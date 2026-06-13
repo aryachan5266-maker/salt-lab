@@ -1,0 +1,1558 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>知识库 / Knowledge Base - XHS_CORE</title>
+
+  <link href="https://lf-code-agent.coze.cn/obj/x-ai-cn/fonts/google/google-all-fonts.css" rel="stylesheet" />
+  <script src="https://lf-code-agent.coze.cn/obj/x-ai-cn/cdn/jquery/jquery-3.7.1.min.js"></script>
+  <script src="https://lf-code-agent.coze.cn/obj/x-ai-cn/cdn/lucide/lucide-1.11.0.min.js"></script>
+  <script src="https://lf-code-agent.coze.cn/obj/x-ai-cn/cdn/tailwindcss/tailwindcss-browser-4.2.4.min.js"></script>
+
+  <style type="text/tailwindcss">
+    @theme {
+      --color-primary:              #7f2028;
+      --color-primary-container:    #3a0f13;
+      --color-on-primary:           #fdebec;
+      --color-background:                 #050607;
+      --color-surface-container-lowest:   #030405;
+      --color-surface:                    #0a0b0d;
+      --color-surface-container:          #14171a;
+      --color-surface-container-high:     #1c2024;
+      --color-surface-container-highest:  #262a2f;
+      --color-on-surface:           #f0f1f3;
+      --color-on-surface-variant:   #8a8f97;
+      --color-success:  #4ade80;
+      --color-error:    #ef4444;
+      --color-warning:  #f59e0b;
+      --color-outline:          rgba(255, 255, 255, 0.10);
+      --color-outline-variant:  rgba(255, 255, 255, 0.06);
+      --radius-sm:   0.125rem;
+      --radius-md:   0.25rem;
+      --radius-lg:   0.375rem;
+      --radius-xl:   0.5rem;
+      --radius-2xl:  0.75rem;
+      --radius-full: 9999px;
+      --shadow-card:   0 1px 0 rgba(255,255,255,0.08) inset, 0 2px 8px rgba(0,0,0,0.5);
+      --shadow-float:  0 1px 0 rgba(255,255,255,0.10) inset, 0 10px 25px rgba(0,0,0,0.6);
+      --shadow-dialog: 0 1px 0 rgba(255,255,255,0.10) inset, 0 25px 50px rgba(0,0,0,0.7);
+      --font-sans: "Space Grotesk", "Inter", "Noto Sans SC", system-ui, sans-serif;
+      --font-mono: "JetBrains Mono", "Space Mono", ui-monospace, monospace;
+    }
+  </style>
+
+  <style>
+    body {
+      background-image:
+        linear-gradient(rgba(127, 32, 40, 0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(127, 32, 40, 0.04) 1px, transparent 1px),
+        radial-gradient(circle at 20% 0%, rgba(127, 32, 40, 0.10), transparent 40%);
+      background-size: 32px 32px, 32px 32px, 100% 100%;
+      background-attachment: fixed;
+    }
+    .tabular { font-variant-numeric: tabular-nums; }
+    .tick-bar { background-image: linear-gradient(90deg, currentColor 50%, transparent 50%); background-size: 6px 1px; background-repeat: repeat-x; }
+    .nav-active { background: linear-gradient(90deg, rgba(127,32,40,0.18), rgba(127,32,40,0.04)); border-left: 2px solid #7f2028; color: #fdebec; }
+    .nav-active i { color: #ef4444; }
+    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    ::-webkit-scrollbar-track { background: #0a0b0d; }
+    ::-webkit-scrollbar-thumb { background: #262a2f; border-radius: 0; }
+    ::-webkit-scrollbar-thumb:hover { background: #7f2028; }
+  </style>
+
+  <script>
+    document.addEventListener('error', function (e) {
+      const img = e.target;
+      if (img.tagName !== 'IMG' || img.dataset.fallback) return;
+      img.dataset.fallback = '1';
+      const esc = s => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+      const cat = img.getAttribute('data-category') || '其他';
+      const alt = img.getAttribute('alt') || '';
+      const label = esc(alt.length > 8 ? alt.slice(0, 8) + '…' : alt);
+      const icons = { '人物': '👤', '自然风景': '🏞', '动物': '🐾', '建筑城市': '🏙', '运动体育': '⚽', '交通工具': '🚗', '食物': '🍽', '服饰时尚': '👗', '商业科技': '💼', '游戏娱乐': '🎮', '艺术': '🎨', '其他': '🖼' };
+      const icon = icons[cat] || '🖼';
+      const w = img.width || 400, h = img.height || 300;
+      const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}"><rect width="100%" height="100%" fill="%231c2024"/><text x="50%" y="45%" text-anchor="middle" font-size="${Math.min(w, h) * 0.18}" fill="%23ef4444" dominant-baseline="central">${icon}</text><text x="50%" y="68%" text-anchor="middle" font-size="${Math.min(w, h) * 0.07}" fill="%238a8f97" font-family="system-ui,sans-serif" dominant-baseline="central">${label}</text></svg>`;
+      img.src = 'data:image/svg+xml,' + svg;
+    }, true);
+  </script>
+</head>
+
+<body class="bg-background text-on-surface font-sans min-h-screen">
+
+  <!-- @nav:start 导航组件 -->
+  <div class="flex min-h-screen" style="height: 100vh;">
+    <aside class="w-60 shrink-0 bg-surface border-r border-outline/20 flex flex-col">
+      <div class="h-16 px-5 flex items-center gap-2.5 border-b border-outline/20">
+        <div class="relative w-8 h-8 bg-primary flex items-center justify-center">
+          <span class="font-mono font-bold text-on-primary text-sm">X</span>
+          <div class="absolute -top-0.5 -right-0.5 w-1.5 h-1.5 bg-primary"></div>
+          <div class="absolute -bottom-0.5 -left-0.5 w-1 h-1 bg-on-primary"></div>
+        </div>
+        <div class="flex-1 min-w-0">
+          <div class="font-mono font-bold text-sm tracking-widest text-on-surface">XHS<span class="text-primary">_</span>CORE</div>
+          <div class="font-mono text-[10px] tracking-wider text-on-surface-variant">XIANLIAO.AI // V2.0</div>
+        </div>
+      </div>
+      <div class="px-5 py-3 border-b border-outline/20">
+        <div class="flex items-center justify-between mb-1.5">
+          <span class="font-mono text-[10px] tracking-widest text-on-surface-variant uppercase">System</span>
+          <span class="flex items-center gap-1 font-mono text-[10px] text-success">
+            <span class="w-1.5 h-1.5 bg-success rounded-full"></span>ONLINE
+          </span>
+        </div>
+        <div class="h-px tick-bar text-outline-variant"></div>
+      </div>
+      <nav class="flex-1 overflow-y-auto py-3">
+        <div class="px-5 mb-2 font-mono text-[10px] tracking-widest text-on-surface-variant uppercase">// Modules</div>
+        <a href="home.html" class="nav-item flex items-center gap-3 px-5 py-2.5 text-sm font-medium text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors">
+          <i data-lucide="radar" class="w-4 h-4"></i><span>选题引擎</span>
+          <span class="ml-auto font-mono text-[10px] text-primary">28</span>
+        </a>
+        <a href="content-factory.html" class="nav-item flex items-center gap-3 px-5 py-2.5 text-sm font-medium text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors">
+          <i data-lucide="factory" class="w-4 h-4"></i><span>内容工厂</span>
+        </a>
+        <a href="publish.html" class="nav-item flex items-center gap-3 px-5 py-2.5 text-sm font-medium text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors">
+          <i data-lucide="send" class="w-4 h-4"></i><span>发布管理</span>
+          <span class="ml-auto font-mono text-[10px] text-warning">3</span>
+        </a>
+        <a href="analytics.html" class="nav-item flex items-center gap-3 px-5 py-2.5 text-sm font-medium text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors">
+          <i data-lucide="bar-chart-horizontal" class="w-4 h-4"></i><span>数据复盘</span>
+        </a>
+        <a href="knowledge.html" class="nav-item flex items-center gap-3 px-5 py-2.5 text-sm font-medium text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors">
+          <i data-lucide="database" class="w-4 h-4"></i><span>知识库</span>
+        </a>
+        <div class="px-5 mt-4 mb-2 font-mono text-[10px] tracking-widest text-on-surface-variant uppercase">// Config</div>
+        <a href="settings.html" class="nav-item flex items-center gap-3 px-5 py-2.5 text-sm font-medium text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors">
+          <i data-lucide="settings" class="w-4 h-4"></i><span>系统设置</span>
+        </a>
+      </nav>
+      <div class="border-t border-outline/20 p-3">
+        <div class="bg-surface-container p-2.5 flex items-center gap-2.5">
+          <div class="w-8 h-8 rounded-full bg-primary-container border border-primary/40 flex items-center justify-center text-primary font-mono text-xs font-bold">咸</div>
+          <div class="flex-1 min-w-0">
+            <div class="text-xs font-medium text-on-surface truncate">咸聊AI·主理人</div>
+            <div class="font-mono text-[10px] text-on-surface-variant">@xianliao_ai</div>
+          </div>
+          <i data-lucide="chevrons-up-down" class="w-3.5 h-3.5 text-on-surface-variant"></i>
+        </div>
+      </div>
+    </aside>
+
+    <div class="flex-1 min-w-0 flex flex-col">
+      <header class="h-16 bg-surface border-b border-outline/20 flex items-center px-6 gap-4 shrink-0">
+        <div class="flex items-center gap-3">
+          <span class="font-mono text-[10px] tracking-widest text-on-surface-variant uppercase">// XHS_CORE</span>
+          <span class="text-on-surface-variant/40">/</span>
+          <span id="page-crumb" class="font-mono text-xs text-on-surface tracking-wide uppercase">KNOWLEDGE / KB</span>
+        </div>
+        <div class="flex-1 max-w-xl mx-auto">
+          <div class="relative">
+            <i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-on-surface-variant"></i>
+            <input type="text" placeholder="SEARCH_TOPIC / KEYWORD / @ACCOUNT..." class="w-full bg-surface-container border border-outline/30 rounded-md pl-10 pr-3 py-2 text-sm font-mono tracking-wide text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/40" />
+            <span class="absolute right-3 top-1/2 -translate-y-1/2 font-mono text-[10px] text-on-surface-variant border border-outline/30 px-1.5 py-0.5">⌘K</span>
+          </div>
+        </div>
+        <div class="flex items-center gap-2">
+          <button class="relative w-9 h-9 flex items-center justify-center border border-outline/30 text-on-surface-variant hover:text-primary hover:border-primary transition-colors">
+            <i data-lucide="bell" class="w-4 h-4"></i>
+            <span class="absolute top-1.5 right-1.5 w-1.5 h-1.5 bg-primary rounded-full"></span>
+          </button>
+          <button class="w-9 h-9 flex items-center justify-center border border-outline/30 text-on-surface-variant hover:text-primary hover:border-primary transition-colors">
+            <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+          </button>
+          <button class="bg-primary hover:bg-primary/90 text-on-primary font-mono font-bold text-xs tracking-widest px-4 h-9 flex items-center gap-2 transition-colors">
+            <i data-lucide="zap" class="w-3.5 h-3.5"></i>RUN_PIPELINE
+          </button>
+        </div>
+      </header>
+
+      <main class="flex-1 min-w-0 overflow-y-auto bg-background">
+        <!-- @main-content:start -->
+        <div class="flex w-full" style="min-height: 100%;">
+
+          <!-- ============== 左侧：知识库分类导航 (200px) ============== -->
+          <aside class="w-[200px] shrink-0 bg-surface border-r border-outline/20 flex flex-col">
+            <div class="px-4 py-4 border-b border-outline/20">
+              <div class="flex items-center justify-between mb-1">
+                <span class="font-mono text-[10px] tracking-widest text-on-surface-variant uppercase">// KB_CATEGORIES</span>
+                <span class="font-mono text-[10px] text-primary">07</span>
+              </div>
+              <div class="h-px tick-bar text-outline-variant mt-2"></div>
+            </div>
+            <nav id="kb-categories" class="flex-1 overflow-y-auto py-2">
+              <button data-tab="brand" class="kb-cat-item is-active w-full flex items-center gap-2.5 px-4 py-2.5 text-left text-sm font-medium border-l-2 border-primary bg-primary/10 text-primary transition-colors">
+                <i data-lucide="crosshair" class="w-3.5 h-3.5 shrink-0"></i>
+                <span class="flex-1 truncate">品牌定位</span>
+                <span class="font-mono text-[10px] text-on-surface-variant tabular">05</span>
+              </button>
+              <button data-tab="persona" class="kb-cat-item w-full flex items-center gap-2.5 px-4 py-2.5 text-left text-sm font-medium text-on-surface-variant border-l-2 border-transparent hover:bg-surface-container hover:text-on-surface transition-colors">
+                <i data-lucide="user-cog" class="w-3.5 h-3.5 shrink-0"></i>
+                <span class="flex-1 truncate">人设语料</span>
+                <span class="font-mono text-[10px] text-on-surface-variant tabular">128</span>
+              </button>
+              <button data-tab="archive" class="kb-cat-item w-full flex items-center gap-2.5 px-4 py-2.5 text-left text-sm font-medium text-on-surface-variant border-l-2 border-transparent hover:bg-surface-container hover:text-on-surface transition-colors">
+                <i data-lucide="archive" class="w-3.5 h-3.5 shrink-0"></i>
+                <span class="flex-1 truncate">往期内容库</span>
+                <span class="font-mono text-[10px] text-on-surface-variant tabular">216</span>
+              </button>
+              <button data-tab="benchmark" class="kb-cat-item w-full flex items-center gap-2.5 px-4 py-2.5 text-left text-sm font-medium text-on-surface-variant border-l-2 border-transparent hover:bg-surface-container hover:text-on-surface transition-colors">
+                <i data-lucide="users" class="w-3.5 h-3.5 shrink-0"></i>
+                <span class="flex-1 truncate">对标账号分析</span>
+                <span class="font-mono text-[10px] text-on-surface-variant tabular">12</span>
+              </button>
+              <button data-tab="viral" class="kb-cat-item w-full flex items-center gap-2.5 px-4 py-2.5 text-left text-sm font-medium text-on-surface-variant border-l-2 border-transparent hover:bg-surface-container hover:text-on-surface transition-colors">
+                <i data-lucide="flame" class="w-3.5 h-3.5 shrink-0"></i>
+                <span class="flex-1 truncate">爆款拆解</span>
+                <span class="font-mono text-[10px] text-on-surface-variant tabular">47</span>
+              </button>
+              <button data-tab="material" class="kb-cat-item w-full flex items-center gap-2.5 px-4 py-2.5 text-left text-sm font-medium text-on-surface-variant border-l-2 border-transparent hover:bg-surface-container hover:text-on-surface transition-colors">
+                <i data-lucide="library" class="w-3.5 h-3.5 shrink-0"></i>
+                <span class="flex-1 truncate">选题素材</span>
+                <span class="font-mono text-[10px] text-on-surface-variant tabular">89</span>
+              </button>
+              <button data-tab="rule" class="kb-cat-item w-full flex items-center gap-2.5 px-4 py-2.5 text-left text-sm font-medium text-on-surface-variant border-l-2 border-transparent hover:bg-surface-container hover:text-on-surface transition-colors">
+                <i data-lucide="shield-alert" class="w-3.5 h-3.5 shrink-0"></i>
+                <span class="flex-1 truncate">平台规则</span>
+                <span class="font-mono text-[10px] text-on-surface-variant tabular">23</span>
+              </button>
+            </nav>
+            <div class="border-t border-outline/20 p-3">
+              <div class="flex items-center justify-between mb-2">
+                <span class="font-mono text-[10px] tracking-widest text-on-surface-variant uppercase">// STORAGE</span>
+                <span class="font-mono text-[10px] text-on-surface tabular">68%</span>
+              </div>
+              <div class="h-1 bg-surface-container-high overflow-hidden">
+                <div class="h-full bg-primary" style="width: 68%"></div>
+              </div>
+              <div class="mt-1.5 flex items-center justify-between font-mono text-[10px] text-on-surface-variant">
+                <span>USED 3.4G / 5G</span>
+                <span class="text-warning">UPGRADE</span>
+              </div>
+            </div>
+          </aside>
+
+          <!-- ============== 中间：主内容区 ============== -->
+          <div class="flex-1 min-w-0 flex flex-col">
+
+            <!-- 主内容顶部 - 头部 + Tab 栏 -->
+            <header class="bg-surface border-b border-outline/20">
+              <div class="px-6 py-4 flex items-center gap-4">
+                <div class="flex items-center gap-3">
+                  <span class="font-mono text-[10px] tracking-widest text-on-surface-variant uppercase">// KB</span>
+                  <span class="text-on-surface-variant/40">/</span>
+                  <h1 id="kb-tab-title" class="font-mono text-sm font-bold text-on-surface tracking-widest uppercase">BRAND_POSITIONING</h1>
+                </div>
+                <p id="kb-tab-desc" class="flex-1 text-xs text-on-surface-variant truncate">品牌资产核心档案 / 定位 / 人设 / 受众 / 禁区 / 原则</p>
+                <div class="flex items-center gap-2">
+                  <span class="font-mono text-[10px] text-on-surface-variant">SYNCED 2 MIN AGO</span>
+                  <span class="w-1.5 h-1.5 bg-success rounded-full"></span>
+                </div>
+              </div>
+              <div id="kb-top-tabs" class="px-6 flex items-center gap-1 overflow-x-auto">
+                <button data-tab="brand" class="kb-top-tab is-active shrink-0 flex items-center gap-2 px-3 py-2.5 text-xs font-medium border-b-2 border-primary text-primary bg-primary/5">
+                  <i data-lucide="crosshair" class="w-3.5 h-3.5"></i>品牌定位
+                </button>
+                <button data-tab="persona" class="kb-top-tab shrink-0 flex items-center gap-2 px-3 py-2.5 text-xs font-medium border-b-2 border-transparent text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors">
+                  <i data-lucide="user-cog" class="w-3.5 h-3.5"></i>人设语料
+                </button>
+                <button data-tab="archive" class="kb-top-tab shrink-0 flex items-center gap-2 px-3 py-2.5 text-xs font-medium border-b-2 border-transparent text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors">
+                  <i data-lucide="archive" class="w-3.5 h-3.5"></i>往期内容库
+                </button>
+                <button data-tab="benchmark" class="kb-top-tab shrink-0 flex items-center gap-2 px-3 py-2.5 text-xs font-medium border-b-2 border-transparent text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors">
+                  <i data-lucide="users" class="w-3.5 h-3.5"></i>对标账号分析
+                </button>
+                <button data-tab="viral" class="kb-top-tab shrink-0 flex items-center gap-2 px-3 py-2.5 text-xs font-medium border-b-2 border-transparent text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors">
+                  <i data-lucide="flame" class="w-3.5 h-3.5"></i>爆款拆解
+                </button>
+                <button data-tab="material" class="kb-top-tab shrink-0 flex items-center gap-2 px-3 py-2.5 text-xs font-medium border-b-2 border-transparent text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors">
+                  <i data-lucide="library" class="w-3.5 h-3.5"></i>选题素材
+                </button>
+                <button data-tab="rule" class="kb-top-tab shrink-0 flex items-center gap-2 px-3 py-2.5 text-xs font-medium border-b-2 border-transparent text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors">
+                  <i data-lucide="shield-alert" class="w-3.5 h-3.5"></i>平台规则
+                </button>
+              </div>
+            </header>
+
+            <!-- Tab 内容滚动区 -->
+            <div class="flex-1 overflow-y-auto p-6 space-y-6">
+
+              <!-- =================== Tab Pane: 品牌定位 =================== -->
+              <section id="pane-brand" class="kb-tab-pane space-y-6">
+
+                <!-- 顶部品牌信息头 -->
+                <div class="bg-surface border border-outline/20 shadow-card p-5">
+                  <div class="flex items-start gap-5">
+                    <div class="relative shrink-0 w-16 h-16 bg-primary flex items-center justify-center">
+                      <span class="font-mono font-bold text-on-primary text-2xl">咸</span>
+                      <div class="absolute -top-0.5 -right-0.5 w-2 h-2 bg-primary"></div>
+                      <div class="absolute -bottom-0.5 -left-0.5 w-1.5 h-1.5 bg-on-primary"></div>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                      <div class="flex items-center gap-3 mb-1.5 flex-wrap">
+                        <h2 class="text-xl font-bold text-on-surface tracking-wide">咸聊AI</h2>
+                        <span class="font-mono text-[10px] text-on-surface-variant tracking-widest">@xianliao_ai</span>
+                        <span class="inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-mono font-bold tracking-widest bg-primary/15 text-primary border border-primary/30">
+                          <i data-lucide="circle-dot" class="w-2.5 h-2.5"></i>商业认知博主
+                        </span>
+                        <span class="inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-mono tracking-widest bg-success/15 text-success border border-success/30">
+                          <span class="w-1.5 h-1.5 bg-success rounded-full"></span>ACTIVE
+                        </span>
+                      </div>
+                      <p class="text-sm text-on-surface-variant leading-relaxed mb-3">为25-40岁女性创业者/企业高管提供商业认知升维。拒绝鸡汤、拒绝爹味，用数据和案例拆解真实商业世界。</p>
+                      <div class="flex items-center gap-5 font-mono text-[11px] text-on-surface-variant flex-wrap">
+                        <div class="flex items-center gap-1.5"><i data-lucide="users" class="w-3 h-3"></i><span class="text-on-surface tabular">128,500</span> 粉丝</div>
+                        <div class="flex items-center gap-1.5"><i data-lucide="file-text" class="w-3 h-3"></i><span class="text-on-surface tabular">216</span> 笔记</div>
+                        <div class="flex items-center gap-1.5"><i data-lucide="heart" class="w-3 h-3"></i><span class="text-on-surface tabular">2.3M</span> 总点赞</div>
+                        <div class="flex items-center gap-1.5"><i data-lucide="calendar" class="w-3 h-3"></i>入驻 2023-03</div>
+                      </div>
+                    </div>
+                    <div class="flex flex-col gap-2 shrink-0">
+                      <button id="btn-edit-brand" class="btn-edit-doc flex items-center gap-1.5 px-3 py-1.5 bg-primary text-on-primary font-mono text-[11px] font-bold tracking-widest hover:opacity-90 transition-opacity" data-id="brand-main">
+                        <i data-lucide="square-pen" class="w-3 h-3"></i>编辑
+                      </button>
+                      <button id="btn-version-brand" class="btn-version flex items-center gap-1.5 px-3 py-1.5 bg-surface-container border border-outline/30 text-on-surface font-mono text-[11px] tracking-widest hover:border-primary hover:text-primary transition-colors" data-id="brand-main">
+                        <i data-lucide="history" class="w-3 h-3"></i>版本历史
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 核心信息卡组 - 5 张卡 -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+
+                  <!-- 卡1：一句话定位 -->
+                  <div class="bg-surface border border-outline/20 shadow-card p-5">
+                    <div class="flex items-center justify-between mb-3">
+                      <div class="flex items-center gap-2">
+                        <span class="font-mono text-[10px] tracking-widest text-primary uppercase">// DOC_01</span>
+                        <span class="font-mono text-[10px] text-on-surface-variant">CORE_POSITIONING</span>
+                      </div>
+                      <div class="flex items-center gap-1">
+                        <button class="btn-edit-doc w-7 h-7 flex items-center justify-center text-on-surface-variant hover:text-primary hover:bg-surface-container transition-colors" data-id="doc-01">
+                          <i data-lucide="square-pen" class="w-3.5 h-3.5"></i>
+                        </button>
+                        <button class="btn-version w-7 h-7 flex items-center justify-center text-on-surface-variant hover:text-primary hover:bg-surface-container transition-colors" data-id="doc-01">
+                          <i data-lucide="history" class="w-3.5 h-3.5"></i>
+                        </button>
+                      </div>
+                    </div>
+                    <div class="flex items-start gap-3">
+                      <div class="shrink-0 w-9 h-9 bg-primary-container border border-primary/30 flex items-center justify-center">
+                        <i data-lucide="crosshair" class="w-4 h-4 text-primary"></i>
+                      </div>
+                      <div class="flex-1 min-w-0">
+                        <div class="text-[10px] font-mono tracking-widest text-on-surface-variant uppercase mb-1.5">一句话定位 / ONE-LINER</div>
+                        <p class="text-base font-semibold text-on-surface leading-relaxed">为25-40岁女性创业者/企业高管提供<span class="text-primary">商业认知升维</span></p>
+                        <div class="mt-3 flex flex-wrap gap-1.5">
+                          <span class="px-1.5 py-0.5 text-[10px] font-mono bg-surface-container text-on-surface-variant">#女性商业</span>
+                          <span class="px-1.5 py-0.5 text-[10px] font-mono bg-surface-container text-on-surface-variant">#认知升维</span>
+                          <span class="px-1.5 py-0.5 text-[10px] font-mono bg-surface-container text-on-surface-variant">#高决策力</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- 卡2：内容人设 -->
+                  <div class="bg-surface border border-outline/20 shadow-card p-5">
+                    <div class="flex items-center justify-between mb-3">
+                      <div class="flex items-center gap-2">
+                        <span class="font-mono text-[10px] tracking-widest text-primary uppercase">// DOC_02</span>
+                        <span class="font-mono text-[10px] text-on-surface-variant">PERSONA_TONE</span>
+                      </div>
+                      <div class="flex items-center gap-1">
+                        <button class="btn-edit-doc w-7 h-7 flex items-center justify-center text-on-surface-variant hover:text-primary hover:bg-surface-container transition-colors" data-id="doc-02">
+                          <i data-lucide="square-pen" class="w-3.5 h-3.5"></i>
+                        </button>
+                        <button class="btn-version w-7 h-7 flex items-center justify-center text-on-surface-variant hover:text-primary hover:bg-surface-container transition-colors" data-id="doc-02">
+                          <i data-lucide="history" class="w-3.5 h-3.5"></i>
+                        </button>
+                      </div>
+                    </div>
+                    <div class="flex items-start gap-3">
+                      <div class="shrink-0 w-9 h-9 bg-primary-container border border-primary/30 flex items-center justify-center">
+                        <i data-lucide="user-cog" class="w-4 h-4 text-primary"></i>
+                      </div>
+                      <div class="flex-1 min-w-0">
+                        <div class="text-[10px] font-mono tracking-widest text-on-surface-variant uppercase mb-1.5">内容人设 / VOICE</div>
+                        <p class="text-base font-semibold text-on-surface leading-relaxed mb-2">
+                          <span class="text-primary">犀利</span> ·
+                          <span class="text-primary">克制</span> ·
+                          <span class="text-primary">敢讲真话</span> ·
+                          有商业洞察<span class="text-error line-through">但</span>不爹味
+                        </p>
+                        <div class="grid grid-cols-2 gap-1.5 text-[11px] font-mono">
+                          <div class="flex items-center gap-1.5 text-on-surface-variant"><i data-lucide="check" class="w-3 h-3 text-success"></i>有数据支撑</div>
+                          <div class="flex items-center gap-1.5 text-on-surface-variant"><i data-lucide="check" class="w-3 h-3 text-success"></i>有反常识视角</div>
+                          <div class="flex items-center gap-1.5 text-on-surface-variant"><i data-lucide="check" class="w-3 h-3 text-success"></i>句式短促有力</div>
+                          <div class="flex items-center gap-1.5 text-on-surface-variant"><i data-lucide="check" class="w-3 h-3 text-success"></i>不端着不讨好</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- 卡3：受众画像 -->
+                  <div class="bg-surface border border-outline/20 shadow-card p-5">
+                    <div class="flex items-center justify-between mb-3">
+                      <div class="flex items-center gap-2">
+                        <span class="font-mono text-[10px] tracking-widest text-primary uppercase">// DOC_03</span>
+                        <span class="font-mono text-[10px] text-on-surface-variant">AUDIENCE</span>
+                      </div>
+                      <div class="flex items-center gap-1">
+                        <button class="btn-edit-doc w-7 h-7 flex items-center justify-center text-on-surface-variant hover:text-primary hover:bg-surface-container transition-colors" data-id="doc-03">
+                          <i data-lucide="square-pen" class="w-3.5 h-3.5"></i>
+                        </button>
+                        <button class="btn-version w-7 h-7 flex items-center justify-center text-on-surface-variant hover:text-primary hover:bg-surface-container transition-colors" data-id="doc-03">
+                          <i data-lucide="history" class="w-3.5 h-3.5"></i>
+                        </button>
+                      </div>
+                    </div>
+                    <div class="flex items-start gap-3">
+                      <div class="shrink-0 w-9 h-9 bg-primary-container border border-primary/30 flex items-center justify-center">
+                        <i data-lucide="users" class="w-4 h-4 text-primary"></i>
+                      </div>
+                      <div class="flex-1 min-w-0">
+                        <div class="text-[10px] font-mono tracking-widest text-on-surface-variant uppercase mb-1.5">受众画像 / PERSONA</div>
+                        <p class="text-sm text-on-surface leading-relaxed mb-2">
+                          <span class="font-semibold">高决策力女性</span>，年龄 <span class="font-mono text-primary tabular">28-40</span>，城市新中产
+                        </p>
+                        <div class="space-y-1.5">
+                          <div class="flex items-start gap-2 text-[11px]">
+                            <span class="font-mono text-error shrink-0 w-8">痛点1</span>
+                            <span class="text-on-surface-variant">商业决策孤独，缺少同频对话者</span>
+                          </div>
+                          <div class="flex items-start gap-2 text-[11px]">
+                            <span class="font-mono text-error shrink-0 w-8">痛点2</span>
+                            <span class="text-on-surface-variant">被信息噪音淹没，难辨真伪</span>
+                          </div>
+                          <div class="flex items-start gap-2 text-[11px]">
+                            <span class="font-mono text-error shrink-0 w-8">痛点3</span>
+                            <span class="text-on-surface-variant">想突破又怕错失，决策成本高</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- 卡4：内容禁区 -->
+                  <div class="bg-surface border border-error/30 shadow-card p-5">
+                    <div class="flex items-center justify-between mb-3">
+                      <div class="flex items-center gap-2">
+                        <span class="font-mono text-[10px] tracking-widest text-error uppercase">// DOC_04</span>
+                        <span class="font-mono text-[10px] text-on-surface-variant">RED_ZONE</span>
+                      </div>
+                      <div class="flex items-center gap-1">
+                        <button class="btn-edit-doc w-7 h-7 flex items-center justify-center text-on-surface-variant hover:text-primary hover:bg-surface-container transition-colors" data-id="doc-04">
+                          <i data-lucide="square-pen" class="w-3.5 h-3.5"></i>
+                        </button>
+                        <button class="btn-version w-7 h-7 flex items-center justify-center text-on-surface-variant hover:text-primary hover:bg-surface-container transition-colors" data-id="doc-04">
+                          <i data-lucide="history" class="w-3.5 h-3.5"></i>
+                        </button>
+                      </div>
+                    </div>
+                    <div class="flex items-start gap-3">
+                      <div class="shrink-0 w-9 h-9 bg-error/15 border border-error/30 flex items-center justify-center">
+                        <i data-lucide="ban" class="w-4 h-4 text-error"></i>
+                      </div>
+                      <div class="flex-1 min-w-0">
+                        <div class="text-[10px] font-mono tracking-widest text-error uppercase mb-1.5">内容禁区 / NEVER SAY</div>
+                        <div class="grid grid-cols-2 gap-1.5 text-[12px]">
+                          <div class="flex items-center gap-1.5 text-on-surface-variant"><i data-lucide="x" class="w-3 h-3 text-error shrink-0"></i>不鸡汤</div>
+                          <div class="flex items-center gap-1.5 text-on-surface-variant"><i data-lucide="x" class="w-3 h-3 text-error shrink-0"></i>不情绪煽动</div>
+                          <div class="flex items-center gap-1.5 text-on-surface-variant"><i data-lucide="x" class="w-3 h-3 text-error shrink-0"></i>不消费女性焦虑</div>
+                          <div class="flex items-center gap-1.5 text-on-surface-variant"><i data-lucide="x" class="w-3 h-3 text-error shrink-0"></i>不讲成功学</div>
+                          <div class="flex items-center gap-1.5 text-on-surface-variant"><i data-lucide="x" class="w-3 h-3 text-error shrink-0"></i>不端架子爹味</div>
+                          <div class="flex items-center gap-1.5 text-on-surface-variant"><i data-lucide="x" class="w-3 h-3 text-error shrink-0"></i>不晒奢靡生活</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- 卡5：表达原则 -->
+                  <div class="bg-surface border border-outline/20 shadow-card p-5 lg:col-span-2">
+                    <div class="flex items-center justify-between mb-3">
+                      <div class="flex items-center gap-2">
+                        <span class="font-mono text-[10px] tracking-widest text-primary uppercase">// DOC_05</span>
+                        <span class="font-mono text-[10px] text-on-surface-variant">EXPRESSION_RULES</span>
+                      </div>
+                      <div class="flex items-center gap-1">
+                        <button class="btn-edit-doc w-7 h-7 flex items-center justify-center text-on-surface-variant hover:text-primary hover:bg-surface-container transition-colors" data-id="doc-05">
+                          <i data-lucide="square-pen" class="w-3.5 h-3.5"></i>
+                        </button>
+                        <button class="btn-version w-7 h-7 flex items-center justify-center text-on-surface-variant hover:text-primary hover:bg-surface-container transition-colors" data-id="doc-05">
+                          <i data-lucide="history" class="w-3.5 h-3.5"></i>
+                        </button>
+                      </div>
+                    </div>
+                    <div class="flex items-start gap-3">
+                      <div class="shrink-0 w-9 h-9 bg-primary-container border border-primary/30 flex items-center justify-center">
+                        <i data-lucide="square-asterisk" class="w-4 h-4 text-primary"></i>
+                      </div>
+                      <div class="flex-1 min-w-0">
+                        <div class="text-[10px] font-mono tracking-widest text-on-surface-variant uppercase mb-2">表达原则 / RULES</div>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                          <div class="border-l-2 border-primary pl-3 py-1">
+                            <div class="font-mono text-[10px] text-primary tracking-widest mb-1">RULE.01</div>
+                            <div class="text-sm font-semibold text-on-surface mb-0.5">用数据和案例代替形容词</div>
+                            <div class="text-[11px] text-on-surface-variant">"GMV增长300%" &gt; "增长了很多"</div>
+                          </div>
+                          <div class="border-l-2 border-primary pl-3 py-1">
+                            <div class="font-mono text-[10px] text-primary tracking-widest mb-1">RULE.02</div>
+                            <div class="text-sm font-semibold text-on-surface mb-0.5">每篇至少1个反常识观点</div>
+                            <div class="text-[11px] text-on-surface-variant">"贵不是问题,贵且不值才是"</div>
+                          </div>
+                          <div class="border-l-2 border-primary pl-3 py-1">
+                            <div class="font-mono text-[10px] text-primary tracking-widest mb-1">RULE.03</div>
+                            <div class="text-sm font-semibold text-on-surface mb-0.5">结论先行,案例支撑</div>
+                            <div class="text-[11px] text-on-surface-variant">先给观点再给论证,不要铺垫</div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 底部信息 -->
+                <div class="flex items-center justify-between font-mono text-[11px] text-on-surface-variant px-2 flex-wrap gap-2">
+                  <div class="flex items-center gap-4 flex-wrap">
+                    <span class="flex items-center gap-1.5"><i data-lucide="clock" class="w-3 h-3"></i>上次更新：<span class="text-on-surface tabular">2024-12-20 14:32</span></span>
+                    <span class="flex items-center gap-1.5"><i data-lucide="user" class="w-3 h-3"></i>by <span class="text-on-surface">主理人</span></span>
+                  </div>
+                  <div class="flex items-center gap-3 flex-wrap">
+                    <span class="flex items-center gap-1.5"><span class="w-1.5 h-1.5 bg-primary"></span>DOC_ID: KB-BRAND-001</span>
+                    <span class="flex items-center gap-1.5"><span class="w-1.5 h-1.5 bg-success"></span>SYNCED</span>
+                  </div>
+                </div>
+              </section>
+
+              <!-- =================== Tab Pane: 往期内容库 =================== -->
+              <section id="pane-archive" class="kb-tab-pane hidden space-y-5">
+                <!-- 顶部筛选条 -->
+                <div class="bg-surface border border-outline/20 shadow-card p-4">
+                  <div class="flex items-center gap-3 flex-wrap">
+                    <span class="font-mono text-[10px] tracking-widest text-on-surface-variant uppercase">// FILTER</span>
+                    <div id="archive-filter" class="flex items-center gap-1">
+                      <button data-filter="all" class="px-2.5 py-1 text-[11px] font-mono border border-primary/40 bg-primary/20 text-primary">ALL</button>
+                      <button data-filter="hot" class="px-2.5 py-1 text-[11px] font-mono border border-outline/20 text-on-surface-variant hover:text-on-surface hover:border-outline/40">爆款 &gt;10w</button>
+                      <button data-filter="normal" class="px-2.5 py-1 text-[11px] font-mono border border-outline/20 text-on-surface-variant hover:text-on-surface hover:border-outline/40">常规</button>
+                      <button data-filter="low" class="px-2.5 py-1 text-[11px] font-mono border border-outline/20 text-on-surface-variant hover:text-on-surface hover:border-outline/40">低表现</button>
+                    </div>
+                    <div class="w-px h-5 bg-outline/30"></div>
+                    <div class="flex items-center gap-1.5">
+                      <i data-lucide="calendar" class="w-3.5 h-3.5 text-on-surface-variant"></i>
+                      <select class="bg-surface-container border-none text-[11px] font-mono text-on-surface px-2 py-1 focus:outline-none focus:ring-1 focus:ring-primary/30">
+                        <option>近 30 天</option>
+                        <option selected>近 90 天</option>
+                        <option>近 6 个月</option>
+                        <option>2024 全年</option>
+                        <option>2023 全年</option>
+                      </select>
+                    </div>
+                    <div class="flex items-center gap-1.5">
+                      <i data-lucide="arrow-up-down" class="w-3.5 h-3.5 text-on-surface-variant"></i>
+                      <select id="archive-sort" class="bg-surface-container border-none text-[11px] font-mono text-on-surface px-2 py-1 focus:outline-none focus:ring-1 focus:ring-primary/30">
+                        <option>按发布时间</option>
+                        <option>按曝光量</option>
+                        <option>按点赞量</option>
+                        <option>按互动率</option>
+                      </select>
+                    </div>
+                    <div class="flex-1"></div>
+                    <div class="flex items-center gap-2 font-mono text-[10px] text-on-surface-variant">
+                      <span>共 <span class="text-on-surface tabular">216</span> 条</span>
+                      <span>·</span>
+                      <span>已筛选 <span class="text-primary tabular">6</span> 条</span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 网格卡片：6 张往期内容卡 -->
+                <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+
+                  <!-- 卡片 1 -->
+                  <div class="bg-surface border border-outline/20 shadow-card overflow-hidden hover:border-primary/40 transition-colors group">
+                    <div class="relative aspect-[4/3] overflow-hidden bg-surface-container">
+                      <img src="https://images.unsplash.com/photo-1556761175-5973dc0f32e7?w=600" alt="商业会议场景" data-category="商业科技" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                      <div class="absolute top-2 left-2 px-1.5 py-0.5 bg-primary text-on-primary text-[10px] font-mono font-bold tracking-widest">爆款</div>
+                      <div class="absolute top-2 right-2 px-1.5 py-0.5 bg-black/70 text-on-surface text-[10px] font-mono tabular">#商业</div>
+                    </div>
+                    <div class="p-3.5">
+                      <h4 class="text-sm font-semibold text-on-surface leading-snug mb-2 line-clamp-2">为什么你的公司活不过第三年?这三个死亡信号被我讲透了</h4>
+                      <div class="flex items-center justify-between text-[11px] font-mono text-on-surface-variant mb-2.5">
+                        <span class="flex items-center gap-1"><i data-lucide="calendar" class="w-3 h-3"></i>2024-12-15</span>
+                        <span class="flex items-center gap-1.5">
+                          <span class="flex items-center gap-0.5"><i data-lucide="eye" class="w-3 h-3"></i><span class="text-on-surface tabular">286K</span></span>
+                          <span class="flex items-center gap-0.5"><i data-lucide="heart" class="w-3 h-3"></i><span class="text-primary tabular">12.4K</span></span>
+                        </span>
+                      </div>
+                      <div class="flex items-center gap-1.5">
+                        <span class="px-1.5 py-0.5 text-[10px] font-mono bg-success/15 text-success">互动率 4.3%</span>
+                        <span class="px-1.5 py-0.5 text-[10px] font-mono bg-surface-container text-on-surface-variant">收藏 3.2K</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- 卡片 2 -->
+                  <div class="bg-surface border border-outline/20 shadow-card overflow-hidden hover:border-primary/40 transition-colors group">
+                    <div class="relative aspect-[4/3] overflow-hidden bg-surface-container">
+                      <img src="https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?w=600" alt="女性领导者" data-category="人物" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                      <div class="absolute top-2 left-2 px-1.5 py-0.5 bg-primary text-on-primary text-[10px] font-mono font-bold tracking-widest">爆款</div>
+                      <div class="absolute top-2 right-2 px-1.5 py-0.5 bg-black/70 text-on-surface text-[10px] font-mono tabular">#认知</div>
+                    </div>
+                    <div class="p-3.5">
+                      <h4 class="text-sm font-semibold text-on-surface leading-snug mb-2 line-clamp-2">30岁女性管理者的"隐形困境":你越能干,周围人越想看你失败</h4>
+                      <div class="flex items-center justify-between text-[11px] font-mono text-on-surface-variant mb-2.5">
+                        <span class="flex items-center gap-1"><i data-lucide="calendar" class="w-3 h-3"></i>2024-12-08</span>
+                        <span class="flex items-center gap-1.5">
+                          <span class="flex items-center gap-0.5"><i data-lucide="eye" class="w-3 h-3"></i><span class="text-on-surface tabular">412K</span></span>
+                          <span class="flex items-center gap-0.5"><i data-lucide="heart" class="w-3 h-3"></i><span class="text-primary tabular">28.7K</span></span>
+                        </span>
+                      </div>
+                      <div class="flex items-center gap-1.5">
+                        <span class="px-1.5 py-0.5 text-[10px] font-mono bg-success/15 text-success">互动率 6.9%</span>
+                        <span class="px-1.5 py-0.5 text-[10px] font-mono bg-surface-container text-on-surface-variant">收藏 8.1K</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- 卡片 3 -->
+                  <div class="bg-surface border border-outline/20 shadow-card overflow-hidden hover:border-primary/40 transition-colors group">
+                    <div class="relative aspect-[4/3] overflow-hidden bg-surface-container">
+                      <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=600" alt="数据分析图表" data-category="商业科技" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                      <div class="absolute top-2 right-2 px-1.5 py-0.5 bg-black/70 text-on-surface text-[10px] font-mono tabular">#数据</div>
+                    </div>
+                    <div class="p-3.5">
+                      <h4 class="text-sm font-semibold text-on-surface leading-snug mb-2 line-clamp-2">拆解3个年入千万女性IP:她们做对了什么,又做错了什么</h4>
+                      <div class="flex items-center justify-between text-[11px] font-mono text-on-surface-variant mb-2.5">
+                        <span class="flex items-center gap-1"><i data-lucide="calendar" class="w-3 h-3"></i>2024-12-01</span>
+                        <span class="flex items-center gap-1.5">
+                          <span class="flex items-center gap-0.5"><i data-lucide="eye" class="w-3 h-3"></i><span class="text-on-surface tabular">198K</span></span>
+                          <span class="flex items-center gap-0.5"><i data-lucide="heart" class="w-3 h-3"></i><span class="text-primary tabular">9.6K</span></span>
+                        </span>
+                      </div>
+                      <div class="flex items-center gap-1.5">
+                        <span class="px-1.5 py-0.5 text-[10px] font-mono bg-warning/15 text-warning">互动率 4.8%</span>
+                        <span class="px-1.5 py-0.5 text-[10px] font-mono bg-surface-container text-on-surface-variant">收藏 2.8K</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- 卡片 4 -->
+                  <div class="bg-surface border border-outline/20 shadow-card overflow-hidden hover:border-primary/40 transition-colors group">
+                    <div class="relative aspect-[4/3] overflow-hidden bg-surface-container">
+                      <img src="https://images.unsplash.com/photo-1551836022-d5d88e9218df?w=600" alt="职业女性思考" data-category="人物" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                      <div class="absolute top-2 left-2 px-1.5 py-0.5 bg-primary text-on-primary text-[10px] font-mono font-bold tracking-widest">爆款</div>
+                      <div class="absolute top-2 right-2 px-1.5 py-0.5 bg-black/70 text-on-surface text-[10px] font-mono tabular">#职场</div>
+                    </div>
+                    <div class="p-3.5">
+                      <h4 class="text-sm font-semibold text-on-surface leading-snug mb-2 line-clamp-2">从月薪8千到年入7位数的女性,差的不是能力,是这个思维</h4>
+                      <div class="flex items-center justify-between text-[11px] font-mono text-on-surface-variant mb-2.5">
+                        <span class="flex items-center gap-1"><i data-lucide="calendar" class="w-3 h-3"></i>2024-11-24</span>
+                        <span class="flex items-center gap-1.5">
+                          <span class="flex items-center gap-0.5"><i data-lucide="eye" class="w-3 h-3"></i><span class="text-on-surface tabular">356K</span></span>
+                          <span class="flex items-center gap-0.5"><i data-lucide="heart" class="w-3 h-3"></i><span class="text-primary tabular">18.2K</span></span>
+                        </span>
+                      </div>
+                      <div class="flex items-center gap-1.5">
+                        <span class="px-1.5 py-0.5 text-[10px] font-mono bg-success/15 text-success">互动率 5.1%</span>
+                        <span class="px-1.5 py-0.5 text-[10px] font-mono bg-surface-container text-on-surface-variant">收藏 5.4K</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- 卡片 5 -->
+                  <div class="bg-surface border border-outline/20 shadow-card overflow-hidden hover:border-primary/40 transition-colors group">
+                    <div class="relative aspect-[4/3] overflow-hidden bg-surface-container">
+                      <img src="https://images.unsplash.com/photo-1521737711867-e3b97375f902?w=600" alt="创业团队" data-category="商业科技" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                      <div class="absolute top-2 right-2 px-1.5 py-0.5 bg-black/70 text-on-surface text-[10px] font-mono tabular">#创业</div>
+                    </div>
+                    <div class="p-3.5">
+                      <h4 class="text-sm font-semibold text-on-surface leading-snug mb-2 line-clamp-2">创业第2年我才明白:合伙人不怕分钱少,就怕规则模糊</h4>
+                      <div class="flex items-center justify-between text-[11px] font-mono text-on-surface-variant mb-2.5">
+                        <span class="flex items-center gap-1"><i data-lucide="calendar" class="w-3 h-3"></i>2024-11-17</span>
+                        <span class="flex items-center gap-1.5">
+                          <span class="flex items-center gap-0.5"><i data-lucide="eye" class="w-3 h-3"></i><span class="text-on-surface tabular">142K</span></span>
+                          <span class="flex items-center gap-0.5"><i data-lucide="heart" class="w-3 h-3"></i><span class="text-primary tabular">6.8K</span></span>
+                        </span>
+                      </div>
+                      <div class="flex items-center gap-1.5">
+                        <span class="px-1.5 py-0.5 text-[10px] font-mono bg-surface-container text-on-surface-variant">互动率 4.7%</span>
+                        <span class="px-1.5 py-0.5 text-[10px] font-mono bg-surface-container text-on-surface-variant">收藏 1.9K</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- 卡片 6 -->
+                  <div class="bg-surface border border-outline/20 shadow-card overflow-hidden hover:border-primary/40 transition-colors group">
+                    <div class="relative aspect-[4/3] overflow-hidden bg-surface-container">
+                      <img src="https://images.unsplash.com/photo-1573164713988-8665fc963095?w=600" alt="谈判场景" data-category="商业科技" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                      <div class="absolute top-2 right-2 px-1.5 py-0.5 bg-black/70 text-on-surface text-[10px] font-mono tabular">#谈判</div>
+                    </div>
+                    <div class="p-3.5">
+                      <h4 class="text-sm font-semibold text-on-surface leading-snug mb-2 line-clamp-2">学会这3个反直觉谈判技巧,客户反而更愿意为你买单</h4>
+                      <div class="flex items-center justify-between text-[11px] font-mono text-on-surface-variant mb-2.5">
+                        <span class="flex items-center gap-1"><i data-lucide="calendar" class="w-3 h-3"></i>2024-11-10</span>
+                        <span class="flex items-center gap-1.5">
+                          <span class="flex items-center gap-0.5"><i data-lucide="eye" class="w-3 h-3"></i><span class="text-on-surface tabular">98K</span></span>
+                          <span class="flex items-center gap-0.5"><i data-lucide="heart" class="w-3 h-3"></i><span class="text-primary tabular">5.2K</span></span>
+                        </span>
+                      </div>
+                      <div class="flex items-center gap-1.5">
+                        <span class="px-1.5 py-0.5 text-[10px] font-mono bg-surface-container text-on-surface-variant">互动率 5.3%</span>
+                        <span class="px-1.5 py-0.5 text-[10px] font-mono bg-surface-container text-on-surface-variant">收藏 1.6K</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 分页 -->
+                <div class="flex items-center justify-center gap-2 pt-2">
+                  <button class="px-3 py-1.5 border border-outline/30 bg-surface font-mono text-[11px] text-on-surface-variant hover:text-on-surface hover:border-primary/40 transition-colors">
+                    <i data-lucide="chevron-left" class="w-3 h-3 inline-block align-middle"></i> 上一页
+                  </button>
+                  <span class="px-3 py-1.5 font-mono text-[11px] text-on-surface bg-primary/15 border border-primary/40">1</span>
+                  <span class="px-3 py-1.5 font-mono text-[11px] text-on-surface-variant">2</span>
+                  <span class="px-3 py-1.5 font-mono text-[11px] text-on-surface-variant">3</span>
+                  <span class="px-2 py-1.5 font-mono text-[11px] text-on-surface-variant">...</span>
+                  <span class="px-3 py-1.5 font-mono text-[11px] text-on-surface-variant">36</span>
+                  <button class="px-3 py-1.5 border border-outline/30 bg-surface font-mono text-[11px] text-on-surface-variant hover:text-on-surface hover:border-primary/40 transition-colors">
+                    下一页 <i data-lucide="chevron-right" class="w-3 h-3 inline-block align-middle"></i>
+                  </button>
+                </div>
+              </section>
+
+              <!-- =================== Tab Pane: 对标账号分析 =================== -->
+              <section id="pane-benchmark" class="kb-tab-pane hidden space-y-5">
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                  <div class="bg-surface border border-outline/20 p-3.5">
+                    <div class="font-mono text-[10px] tracking-widest text-on-surface-variant uppercase mb-1.5">// TOTAL</div>
+                    <div class="flex items-baseline gap-1.5">
+                      <span class="font-mono text-2xl font-bold text-on-surface tabular">12</span>
+                      <span class="text-xs text-on-surface-variant">对标账号</span>
+                    </div>
+                  </div>
+                  <div class="bg-surface border border-outline/20 p-3.5">
+                    <div class="font-mono text-[10px] tracking-widest text-on-surface-variant uppercase mb-1.5">// S_TIER</div>
+                    <div class="flex items-baseline gap-1.5">
+                      <span class="font-mono text-2xl font-bold text-primary tabular">04</span>
+                      <span class="text-xs text-on-surface-variant">重点研究</span>
+                    </div>
+                  </div>
+                  <div class="bg-surface border border-outline/20 p-3.5">
+                    <div class="font-mono text-[10px] tracking-widest text-on-surface-variant uppercase mb-1.5">// VIRAL_POOL</div>
+                    <div class="flex items-baseline gap-1.5">
+                      <span class="font-mono text-2xl font-bold text-on-surface tabular">47</span>
+                      <span class="text-xs text-on-surface-variant">共性爆款</span>
+                    </div>
+                  </div>
+                  <div class="bg-surface border border-outline/20 p-3.5">
+                    <div class="font-mono text-[10px] tracking-widest text-on-surface-variant uppercase mb-1.5">// LAST_UPDATE</div>
+                    <div class="flex items-baseline gap-1.5">
+                      <span class="font-mono text-base font-bold text-on-surface tabular">12-18</span>
+                      <span class="text-xs text-on-surface-variant">3天前</span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 4 张对标账号卡 -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                  <!-- 账号 1 -->
+                  <div class="bg-surface border border-outline/20 shadow-card p-5 hover:border-primary/40 transition-colors">
+                    <div class="flex items-start gap-4 mb-4">
+                      <div class="relative shrink-0 w-14 h-14 rounded-full bg-gradient-to-br from-primary-container to-surface-container-high flex items-center justify-center text-on-surface font-mono text-lg font-bold border border-outline/30">
+                        幂
+                        <div class="absolute -bottom-0.5 -right-0.5 px-1 py-0.5 bg-primary text-on-primary text-[9px] font-mono font-bold">S</div>
+                      </div>
+                      <div class="flex-1 min-w-0">
+                        <div class="flex items-center gap-2 mb-1">
+                          <h4 class="text-base font-bold text-on-surface">幂姐说商业</h4>
+                          <span class="font-mono text-[10px] text-on-surface-variant">@mijie_biz</span>
+                        </div>
+                        <div class="flex items-center gap-3 font-mono text-[11px] text-on-surface-variant mb-2 flex-wrap">
+                          <span class="flex items-center gap-1"><i data-lucide="users" class="w-3 h-3"></i><span class="text-on-surface tabular">2.8M</span></span>
+                          <span class="flex items-center gap-1"><i data-lucide="file-text" class="w-3 h-3"></i><span class="text-on-surface tabular">1,240</span></span>
+                          <span class="flex items-center gap-1"><i data-lucide="heart" class="w-3 h-3"></i><span class="text-on-surface tabular">42M</span></span>
+                        </div>
+                        <div class="text-[11px] text-on-surface-variant">内容方向：女性商业思维 / 商业心理学 / 案例拆解</div>
+                      </div>
+                      <button class="btn-view-bench w-8 h-8 flex items-center justify-center border border-outline/30 text-on-surface-variant hover:text-primary hover:border-primary transition-colors shrink-0" data-id="bench-01">
+                        <i data-lucide="arrow-up-right" class="w-3.5 h-3.5"></i>
+                      </button>
+                    </div>
+                    <div class="border-t border-outline/20 pt-3">
+                      <div class="font-mono text-[10px] tracking-widest text-primary uppercase mb-2">// 共性爆款特征</div>
+                      <div class="grid grid-cols-2 gap-1.5 text-[11px] font-mono">
+                        <div class="flex items-center gap-1.5 text-on-surface-variant"><span class="text-primary">›</span>标题用反问句</div>
+                        <div class="flex items-center gap-1.5 text-on-surface-variant"><span class="text-primary">›</span>3个数据开篇</div>
+                        <div class="flex items-center gap-1.5 text-on-surface-variant"><span class="text-primary">›</span>个人故事+商业</div>
+                        <div class="flex items-center gap-1.5 text-on-surface-variant"><span class="text-primary">›</span>案例多到3-5个</div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- 账号 2 -->
+                  <div class="bg-surface border border-outline/20 shadow-card p-5 hover:border-primary/40 transition-colors">
+                    <div class="flex items-start gap-4 mb-4">
+                      <div class="relative shrink-0 w-14 h-14 rounded-full bg-gradient-to-br from-primary-container to-surface-container-high flex items-center justify-center text-on-surface font-mono text-lg font-bold border border-outline/30">
+                        兰
+                        <div class="absolute -bottom-0.5 -right-0.5 px-1 py-0.5 bg-primary text-on-primary text-[9px] font-mono font-bold">S</div>
+                      </div>
+                      <div class="flex-1 min-w-0">
+                        <div class="flex items-center gap-2 mb-1">
+                          <h4 class="text-base font-bold text-on-surface">兰姐商业观察</h4>
+                          <span class="font-mono text-[10px] text-on-surface-variant">@lanjie_obs</span>
+                        </div>
+                        <div class="flex items-center gap-3 font-mono text-[11px] text-on-surface-variant mb-2 flex-wrap">
+                          <span class="flex items-center gap-1"><i data-lucide="users" class="w-3 h-3"></i><span class="text-on-surface tabular">1.5M</span></span>
+                          <span class="flex items-center gap-1"><i data-lucide="file-text" class="w-3 h-3"></i><span class="text-on-surface tabular">680</span></span>
+                          <span class="flex items-center gap-1"><i data-lucide="heart" class="w-3 h-3"></i><span class="text-on-surface tabular">28M</span></span>
+                        </div>
+                        <div class="text-[11px] text-on-surface-variant">内容方向：商业现象 / 行业内幕 / 深度长文</div>
+                      </div>
+                      <button class="btn-view-bench w-8 h-8 flex items-center justify-center border border-outline/30 text-on-surface-variant hover:text-primary hover:border-primary transition-colors shrink-0" data-id="bench-02">
+                        <i data-lucide="arrow-up-right" class="w-3.5 h-3.5"></i>
+                      </button>
+                    </div>
+                    <div class="border-t border-outline/20 pt-3">
+                      <div class="font-mono text-[10px] tracking-widest text-primary uppercase mb-2">// 共性爆款特征</div>
+                      <div class="grid grid-cols-2 gap-1.5 text-[11px] font-mono">
+                        <div class="flex items-center gap-1.5 text-on-surface-variant"><span class="text-primary">›</span>内幕式钩子</div>
+                        <div class="flex items-center gap-1.5 text-on-surface-variant"><span class="text-primary">›</span>配图多3-6张</div>
+                        <div class="flex items-center gap-1.5 text-on-surface-variant"><span class="text-primary">›</span>数字+百分比</div>
+                        <div class="flex items-center gap-1.5 text-on-surface-variant"><span class="text-primary">›</span>3000字长文</div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- 账号 3 -->
+                  <div class="bg-surface border border-outline/20 shadow-card p-5 hover:border-primary/40 transition-colors">
+                    <div class="flex items-start gap-4 mb-4">
+                      <div class="relative shrink-0 w-14 h-14 rounded-full bg-gradient-to-br from-primary-container to-surface-container-high flex items-center justify-center text-on-surface font-mono text-lg font-bold border border-outline/30">
+                        初
+                        <div class="absolute -bottom-0.5 -right-0.5 px-1 py-0.5 bg-primary text-on-primary text-[9px] font-mono font-bold">S</div>
+                      </div>
+                      <div class="flex-1 min-w-0">
+                        <div class="flex items-center gap-2 mb-1">
+                          <h4 class="text-base font-bold text-on-surface">初夏商业笔记</h4>
+                          <span class="font-mono text-[10px] text-on-surface-variant">@chuxia_biz</span>
+                        </div>
+                        <div class="flex items-center gap-3 font-mono text-[11px] text-on-surface-variant mb-2 flex-wrap">
+                          <span class="flex items-center gap-1"><i data-lucide="users" class="w-3 h-3"></i><span class="text-on-surface tabular">890K</span></span>
+                          <span class="flex items-center gap-1"><i data-lucide="file-text" class="w-3 h-3"></i><span class="text-on-surface tabular">520</span></span>
+                          <span class="flex items-center gap-1"><i data-lucide="heart" class="w-3 h-3"></i><span class="text-on-surface tabular">18M</span></span>
+                        </div>
+                        <div class="text-[11px] text-on-surface-variant">内容方向：女性高管 / 升职加薪 / 谈判技巧</div>
+                      </div>
+                      <button class="btn-view-bench w-8 h-8 flex items-center justify-center border border-outline/30 text-on-surface-variant hover:text-primary hover:border-primary transition-colors shrink-0" data-id="bench-03">
+                        <i data-lucide="arrow-up-right" class="w-3.5 h-3.5"></i>
+                      </button>
+                    </div>
+                    <div class="border-t border-outline/20 pt-3">
+                      <div class="font-mono text-[10px] tracking-widest text-primary uppercase mb-2">// 共性爆款特征</div>
+                      <div class="grid grid-cols-2 gap-1.5 text-[11px] font-mono">
+                        <div class="flex items-center gap-1.5 text-on-surface-variant"><span class="text-primary">›</span>职场情景剧</div>
+                        <div class="flex items-center gap-1.5 text-on-surface-variant"><span class="text-primary">›</span>金句结尾</div>
+                        <div class="flex items-center gap-1.5 text-on-surface-variant"><span class="text-primary">›</span>对话体</div>
+                        <div class="flex items-center gap-1.5 text-on-surface-variant"><span class="text-primary">›</span>情绪+方法</div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- 账号 4 -->
+                  <div class="bg-surface border border-outline/20 shadow-card p-5 hover:border-primary/40 transition-colors">
+                    <div class="flex items-start gap-4 mb-4">
+                      <div class="relative shrink-0 w-14 h-14 rounded-full bg-gradient-to-br from-primary-container to-surface-container-high flex items-center justify-center text-on-surface font-mono text-lg font-bold border border-outline/30">
+                        沈
+                        <div class="absolute -bottom-0.5 -right-0.5 px-1 py-0.5 bg-primary text-on-primary text-[9px] font-mono font-bold">S</div>
+                      </div>
+                      <div class="flex-1 min-w-0">
+                        <div class="flex items-center gap-2 mb-1">
+                          <h4 class="text-base font-bold text-on-surface">沈老师讲商业</h4>
+                          <span class="font-mono text-[10px] text-on-surface-variant">@shen_biz</span>
+                        </div>
+                        <div class="flex items-center gap-3 font-mono text-[11px] text-on-surface-variant mb-2 flex-wrap">
+                          <span class="flex items-center gap-1"><i data-lucide="users" class="w-3 h-3"></i><span class="text-on-surface tabular">620K</span></span>
+                          <span class="flex items-center gap-1"><i data-lucide="file-text" class="w-3 h-3"></i><span class="text-on-surface tabular">340</span></span>
+                          <span class="flex items-center gap-1"><i data-lucide="heart" class="w-3 h-3"></i><span class="text-on-surface tabular">12M</span></span>
+                        </div>
+                        <div class="text-[11px] text-on-surface-variant">内容方向：商业模型 / 财务基础 / 创业避坑</div>
+                      </div>
+                      <button class="btn-view-bench w-8 h-8 flex items-center justify-center border border-outline/30 text-on-surface-variant hover:text-primary hover:border-primary transition-colors shrink-0" data-id="bench-04">
+                        <i data-lucide="arrow-up-right" class="w-3.5 h-3.5"></i>
+                      </button>
+                    </div>
+                    <div class="border-t border-outline/20 pt-3">
+                      <div class="font-mono text-[10px] tracking-widest text-primary uppercase mb-2">// 共性爆款特征</div>
+                      <div class="grid grid-cols-2 gap-1.5 text-[11px] font-mono">
+                        <div class="flex items-center gap-1.5 text-on-surface-variant"><span class="text-primary">›</span>白板手写</div>
+                        <div class="flex items-center gap-1.5 text-on-surface-variant"><span class="text-primary">›</span>模型图解</div>
+                        <div class="flex items-center gap-1.5 text-on-surface-variant"><span class="text-primary">›</span>10-15分钟</div>
+                        <div class="flex items-center gap-1.5 text-on-surface-variant"><span class="text-primary">›</span>工具清单</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 底部：对标矩阵概览 -->
+                <div class="bg-surface border border-outline/20 shadow-card p-5">
+                  <div class="flex items-center justify-between mb-4">
+                    <div class="flex items-center gap-2">
+                      <span class="font-mono text-[10px] tracking-widest text-primary uppercase">// POSITIONING_MATRIX</span>
+                      <span class="font-mono text-[10px] text-on-surface-variant">定位矩阵</span>
+                    </div>
+                    <span class="font-mono text-[10px] text-on-surface-variant">X = 商业深度 · Y = 内容娱乐性</span>
+                  </div>
+                  <div class="relative h-48 bg-surface-container border border-outline/20">
+                    <div class="absolute inset-0" style="background-image: linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px); background-size: 25% 25%;"></div>
+                    <div class="absolute top-1/2 left-0 right-0 h-px bg-outline/30"></div>
+                    <div class="absolute left-1/2 top-0 bottom-0 w-px bg-outline/30"></div>
+                    <div class="absolute" style="left: 72%; top: 28%;">
+                      <div class="relative">
+                        <div class="w-3 h-3 bg-primary rotate-45"></div>
+                        <div class="absolute left-5 top-0.5 whitespace-nowrap font-mono text-[10px] text-primary font-bold">咸聊AI</div>
+                        <div class="absolute left-5 top-4 whitespace-nowrap font-mono text-[9px] text-on-surface-variant">YOU</div>
+                      </div>
+                    </div>
+                    <div class="absolute" style="left: 78%; top: 22%;">
+                      <div class="w-2 h-2 bg-on-surface rounded-full"></div>
+                      <div class="absolute left-3 -top-1 whitespace-nowrap font-mono text-[9px] text-on-surface">幂姐说商业</div>
+                    </div>
+                    <div class="absolute" style="left: 65%; top: 38%;">
+                      <div class="w-2 h-2 bg-on-surface rounded-full"></div>
+                      <div class="absolute left-3 -top-1 whitespace-nowrap font-mono text-[9px] text-on-surface">兰姐商业观察</div>
+                    </div>
+                    <div class="absolute" style="left: 38%; top: 60%;">
+                      <div class="w-2 h-2 bg-on-surface rounded-full"></div>
+                      <div class="absolute left-3 -top-1 whitespace-nowrap font-mono text-[9px] text-on-surface">初夏商业笔记</div>
+                    </div>
+                    <div class="absolute" style="left: 80%; top: 70%;">
+                      <div class="w-2 h-2 bg-on-surface rounded-full"></div>
+                      <div class="absolute left-3 -top-1 whitespace-nowrap font-mono text-[9px] text-on-surface">沈老师讲商业</div>
+                    </div>
+                    <div class="absolute top-1 left-2 font-mono text-[9px] text-on-surface-variant/60 tracking-widest">深 · 严肃</div>
+                    <div class="absolute top-1 right-2 font-mono text-[9px] text-on-surface-variant/60 tracking-widest">深 · 通俗</div>
+                    <div class="absolute bottom-1 left-2 font-mono text-[9px] text-on-surface-variant/60 tracking-widest">浅 · 严肃</div>
+                    <div class="absolute bottom-1 right-2 font-mono text-[9px] text-on-surface-variant/60 tracking-widest">浅 · 通俗</div>
+                  </div>
+                </div>
+              </section>
+
+              <!-- =================== Tab Pane: 人设语料 =================== -->
+              <section id="pane-persona" class="kb-tab-pane hidden space-y-5">
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+                  <div class="bg-surface border border-outline/20 shadow-card p-5">
+                    <div class="flex items-center justify-between mb-3">
+                      <div class="flex items-center gap-2">
+                        <i data-lucide="mic" class="w-4 h-4 text-primary"></i>
+                        <span class="font-mono text-[10px] tracking-widest text-primary uppercase">// TONE</span>
+                      </div>
+                      <span class="font-mono text-[10px] text-on-surface-variant tabular">23 条</span>
+                    </div>
+                    <div class="space-y-2 text-sm">
+                      <div class="flex items-start gap-2 p-2 bg-surface-container border-l-2 border-primary">
+                        <span class="font-mono text-[10px] text-primary w-6">.01</span>
+                        <div class="flex-1">
+                          <div class="text-on-surface">说白了</div>
+                          <div class="text-[11px] text-on-surface-variant">用于揭示真相</div>
+                        </div>
+                      </div>
+                      <div class="flex items-start gap-2 p-2 bg-surface-container border-l-2 border-primary">
+                        <span class="font-mono text-[10px] text-primary w-6">.02</span>
+                        <div class="flex-1">
+                          <div class="text-on-surface">真相是</div>
+                          <div class="text-[11px] text-on-surface-variant">用于结论先行</div>
+                        </div>
+                      </div>
+                      <div class="flex items-start gap-2 p-2 bg-surface-container border-l-2 border-primary">
+                        <span class="font-mono text-[10px] text-primary w-6">.03</span>
+                        <div class="flex-1">
+                          <div class="text-on-surface">我反而觉得</div>
+                          <div class="text-[11px] text-on-surface-variant">用于反常识观点</div>
+                        </div>
+                      </div>
+                      <div class="flex items-start gap-2 p-2 bg-surface-container border-l-2 border-primary">
+                        <span class="font-mono text-[10px] text-primary w-6">.04</span>
+                        <div class="flex-1">
+                          <div class="text-on-surface">数据告诉你</div>
+                          <div class="text-[11px] text-on-surface-variant">用于引用数据</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="bg-surface border border-outline/20 shadow-card p-5">
+                    <div class="flex items-center justify-between mb-3">
+                      <div class="flex items-center gap-2">
+                        <i data-lucide="quote" class="w-4 h-4 text-primary"></i>
+                        <span class="font-mono text-[10px] tracking-widest text-primary uppercase">// SENTENCE</span>
+                      </div>
+                      <span class="font-mono text-[10px] text-on-surface-variant tabular">45 条</span>
+                    </div>
+                    <div class="space-y-2.5 text-sm font-mono text-on-surface">
+                      <div class="p-2 bg-surface-container border border-outline/20 text-[12px] leading-relaxed">"贵不是问题,<span class="text-primary">贵且不值</span>才是"</div>
+                      <div class="p-2 bg-surface-container border border-outline/20 text-[12px] leading-relaxed">"你以为是能力问题,其实是<span class="text-primary">规则问题</span>"</div>
+                      <div class="p-2 bg-surface-container border border-outline/20 text-[12px] leading-relaxed">"认知差才是最贵的<span class="text-primary">税</span>"</div>
+                      <div class="p-2 bg-surface-container border border-outline/20 text-[12px] leading-relaxed">"不是不能做,是<span class="text-primary">不该现在做</span>"</div>
+                    </div>
+                  </div>
+
+                  <div class="bg-surface border border-error/30 shadow-card p-5">
+                    <div class="flex items-center justify-between mb-3">
+                      <div class="flex items-center gap-2">
+                        <i data-lucide="ban" class="w-4 h-4 text-error"></i>
+                        <span class="font-mono text-[10px] tracking-widest text-error uppercase">// BAN</span>
+                      </div>
+                      <span class="font-mono text-[10px] text-on-surface-variant tabular">60 条</span>
+                    </div>
+                    <div class="space-y-2 text-sm text-on-surface-variant">
+                      <div class="flex items-center gap-2 line-through"><i data-lucide="x" class="w-3 h-3 text-error shrink-0"></i>姐妹们冲鸭</div>
+                      <div class="flex items-center gap-2 line-through"><i data-lucide="x" class="w-3 h-3 text-error shrink-0"></i>建议所有女生都去学</div>
+                      <div class="flex items-center gap-2 line-through"><i data-lucide="x" class="w-3 h-3 text-error shrink-0"></i>女生要学会爱自己</div>
+                      <div class="flex items-center gap-2 line-through"><i data-lucide="x" class="w-3 h-3 text-error shrink-0"></i>女孩不该被定义</div>
+                      <div class="flex items-center gap-2 line-through"><i data-lucide="x" class="w-3 h-3 text-error shrink-0"></i>精致女孩的下午茶</div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="bg-surface border border-outline/20 shadow-card p-5">
+                  <div class="flex items-center justify-between mb-4">
+                    <div class="flex items-center gap-2">
+                      <span class="font-mono text-[10px] tracking-widest text-primary uppercase">// WORD_FREQ</span>
+                      <span class="font-mono text-[10px] text-on-surface-variant">近 90 天词汇使用频次</span>
+                    </div>
+                    <div class="flex items-center gap-1.5 font-mono text-[10px]">
+                      <span class="flex items-center gap-1"><span class="w-2 h-2 bg-primary"></span>高频</span>
+                      <span class="flex items-center gap-1 text-on-surface-variant"><span class="w-2 h-2 bg-surface-container-high"></span>低频</span>
+                    </div>
+                  </div>
+                  <div class="grid grid-cols-2 md:grid-cols-4 gap-2 text-sm">
+                    <div class="flex items-center justify-between p-2.5 bg-surface-container"><span class="text-on-surface">商业本质</span><span class="font-mono text-primary text-xs tabular">86 次</span></div>
+                    <div class="flex items-center justify-between p-2.5 bg-surface-container"><span class="text-on-surface">认知差</span><span class="font-mono text-primary text-xs tabular">72 次</span></div>
+                    <div class="flex items-center justify-between p-2.5 bg-surface-container"><span class="text-on-surface">决策成本</span><span class="font-mono text-primary text-xs tabular">64 次</span></div>
+                    <div class="flex items-center justify-between p-2.5 bg-surface-container"><span class="text-on-surface">反常识</span><span class="font-mono text-primary text-xs tabular">58 次</span></div>
+                    <div class="flex items-center justify-between p-2.5 bg-surface-container"><span class="text-on-surface">信息噪音</span><span class="font-mono text-primary text-xs tabular">47 次</span></div>
+                    <div class="flex items-center justify-between p-2.5 bg-surface-container"><span class="text-on-surface">真实世界</span><span class="font-mono text-on-surface-variant text-xs tabular">31 次</span></div>
+                    <div class="flex items-center justify-between p-2.5 bg-surface-container"><span class="text-on-surface">数据说话</span><span class="font-mono text-on-surface-variant text-xs tabular">28 次</span></div>
+                    <div class="flex items-center justify-between p-2.5 bg-surface-container"><span class="text-on-surface">独立思考</span><span class="font-mono text-on-surface-variant text-xs tabular">22 次</span></div>
+                  </div>
+                </div>
+              </section>
+
+              <!-- =================== Tab Pane: 爆款拆解 =================== -->
+              <section id="pane-viral" class="kb-tab-pane hidden space-y-5">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                  <div class="bg-surface border border-outline/20 shadow-card p-5">
+                    <div class="flex items-center justify-between mb-3">
+                      <div class="flex items-center gap-2">
+                        <span class="font-mono text-[10px] tracking-widest text-primary uppercase">// VIRAL_001</span>
+                        <span class="px-1.5 py-0.5 text-[10px] font-mono bg-primary/15 text-primary">爆款</span>
+                      </div>
+                      <span class="font-mono text-[10px] text-on-surface-variant tabular">286K 曝光</span>
+                    </div>
+                    <h4 class="text-base font-semibold text-on-surface mb-3">"为什么你的公司活不过第三年?"</h4>
+                    <div class="space-y-2 text-sm">
+                      <div class="flex gap-2"><span class="font-mono text-[10px] text-primary w-12 shrink-0">钩子</span><span class="text-on-surface">疑问句+死亡信号,直击老板焦虑</span></div>
+                      <div class="flex gap-2"><span class="font-mono text-[10px] text-primary w-12 shrink-0">结构</span><span class="text-on-surface">结论→3个信号→案例→行动建议</span></div>
+                      <div class="flex gap-2"><span class="font-mono text-[10px] text-primary w-12 shrink-0">情绪</span><span class="text-on-surface">焦虑→顿悟→行动</span></div>
+                      <div class="flex gap-2"><span class="font-mono text-[10px] text-primary w-12 shrink-0">节奏</span><span class="text-on-surface">短句+数字+反问,3秒抓注意力</span></div>
+                    </div>
+                  </div>
+                  <div class="bg-surface border border-outline/20 shadow-card p-5">
+                    <div class="flex items-center justify-between mb-3">
+                      <div class="flex items-center gap-2">
+                        <span class="font-mono text-[10px] tracking-widest text-primary uppercase">// VIRAL_002</span>
+                        <span class="px-1.5 py-0.5 text-[10px] font-mono bg-primary/15 text-primary">爆款</span>
+                      </div>
+                      <span class="font-mono text-[10px] text-on-surface-variant tabular">412K 曝光</span>
+                    </div>
+                    <h4 class="text-base font-semibold text-on-surface mb-3">"30岁女性管理者的'隐形困境'"</h4>
+                    <div class="space-y-2 text-sm">
+                      <div class="flex gap-2"><span class="font-mono text-[10px] text-primary w-12 shrink-0">钩子</span><span class="text-on-surface">年龄+身份+隐形困境,精准受众</span></div>
+                      <div class="flex gap-2"><span class="font-mono text-[10px] text-primary w-12 shrink-0">结构</span><span class="text-on-surface">现象→原因→共鸣点→反常识结论</span></div>
+                      <div class="flex gap-2"><span class="font-mono text-[10px] text-primary w-12 shrink-0">情绪</span><span class="text-on-surface">共鸣→愤怒→释然</span></div>
+                      <div class="flex gap-2"><span class="font-mono text-[10px] text-primary w-12 shrink-0">节奏</span><span class="text-on-surface">案例密度高,每段1个真实场景</span></div>
+                    </div>
+                  </div>
+                  <div class="bg-surface border border-outline/20 shadow-card p-5">
+                    <div class="flex items-center justify-between mb-3">
+                      <div class="flex items-center gap-2">
+                        <span class="font-mono text-[10px] tracking-widest text-primary uppercase">// VIRAL_003</span>
+                        <span class="px-1.5 py-0.5 text-[10px] font-mono bg-primary/15 text-primary">爆款</span>
+                      </div>
+                      <span class="font-mono text-[10px] text-on-surface-variant tabular">356K 曝光</span>
+                    </div>
+                    <h4 class="text-base font-semibold text-on-surface mb-3">"从月薪8千到年入7位数的女性"</h4>
+                    <div class="space-y-2 text-sm">
+                      <div class="flex gap-2"><span class="font-mono text-[10px] text-primary w-12 shrink-0">钩子</span><span class="text-on-surface">数字对比+性别,激发向往</span></div>
+                      <div class="flex gap-2"><span class="font-mono text-[10px] text-primary w-12 shrink-0">结构</span><span class="text-on-surface">对比→误区→真相→方法</span></div>
+                      <div class="flex gap-2"><span class="font-mono text-[10px] text-primary w-12 shrink-0">情绪</span><span class="text-on-surface">羡慕→挫败→希望</span></div>
+                      <div class="flex gap-2"><span class="font-mono text-[10px] text-primary w-12 shrink-0">节奏</span><span class="text-on-surface">3个阶段拆解,信息密度大</span></div>
+                    </div>
+                  </div>
+                  <div class="bg-surface border border-outline/20 shadow-card p-5">
+                    <div class="flex items-center justify-between mb-3">
+                      <div class="flex items-center gap-2">
+                        <span class="font-mono text-[10px] tracking-widest text-primary uppercase">// VIRAL_004</span>
+                        <span class="px-1.5 py-0.5 text-[10px] font-mono bg-primary/15 text-primary">爆款</span>
+                      </div>
+                      <span class="font-mono text-[10px] text-on-surface-variant tabular">198K 曝光</span>
+                    </div>
+                    <h4 class="text-base font-semibold text-on-surface mb-3">"拆解3个年入千万女性IP"</h4>
+                    <div class="space-y-2 text-sm">
+                      <div class="flex gap-2"><span class="font-mono text-[10px] text-primary w-12 shrink-0">钩子</span><span class="text-on-surface">"拆解"+具体数字,满足好奇心</span></div>
+                      <div class="flex gap-2"><span class="font-mono text-[10px] text-primary w-12 shrink-0">结构</span><span class="text-on-surface">3个并列案例+共性总结</span></div>
+                      <div class="flex gap-2"><span class="font-mono text-[10px] text-primary w-12 shrink-0">情绪</span><span class="text-on-surface">好奇→认同→行动</span></div>
+                      <div class="flex gap-2"><span class="font-mono text-[10px] text-primary w-12 shrink-0">节奏</span><span class="text-on-surface">清晰分段,适合快速阅读</span></div>
+                    </div>
+                  </div>
+                </div>
+              </section>
+
+              <!-- =================== Tab Pane: 选题素材 =================== -->
+              <section id="pane-material" class="kb-tab-pane hidden space-y-5">
+                <div class="bg-surface border border-outline/20 shadow-card p-5">
+                  <div class="flex items-center justify-between mb-4">
+                    <div class="flex items-center gap-2">
+                      <span class="font-mono text-[10px] tracking-widest text-primary uppercase">// TOPIC_POOL</span>
+                      <span class="font-mono text-[10px] text-on-surface-variant">选题素材池</span>
+                    </div>
+                    <span class="font-mono text-[10px] text-on-surface-variant">共 <span class="text-on-surface tabular">89</span> 条 · 已用 <span class="text-primary tabular">34</span> 条</span>
+                  </div>
+                  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                    <div class="p-3 bg-surface-container border border-outline/20 hover:border-primary/40 transition-colors cursor-pointer">
+                      <div class="flex items-center justify-between mb-2">
+                        <span class="px-1.5 py-0.5 text-[10px] font-mono bg-primary/15 text-primary">女性商业</span>
+                        <span class="font-mono text-[10px] text-on-surface-variant tabular">热度 92</span>
+                      </div>
+                      <p class="text-sm text-on-surface leading-snug mb-2">为什么女性创业者的"软决策"反而是优势?</p>
+                      <div class="flex items-center gap-1.5">
+                        <span class="px-1.5 py-0.5 text-[10px] font-mono bg-surface text-on-surface-variant">认知</span>
+                        <span class="px-1.5 py-0.5 text-[10px] font-mono bg-surface text-on-surface-variant">创业</span>
+                      </div>
+                    </div>
+                    <div class="p-3 bg-surface-container border border-outline/20 hover:border-primary/40 transition-colors cursor-pointer">
+                      <div class="flex items-center justify-between mb-2">
+                        <span class="px-1.5 py-0.5 text-[10px] font-mono bg-primary/15 text-primary">职场认知</span>
+                        <span class="font-mono text-[10px] text-on-surface-variant tabular">热度 88</span>
+                      </div>
+                      <p class="text-sm text-on-surface leading-snug mb-2">35岁HR总监被裁后,她用3个月看清了3件事</p>
+                      <div class="flex items-center gap-1.5">
+                        <span class="px-1.5 py-0.5 text-[10px] font-mono bg-surface text-on-surface-variant">职场</span>
+                        <span class="px-1.5 py-0.5 text-[10px] font-mono bg-surface text-on-surface-variant">转型</span>
+                      </div>
+                    </div>
+                    <div class="p-3 bg-surface-container border border-outline/20 hover:border-primary/40 transition-colors cursor-pointer">
+                      <div class="flex items-center justify-between mb-2">
+                        <span class="px-1.5 py-0.5 text-[10px] font-mono bg-warning/15 text-warning">反常识</span>
+                        <span class="font-mono text-[10px] text-on-surface-variant tabular">热度 95</span>
+                      </div>
+                      <p class="text-sm text-on-surface leading-snug mb-2">"听话"的员工,为什么反而是公司最大的隐患?</p>
+                      <div class="flex items-center gap-1.5">
+                        <span class="px-1.5 py-0.5 text-[10px] font-mono bg-surface text-on-surface-variant">管理</span>
+                        <span class="px-1.5 py-0.5 text-[10px] font-mono bg-surface text-on-surface-variant">反常识</span>
+                      </div>
+                    </div>
+                    <div class="p-3 bg-surface-container border border-outline/20 hover:border-primary/40 transition-colors cursor-pointer">
+                      <div class="flex items-center justify-between mb-2">
+                        <span class="px-1.5 py-0.5 text-[10px] font-mono bg-primary/15 text-primary">消费洞察</span>
+                        <span class="font-mono text-[10px] text-on-surface-variant tabular">热度 76</span>
+                      </div>
+                      <p class="text-sm text-on-surface leading-snug mb-2">年消费百万的女性客户,最在意的不是产品是"被理解"</p>
+                      <div class="flex items-center gap-1.5">
+                        <span class="px-1.5 py-0.5 text-[10px] font-mono bg-surface text-on-surface-variant">消费</span>
+                        <span class="px-1.5 py-0.5 text-[10px] font-mono bg-surface text-on-surface-variant">高端</span>
+                      </div>
+                    </div>
+                    <div class="p-3 bg-surface-container border border-outline/20 hover:border-primary/40 transition-colors cursor-pointer">
+                      <div class="flex items-center justify-between mb-2">
+                        <span class="px-1.5 py-0.5 text-[10px] font-mono bg-success/15 text-success">案例拆解</span>
+                        <span class="font-mono text-[10px] text-on-surface-variant tabular">热度 81</span>
+                      </div>
+                      <p class="text-sm text-on-surface leading-snug mb-2">估值10亿的moody:女性消费品的3个反直觉打法</p>
+                      <div class="flex items-center gap-1.5">
+                        <span class="px-1.5 py-0.5 text-[10px] font-mono bg-surface text-on-surface-variant">品牌</span>
+                        <span class="px-1.5 py-0.5 text-[10px] font-mono bg-surface text-on-surface-variant">案例</span>
+                      </div>
+                    </div>
+                    <div class="p-3 bg-surface-container border border-outline/20 hover:border-primary/40 transition-colors cursor-pointer">
+                      <div class="flex items-center justify-between mb-2">
+                        <span class="px-1.5 py-0.5 text-[10px] font-mono bg-primary/15 text-primary">决策心理</span>
+                        <span class="font-mono text-[10px] text-on-surface-variant tabular">热度 84</span>
+                      </div>
+                      <p class="text-sm text-on-surface leading-snug mb-2">"沉没成本"如何绑架了90%的女性创业者?</p>
+                      <div class="flex items-center gap-1.5">
+                        <span class="px-1.5 py-0.5 text-[10px] font-mono bg-surface text-on-surface-variant">心理</span>
+                        <span class="px-1.5 py-0.5 text-[10px] font-mono bg-surface text-on-surface-variant">决策</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </section>
+
+              <!-- =================== Tab Pane: 平台规则 =================== -->
+              <section id="pane-rule" class="kb-tab-pane hidden space-y-5">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                  <div class="bg-surface border border-outline/20 shadow-card p-5">
+                    <div class="flex items-center gap-2 mb-3">
+                      <i data-lucide="cog" class="w-4 h-4 text-primary"></i>
+                      <span class="font-mono text-[10px] tracking-widest text-primary uppercase">// ALGORITHM</span>
+                      <span class="font-mono text-[10px] text-on-surface-variant">推荐机制</span>
+                    </div>
+                    <div class="space-y-2.5 text-sm">
+                      <div class="flex items-start gap-2 p-2.5 bg-surface-container border-l-2 border-primary">
+                        <span class="font-mono text-[10px] text-primary w-6">.01</span>
+                        <div class="flex-1">
+                          <div class="text-on-surface font-medium">初始流量池 <span class="font-mono text-primary tabular">200-500</span></div>
+                          <div class="text-[11px] text-on-surface-variant mt-0.5">新发布笔记进入,看 30 分钟数据</div>
+                        </div>
+                      </div>
+                      <div class="flex items-start gap-2 p-2.5 bg-surface-container border-l-2 border-primary">
+                        <span class="font-mono text-[10px] text-primary w-6">.02</span>
+                        <div class="flex-1">
+                          <div class="text-on-surface font-medium">互动率阈值 <span class="font-mono text-primary tabular">&gt; 3%</span></div>
+                          <div class="text-[11px] text-on-surface-variant mt-0.5">点赞+收藏+评论/曝光 比值</div>
+                        </div>
+                      </div>
+                      <div class="flex items-start gap-2 p-2.5 bg-surface-container border-l-2 border-primary">
+                        <span class="font-mono text-[10px] text-primary w-6">.03</span>
+                        <div class="flex-1">
+                          <div class="text-on-surface font-medium">完读率 <span class="font-mono text-primary tabular">&gt; 40%</span></div>
+                          <div class="text-[11px] text-on-surface-variant mt-0.5">图文停留时间 + 下滑率</div>
+                        </div>
+                      </div>
+                      <div class="flex items-start gap-2 p-2.5 bg-surface-container border-l-2 border-primary">
+                        <span class="font-mono text-[10px] text-primary w-6">.04</span>
+                        <div class="flex-1">
+                          <div class="text-on-surface font-medium">搜索权重</div>
+                          <div class="text-[11px] text-on-surface-variant mt-0.5">标题+正文关键词命中,长尾词 7 天起效</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="bg-surface border border-error/30 shadow-card p-5">
+                    <div class="flex items-center gap-2 mb-3">
+                      <i data-lucide="alert-triangle" class="w-4 h-4 text-error"></i>
+                      <span class="font-mono text-[10px] tracking-widest text-error uppercase">// RED_LINE</span>
+                      <span class="font-mono text-[10px] text-on-surface-variant">限流红线</span>
+                    </div>
+                    <div class="space-y-2.5 text-sm">
+                      <div class="flex items-start gap-2 p-2.5 bg-error/5 border-l-2 border-error">
+                        <i data-lucide="x" class="w-3.5 h-3.5 text-error shrink-0 mt-0.5"></i>
+                        <div class="flex-1">
+                          <div class="text-on-surface font-medium">敏感词触发</div>
+                          <div class="text-[11px] text-on-surface-variant mt-0.5">医疗/金融/绝对化用语/未认证功效</div>
+                        </div>
+                      </div>
+                      <div class="flex items-start gap-2 p-2.5 bg-error/5 border-l-2 border-error">
+                        <i data-lucide="x" class="w-3.5 h-3.5 text-error shrink-0 mt-0.5"></i>
+                        <div class="flex-1">
+                          <div class="text-on-surface font-medium">诱导互动</div>
+                          <div class="text-[11px] text-on-surface-variant mt-0.5">"点赞关注才能看"/私我领取</div>
+                        </div>
+                      </div>
+                      <div class="flex items-start gap-2 p-2.5 bg-error/5 border-l-2 border-error">
+                        <i data-lucide="x" class="w-3.5 h-3.5 text-error shrink-0 mt-0.5"></i>
+                        <div class="flex-1">
+                          <div class="text-on-surface font-medium">搬运/二改</div>
+                          <div class="text-[11px] text-on-surface-variant mt-0.5">原创度 &lt; 60% 直接降权</div>
+                        </div>
+                      </div>
+                      <div class="flex items-start gap-2 p-2.5 bg-error/5 border-l-2 border-error">
+                        <i data-lucide="x" class="w-3.5 h-3.5 text-error shrink-0 mt-0.5"></i>
+                        <div class="flex-1">
+                          <div class="text-on-surface font-medium">营销导流</div>
+                          <div class="text-[11px] text-on-surface-variant mt-0.5">微信号/外链/二维码/小字规避</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="bg-surface border border-outline/20 shadow-card p-5 lg:col-span-2">
+                    <div class="flex items-center gap-2 mb-4">
+                      <i data-lucide="file-warning" class="w-4 h-4 text-primary"></i>
+                      <span class="font-mono text-[10px] tracking-widest text-primary uppercase">// APPEAL_FLOW</span>
+                      <span class="font-mono text-[10px] text-on-surface-variant">限流申诉流程</span>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-5 gap-3">
+                      <div class="p-3 bg-surface-container border border-outline/20 relative">
+                        <div class="font-mono text-[10px] text-primary mb-2">STEP.01</div>
+                        <div class="text-sm font-semibold text-on-surface mb-1">检测到限流</div>
+                        <div class="text-[11px] text-on-surface-variant">曝光骤降 &gt; 80%</div>
+                        <div class="absolute top-1/2 -right-2 w-4 h-px bg-outline/40"></div>
+                      </div>
+                      <div class="p-3 bg-surface-container border border-outline/20 relative">
+                        <div class="font-mono text-[10px] text-primary mb-2">STEP.02</div>
+                        <div class="text-sm font-semibold text-on-surface mb-1">自查笔记</div>
+                        <div class="text-[11px] text-on-surface-variant">检查最近 5 条内容</div>
+                        <div class="absolute top-1/2 -right-2 w-4 h-px bg-outline/40"></div>
+                      </div>
+                      <div class="p-3 bg-surface-container border border-outline/20 relative">
+                        <div class="font-mono text-[10px] text-primary mb-2">STEP.03</div>
+                        <div class="text-sm font-semibold text-on-surface mb-1">删除/修改</div>
+                        <div class="text-[11px] text-on-surface-variant">违规内容立即处理</div>
+                        <div class="absolute top-1/2 -right-2 w-4 h-px bg-outline/40"></div>
+                      </div>
+                      <div class="p-3 bg-surface-container border border-outline/20 relative">
+                        <div class="font-mono text-[10px] text-primary mb-2">STEP.04</div>
+                        <div class="text-sm font-semibold text-on-surface mb-1">申诉提交</div>
+                        <div class="text-[11px] text-on-surface-variant">APP 帮助中心</div>
+                        <div class="absolute top-1/2 -right-2 w-4 h-px bg-outline/40"></div>
+                      </div>
+                      <div class="p-3 bg-primary-container border border-primary/30">
+                        <div class="font-mono text-[10px] text-primary mb-2">STEP.05</div>
+                        <div class="text-sm font-semibold text-on-surface mb-1">等待 24h</div>
+                        <div class="text-[11px] text-on-surface-variant">未恢复重复申诉</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </section>
+
+            </div>
+          </div>
+
+          <!-- ============== 右侧：快速操作悬浮面板 (240px) ============== -->
+          <aside class="w-[240px] shrink-0 bg-surface border-l border-outline/20 flex flex-col">
+            <div class="px-4 py-4 border-b border-outline/20">
+              <div class="flex items-center justify-between mb-1">
+                <span class="font-mono text-[10px] tracking-widest text-primary uppercase">// QUICK_ACTIONS</span>
+                <i data-lucide="zap" class="w-3 h-3 text-primary"></i>
+              </div>
+              <div class="h-px tick-bar text-outline-variant mt-2"></div>
+            </div>
+
+            <div class="flex-1 p-3 space-y-2 overflow-y-auto">
+              <button id="qa-import" class="w-full flex items-center gap-2.5 p-3 bg-surface-container border border-outline/20 hover:border-primary/40 hover:bg-surface-container-high transition-colors text-left group">
+                <div class="shrink-0 w-8 h-8 bg-primary/10 border border-primary/30 flex items-center justify-center group-hover:bg-primary/20">
+                  <i data-lucide="download" class="w-4 h-4 text-primary"></i>
+                </div>
+                <div class="flex-1 min-w-0">
+                  <div class="text-sm font-medium text-on-surface">导入新素材</div>
+                  <div class="font-mono text-[10px] text-on-surface-variant">IMPORT / PDF/DOCX/MD</div>
+                </div>
+                <i data-lucide="chevron-right" class="w-3.5 h-3.5 text-on-surface-variant"></i>
+              </button>
+
+              <button id="qa-sync" class="w-full flex items-center gap-2.5 p-3 bg-surface-container border border-outline/20 hover:border-primary/40 hover:bg-surface-container-high transition-colors text-left group">
+                <div class="shrink-0 w-8 h-8 bg-primary/10 border border-primary/30 flex items-center justify-center group-hover:bg-primary/20">
+                  <i data-lucide="refresh-ccw" class="w-4 h-4 text-primary"></i>
+                </div>
+                <div class="flex-1 min-w-0">
+                  <div class="text-sm font-medium text-on-surface">一键同步品牌定位</div>
+                  <div class="font-mono text-[10px] text-on-surface-variant">SYNC / 2 MIN AGO</div>
+                </div>
+                <i data-lucide="chevron-right" class="w-3.5 h-3.5 text-on-surface-variant"></i>
+              </button>
+
+              <button id="qa-newdoc" class="w-full flex items-center gap-2.5 p-3 bg-primary hover:bg-primary/90 transition-colors text-left group">
+                <div class="shrink-0 w-8 h-8 bg-on-primary/20 border border-on-primary/30 flex items-center justify-center">
+                  <i data-lucide="plus" class="w-4 h-4 text-on-primary"></i>
+                </div>
+                <div class="flex-1 min-w-0">
+                  <div class="text-sm font-medium text-on-primary">新建文档</div>
+                  <div class="font-mono text-[10px] text-on-primary/70">NEW_DOC / ⌘N</div>
+                </div>
+                <i data-lucide="chevron-right" class="w-3.5 h-3.5 text-on-primary/70"></i>
+              </button>
+
+              <button id="qa-search" class="w-full flex items-center gap-2.5 p-3 bg-surface-container border border-outline/20 hover:border-primary/40 hover:bg-surface-container-high transition-colors text-left group">
+                <div class="shrink-0 w-8 h-8 bg-primary/10 border border-primary/30 flex items-center justify-center group-hover:bg-primary/20">
+                  <i data-lucide="search" class="w-4 h-4 text-primary"></i>
+                </div>
+                <div class="flex-1 min-w-0">
+                  <div class="text-sm font-medium text-on-surface">全文检索</div>
+                  <div class="font-mono text-[10px] text-on-surface-variant">FULLTEXT / ⌘K</div>
+                </div>
+                <i data-lucide="chevron-right" class="w-3.5 h-3.5 text-on-surface-variant"></i>
+              </button>
+            </div>
+
+            <div class="border-t border-outline/20">
+              <div class="px-4 py-3">
+                <div class="flex items-center justify-between mb-2">
+                  <span class="font-mono text-[10px] tracking-widest text-on-surface-variant uppercase">// RECENT_ACTIVITY</span>
+                </div>
+                <div class="space-y-2 text-[11px] font-mono">
+                  <div class="flex items-start gap-2"><span class="text-on-surface-variant shrink-0 tabular">14:32</span><span class="text-on-surface-variant flex-1">更新 品牌定位</span></div>
+                  <div class="flex items-start gap-2"><span class="text-on-surface-variant shrink-0 tabular">11:08</span><span class="text-on-surface-variant flex-1">导入 3 条素材</span></div>
+                  <div class="flex items-start gap-2"><span class="text-on-surface-variant shrink-0 tabular">昨 22:15</span><span class="text-on-surface-variant flex-1">拆解 爆款 002</span></div>
+                  <div class="flex items-start gap-2"><span class="text-on-surface-variant shrink-0 tabular">昨 18:40</span><span class="text-on-surface-variant flex-1">同步 账号数据</span></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="border-t border-outline/20 p-3">
+              <div class="bg-primary-container/40 border border-primary/30 p-2.5">
+                <div class="flex items-center gap-1.5 mb-1">
+                  <i data-lucide="circle-check" class="w-3 h-3 text-success"></i>
+                  <span class="font-mono text-[10px] tracking-widest text-on-surface">AUTO_SYNC</span>
+                </div>
+                <p class="font-mono text-[10px] text-on-surface-variant leading-relaxed">所有变更已加密同步至云端 · 最近 2 分钟前</p>
+              </div>
+            </div>
+          </aside>
+
+        </div>
+        <!-- @main-content:end -->
+      </main>
+    </div>
+  </div>
+  <!-- @nav:end -->
+
+  <script>
+    window.__highlightNav = function (key) {
+      const map = {
+        'radar': 'home.html',
+        'factory': 'content-factory.html',
+        'publish': 'publish.html',
+        'analytics': 'analytics.html',
+        'knowledge': 'knowledge.html',
+        'settings': 'settings.html'
+      };
+      const crumbMap = {
+        'radar': 'RADAR / TOPIC_ENGINE',
+        'factory': 'FACTORY / CONTENT_GEN',
+        'publish': 'PUBLISH / SCHEDULER',
+        'analytics': 'ANALYTICS / REVIEW',
+        'knowledge': 'KNOWLEDGE / KB',
+        'settings': 'SETTINGS / SYSTEM'
+      };
+      document.querySelectorAll('.nav-item').forEach(el => {
+        el.classList.remove('nav-active');
+        if (el.getAttribute('href') === map[key]) el.classList.add('nav-active');
+      });
+      const crumb = document.getElementById('page-crumb');
+      if (crumb) crumb.textContent = crumbMap[key] || '';
+      lucide.createIcons();
+    };
+    window.__highlightNav('knowledge');
+
+    $(function() {
+      // 左侧分类切换
+      $('#kb-categories').on('click', '.kb-cat-item', function() {
+        const tab = $(this).data('tab');
+        $('.kb-cat-item').removeClass('is-active').addClass('text-on-surface-variant');
+        $(this).addClass('is-active').removeClass('text-on-surface-variant');
+
+        const titleMap = {
+          'brand':     'BRAND_POSITIONING',
+          'persona':   'PERSONA_CORPUS',
+          'archive':   'PAST_CONTENT',
+          'benchmark': 'BENCHMARK_ANALYSIS',
+          'viral':     'VIRAL_TEARDOWN',
+          'material':  'TOPIC_MATERIAL',
+          'rule':      'PLATFORM_RULES'
+        };
+        const descMap = {
+          'brand':     '品牌资产核心档案 / 定位 / 人设 / 受众 / 禁区 / 原则',
+          'persona':   '内容人设语料库 / 语气词 / 句式 / 高频词 / 禁句',
+          'archive':   '历史发布内容库 / 标题 / 封面 / 选题 / 表现数据',
+          'benchmark': '对标账号档案 / 粉丝量 / 内容方向 / 爆款共性',
+          'viral':     '爆款拆解文档 / 选题 / 钩子 / 结构 / 情绪 / 节奏',
+          'material':  '选题素材池 / 关键词 / 话题 / 痛点 / 案例',
+          'rule':      '平台规则手册 / 推荐机制 / 限流红线 / 申诉流程'
+        };
+        $('#kb-tab-title').text(titleMap[tab] || '');
+        $('#kb-tab-desc').text(descMap[tab] || '');
+
+        $('.kb-tab-pane').addClass('hidden');
+        $('#pane-' + tab).removeClass('hidden');
+      });
+
+      // 顶部 Tab 切换
+      $('#kb-top-tabs').on('click', '.kb-top-tab', function() {
+        const tab = $(this).data('tab');
+        $('.kb-top-tab').removeClass('is-active bg-primary/15 text-primary border-primary/40').addClass('text-on-surface-variant border-transparent');
+        $(this).addClass('is-active bg-primary/15 text-primary border-primary/40').removeClass('text-on-surface-variant border-transparent');
+
+        $('.kb-tab-pane').addClass('hidden');
+        $('#pane-' + tab).removeClass('hidden');
+
+        $('.kb-cat-item').removeClass('is-active').addClass('text-on-surface-variant');
+        $('.kb-cat-item[data-tab="'+tab+'"]').addClass('is-active').removeClass('text-on-surface-variant');
+      });
+
+      // 往期内容 - 排序
+      $('#archive-sort').on('change', function() {
+        console.log('排序方式变更:', $(this).val());
+      });
+
+      // 往期内容 - 筛选
+      $('#archive-filter').on('click', 'button', function() {
+        $('#archive-filter button').removeClass('bg-primary/20 text-primary border-primary/40').addClass('text-on-surface-variant border-outline/20');
+        $(this).addClass('bg-primary/20 text-primary border-primary/40').removeClass('text-on-surface-variant border-outline/20');
+        console.log('筛选条件:', $(this).data('filter'));
+      });
+
+      // 文档卡片 - 编辑入口
+      // 复杂交互 - 后续应实现：
+      // 1. 点击"编辑"打开模态框，模态框内是该卡片的可编辑表单
+      // 2. 表单字段：标题、内容正文、标签、关联素材
+      // 3. 支持 Markdown 实时预览
+      // 4. 编辑过程中每 30s 自动保存草稿到 localStorage
+      // 5. 点击"保存"调用 PUT /api/kb/{id} 接口
+      // 6. 点击"取消"关闭模态框并丢弃本地草稿
+      // 7. 编辑后"上次更新"时间与 by 字段自动更新
+      $('#pane-brand').on('click', '.btn-edit-doc', function() {
+        const docId = $(this).data('id');
+        console.log('编辑文档:', docId);
+      });
+
+      // 版本历史入口
+      // 复杂交互 - 后续应实现：
+      // 1. 弹出抽屉显示该文档的所有历史版本（按时间倒序）
+      // 2. 每条版本显示：版本号、保存时间、保存人、变更摘要
+      // 3. 支持"对比"按钮：左右分栏展示两个版本的 diff
+      // 4. 支持"回滚到此版本"：点击后弹出确认，确认后覆盖当前内容
+      // 5. 支持"导出历史"：下载该文档所有版本的 zip 包
+      $('#pane-brand').on('click', '.btn-version', function() {
+        const docId = $(this).data('id');
+        console.log('查看版本历史:', docId);
+      });
+
+      // 右侧快速操作
+      $('#qa-import').on('click', function() {
+        // 复杂交互 - 后续应实现：
+        // 1. 弹出文件上传模态框
+        // 2. 支持拖拽多文件上传（图片/PDF/Word/Excel）
+        // 3. 上传后自动解析文件并 AI 分类到对应知识库分类
+        // 4. 用户可调整自动分类结果，确认后入库
+        console.log('导入新素材');
+      });
+      $('#qa-sync').on('click', function() {
+        // 复杂交互 - 后续应实现：
+        // 1. 调用品牌定位 API 获取最新数据
+        // 2. 与本地档案对比，标出新增/变更/删除字段
+        // 3. 用户确认后批量更新本地
+        console.log('一键同步品牌定位');
+      });
+      $('#qa-newdoc').on('click', function() {
+        // 复杂交互 - 后续应实现：
+        // 1. 弹出新建文档表单（标题、分类、标签、模板）
+        // 2. 支持选择预置模板：品牌档案/语料/爆款拆解/账号分析
+        // 3. 创建后跳转到该文档的编辑页
+        console.log('新建文档');
+      });
+      $('#qa-search').on('click', function() {
+        // 复杂交互 - 后续应实现：
+        // 1. 弹出全局搜索模态框
+        // 2. 跨分类搜索（标题/正文/标签）
+        // 3. 支持高级过滤：时间范围/分类/作者
+        // 4. 搜索结果高亮关键词
+        console.log('全文检索');
+      });
+
+      // 对标账号 - 查看详情
+      $('#pane-benchmark').on('click', '.btn-view-bench', function() {
+        const id = $(this).data('id');
+        console.log('查看对标账号详情:', id);
+        // 复杂交互：跳转 benchmark-detail.html?id=xxx
+      });
+    });
+  </script>
+</body>
+
+</html>

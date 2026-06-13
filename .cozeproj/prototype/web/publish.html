@@ -1,0 +1,1644 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <link href="https://lf-code-agent.coze.cn/obj/x-ai-cn/fonts/google/google-all-fonts.css" rel="stylesheet" />
+
+  <script src="https://lf-code-agent.coze.cn/obj/x-ai-cn/cdn/jquery/jquery-3.7.1.min.js"></script>
+  <script src="https://lf-code-agent.coze.cn/obj/x-ai-cn/cdn/lucide/lucide-1.11.0.min.js"></script>
+  <script src="https://lf-code-agent.coze.cn/obj/x-ai-cn/cdn/tailwindcss/tailwindcss-browser-4.2.4.min.js"></script>
+
+  <style type="text/tailwindcss">
+    @theme {
+      /* === 品牌色（机械红） === */
+      --color-primary:              #7f2028;
+      --color-primary-container:    #3a0f13;
+      --color-on-primary:           #fdebec;
+      /* === 背景 / 表面（暗底工业） === */
+      --color-background:                 #050607;
+      --color-surface-container-lowest:   #030405;
+      --color-surface:                    #0a0b0d;
+      --color-surface-container:          #14171a;
+      --color-surface-container-high:     #1c2024;
+      --color-surface-container-highest:  #262a2f;
+      /* === 文字 === */
+      --color-on-surface:           #f0f1f3;
+      --color-on-surface-variant:   #8a8f97;
+      /* === 功能色 === */
+      --color-success:  #4ade80;
+      --color-error:    #ef4444;
+      --color-warning:  #f59e0b;
+      /* === 边框（Ghost Border） === */
+      --color-outline:          rgba(255, 255, 255, 0.10);
+      --color-outline-variant:  rgba(255, 255, 255, 0.06);
+      /* === 圆角（工业硬朗） === */
+      --radius-sm:   0.125rem;
+      --radius-md:   0.25rem;
+      --radius-lg:   0.375rem;
+      --radius-xl:   0.5rem;
+      --radius-2xl:  0.75rem;
+      --radius-full: 9999px;
+      /* === 阴影（暗底加重） === */
+      --shadow-card:   0 1px 0 rgba(255,255,255,0.08) inset, 0 2px 8px rgba(0,0,0,0.5);
+      --shadow-float:  0 1px 0 rgba(255,255,255,0.10) inset, 0 10px 25px rgba(0,0,0,0.6);
+      --shadow-dialog: 0 1px 0 rgba(255,255,255,0.10) inset, 0 25px 50px rgba(0,0,0,0.7);
+      /* === 字体（工业机械+无衬线） === */
+      --font-sans: "Space Grotesk", "Inter", "Noto Sans SC", system-ui, sans-serif;
+      --font-mono: "JetBrains Mono", "Space Mono", ui-monospace, monospace;
+    }
+  </style>
+
+  <style>
+    /* 工业风纹理：在 background / surface 上叠一层极淡的网格与噪点（仅用于装饰） */
+    body {
+      background-image:
+        linear-gradient(rgba(127, 32, 40, 0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(127, 32, 40, 0.04) 1px, transparent 1px),
+        radial-gradient(circle at 20% 0%, rgba(127, 32, 40, 0.10), transparent 40%);
+      background-size: 32px 32px, 32px 32px, 100% 100%;
+      background-attachment: fixed;
+    }
+    /* 等宽数字 / 工业感细节 */
+    .tabular { font-variant-numeric: tabular-nums; }
+    /* 角标刻度条 */
+    .tick-bar { background-image: linear-gradient(90deg, currentColor 50%, transparent 50%); background-size: 6px 1px; background-repeat: repeat-x; }
+    /* 选中态：机械红 + 左侧红条 */
+    .nav-active { background: linear-gradient(90deg, rgba(127,32,40,0.18), rgba(127,32,40,0.04)); border-left: 2px solid #7f2028; color: #fdebec; }
+    .nav-active i { color: #ef4444; }
+    /* 滚动条 */
+    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    ::-webkit-scrollbar-track { background: #0a0b0d; }
+    ::-webkit-scrollbar-thumb { background: #262a2f; border-radius: 0; }
+    ::-webkit-scrollbar-thumb:hover { background: #7f2028; }
+  </style>
+
+  <script>
+    document.addEventListener('error', function (e) {
+      const img = e.target;
+      if (img.tagName !== 'IMG' || img.dataset.fallback) return;
+      img.dataset.fallback = '1';
+      const esc = s => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+      const cat = img.getAttribute('data-category') || '其他';
+      const alt = img.getAttribute('alt') || '';
+      const label = esc(alt.length > 8 ? alt.slice(0, 8) + '…' : alt);
+      const icons = { '人物': '👤', '自然风景': '🏞', '动物': '🐾', '建筑城市': '🏙', '运动体育': '⚽', '交通工具': '🚗', '食物': '🍽', '服饰时尚': '👗', '商业科技': '💼', '游戏娱乐': '🎮', '艺术': '🎨', '其他': '🖼' };
+      const icon = icons[cat] || '🖼';
+      const w = img.width || 400, h = img.height || 300;
+      const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}"><rect width="100%" height="100%" fill="%231c2024"/><text x="50%" y="45%" text-anchor="middle" font-size="${Math.min(w, h) * 0.18}" fill="%23ef4444" dominant-baseline="central">${icon}</text><text x="50%" y="68%" text-anchor="middle" font-size="${Math.min(w, h) * 0.07}" fill="%238a8f97" font-family="system-ui,sans-serif" dominant-baseline="central">${label}</text></svg>`;
+      img.src = 'data:image/svg+xml,' + svg;
+    }, true);
+  </script>
+</head>
+
+<body class="bg-background text-on-surface font-sans min-h-screen">
+
+  <!-- @nav:start 导航组件，不需要的页面则不要复制此段（从 @nav:start 到 @nav:end） -->
+  <div class="flex min-h-screen" style="height: 100vh;">
+
+    <!-- Sidebar：左侧 240px，工业机械风 -->
+    <aside class="w-60 shrink-0 bg-surface border-r border-outline/20 flex flex-col">
+      <!-- Logo 区 -->
+      <div class="h-16 px-5 flex items-center gap-2.5 border-b border-outline/20">
+        <div class="relative w-8 h-8 bg-primary flex items-center justify-center">
+          <span class="font-mono font-bold text-on-primary text-sm">X</span>
+          <div class="absolute -top-0.5 -right-0.5 w-1.5 h-1.5 bg-primary"></div>
+          <div class="absolute -bottom-0.5 -left-0.5 w-1 h-1 bg-on-primary"></div>
+        </div>
+        <div class="flex-1 min-w-0">
+          <div class="font-mono font-bold text-sm tracking-widest text-on-surface">XHS<span class="text-primary">_</span>CORE</div>
+          <div class="font-mono text-[10px] tracking-wider text-on-surface-variant">XIANLIAO.AI // V2.0</div>
+        </div>
+      </div>
+
+      <!-- 系统状态条 -->
+      <div class="px-5 py-3 border-b border-outline/20">
+        <div class="flex items-center justify-between mb-1.5">
+          <span class="font-mono text-[10px] tracking-widest text-on-surface-variant uppercase">System</span>
+          <span class="flex items-center gap-1 font-mono text-[10px] text-success">
+            <span class="w-1.5 h-1.5 bg-success rounded-full"></span>ONLINE
+          </span>
+        </div>
+        <div class="h-px tick-bar text-outline-variant"></div>
+      </div>
+
+      <!-- 导航菜单 -->
+      <nav class="flex-1 overflow-y-auto py-3">
+        <div class="px-5 mb-2 font-mono text-[10px] tracking-widest text-on-surface-variant uppercase">// Modules</div>
+        <a href="home.html" class="nav-item flex items-center gap-3 px-5 py-2.5 text-sm font-medium text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors">
+          <i data-lucide="radar" class="w-4 h-4"></i><span>选题引擎</span>
+          <span class="ml-auto font-mono text-[10px] text-primary">28</span>
+        </a>
+        <a href="content-factory.html" class="nav-item flex items-center gap-3 px-5 py-2.5 text-sm font-medium text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors">
+          <i data-lucide="factory" class="w-4 h-4"></i><span>内容工厂</span>
+        </a>
+        <a href="publish.html" class="nav-item flex items-center gap-3 px-5 py-2.5 text-sm font-medium text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors">
+          <i data-lucide="send" class="w-4 h-4"></i><span>发布管理</span>
+          <span class="ml-auto font-mono text-[10px] text-warning">3</span>
+        </a>
+        <a href="analytics.html" class="nav-item flex items-center gap-3 px-5 py-2.5 text-sm font-medium text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors">
+          <i data-lucide="bar-chart-horizontal" class="w-4 h-4"></i><span>数据复盘</span>
+        </a>
+        <a href="knowledge.html" class="nav-item flex items-center gap-3 px-5 py-2.5 text-sm font-medium text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors">
+          <i data-lucide="database" class="w-4 h-4"></i><span>知识库</span>
+        </a>
+
+        <div class="px-5 mt-4 mb-2 font-mono text-[10px] tracking-widest text-on-surface-variant uppercase">// Config</div>
+        <a href="settings.html" class="nav-item flex items-center gap-3 px-5 py-2.5 text-sm font-medium text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors">
+          <i data-lucide="settings" class="w-4 h-4"></i><span>系统设置</span>
+        </a>
+      </nav>
+
+      <!-- 底部：当前账号 -->
+      <div class="border-t border-outline/20 p-3">
+        <div class="bg-surface-container p-2.5 flex items-center gap-2.5">
+          <div class="w-8 h-8 rounded-full bg-primary-container border border-primary/40 flex items-center justify-center text-primary font-mono text-xs font-bold">咸</div>
+          <div class="flex-1 min-w-0">
+            <div class="text-xs font-medium text-on-surface truncate">咸聊AI·主理人</div>
+            <div class="font-mono text-[10px] text-on-surface-variant">@xianliao_ai</div>
+          </div>
+          <i data-lucide="chevrons-up-down" class="w-3.5 h-3.5 text-on-surface-variant"></i>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main area：topbar + content -->
+    <div class="flex-1 min-w-0 flex flex-col">
+      <!-- 顶栏：64px -->
+      <header class="h-16 bg-surface border-b border-outline/20 flex items-center px-6 gap-4 shrink-0">
+        <div class="flex items-center gap-3">
+          <span class="font-mono text-[10px] tracking-widest text-on-surface-variant uppercase">// XHS_CORE</span>
+          <span class="text-on-surface-variant/40">/</span>
+          <span id="page-crumb" class="font-mono text-xs text-on-surface tracking-wide uppercase">PUBLISH / SCHEDULER</span>
+        </div>
+        <div class="flex-1 max-w-xl mx-auto">
+          <div class="relative">
+            <i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-on-surface-variant"></i>
+            <input type="text" placeholder="SEARCH_TOPIC / KEYWORD / @ACCOUNT..." class="w-full bg-surface-container border border-outline/30 rounded-md pl-10 pr-3 py-2 text-sm font-mono tracking-wide text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/40" />
+            <span class="absolute right-3 top-1/2 -translate-y-1/2 font-mono text-[10px] text-on-surface-variant border border-outline/30 px-1.5 py-0.5">⌘K</span>
+          </div>
+        </div>
+        <div class="flex items-center gap-2">
+          <button class="relative w-9 h-9 flex items-center justify-center border border-outline/30 text-on-surface-variant hover:text-primary hover:border-primary transition-colors">
+            <i data-lucide="bell" class="w-4 h-4"></i>
+            <span class="absolute top-1.5 right-1.5 w-1.5 h-1.5 bg-primary rounded-full"></span>
+          </button>
+          <button class="w-9 h-9 flex items-center justify-center border border-outline/30 text-on-surface-variant hover:text-primary hover:border-primary transition-colors">
+            <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+          </button>
+          <button class="bg-primary hover:bg-primary/90 text-on-primary font-mono font-bold text-xs tracking-widest px-4 h-9 flex items-center gap-2 transition-colors">
+            <i data-lucide="zap" class="w-3.5 h-3.5"></i>RUN_PIPELINE
+          </button>
+        </div>
+      </header>
+
+      <main class="flex-1 min-w-0 overflow-y-auto bg-background">
+        <!-- @main-content:start -->
+        <div class="p-6 space-y-4">
+
+          <!-- ============ TOP TOOLBAR ============ -->
+          <div class="flex items-center gap-3 flex-wrap">
+            <div>
+              <h1 class="text-2xl font-bold text-on-surface tracking-wide">发布管理</h1>
+              <p class="font-mono text-[11px] text-on-surface-variant tracking-widest mt-1">PUBLISH_SCHEDULER · WEEK_52 // 2024-12-23 ~ 2024-12-29</p>
+            </div>
+            <div class="flex-1"></div>
+
+            <!-- 视图切换 -->
+            <div class="flex items-center bg-surface border border-outline/30 p-0.5">
+              <button id="view-month" class="px-3 py-1.5 text-xs font-mono font-medium text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors">月视图</button>
+              <button id="view-week" aria-current="page" class="px-3 py-1.5 text-xs font-mono font-bold bg-primary text-on-primary">周视图</button>
+              <button id="view-list" class="px-3 py-1.5 text-xs font-mono font-medium text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors">列表视图</button>
+            </div>
+
+            <!-- 多账号切换器 -->
+            <div class="relative" id="account-switcher">
+              <button id="btn-account" class="flex items-center gap-2 bg-surface border border-outline/30 hover:border-primary h-9 px-3 text-sm transition-colors">
+                <div class="w-5 h-5 bg-primary-container border border-primary/40 flex items-center justify-center text-primary font-mono text-[10px] font-bold">咸</div>
+                <span class="font-mono text-xs text-on-surface">@xianliao_ai</span>
+                <span class="px-1.5 py-0.5 bg-primary/20 text-error text-[10px] font-mono">主号</span>
+                <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-on-surface-variant"></i>
+              </button>
+              <div id="account-dropdown" class="absolute top-full right-0 mt-1 w-80 bg-surface border border-outline/30 shadow-float z-30 hidden">
+                <div class="px-3 py-2 border-b border-outline/20 bg-surface-container">
+                  <div class="font-mono text-[10px] tracking-widest text-on-surface-variant uppercase">// SWITCH_ACCOUNT · 4</div>
+                </div>
+                <div class="p-1">
+                  <!-- 账号1-主号-当前激活 -->
+                  <button data-account="xianliao_ai" class="account-row w-full flex items-center gap-3 px-3 py-2.5 hover:bg-surface-container transition-colors text-left">
+                    <div class="w-8 h-8 bg-primary-container border border-primary/40 flex items-center justify-center text-primary font-mono text-xs font-bold">咸</div>
+                    <div class="flex-1 min-w-0">
+                      <div class="flex items-center gap-2">
+                        <span class="text-sm font-medium text-on-surface">@xianliao_ai</span>
+                        <span class="px-1.5 py-0.5 bg-primary/20 text-error text-[9px] font-mono">主号</span>
+                        <span class="px-1.5 py-0.5 bg-success/15 text-success text-[9px] font-mono">当前</span>
+                      </div>
+                      <div class="font-mono text-[10px] text-on-surface-variant mt-0.5">小红书 · 28.5w 粉</div>
+                    </div>
+                    <div class="text-right shrink-0">
+                      <div class="font-mono text-[10px] text-on-surface-variant">今日</div>
+                      <div class="font-mono text-xs text-on-surface tabular font-bold">5/8</div>
+                    </div>
+                  </button>
+                  <!-- 账号2 -->
+                  <button data-account="xianliao_biz" class="account-row w-full flex items-center gap-3 px-3 py-2.5 hover:bg-surface-container transition-colors text-left">
+                    <div class="w-8 h-8 bg-surface-container-high border border-outline/30 flex items-center justify-center text-on-surface-variant font-mono text-xs font-bold">商</div>
+                    <div class="flex-1 min-w-0">
+                      <div class="flex items-center gap-2">
+                        <span class="text-sm font-medium text-on-surface">@xianliao_biz</span>
+                        <span class="px-1.5 py-0.5 bg-warning/15 text-warning text-[9px] font-mono">商务</span>
+                      </div>
+                      <div class="font-mono text-[10px] text-on-surface-variant mt-0.5">小红书 · 9.2w 粉</div>
+                    </div>
+                    <div class="text-right shrink-0">
+                      <div class="font-mono text-[10px] text-on-surface-variant">今日</div>
+                      <div class="font-mono text-xs text-on-surface tabular font-bold">2/3</div>
+                    </div>
+                  </button>
+                  <!-- 账号3 -->
+                  <button data-account="xianliao_journal" class="account-row w-full flex items-center gap-3 px-3 py-2.5 hover:bg-surface-container transition-colors text-left">
+                    <div class="w-8 h-8 bg-surface-container-high border border-outline/30 flex items-center justify-center text-on-surface-variant font-mono text-xs font-bold">记</div>
+                    <div class="flex-1 min-w-0">
+                      <div class="flex items-center gap-2">
+                        <span class="text-sm font-medium text-on-surface">@xianliao_journal</span>
+                        <span class="px-1.5 py-0.5 bg-success/15 text-success text-[9px] font-mono">记录</span>
+                      </div>
+                      <div class="font-mono text-[10px] text-on-surface-variant mt-0.5">视频号 · 5.7w 粉</div>
+                    </div>
+                    <div class="text-right shrink-0">
+                      <div class="font-mono text-[10px] text-on-surface-variant">今日</div>
+                      <div class="font-mono text-xs text-on-surface tabular font-bold">1/2</div>
+                    </div>
+                  </button>
+                  <!-- 账号4 -->
+                  <button data-account="xianliao_lab" class="account-row w-full flex items-center gap-3 px-3 py-2.5 hover:bg-surface-container transition-colors text-left">
+                    <div class="w-8 h-8 bg-surface-container-high border border-outline/30 flex items-center justify-center text-on-surface-variant font-mono text-xs font-bold">实</div>
+                    <div class="flex-1 min-w-0">
+                      <div class="flex items-center gap-2">
+                        <span class="text-sm font-medium text-on-surface">@xianliao_lab</span>
+                        <span class="px-1.5 py-0.5 bg-primary/15 text-primary text-[9px] font-mono">实验</span>
+                      </div>
+                      <div class="font-mono text-[10px] text-on-surface-variant mt-0.5">微博 · 1.3w 粉</div>
+                    </div>
+                    <div class="text-right shrink-0">
+                      <div class="font-mono text-[10px] text-on-surface-variant">今日</div>
+                      <div class="font-mono text-xs text-on-surface-variant tabular font-bold">0/1</div>
+                    </div>
+                  </button>
+                </div>
+                <div class="px-3 py-2 border-t border-outline/20 bg-surface-container flex items-center justify-between">
+                  <span class="font-mono text-[10px] text-on-surface-variant">// TOTAL_TODAY = 8/14</span>
+                  <button class="text-[10px] font-mono text-primary hover:underline">+ 添加账号</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- 新建排期 主按钮（红底） -->
+            <button id="btn-new-schedule" class="bg-primary hover:bg-error text-on-primary font-mono font-bold text-xs tracking-widest h-9 px-4 flex items-center gap-2 transition-colors shadow-card">
+              <i data-lucide="plus" class="w-3.5 h-3.5"></i>新建排期
+            </button>
+          </div>
+
+          <!-- ============ MAIN GRID: CALENDAR + QUEUE ============ -->
+          <div class="grid grid-cols-5 gap-4">
+
+            <!-- ====== LEFT: WEEK CALENDAR (3/5) ====== -->
+            <div id="week-calendar" class="col-span-3 bg-surface border border-outline/20 shadow-card relative">
+              <!-- Calendar header -->
+              <div class="px-4 py-3 border-b border-outline/20 flex items-center gap-3">
+                <div class="w-1 h-4 bg-primary"></div>
+                <h2 class="text-base font-semibold text-on-surface tracking-wide">本周排期</h2>
+                <span class="font-mono text-[10px] text-on-surface-variant">// 12/23 ~ 12/29</span>
+                <!-- 状态图例 -->
+                <div class="flex items-center gap-3 ml-2">
+                  <span class="flex items-center gap-1 font-mono text-[10px] text-on-surface-variant">
+                    <span class="w-2 h-2 bg-success"></span>已发
+                  </span>
+                  <span class="flex items-center gap-1 font-mono text-[10px] text-on-surface-variant">
+                    <span class="w-2 h-2 bg-error"></span>已排
+                  </span>
+                  <span class="flex items-center gap-1 font-mono text-[10px] text-on-surface-variant">
+                    <span class="w-2 h-2 bg-warning"></span>待审
+                  </span>
+                  <span class="flex items-center gap-1 font-mono text-[10px] text-on-surface-variant">
+                    <span class="w-2 h-2 bg-on-surface-variant/60"></span>草稿
+                  </span>
+                </div>
+                <div class="flex-1"></div>
+                <span class="font-mono text-[10px] text-on-surface-variant">W52 · 2024</span>
+                <div class="flex items-center gap-1">
+                  <button id="btn-prev-week" class="w-7 h-7 flex items-center justify-center text-on-surface-variant hover:text-on-surface border border-outline/30 hover:border-primary/40 transition-colors">
+                    <i data-lucide="chevron-left" class="w-3.5 h-3.5"></i>
+                  </button>
+                  <button id="btn-next-week" class="w-7 h-7 flex items-center justify-center text-on-surface-variant hover:text-on-surface border border-outline/30 hover:border-primary/40 transition-colors">
+                    <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Calendar grid -->
+              <div class="relative">
+                <!-- Day header row -->
+                <div class="grid border-b-2 border-outline/30" style="grid-template-columns: 70px repeat(7, 1fr);">
+                  <div class="px-3 py-2.5 text-[10px] font-mono text-on-surface-variant uppercase flex items-end">SLOT</div>
+                  <!-- MON -->
+                  <div id="day-header-mon" data-day="mon" class="day-header px-2 py-2 text-center border-l border-outline/10 cursor-pointer hover:bg-surface-container transition-colors relative">
+                    <div class="text-[10px] font-mono text-on-surface-variant">MON</div>
+                    <div class="text-base font-bold text-on-surface tabular mt-0.5">23</div>
+                    <div class="absolute bottom-0.5 left-1/2 -translate-x-1/2 font-mono text-[9px] text-on-surface-variant">12月</div>
+                  </div>
+                  <!-- TUE -->
+                  <div id="day-header-tue" data-day="tue" class="day-header px-2 py-2 text-center border-l border-outline/10 cursor-pointer hover:bg-surface-container transition-colors relative">
+                    <div class="text-[10px] font-mono text-on-surface-variant">TUE</div>
+                    <div class="text-base font-bold text-on-surface tabular mt-0.5">24</div>
+                    <div class="absolute bottom-0.5 left-1/2 -translate-x-1/2 font-mono text-[9px] text-on-surface-variant">12月</div>
+                  </div>
+                  <!-- WED -->
+                  <div id="day-header-wed" data-day="wed" class="day-header px-2 py-2 text-center border-l border-outline/10 cursor-pointer hover:bg-surface-container transition-colors relative">
+                    <div class="text-[10px] font-mono text-on-surface-variant">WED</div>
+                    <div class="text-base font-bold text-on-surface tabular mt-0.5">25</div>
+                    <div class="absolute bottom-0.5 left-1/2 -translate-x-1/2 font-mono text-[9px] text-on-surface-variant">12月</div>
+                  </div>
+                  <!-- THU (TODAY) -->
+                  <div id="day-header-thu" data-day="thu" class="day-header px-2 py-2 text-center border-l border-primary/30 bg-primary/5 cursor-pointer hover:bg-primary/10 transition-colors relative">
+                    <div class="text-[9px] font-mono text-error font-bold tracking-widest">● TODAY</div>
+                    <div class="text-base font-bold text-on-surface tabular mt-0.5">26</div>
+                    <div class="absolute bottom-0.5 left-1/2 -translate-x-1/2 font-mono text-[9px] text-error">12月</div>
+                  </div>
+                  <!-- FRI -->
+                  <div id="day-header-fri" data-day="fri" class="day-header px-2 py-2 text-center border-l border-outline/10 cursor-pointer hover:bg-surface-container transition-colors relative">
+                    <div class="text-[10px] font-mono text-on-surface-variant">FRI</div>
+                    <div class="text-base font-bold text-on-surface tabular mt-0.5">27</div>
+                    <div class="absolute bottom-0.5 left-1/2 -translate-x-1/2 font-mono text-[9px] text-on-surface-variant">12月</div>
+                  </div>
+                  <!-- SAT -->
+                  <div id="day-header-sat" data-day="sat" class="day-header px-2 py-2 text-center border-l border-outline/10 cursor-pointer hover:bg-surface-container transition-colors relative">
+                    <div class="text-[10px] font-mono text-on-surface-variant">SAT</div>
+                    <div class="text-base font-bold text-on-surface tabular mt-0.5">28</div>
+                    <div class="absolute bottom-0.5 left-1/2 -translate-x-1/2 font-mono text-[9px] text-on-surface-variant">12月</div>
+                  </div>
+                  <!-- SUN -->
+                  <div id="day-header-sun" data-day="sun" class="day-header px-2 py-2 text-center border-l border-outline/10 cursor-pointer hover:bg-surface-container transition-colors relative">
+                    <div class="text-[10px] font-mono text-on-surface-variant">SUN</div>
+                    <div class="text-base font-bold text-on-surface tabular mt-0.5">29</div>
+                    <div class="absolute bottom-0.5 left-1/2 -translate-x-1/2 font-mono text-[9px] text-on-surface-variant">12月</div>
+                  </div>
+                </div>
+
+                <!-- ====== ROW 1: 06:00 MORNING ====== -->
+                <div class="grid" style="grid-template-columns: 70px repeat(7, 1fr);">
+                  <div class="px-3 py-3 border-b border-r border-outline/10 flex flex-col justify-start bg-surface-container/30">
+                    <div class="font-mono text-xs font-bold text-on-surface tabular">06:00</div>
+                    <div class="font-mono text-[9px] text-on-surface-variant uppercase tracking-widest mt-0.5">MORNING</div>
+                  </div>
+                  <!-- Mon 6:00 -->
+                  <div class="px-1.5 py-2 border-b border-l border-outline/10 min-h-[110px] hover:bg-surface-container/30 transition-colors">
+                    <!-- 列表-Mon6-早安工具日报-已发 -->
+                    <div class="schedule-block bg-success/15 border-l-2 border-l-success p-1.5 mb-1 cursor-pointer hover:bg-success/25 transition-colors">
+                      <div class="text-[11px] font-semibold text-success truncate">早安·工具日报</div>
+                      <div class="font-mono text-[10px] text-on-surface-variant mt-0.5 flex items-center gap-1">
+                        <span class="tabular">06:30</span>
+                        <span class="text-on-surface-variant/50">·</span>
+                        <span class="text-success">已发</span>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- Tue 6:00 -->
+                  <div class="px-1.5 py-2 border-b border-l border-outline/10 min-h-[110px] hover:bg-surface-container/30 transition-colors"></div>
+                  <!-- Wed 6:00 -->
+                  <div class="px-1.5 py-2 border-b border-l border-outline/10 min-h-[110px] hover:bg-surface-container/30 transition-colors">
+                    <!-- 列表-Wed6-早安工具日报-已发 -->
+                    <div class="schedule-block bg-success/15 border-l-2 border-l-success p-1.5 mb-1 cursor-pointer hover:bg-success/25 transition-colors">
+                      <div class="text-[11px] font-semibold text-success truncate">早安·工具日报</div>
+                      <div class="font-mono text-[10px] text-on-surface-variant mt-0.5 flex items-center gap-1">
+                        <span class="tabular">06:30</span>
+                        <span class="text-on-surface-variant/50">·</span>
+                        <span class="text-success">已发</span>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- Thu 6:00 (TODAY) -->
+                  <div class="px-1.5 py-2 border-b border-l border-primary/30 min-h-[110px] bg-primary/5 hover:bg-primary/10 transition-colors relative">
+                    <div class="font-mono text-[9px] text-on-surface-variant mb-1">// SLOT_06:00</div>
+                  </div>
+                  <!-- Fri 6:00 -->
+                  <div class="px-1.5 py-2 border-b border-l border-outline/10 min-h-[110px] hover:bg-surface-container/30 transition-colors"></div>
+                  <!-- Sat 6:00 -->
+                  <div class="px-1.5 py-2 border-b border-l border-outline/10 min-h-[110px] hover:bg-surface-container/30 transition-colors">
+                    <!-- 列表-Sat6-早安工具日报-已发 -->
+                    <div class="schedule-block bg-success/15 border-l-2 border-l-success p-1.5 mb-1 cursor-pointer hover:bg-success/25 transition-colors">
+                      <div class="text-[11px] font-semibold text-success truncate">早安·工具日报</div>
+                      <div class="font-mono text-[10px] text-on-surface-variant mt-0.5 flex items-center gap-1">
+                        <span class="tabular">06:30</span>
+                        <span class="text-on-surface-variant/50">·</span>
+                        <span class="text-success">已发</span>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- Sun 6:00 -->
+                  <div class="px-1.5 py-2 border-b border-l border-outline/10 min-h-[110px] hover:bg-surface-container/30 transition-colors"></div>
+                </div>
+
+                <!-- ====== ROW 2: 12:00 NOON (with NOW indicator on Thu) ====== -->
+                <div class="grid" style="grid-template-columns: 70px repeat(7, 1fr);">
+                  <div class="px-3 py-3 border-b border-r border-outline/10 flex flex-col justify-start bg-surface-container/30">
+                    <div class="font-mono text-xs font-bold text-on-surface tabular">12:00</div>
+                    <div class="font-mono text-[9px] text-on-surface-variant uppercase tracking-widest mt-0.5">NOON</div>
+                  </div>
+                  <!-- Mon 12:00 -->
+                  <div class="px-1.5 py-2 border-b border-l border-outline/10 min-h-[110px] hover:bg-surface-container/30 transition-colors"></div>
+                  <!-- Tue 12:00 -->
+                  <div class="px-1.5 py-2 border-b border-l border-outline/10 min-h-[110px] hover:bg-surface-container/30 transition-colors">
+                    <!-- 列表-Tue12-年终复盘-已排 -->
+                    <div class="schedule-block bg-primary/20 border-l-2 border-l-error p-1.5 mb-1 cursor-pointer hover:bg-primary/30 transition-colors">
+                      <div class="text-[11px] font-semibold text-error truncate">年终复盘 5 步法</div>
+                      <div class="font-mono text-[10px] text-on-surface-variant mt-0.5 flex items-center gap-1">
+                        <span class="tabular">12:00</span>
+                        <span class="text-on-surface-variant/50">·</span>
+                        <span class="text-error">已排</span>
+                        <span class="text-on-surface-variant/50">·</span>
+                        <span class="text-primary">小红书</span>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- Wed 12:00 -->
+                  <div class="px-1.5 py-2 border-b border-l border-outline/10 min-h-[110px] hover:bg-surface-container/30 transition-colors"></div>
+                  <!-- Thu 12:00 (TODAY + NOW) -->
+                  <div class="px-1.5 py-2 border-b border-l border-primary/30 min-h-[110px] bg-primary/5 hover:bg-primary/10 transition-colors relative">
+                    <!-- 当前时间 NOW 红色高亮条 -->
+                    <div class="absolute -top-2.5 left-0 right-0 flex items-center gap-1 z-10 pointer-events-none">
+                      <span class="bg-error text-on-primary font-mono font-bold text-[9px] px-1.5 py-0.5 flex items-center gap-1">
+                        <span class="w-1 h-1 bg-on-primary rounded-full animate-pulse"></span>NOW 15:32
+                      </span>
+                      <div class="flex-1 h-px bg-error"></div>
+                    </div>
+                    <!-- 列表-Thu12-三件好事-已排 -->
+                    <div class="schedule-block bg-primary/20 border-l-2 border-l-error p-1.5 mb-1 cursor-pointer hover:bg-primary/30 transition-colors">
+                      <div class="text-[11px] font-semibold text-error truncate">三件好事 Day 7</div>
+                      <div class="font-mono text-[10px] text-on-surface-variant mt-0.5 flex items-center gap-1">
+                        <span class="tabular">12:00</span>
+                        <span class="text-on-surface-variant/50">·</span>
+                        <span class="text-error">已排</span>
+                        <span class="text-on-surface-variant/50">·</span>
+                        <span class="text-primary">小红书</span>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- Fri 12:00 -->
+                  <div class="px-1.5 py-2 border-b border-l border-outline/10 min-h-[110px] hover:bg-surface-container/30 transition-colors"></div>
+                  <!-- Sat 12:00 -->
+                  <div class="px-1.5 py-2 border-b border-l border-outline/10 min-h-[110px] hover:bg-surface-container/30 transition-colors">
+                    <!-- 列表-Sat12-周报-已排 -->
+                    <div class="schedule-block bg-primary/20 border-l-2 border-l-error p-1.5 mb-1 cursor-pointer hover:bg-primary/30 transition-colors">
+                      <div class="text-[11px] font-semibold text-error truncate">周报 Week 52</div>
+                      <div class="font-mono text-[10px] text-on-surface-variant mt-0.5 flex items-center gap-1">
+                        <span class="tabular">12:00</span>
+                        <span class="text-on-surface-variant/50">·</span>
+                        <span class="text-error">已排</span>
+                        <span class="text-on-surface-variant/50">·</span>
+                        <span class="text-primary">小红书</span>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- Sun 12:00 -->
+                  <div class="px-1.5 py-2 border-b border-l border-outline/10 min-h-[110px] hover:bg-surface-container/30 transition-colors">
+                    <!-- 列表-Sun12-新年flag-已排 -->
+                    <div class="schedule-block bg-primary/20 border-l-2 border-l-error p-1.5 mb-1 cursor-pointer hover:bg-primary/30 transition-colors">
+                      <div class="text-[11px] font-semibold text-error truncate">新年 flag 模板</div>
+                      <div class="font-mono text-[10px] text-on-surface-variant mt-0.5 flex items-center gap-1">
+                        <span class="tabular">12:00</span>
+                        <span class="text-on-surface-variant/50">·</span>
+                        <span class="text-error">已排</span>
+                        <span class="text-on-surface-variant/50">·</span>
+                        <span class="text-primary">小红书</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- ====== ROW 3: 18:00 EVENING ====== -->
+                <div class="grid" style="grid-template-columns: 70px repeat(7, 1fr);">
+                  <div class="px-3 py-3 border-b border-r border-outline/10 flex flex-col justify-start bg-surface-container/30">
+                    <div class="font-mono text-xs font-bold text-on-surface tabular">18:00</div>
+                    <div class="font-mono text-[9px] text-on-surface-variant uppercase tracking-widest mt-0.5">EVENING</div>
+                  </div>
+                  <!-- Mon 18:00 -->
+                  <div class="px-1.5 py-2 border-b border-l border-outline/10 min-h-[110px] hover:bg-surface-container/30 transition-colors"></div>
+                  <!-- Tue 18:00 -->
+                  <div class="px-1.5 py-2 border-b border-l border-outline/10 min-h-[110px] hover:bg-surface-container/30 transition-colors">
+                    <!-- 列表-Tue18-vlog清单-已排 -->
+                    <div class="schedule-block bg-primary/20 border-l-2 border-l-error p-1.5 mb-1 cursor-pointer hover:bg-primary/30 transition-colors">
+                      <div class="text-[11px] font-semibold text-error truncate">vlog 拍摄清单</div>
+                      <div class="font-mono text-[10px] text-on-surface-variant mt-0.5 flex items-center gap-1">
+                        <span class="tabular">18:30</span>
+                        <span class="text-on-surface-variant/50">·</span>
+                        <span class="text-error">已排</span>
+                        <span class="text-on-surface-variant/50">·</span>
+                        <span class="text-success">视频号</span>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- Wed 18:00 -->
+                  <div class="px-1.5 py-2 border-b border-l border-outline/10 min-h-[110px] hover:bg-surface-container/30 transition-colors">
+                    <!-- 列表-Wed18-小众品牌-已排 -->
+                    <div class="schedule-block bg-primary/20 border-l-2 border-l-error p-1.5 mb-1 cursor-pointer hover:bg-primary/30 transition-colors">
+                      <div class="text-[11px] font-semibold text-error truncate">小众品牌合集</div>
+                      <div class="font-mono text-[10px] text-on-surface-variant mt-0.5 flex items-center gap-1">
+                        <span class="tabular">18:00</span>
+                        <span class="text-on-surface-variant/50">·</span>
+                        <span class="text-error">已排</span>
+                        <span class="text-on-surface-variant/50">·</span>
+                        <span class="text-primary">小红书</span>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- Thu 18:00 (TODAY) -->
+                  <div class="px-1.5 py-2 border-b border-l border-primary/30 min-h-[110px] bg-primary/5 hover:bg-primary/10 transition-colors">
+                    <!-- 列表-Thu18-AI头像-草稿 -->
+                    <div class="schedule-block bg-surface-container-high border-l-2 border-l-on-surface-variant p-1.5 mb-1 cursor-pointer hover:bg-surface-container-highest transition-colors">
+                      <div class="text-[11px] font-semibold text-on-surface-variant truncate">AI 头像教程</div>
+                      <div class="font-mono text-[10px] text-on-surface-variant mt-0.5 flex items-center gap-1">
+                        <span class="tabular">18:00</span>
+                        <span class="text-on-surface-variant/50">·</span>
+                        <span>草稿</span>
+                        <span class="text-on-surface-variant/50">·</span>
+                        <span class="text-primary">小红书</span>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- Fri 18:00 -->
+                  <div class="px-1.5 py-2 border-b border-l border-outline/10 min-h-[110px] hover:bg-surface-container/30 transition-colors"></div>
+                  <!-- Sat 18:00 -->
+                  <div class="px-1.5 py-2 border-b border-l border-outline/10 min-h-[110px] hover:bg-surface-container/30 transition-colors">
+                    <!-- 列表-Sat18-年度工具榜-已发 -->
+                    <div class="schedule-block bg-success/15 border-l-2 border-l-success p-1.5 mb-1 cursor-pointer hover:bg-success/25 transition-colors">
+                      <div class="text-[11px] font-semibold text-success truncate">年度工具榜 Top10</div>
+                      <div class="font-mono text-[10px] text-on-surface-variant mt-0.5 flex items-center gap-1">
+                        <span class="tabular">18:00</span>
+                        <span class="text-on-surface-variant/50">·</span>
+                        <span class="text-success">已发</span>
+                        <span class="text-on-surface-variant/50">·</span>
+                        <span class="text-primary">小红书</span>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- Sun 18:00 -->
+                  <div class="px-1.5 py-2 border-b border-l border-outline/10 min-h-[110px] hover:bg-surface-container/30 transition-colors"></div>
+                </div>
+
+                <!-- ====== ROW 4: 21:00 NIGHT ====== -->
+                <div class="grid" style="grid-template-columns: 70px repeat(7, 1fr);">
+                  <div class="px-3 py-3 border-r border-outline/10 flex flex-col justify-start bg-surface-container/30">
+                    <div class="font-mono text-xs font-bold text-on-surface tabular">21:00</div>
+                    <div class="font-mono text-[9px] text-on-surface-variant uppercase tracking-widest mt-0.5">NIGHT</div>
+                  </div>
+                  <!-- Mon 21:00 -->
+                  <div class="px-1.5 py-2 border-l border-outline/10 min-h-[110px] hover:bg-surface-container/30 transition-colors">
+                    <!-- 列表-Mon21-AI提示词-待审 -->
+                    <div class="schedule-block bg-warning/15 border-l-2 border-l-warning p-1.5 mb-1 cursor-pointer hover:bg-warning/25 transition-colors">
+                      <div class="text-[11px] font-semibold text-warning truncate">AI 提示词合集</div>
+                      <div class="font-mono text-[10px] text-on-surface-variant mt-0.5 flex items-center gap-1">
+                        <span class="tabular">21:00</span>
+                        <span class="text-on-surface-variant/50">·</span>
+                        <span class="text-warning">待审</span>
+                        <span class="text-on-surface-variant/50">·</span>
+                        <span class="text-primary">小红书</span>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- Tue 21:00 -->
+                  <div class="px-1.5 py-2 border-l border-outline/10 min-h-[110px] hover:bg-surface-container/30 transition-colors">
+                    <!-- 列表-Tue21-算法拆解-待审 -->
+                    <div class="schedule-block bg-warning/15 border-l-2 border-l-warning p-1.5 mb-1 cursor-pointer hover:bg-warning/25 transition-colors">
+                      <div class="text-[11px] font-semibold text-warning truncate">算法拆解 v2</div>
+                      <div class="font-mono text-[10px] text-on-surface-variant mt-0.5 flex items-center gap-1">
+                        <span class="tabular">21:30</span>
+                        <span class="text-on-surface-variant/50">·</span>
+                        <span class="text-warning">待审</span>
+                        <span class="text-on-surface-variant/50">·</span>
+                        <span class="text-primary">小红书</span>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- Wed 21:00 -->
+                  <div class="px-1.5 py-2 border-l border-outline/10 min-h-[110px] hover:bg-surface-container/30 transition-colors"></div>
+                  <!-- Thu 21:00 (TODAY) -->
+                  <div class="px-1.5 py-2 border-l border-primary/30 min-h-[110px] bg-primary/5 hover:bg-primary/10 transition-colors">
+                    <!-- 列表-Thu21-小众旅行地-已排 -->
+                    <div class="schedule-block bg-primary/20 border-l-2 border-l-error p-1.5 mb-1 cursor-pointer hover:bg-primary/30 transition-colors">
+                      <div class="text-[11px] font-semibold text-error truncate">小众旅行地</div>
+                      <div class="font-mono text-[10px] text-on-surface-variant mt-0.5 flex items-center gap-1">
+                        <span class="tabular">21:00</span>
+                        <span class="text-on-surface-variant/50">·</span>
+                        <span class="text-error">已排</span>
+                        <span class="text-on-surface-variant/50">·</span>
+                        <span class="text-warning">微博</span>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- Fri 21:00 -->
+                  <div class="px-1.5 py-2 border-l border-outline/10 min-h-[110px] hover:bg-surface-container/30 transition-colors">
+                    <!-- 列表-Fri21-跨年活动-待审 -->
+                    <div class="schedule-block bg-warning/15 border-l-2 border-l-warning p-1.5 mb-1 cursor-pointer hover:bg-warning/25 transition-colors">
+                      <div class="text-[11px] font-semibold text-warning truncate">跨年活动指南</div>
+                      <div class="font-mono text-[10px] text-on-surface-variant mt-0.5 flex items-center gap-1">
+                        <span class="tabular">21:00</span>
+                        <span class="text-on-surface-variant/50">·</span>
+                        <span class="text-warning">待审</span>
+                        <span class="text-on-surface-variant/50">·</span>
+                        <span class="text-primary">小红书</span>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- Sat 21:00 -->
+                  <div class="px-1.5 py-2 border-l border-outline/10 min-h-[110px] hover:bg-surface-container/30 transition-colors"></div>
+                  <!-- Sun 21:00 -->
+                  <div class="px-1.5 py-2 border-l border-outline/10 min-h-[110px] hover:bg-surface-container/30 transition-colors"></div>
+                </div>
+
+                <!-- ====== Day popovers (hidden by default) ====== -->
+                <div id="popover-mon" class="day-popover absolute top-12 left-[15%] w-64 bg-surface border border-outline/30 shadow-float z-30 hidden">
+                  <div class="px-3 py-2 border-b border-outline/20 bg-primary/10 flex items-center justify-between">
+                    <div>
+                      <div class="font-mono text-[10px] tracking-widest text-primary uppercase">// 12/23 MON</div>
+                      <div class="text-sm font-bold text-on-surface mt-0.5">2 条内容</div>
+                    </div>
+                    <span class="font-mono text-[10px] text-on-surface-variant">1发·1审</span>
+                  </div>
+                  <div class="p-2 space-y-1.5">
+                    <div class="flex items-center gap-2 px-2 py-1 bg-surface-container/50">
+                      <span class="w-1.5 h-1.5 bg-success"></span>
+                      <span class="text-xs text-on-surface flex-1 truncate">早安·工具日报</span>
+                      <span class="font-mono text-[10px] text-on-surface-variant">06:30</span>
+                    </div>
+                    <div class="flex items-center gap-2 px-2 py-1 bg-surface-container/50">
+                      <span class="w-1.5 h-1.5 bg-warning"></span>
+                      <span class="text-xs text-on-surface flex-1 truncate">AI 提示词合集</span>
+                      <span class="font-mono text-[10px] text-on-surface-variant">21:00</span>
+                    </div>
+                  </div>
+                  <div class="px-3 py-2 border-t border-outline/20 flex items-center justify-between">
+                    <span class="font-mono text-[10px] text-on-surface-variant">曝光预估 32k</span>
+                    <button class="text-xs text-primary hover:underline font-mono">查看完整队列 →</button>
+                  </div>
+                </div>
+
+                <div id="popover-tue" class="day-popover absolute top-12 left-[27%] w-64 bg-surface border border-outline/30 shadow-float z-30 hidden">
+                  <div class="px-3 py-2 border-b border-outline/20 bg-primary/10 flex items-center justify-between">
+                    <div>
+                      <div class="font-mono text-[10px] tracking-widest text-primary uppercase">// 12/24 TUE</div>
+                      <div class="text-sm font-bold text-on-surface mt-0.5">3 条内容</div>
+                    </div>
+                    <span class="font-mono text-[10px] text-on-surface-variant">2排·1审</span>
+                  </div>
+                  <div class="p-2 space-y-1.5">
+                    <div class="flex items-center gap-2 px-2 py-1 bg-surface-container/50">
+                      <span class="w-1.5 h-1.5 bg-error"></span>
+                      <span class="text-xs text-on-surface flex-1 truncate">年终复盘 5 步法</span>
+                      <span class="font-mono text-[10px] text-on-surface-variant">12:00</span>
+                    </div>
+                    <div class="flex items-center gap-2 px-2 py-1 bg-surface-container/50">
+                      <span class="w-1.5 h-1.5 bg-error"></span>
+                      <span class="text-xs text-on-surface flex-1 truncate">vlog 拍摄清单</span>
+                      <span class="font-mono text-[10px] text-on-surface-variant">18:30</span>
+                    </div>
+                    <div class="flex items-center gap-2 px-2 py-1 bg-surface-container/50">
+                      <span class="w-1.5 h-1.5 bg-warning"></span>
+                      <span class="text-xs text-on-surface flex-1 truncate">算法拆解 v2</span>
+                      <span class="font-mono text-[10px] text-on-surface-variant">21:30</span>
+                    </div>
+                  </div>
+                  <div class="px-3 py-2 border-t border-outline/20 flex items-center justify-between">
+                    <span class="font-mono text-[10px] text-on-surface-variant">曝光预估 56k</span>
+                    <button class="text-xs text-primary hover:underline font-mono">查看完整队列 →</button>
+                  </div>
+                </div>
+
+                <div id="popover-wed" class="day-popover absolute top-12 left-[39%] w-64 bg-surface border border-outline/30 shadow-float z-30 hidden">
+                  <div class="px-3 py-2 border-b border-outline/20 bg-primary/10 flex items-center justify-between">
+                    <div>
+                      <div class="font-mono text-[10px] tracking-widest text-primary uppercase">// 12/25 WED</div>
+                      <div class="text-sm font-bold text-on-surface mt-0.5">2 条内容</div>
+                    </div>
+                    <span class="font-mono text-[10px] text-on-surface-variant">1发·1排</span>
+                  </div>
+                  <div class="p-2 space-y-1.5">
+                    <div class="flex items-center gap-2 px-2 py-1 bg-surface-container/50">
+                      <span class="w-1.5 h-1.5 bg-success"></span>
+                      <span class="text-xs text-on-surface flex-1 truncate">早安·工具日报</span>
+                      <span class="font-mono text-[10px] text-on-surface-variant">06:30</span>
+                    </div>
+                    <div class="flex items-center gap-2 px-2 py-1 bg-surface-container/50">
+                      <span class="w-1.5 h-1.5 bg-error"></span>
+                      <span class="text-xs text-on-surface flex-1 truncate">小众品牌合集</span>
+                      <span class="font-mono text-[10px] text-on-surface-variant">18:00</span>
+                    </div>
+                  </div>
+                  <div class="px-3 py-2 border-t border-outline/20 flex items-center justify-between">
+                    <span class="font-mono text-[10px] text-on-surface-variant">曝光预估 24k</span>
+                    <button class="text-xs text-primary hover:underline font-mono">查看完整队列 →</button>
+                  </div>
+                </div>
+
+                <div id="popover-thu" class="day-popover absolute top-12 left-[51%] w-64 bg-surface border border-primary/40 shadow-float z-30 hidden">
+                  <div class="px-3 py-2 border-b border-outline/20 bg-primary/20 flex items-center justify-between">
+                    <div>
+                      <div class="font-mono text-[10px] tracking-widest text-error uppercase font-bold">● 12/26 THU · TODAY</div>
+                      <div class="text-sm font-bold text-on-surface mt-0.5">3 条内容</div>
+                    </div>
+                    <span class="font-mono text-[10px] text-on-surface-variant">2排·1稿</span>
+                  </div>
+                  <div class="p-2 space-y-1.5">
+                    <div class="flex items-center gap-2 px-2 py-1 bg-surface-container/50">
+                      <span class="w-1.5 h-1.5 bg-error"></span>
+                      <span class="text-xs text-on-surface flex-1 truncate">三件好事 Day 7</span>
+                      <span class="font-mono text-[10px] text-on-surface-variant">12:00</span>
+                    </div>
+                    <div class="flex items-center gap-2 px-2 py-1 bg-surface-container/50">
+                      <span class="w-1.5 h-1.5 bg-on-surface-variant/60"></span>
+                      <span class="text-xs text-on-surface flex-1 truncate">AI 头像教程</span>
+                      <span class="font-mono text-[10px] text-on-surface-variant">18:00</span>
+                    </div>
+                    <div class="flex items-center gap-2 px-2 py-1 bg-surface-container/50">
+                      <span class="w-1.5 h-1.5 bg-error"></span>
+                      <span class="text-xs text-on-surface flex-1 truncate">小众旅行地</span>
+                      <span class="font-mono text-[10px] text-on-surface-variant">21:00</span>
+                    </div>
+                  </div>
+                  <div class="px-3 py-2 border-t border-outline/20 flex items-center justify-between">
+                    <span class="font-mono text-[10px] text-on-surface-variant">曝光预估 41k</span>
+                    <button class="text-xs text-primary hover:underline font-mono">查看完整队列 →</button>
+                  </div>
+                </div>
+
+                <div id="popover-fri" class="day-popover absolute top-12 left-[63%] w-64 bg-surface border border-outline/30 shadow-float z-30 hidden">
+                  <div class="px-3 py-2 border-b border-outline/20 bg-primary/10 flex items-center justify-between">
+                    <div>
+                      <div class="font-mono text-[10px] tracking-widest text-primary uppercase">// 12/27 FRI</div>
+                      <div class="text-sm font-bold text-on-surface mt-0.5">1 条内容</div>
+                    </div>
+                    <span class="font-mono text-[10px] text-on-surface-variant">1审</span>
+                  </div>
+                  <div class="p-2 space-y-1.5">
+                    <div class="flex items-center gap-2 px-2 py-1 bg-surface-container/50">
+                      <span class="w-1.5 h-1.5 bg-warning"></span>
+                      <span class="text-xs text-on-surface flex-1 truncate">跨年活动指南</span>
+                      <span class="font-mono text-[10px] text-on-surface-variant">21:00</span>
+                    </div>
+                  </div>
+                  <div class="px-3 py-2 border-t border-outline/20 flex items-center justify-between">
+                    <span class="font-mono text-[10px] text-on-surface-variant">曝光预估 18k</span>
+                    <button class="text-xs text-primary hover:underline font-mono">查看完整队列 →</button>
+                  </div>
+                </div>
+
+                <div id="popover-sat" class="day-popover absolute top-12 left-[75%] w-64 bg-surface border border-outline/30 shadow-float z-30 hidden">
+                  <div class="px-3 py-2 border-b border-outline/20 bg-primary/10 flex items-center justify-between">
+                    <div>
+                      <div class="font-mono text-[10px] tracking-widest text-primary uppercase">// 12/28 SAT</div>
+                      <div class="text-sm font-bold text-on-surface mt-0.5">3 条内容</div>
+                    </div>
+                    <span class="font-mono text-[10px] text-on-surface-variant">1发·1排·1发</span>
+                  </div>
+                  <div class="p-2 space-y-1.5">
+                    <div class="flex items-center gap-2 px-2 py-1 bg-surface-container/50">
+                      <span class="w-1.5 h-1.5 bg-success"></span>
+                      <span class="text-xs text-on-surface flex-1 truncate">早安·工具日报</span>
+                      <span class="font-mono text-[10px] text-on-surface-variant">06:30</span>
+                    </div>
+                    <div class="flex items-center gap-2 px-2 py-1 bg-surface-container/50">
+                      <span class="w-1.5 h-1.5 bg-error"></span>
+                      <span class="text-xs text-on-surface flex-1 truncate">周报 Week 52</span>
+                      <span class="font-mono text-[10px] text-on-surface-variant">12:00</span>
+                    </div>
+                    <div class="flex items-center gap-2 px-2 py-1 bg-surface-container/50">
+                      <span class="w-1.5 h-1.5 bg-success"></span>
+                      <span class="text-xs text-on-surface flex-1 truncate">年度工具榜 Top10</span>
+                      <span class="font-mono text-[10px] text-on-surface-variant">18:00</span>
+                    </div>
+                  </div>
+                  <div class="px-3 py-2 border-t border-outline/20 flex items-center justify-between">
+                    <span class="font-mono text-[10px] text-on-surface-variant">曝光预估 67k</span>
+                    <button class="text-xs text-primary hover:underline font-mono">查看完整队列 →</button>
+                  </div>
+                </div>
+
+                <div id="popover-sun" class="day-popover absolute top-12 right-2 w-64 bg-surface border border-outline/30 shadow-float z-30 hidden">
+                  <div class="px-3 py-2 border-b border-outline/20 bg-primary/10 flex items-center justify-between">
+                    <div>
+                      <div class="font-mono text-[10px] tracking-widest text-primary uppercase">// 12/29 SUN</div>
+                      <div class="text-sm font-bold text-on-surface mt-0.5">1 条内容</div>
+                    </div>
+                    <span class="font-mono text-[10px] text-on-surface-variant">1排</span>
+                  </div>
+                  <div class="p-2 space-y-1.5">
+                    <div class="flex items-center gap-2 px-2 py-1 bg-surface-container/50">
+                      <span class="w-1.5 h-1.5 bg-error"></span>
+                      <span class="text-xs text-on-surface flex-1 truncate">新年 flag 模板</span>
+                      <span class="font-mono text-[10px] text-on-surface-variant">12:00</span>
+                    </div>
+                  </div>
+                  <div class="px-3 py-2 border-t border-outline/20 flex items-center justify-between">
+                    <span class="font-mono text-[10px] text-on-surface-variant">曝光预估 12k</span>
+                    <button class="text-xs text-primary hover:underline font-mono">查看完整队列 →</button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Calendar footer: 统计 -->
+              <div class="px-4 py-2.5 border-t border-outline/20 bg-surface-container/30 flex items-center gap-4">
+                <span class="font-mono text-[10px] text-on-surface-variant">// WEEK_52_STATS</span>
+                <span class="flex items-center gap-1.5 font-mono text-[10px]">
+                  <span class="w-1.5 h-1.5 bg-success"></span>
+                  <span class="text-on-surface-variant">已发</span>
+                  <span class="text-success font-bold tabular">5</span>
+                </span>
+                <span class="flex items-center gap-1.5 font-mono text-[10px]">
+                  <span class="w-1.5 h-1.5 bg-error"></span>
+                  <span class="text-on-surface-variant">已排</span>
+                  <span class="text-error font-bold tabular">6</span>
+                </span>
+                <span class="flex items-center gap-1.5 font-mono text-[10px]">
+                  <span class="w-1.5 h-1.5 bg-warning"></span>
+                  <span class="text-on-surface-variant">待审</span>
+                  <span class="text-warning font-bold tabular">3</span>
+                </span>
+                <span class="flex items-center gap-1.5 font-mono text-[10px]">
+                  <span class="w-1.5 h-1.5 bg-on-surface-variant/60"></span>
+                  <span class="text-on-surface-variant">草稿</span>
+                  <span class="text-on-surface-variant font-bold tabular">1</span>
+                </span>
+                <div class="flex-1"></div>
+                <span class="font-mono text-[10px] text-on-surface-variant">曝光预估:</span>
+                <span class="font-mono text-[10px] text-primary font-bold tabular">250.2k</span>
+                <span class="font-mono text-[10px] text-on-surface-variant">| 互动预估:</span>
+                <span class="font-mono text-[10px] text-primary font-bold tabular">18.4k</span>
+              </div>
+            </div>
+
+            <!-- ====== RIGHT: CONTENT QUEUE (2/5) ====== -->
+            <div id="content-queue" class="col-span-2 bg-surface border border-outline/20 shadow-card flex flex-col max-h-[680px]">
+              <!-- Queue header -->
+              <div class="px-4 py-3 border-b border-outline/20 flex items-center gap-3 shrink-0">
+                <div class="w-1 h-4 bg-primary"></div>
+                <h2 class="text-base font-semibold text-on-surface tracking-wide">内容队列</h2>
+                <span class="font-mono text-[10px] text-on-surface-variant">// QUEUE</span>
+                <div class="flex-1"></div>
+                <button class="w-7 h-7 flex items-center justify-center text-on-surface-variant hover:text-primary border border-outline/30 hover:border-primary/40 transition-colors">
+                  <i data-lucide="filter" class="w-3.5 h-3.5"></i>
+                </button>
+              </div>
+
+              <!-- Tabs -->
+              <div class="flex border-b border-outline/20 bg-surface-container/30 shrink-0">
+                <button id="tab-pending" aria-current="page" class="flex-1 px-3 py-2.5 text-xs font-mono font-bold bg-surface text-error border-b-2 border-b-error transition-colors">
+                  待审核 <span class="ml-1 text-error font-bold tabular">3</span>
+                </button>
+                <button id="tab-today" class="flex-1 px-3 py-2.5 text-xs font-mono font-medium text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors">
+                  今日待发 <span class="ml-1 text-on-surface-variant tabular">5</span>
+                </button>
+                <button id="tab-week" class="flex-1 px-3 py-2.5 text-xs font-mono font-medium text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors">
+                  本周已发 <span class="ml-1 text-on-surface-variant tabular">12</span>
+                </button>
+              </div>
+
+              <!-- ====== List: 待审核 (3 items) ====== -->
+              <div id="list-pending" class="flex-1 overflow-y-auto">
+                <!-- 列表-待审1-AI提示词 -->
+                <div class="queue-item px-3 py-3 border-b border-outline/10 hover:bg-surface-container/50 transition-colors">
+                  <div class="flex items-start gap-3">
+                    <div class="w-11 h-11 bg-primary/20 border border-primary/30 flex items-center justify-center shrink-0">
+                      <i data-lucide="hash" class="w-4 h-4 text-error"></i>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                      <div class="flex items-center gap-1.5">
+                        <span class="text-[9px] font-mono text-warning border border-warning/40 px-1 py-0.5">待审</span>
+                        <span class="text-[10px] font-mono text-on-surface-variant">#1</span>
+                      </div>
+                      <div class="text-sm font-semibold text-on-surface mt-1 truncate">AI 提示词合集 · 30 套</div>
+                      <div class="flex items-center gap-1.5 mt-1.5">
+                        <div class="w-4 h-4 bg-primary-container border border-primary/40 flex items-center justify-center text-primary font-mono text-[8px] font-bold">咸</div>
+                        <span class="font-mono text-[10px] text-on-surface-variant">@小初</span>
+                        <span class="px-1.5 py-0.5 bg-primary/20 text-error text-[9px] font-mono">小红书</span>
+                        <div class="flex-1"></div>
+                        <i data-lucide="clock" class="w-2.5 h-2.5 text-on-surface-variant"></i>
+                        <span class="font-mono text-[10px] text-on-surface tabular">12/23 21:00</span>
+                      </div>
+                    </div>
+                    <div class="flex flex-col gap-1 shrink-0">
+                      <button class="action-edit w-7 h-7 flex items-center justify-center text-on-surface-variant hover:text-primary hover:bg-primary/10 border border-outline/20 transition-colors" title="编辑">
+                        <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
+                      </button>
+                      <button class="action-approve w-7 h-7 flex items-center justify-center text-success hover:bg-success/15 border border-outline/20 transition-colors" title="通过">
+                        <i data-lucide="check" class="w-3.5 h-3.5"></i>
+                      </button>
+                      <button class="action-reject w-7 h-7 flex items-center justify-center text-error hover:bg-error/15 border border-outline/20 transition-colors" title="退回">
+                        <i data-lucide="x" class="w-3.5 h-3.5"></i>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 列表-待审2-算法拆解 -->
+                <div class="queue-item px-3 py-3 border-b border-outline/10 hover:bg-surface-container/50 transition-colors">
+                  <div class="flex items-start gap-3">
+                    <div class="w-11 h-11 bg-warning/15 border border-warning/30 flex items-center justify-center shrink-0">
+                      <i data-lucide="bar-chart-2" class="w-4 h-4 text-warning"></i>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                      <div class="flex items-center gap-1.5">
+                        <span class="text-[9px] font-mono text-warning border border-warning/40 px-1 py-0.5">待审</span>
+                        <span class="text-[10px] font-mono text-on-surface-variant">#2</span>
+                      </div>
+                      <div class="text-sm font-semibold text-on-surface mt-1 truncate">算法拆解 v2 · 推荐流权重</div>
+                      <div class="flex items-center gap-1.5 mt-1.5">
+                        <div class="w-4 h-4 bg-primary-container border border-primary/40 flex items-center justify-center text-primary font-mono text-[8px] font-bold">咸</div>
+                        <span class="font-mono text-[10px] text-on-surface-variant">@小初</span>
+                        <span class="px-1.5 py-0.5 bg-primary/20 text-error text-[9px] font-mono">小红书</span>
+                        <div class="flex-1"></div>
+                        <i data-lucide="clock" class="w-2.5 h-2.5 text-on-surface-variant"></i>
+                        <span class="font-mono text-[10px] text-on-surface tabular">12/24 21:30</span>
+                      </div>
+                    </div>
+                    <div class="flex flex-col gap-1 shrink-0">
+                      <button class="action-edit w-7 h-7 flex items-center justify-center text-on-surface-variant hover:text-primary hover:bg-primary/10 border border-outline/20 transition-colors" title="编辑">
+                        <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
+                      </button>
+                      <button class="action-approve w-7 h-7 flex items-center justify-center text-success hover:bg-success/15 border border-outline/20 transition-colors" title="通过">
+                        <i data-lucide="check" class="w-3.5 h-3.5"></i>
+                      </button>
+                      <button class="action-reject w-7 h-7 flex items-center justify-center text-error hover:bg-error/15 border border-outline/20 transition-colors" title="退回">
+                        <i data-lucide="x" class="w-3.5 h-3.5"></i>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 列表-待审3-跨年活动 -->
+                <div class="queue-item px-3 py-3 border-b border-outline/10 hover:bg-surface-container/50 transition-colors">
+                  <div class="flex items-start gap-3">
+                    <div class="w-11 h-11 bg-success/15 border border-success/30 flex items-center justify-center shrink-0">
+                      <i data-lucide="party-popper" class="w-4 h-4 text-success"></i>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                      <div class="flex items-center gap-1.5">
+                        <span class="text-[9px] font-mono text-warning border border-warning/40 px-1 py-0.5">待审</span>
+                        <span class="text-[10px] font-mono text-on-surface-variant">#3</span>
+                      </div>
+                      <div class="text-sm font-semibold text-on-surface mt-1 truncate">跨年活动指南 · 12 城</div>
+                      <div class="flex items-center gap-1.5 mt-1.5">
+                        <div class="w-4 h-4 bg-primary-container border border-primary/40 flex items-center justify-center text-primary font-mono text-[8px] font-bold">咸</div>
+                        <span class="font-mono text-[10px] text-on-surface-variant">@小初</span>
+                        <span class="px-1.5 py-0.5 bg-primary/20 text-error text-[9px] font-mono">小红书</span>
+                        <div class="flex-1"></div>
+                        <i data-lucide="clock" class="w-2.5 h-2.5 text-on-surface-variant"></i>
+                        <span class="font-mono text-[10px] text-on-surface tabular">12/27 21:00</span>
+                      </div>
+                    </div>
+                    <div class="flex flex-col gap-1 shrink-0">
+                      <button class="action-edit w-7 h-7 flex items-center justify-center text-on-surface-variant hover:text-primary hover:bg-primary/10 border border-outline/20 transition-colors" title="编辑">
+                        <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
+                      </button>
+                      <button class="action-approve w-7 h-7 flex items-center justify-center text-success hover:bg-success/15 border border-outline/20 transition-colors" title="通过">
+                        <i data-lucide="check" class="w-3.5 h-3.5"></i>
+                      </button>
+                      <button class="action-reject w-7 h-7 flex items-center justify-center text-error hover:bg-error/15 border border-outline/20 transition-colors" title="退回">
+                        <i data-lucide="x" class="w-3.5 h-3.5"></i>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 列表-待审4 底部小计 -->
+                <div class="px-3 py-2 bg-surface-container/30 flex items-center justify-between">
+                  <span class="font-mono text-[10px] text-on-surface-variant">// 3 PENDING · AVG_WAIT 4h</span>
+                  <button class="font-mono text-[10px] text-primary hover:underline">一键通过 →</button>
+                </div>
+              </div>
+
+              <!-- ====== List: 今日待发 (5 items) ====== -->
+              <div id="list-today" class="flex-1 overflow-y-auto hidden">
+                <!-- 列表-今日1-早安工具日报-已发 -->
+                <div class="queue-item px-3 py-3 border-b border-outline/10 hover:bg-surface-container/50 transition-colors">
+                  <div class="flex items-start gap-3">
+                    <div class="w-11 h-11 bg-success/15 border border-success/30 flex items-center justify-center shrink-0">
+                      <i data-lucide="sunrise" class="w-4 h-4 text-success"></i>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                      <div class="flex items-center gap-1.5">
+                        <span class="text-[9px] font-mono text-success border border-success/40 px-1 py-0.5">已发</span>
+                        <span class="text-[10px] font-mono text-on-surface-variant">06:30</span>
+                      </div>
+                      <div class="text-sm font-semibold text-on-surface mt-1 truncate">早安·工具日报 #52</div>
+                      <div class="flex items-center gap-1.5 mt-1.5">
+                        <span class="px-1.5 py-0.5 bg-primary/20 text-error text-[9px] font-mono">小红书</span>
+                        <div class="flex-1"></div>
+                        <span class="font-mono text-[10px] text-success tabular">12.8k曝光</span>
+                      </div>
+                    </div>
+                    <div class="flex flex-col gap-1 shrink-0">
+                      <button class="action-view w-7 h-7 flex items-center justify-center text-on-surface-variant hover:text-primary hover:bg-primary/10 border border-outline/20 transition-colors" title="查看">
+                        <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
+                      </button>
+                      <button class="action-stats w-7 h-7 flex items-center justify-center text-on-surface-variant hover:text-primary hover:bg-primary/10 border border-outline/20 transition-colors" title="数据">
+                        <i data-lucide="bar-chart-2" class="w-3.5 h-3.5"></i>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 列表-今日2-三件好事-已排 -->
+                <div class="queue-item px-3 py-3 border-b border-outline/10 hover:bg-surface-container/50 transition-colors">
+                  <div class="flex items-start gap-3">
+                    <div class="w-11 h-11 bg-primary/20 border border-primary/30 flex items-center justify-center shrink-0">
+                      <i data-lucide="heart" class="w-4 h-4 text-error"></i>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                      <div class="flex items-center gap-1.5">
+                        <span class="text-[9px] font-mono text-error border border-error/40 px-1 py-0.5">已排</span>
+                        <span class="text-[10px] font-mono text-on-surface-variant">12:00 · 倒计时 5h</span>
+                      </div>
+                      <div class="text-sm font-semibold text-on-surface mt-1 truncate">三件好事 Day 7</div>
+                      <div class="flex items-center gap-1.5 mt-1.5">
+                        <span class="px-1.5 py-0.5 bg-primary/20 text-error text-[9px] font-mono">小红书</span>
+                        <div class="flex-1"></div>
+                        <span class="font-mono text-[10px] text-on-surface-variant tabular">预估 18k曝光</span>
+                      </div>
+                    </div>
+                    <div class="flex flex-col gap-1 shrink-0">
+                      <button class="action-edit w-7 h-7 flex items-center justify-center text-on-surface-variant hover:text-primary hover:bg-primary/10 border border-outline/20 transition-colors" title="编辑">
+                        <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
+                      </button>
+                      <button class="action-cancel w-7 h-7 flex items-center justify-center text-on-surface-variant hover:text-error hover:bg-error/10 border border-outline/20 transition-colors" title="取消">
+                        <i data-lucide="x" class="w-3.5 h-3.5"></i>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 列表-今日3-AI头像-草稿 -->
+                <div class="queue-item px-3 py-3 border-b border-outline/10 hover:bg-surface-container/50 transition-colors">
+                  <div class="flex items-start gap-3">
+                    <div class="w-11 h-11 bg-surface-container-high border border-outline/30 flex items-center justify-center shrink-0">
+                      <i data-lucide="file-text" class="w-4 h-4 text-on-surface-variant"></i>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                      <div class="flex items-center gap-1.5">
+                        <span class="text-[9px] font-mono text-on-surface-variant border border-outline/30 px-1 py-0.5">草稿</span>
+                        <span class="text-[10px] font-mono text-on-surface-variant">18:00 · 未排期</span>
+                      </div>
+                      <div class="text-sm font-semibold text-on-surface mt-1 truncate">AI 头像教程</div>
+                      <div class="flex items-center gap-1.5 mt-1.5">
+                        <span class="px-1.5 py-0.5 bg-primary/20 text-error text-[9px] font-mono">小红书</span>
+                        <div class="flex-1"></div>
+                        <span class="font-mono text-[10px] text-on-surface-variant tabular">完成度 65%</span>
+                      </div>
+                    </div>
+                    <div class="flex flex-col gap-1 shrink-0">
+                      <button class="action-edit w-7 h-7 flex items-center justify-center text-on-surface-variant hover:text-primary hover:bg-primary/10 border border-outline/20 transition-colors" title="编辑">
+                        <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
+                      </button>
+                      <button class="action-schedule w-7 h-7 flex items-center justify-center text-on-surface-variant hover:text-success hover:bg-success/10 border border-outline/20 transition-colors" title="排期">
+                        <i data-lucide="send" class="w-3.5 h-3.5"></i>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 列表-今日4-小众旅行地-已排 -->
+                <div class="queue-item px-3 py-3 border-b border-outline/10 hover:bg-surface-container/50 transition-colors">
+                  <div class="flex items-start gap-3">
+                    <div class="w-11 h-11 bg-primary/20 border border-primary/30 flex items-center justify-center shrink-0">
+                      <i data-lucide="map-pin" class="w-4 h-4 text-error"></i>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                      <div class="flex items-center gap-1.5">
+                        <span class="text-[9px] font-mono text-error border border-error/40 px-1 py-0.5">已排</span>
+                        <span class="text-[10px] font-mono text-on-surface-variant">21:00 · 倒计时 5h28m</span>
+                      </div>
+                      <div class="text-sm font-semibold text-on-surface mt-1 truncate">小众旅行地 · 5 处</div>
+                      <div class="flex items-center gap-1.5 mt-1.5">
+                        <span class="px-1.5 py-0.5 bg-warning/15 text-warning text-[9px] font-mono">微博</span>
+                        <div class="flex-1"></div>
+                        <span class="font-mono text-[10px] text-on-surface-variant tabular">预估 6.4k曝光</span>
+                      </div>
+                    </div>
+                    <div class="flex flex-col gap-1 shrink-0">
+                      <button class="action-edit w-7 h-7 flex items-center justify-center text-on-surface-variant hover:text-primary hover:bg-primary/10 border border-outline/20 transition-colors" title="编辑">
+                        <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
+                      </button>
+                      <button class="action-cancel w-7 h-7 flex items-center justify-center text-on-surface-variant hover:text-error hover:bg-error/10 border border-outline/20 transition-colors" title="取消">
+                        <i data-lucide="x" class="w-3.5 h-3.5"></i>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 列表-今日5-工位搭子-已排 -->
+                <div class="queue-item px-3 py-3 border-b border-outline/10 hover:bg-surface-container/50 transition-colors">
+                  <div class="flex items-start gap-3">
+                    <div class="w-11 h-11 bg-primary/20 border border-primary/30 flex items-center justify-center shrink-0">
+                      <i data-lucide="coffee" class="w-4 h-4 text-error"></i>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                      <div class="flex items-center gap-1.5">
+                        <span class="text-[9px] font-mono text-error border border-error/40 px-1 py-0.5">已排</span>
+                        <span class="text-[10px] font-mono text-on-surface-variant">17:00 · 倒计时 1h28m</span>
+                      </div>
+                      <div class="text-sm font-semibold text-on-surface mt-1 truncate">工位搭子推荐</div>
+                      <div class="flex items-center gap-1.5 mt-1.5">
+                        <span class="px-1.5 py-0.5 bg-primary/20 text-error text-[9px] font-mono">小红书</span>
+                        <div class="flex-1"></div>
+                        <span class="font-mono text-[10px] text-warning tabular">⚠ 即将发布</span>
+                      </div>
+                    </div>
+                    <div class="flex flex-col gap-1 shrink-0">
+                      <button class="action-edit w-7 h-7 flex items-center justify-center text-on-surface-variant hover:text-primary hover:bg-primary/10 border border-outline/20 transition-colors" title="编辑">
+                        <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
+                      </button>
+                      <button class="action-cancel w-7 h-7 flex items-center justify-center text-on-surface-variant hover:text-error hover:bg-error/10 border border-outline/20 transition-colors" title="取消">
+                        <i data-lucide="x" class="w-3.5 h-3.5"></i>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 列表-今日 底部小计 -->
+                <div class="px-3 py-2 bg-surface-container/30 flex items-center justify-between">
+                  <span class="font-mono text-[10px] text-on-surface-variant">// 5 TODAY · 1 PUBLISHED</span>
+                  <button class="font-mono text-[10px] text-primary hover:underline">查看全部 →</button>
+                </div>
+              </div>
+
+              <!-- ====== List: 本周已发 (5 items) ====== -->
+              <div id="list-week" class="flex-1 overflow-y-auto hidden">
+                <!-- 列表-本周1 -->
+                <div class="queue-item px-3 py-3 border-b border-outline/10 hover:bg-surface-container/50 transition-colors">
+                  <div class="flex items-start gap-3">
+                    <div class="w-11 h-11 bg-success/15 border border-success/30 flex items-center justify-center shrink-0 relative">
+                      <i data-lucide="trending-up" class="w-4 h-4 text-success"></i>
+                      <span class="absolute -top-1 -right-1 bg-primary text-on-primary font-mono text-[8px] px-1 font-bold">HOT</span>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                      <div class="flex items-center gap-1.5">
+                        <span class="text-[10px] font-mono text-on-surface-variant">12/22</span>
+                        <span class="text-[10px] font-mono text-on-surface-variant tabular">21:00</span>
+                      </div>
+                      <div class="text-sm font-semibold text-on-surface mt-1 truncate">年终书单 · 10 本</div>
+                      <div class="flex items-center gap-1.5 mt-1.5">
+                        <span class="px-1.5 py-0.5 bg-primary/20 text-error text-[9px] font-mono">小红书</span>
+                        <div class="flex-1"></div>
+                        <span class="font-mono text-[10px] text-success tabular font-bold">45.2k</span>
+                      </div>
+                    </div>
+                    <div class="flex flex-col gap-1 shrink-0">
+                      <button class="action-stats w-7 h-7 flex items-center justify-center text-on-surface-variant hover:text-primary hover:bg-primary/10 border border-outline/20 transition-colors" title="数据复盘">
+                        <i data-lucide="bar-chart-2" class="w-3.5 h-3.5"></i>
+                      </button>
+                      <button class="action-reuse w-7 h-7 flex items-center justify-center text-on-surface-variant hover:text-primary hover:bg-primary/10 border border-outline/20 transition-colors" title="复用">
+                        <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 列表-本周2 -->
+                <div class="queue-item px-3 py-3 border-b border-outline/10 hover:bg-surface-container/50 transition-colors">
+                  <div class="flex items-start gap-3">
+                    <div class="w-11 h-11 bg-success/15 border border-success/30 flex items-center justify-center shrink-0">
+                      <i data-lucide="image" class="w-4 h-4 text-success"></i>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                      <div class="flex items-center gap-1.5">
+                        <span class="text-[10px] font-mono text-on-surface-variant">12/22</span>
+                        <span class="text-[10px] font-mono text-on-surface-variant tabular">12:00</span>
+                      </div>
+                      <div class="text-sm font-semibold text-on-surface mt-1 truncate">冬日胶片调色教程</div>
+                      <div class="flex items-center gap-1.5 mt-1.5">
+                        <span class="px-1.5 py-0.5 bg-primary/20 text-error text-[9px] font-mono">小红书</span>
+                        <div class="flex-1"></div>
+                        <span class="font-mono text-[10px] text-success tabular font-bold">22.8k</span>
+                      </div>
+                    </div>
+                    <div class="flex flex-col gap-1 shrink-0">
+                      <button class="action-stats w-7 h-7 flex items-center justify-center text-on-surface-variant hover:text-primary hover:bg-primary/10 border border-outline/20 transition-colors" title="数据复盘">
+                        <i data-lucide="bar-chart-2" class="w-3.5 h-3.5"></i>
+                      </button>
+                      <button class="action-reuse w-7 h-7 flex items-center justify-center text-on-surface-variant hover:text-primary hover:bg-primary/10 border border-outline/20 transition-colors" title="复用">
+                        <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 列表-本周3 -->
+                <div class="queue-item px-3 py-3 border-b border-outline/10 hover:bg-surface-container/50 transition-colors">
+                  <div class="flex items-start gap-3">
+                    <div class="w-11 h-11 bg-success/15 border border-success/30 flex items-center justify-center shrink-0">
+                      <i data-lucide="utensils" class="w-4 h-4 text-success"></i>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                      <div class="flex items-center gap-1.5">
+                        <span class="text-[10px] font-mono text-on-surface-variant">12/21</span>
+                        <span class="text-[10px] font-mono text-on-surface-variant tabular">18:00</span>
+                      </div>
+                      <div class="text-sm font-semibold text-on-surface mt-1 truncate">5 元早餐挑战 Day 3</div>
+                      <div class="flex items-center gap-1.5 mt-1.5">
+                        <span class="px-1.5 py-0.5 bg-primary/20 text-error text-[9px] font-mono">小红书</span>
+                        <div class="flex-1"></div>
+                        <span class="font-mono text-[10px] text-success tabular font-bold">31.5k</span>
+                      </div>
+                    </div>
+                    <div class="flex flex-col gap-1 shrink-0">
+                      <button class="action-stats w-7 h-7 flex items-center justify-center text-on-surface-variant hover:text-primary hover:bg-primary/10 border border-outline/20 transition-colors" title="数据复盘">
+                        <i data-lucide="bar-chart-2" class="w-3.5 h-3.5"></i>
+                      </button>
+                      <button class="action-reuse w-7 h-7 flex items-center justify-center text-on-surface-variant hover:text-primary hover:bg-primary/10 border border-outline/20 transition-colors" title="复用">
+                        <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 列表-本周4 -->
+                <div class="queue-item px-3 py-3 border-b border-outline/10 hover:bg-surface-container/50 transition-colors">
+                  <div class="flex items-start gap-3">
+                    <div class="w-11 h-11 bg-success/15 border border-success/30 flex items-center justify-center shrink-0">
+                      <i data-lucide="briefcase" class="w-4 h-4 text-success"></i>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                      <div class="flex items-center gap-1.5">
+                        <span class="text-[10px] font-mono text-on-surface-variant">12/20</span>
+                        <span class="text-[10px] font-mono text-on-surface-variant tabular">21:00</span>
+                      </div>
+                      <div class="text-sm font-semibold text-on-surface mt-1 truncate">副业踩坑实录</div>
+                      <div class="flex items-center gap-1.5 mt-1.5">
+                        <span class="px-1.5 py-0.5 bg-primary/20 text-error text-[9px] font-mono">小红书</span>
+                        <div class="flex-1"></div>
+                        <span class="font-mono text-[10px] text-success tabular font-bold">38.6k</span>
+                      </div>
+                    </div>
+                    <div class="flex flex-col gap-1 shrink-0">
+                      <button class="action-stats w-7 h-7 flex items-center justify-center text-on-surface-variant hover:text-primary hover:bg-primary/10 border border-outline/20 transition-colors" title="数据复盘">
+                        <i data-lucide="bar-chart-2" class="w-3.5 h-3.5"></i>
+                      </button>
+                      <button class="action-reuse w-7 h-7 flex items-center justify-center text-on-surface-variant hover:text-primary hover:bg-primary/10 border border-outline/20 transition-colors" title="复用">
+                        <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 列表-本周5 -->
+                <div class="queue-item px-3 py-3 border-b border-outline/10 hover:bg-surface-container/50 transition-colors">
+                  <div class="flex items-start gap-3">
+                    <div class="w-11 h-11 bg-success/15 border border-success/30 flex items-center justify-center shrink-0">
+                      <i data-lucide="lightbulb" class="w-4 h-4 text-success"></i>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                      <div class="flex items-center gap-1.5">
+                        <span class="text-[10px] font-mono text-on-surface-variant">12/19</span>
+                        <span class="text-[10px] font-mono text-on-surface-variant tabular">12:00</span>
+                      </div>
+                      <div class="text-sm font-semibold text-on-surface mt-1 truncate">Notion 模板分享</div>
+                      <div class="flex items-center gap-1.5 mt-1.5">
+                        <span class="px-1.5 py-0.5 bg-primary/20 text-error text-[9px] font-mono">小红书</span>
+                        <div class="flex-1"></div>
+                        <span class="font-mono text-[10px] text-success tabular font-bold">19.4k</span>
+                      </div>
+                    </div>
+                    <div class="flex flex-col gap-1 shrink-0">
+                      <button class="action-stats w-7 h-7 flex items-center justify-center text-on-surface-variant hover:text-primary hover:bg-primary/10 border border-outline/20 transition-colors" title="数据复盘">
+                        <i data-lucide="bar-chart-2" class="w-3.5 h-3.5"></i>
+                      </button>
+                      <button class="action-reuse w-7 h-7 flex items-center justify-center text-on-surface-variant hover:text-primary hover:bg-primary/10 border border-outline/20 transition-colors" title="复用">
+                        <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 列表-本周 底部小计 -->
+                <div class="px-3 py-2 bg-surface-container/30 flex items-center justify-between">
+                  <span class="font-mono text-[10px] text-on-surface-variant">// 12 PUBLISHED · TOTAL 254.6k</span>
+                  <button class="font-mono text-[10px] text-primary hover:underline">查看全部 →</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ============ BOTTOM: AUTO PUSH RULE PANEL ============ -->
+          <div id="auto-push-panel" class="bg-surface border border-outline/20 shadow-card">
+            <button id="btn-toggle-push" class="w-full px-4 py-3 flex items-center gap-3 hover:bg-surface-container transition-colors text-left">
+              <i data-lucide="webhook" class="w-4 h-4 text-primary"></i>
+              <h2 class="text-sm font-bold font-mono text-on-surface tracking-widest">// AUTO_PUSH_RULE</h2>
+              <span class="px-1.5 py-0.5 bg-primary/20 text-error font-mono text-[10px]">3 RULES</span>
+              <span class="px-1.5 py-0.5 bg-surface-container border border-outline/30 text-on-surface-variant font-mono text-[10px]">4 EVENTS · 24h</span>
+              <span class="px-1.5 py-0.5 bg-success/15 text-success font-mono text-[10px]">100% SUCCESS</span>
+              <div class="flex-1"></div>
+              <span class="font-mono text-[10px] text-on-surface-variant">// SCHED_PUSH · v2.3</span>
+              <i id="icon-push-toggle" data-lucide="chevron-down" class="w-4 h-4 text-on-surface-variant transition-transform"></i>
+            </button>
+            <div id="push-content" class="grid grid-cols-2 gap-0 border-t border-outline/20">
+              <!-- RULES column -->
+              <div class="p-4 border-r border-outline/20">
+                <div class="flex items-center justify-between mb-3">
+                  <h3 class="text-xs font-mono font-bold text-on-surface-variant uppercase tracking-widest">// RULES</h3>
+                  <button class="font-mono text-[10px] text-primary hover:underline">编辑规则</button>
+                </div>
+                <div class="space-y-3">
+                  <!-- Rule 1 -->
+                  <div class="flex items-start gap-3 px-3 py-2.5 bg-surface-container/50 border-l-2 border-l-success">
+                    <div class="w-6 h-6 bg-success/20 border border-success/40 flex items-center justify-center shrink-0 mt-0.5">
+                      <i data-lucide="check" class="w-3.5 h-3.5 text-success"></i>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                      <div class="text-sm font-medium text-on-surface">提前 30 分钟生成提醒</div>
+                      <div class="font-mono text-[10px] text-on-surface-variant mt-0.5">REMIND_BEFORE_MIN = 30 · PUSH_CHANNEL = FEISHU</div>
+                    </div>
+                    <span class="font-mono text-[10px] text-success shrink-0">ACTIVE</span>
+                  </div>
+                  <!-- Rule 2 -->
+                  <div class="flex items-start gap-3 px-3 py-2.5 bg-surface-container/50 border-l-2 border-l-success">
+                    <div class="w-6 h-6 bg-success/20 border border-success/40 flex items-center justify-center shrink-0 mt-0.5">
+                      <i data-lucide="check" class="w-3.5 h-3.5 text-success"></i>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                      <div class="text-sm font-medium text-on-surface">绑定飞书 / Webhook 推送</div>
+                      <div class="font-mono text-[10px] text-on-surface-variant mt-0.5">PUSH_TARGET = FEISHU_BOT + WEBHOOK_URL · SIGN_RSA256</div>
+                    </div>
+                    <span class="font-mono text-[10px] text-success shrink-0">ACTIVE</span>
+                  </div>
+                  <!-- Rule 3 -->
+                  <div class="flex items-start gap-3 px-3 py-2.5 bg-surface-container/50 border-l-2 border-l-success">
+                    <div class="w-6 h-6 bg-success/20 border border-success/40 flex items-center justify-center shrink-0 mt-0.5">
+                      <i data-lucide="check" class="w-3.5 h-3.5 text-success"></i>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                      <div class="text-sm font-medium text-on-surface">失败重试 3 次 · 间隔 60s</div>
+                      <div class="font-mono text-[10px] text-on-surface-variant mt-0.5">RETRY_MAX = 3 · RETRY_INTERVAL = 60s · FALLBACK_QUEUE</div>
+                    </div>
+                    <span class="font-mono text-[10px] text-success shrink-0">ACTIVE</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- EVENT_LOG column -->
+              <div class="p-4">
+                <div class="flex items-center justify-between mb-3">
+                  <h3 class="text-xs font-mono font-bold text-on-surface-variant uppercase tracking-widest">// EVENT_LOG · 24h</h3>
+                  <div class="flex items-center gap-2">
+                    <span class="flex items-center gap-1 font-mono text-[10px] text-success">
+                      <span class="w-1.5 h-1.5 bg-success"></span>4 成功
+                    </span>
+                    <span class="flex items-center gap-1 font-mono text-[10px] text-error">
+                      <span class="w-1.5 h-1.5 bg-error"></span>0 失败
+                    </span>
+                  </div>
+                </div>
+                <div class="space-y-1">
+                  <!-- Log 1 -->
+                  <div class="flex items-center gap-2 px-2.5 py-2 bg-surface-container/50 hover:bg-surface-container transition-colors font-mono text-[11px]">
+                    <span class="text-on-surface-variant tabular shrink-0">12/24</span>
+                    <span class="text-on-surface tabular font-bold shrink-0">14:00</span>
+                    <span class="text-on-surface-variant shrink-0">→</span>
+                    <span class="text-on-surface shrink-0">@xianliao_ai</span>
+                    <span class="text-on-surface-variant shrink-0">·</span>
+                    <span class="text-on-surface-variant truncate flex-1">年终复盘 5 步法</span>
+                    <span class="flex items-center gap-1 text-success shrink-0">
+                      <span class="w-1.5 h-1.5 bg-success"></span>成功
+                    </span>
+                    <span class="text-primary font-bold tabular shrink-0">28.5k</span>
+                  </div>
+                  <!-- Log 2 -->
+                  <div class="flex items-center gap-2 px-2.5 py-2 bg-surface-container/50 hover:bg-surface-container transition-colors font-mono text-[11px]">
+                    <span class="text-on-surface-variant tabular shrink-0">12/24</span>
+                    <span class="text-on-surface tabular font-bold shrink-0">12:00</span>
+                    <span class="text-on-surface-variant shrink-0">→</span>
+                    <span class="text-on-surface shrink-0">@xianliao_ai</span>
+                    <span class="text-on-surface-variant shrink-0">·</span>
+                    <span class="text-on-surface-variant truncate flex-1">早安·工具日报</span>
+                    <span class="flex items-center gap-1 text-success shrink-0">
+                      <span class="w-1.5 h-1.5 bg-success"></span>成功
+                    </span>
+                    <span class="text-primary font-bold tabular shrink-0">18.2k</span>
+                  </div>
+                  <!-- Log 3 -->
+                  <div class="flex items-center gap-2 px-2.5 py-2 bg-surface-container/50 hover:bg-surface-container transition-colors font-mono text-[11px]">
+                    <span class="text-on-surface-variant tabular shrink-0">12/24</span>
+                    <span class="text-on-surface tabular font-bold shrink-0">09:30</span>
+                    <span class="text-on-surface-variant shrink-0">→</span>
+                    <span class="text-on-surface shrink-0">@xianliao_biz</span>
+                    <span class="text-on-surface-variant shrink-0">·</span>
+                    <span class="text-on-surface-variant truncate flex-1">商务周报</span>
+                    <span class="flex items-center gap-1 text-success shrink-0">
+                      <span class="w-1.5 h-1.5 bg-success"></span>成功
+                    </span>
+                    <span class="text-primary font-bold tabular shrink-0">6.4k</span>
+                  </div>
+                  <!-- Log 4 -->
+                  <div class="flex items-center gap-2 px-2.5 py-2 bg-surface-container/50 hover:bg-surface-container transition-colors font-mono text-[11px]">
+                    <span class="text-on-surface-variant tabular shrink-0">12/23</span>
+                    <span class="text-on-surface tabular font-bold shrink-0">21:00</span>
+                    <span class="text-on-surface-variant shrink-0">→</span>
+                    <span class="text-on-surface shrink-0">@xianliao_ai</span>
+                    <span class="text-on-surface-variant shrink-0">·</span>
+                    <span class="text-on-surface-variant truncate flex-1">AI 提示词合集</span>
+                    <span class="flex items-center gap-1 text-success shrink-0">
+                      <span class="w-1.5 h-1.5 bg-success"></span>成功
+                    </span>
+                    <span class="text-primary font-bold tabular shrink-0">32.1k</span>
+                  </div>
+                </div>
+                <div class="mt-2 flex items-center justify-between font-mono text-[10px]">
+                  <span class="text-on-surface-variant">// 4/4 SUCCESS · 85.2k TOTAL_EXPOSURE</span>
+                  <button class="text-primary hover:underline">查看完整日志 →</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+        <!-- @main-content:end -->
+      </main>
+    </div>
+  </div>
+  <!-- @nav:end 导航组件，不需要的页面则不要复制此段 -->
+
+  <script>
+    // 子 Agent 调用此函数来高亮当前页面对应的导航项
+    window.__highlightNav = function (key) {
+      const map = {
+        'radar': 'home.html',
+        'factory': 'content-factory.html',
+        'publish': 'publish.html',
+        'analytics': 'analytics.html',
+        'knowledge': 'knowledge.html',
+        'settings': 'settings.html'
+      };
+      const crumbMap = {
+        'radar': 'RADAR / TOPIC_ENGINE',
+        'factory': 'FACTORY / CONTENT_GEN',
+        'publish': 'PUBLISH / SCHEDULER',
+        'analytics': 'ANALYTICS / REVIEW',
+        'knowledge': 'KNOWLEDGE / KB',
+        'settings': 'SETTINGS / SYSTEM'
+      };
+      document.querySelectorAll('.nav-item').forEach(el => {
+        el.classList.remove('nav-active');
+        if (el.getAttribute('href') === map[key]) el.classList.add('nav-active');
+      });
+      const crumb = document.getElementById('page-crumb');
+      if (crumb) crumb.textContent = crumbMap[key] || '';
+      lucide.createIcons();
+    };
+    lucide.createIcons();
+  </script>
+
+  <script>
+    $(function () {
+      // === 1. 高亮当前导航 ===
+      window.__highlightNav('publish');
+
+      // === 2. 视图切换（周/月/列表） ===
+      // 简单交互：切换 active 状态。后续可实现：
+      // 1. "月视图" 切换为 7×6 网格（42 个日期单元格），点击日期跳转周视图
+      // 2. "列表视图" 切换为扁平表格视图，展示所有排期条目按时间倒序
+      // 3. 切换时通过 fetch 获取对应数据并重新渲染（需调用后端 API）
+      $('#view-month, #view-week, #view-list').on('click', function () {
+        $('#view-month, #view-week, #view-list').removeClass('bg-primary text-on-primary font-bold').addClass('text-on-surface-variant font-medium hover:text-on-surface hover:bg-surface-container');
+        $(this).removeClass('text-on-surface-variant font-medium hover:text-on-surface hover:bg-surface-container').addClass('bg-primary text-on-primary font-bold');
+        console.log('切换视图:', $(this).text().trim());
+      });
+
+      // === 3. 多账号切换器 ===
+      // 后续可实现：调用后端 API 切换当前运营账号，重新加载所有排期数据
+      $('#btn-account').on('click', function (e) {
+        e.stopPropagation();
+        $('#account-dropdown').toggleClass('hidden');
+        // 切换 chevron 方向
+        const $icon = $(this).find('[data-lucide="chevron-down"]');
+        $icon.toggleClass('rotate-180');
+      });
+      // 点击账号行 → 切换当前账号
+      // 后续可实现：1. 调用后端切换账号会话；2. 重新拉取该账号的所有排期数据；3. 更新顶部账号信息显示
+      $('#account-dropdown').on('click', '.account-row', function () {
+        const account = $(this).data('account');
+        console.log('切换账号:', account);
+        // 关闭下拉
+        $('#account-dropdown').addClass('hidden');
+        $('#btn-account').find('[data-lucide="chevron-down"]').removeClass('rotate-180');
+      });
+      // 点击其他位置关闭下拉
+      $(document).on('click', function (e) {
+        if (!$(e.target).closest('#account-switcher').length) {
+          $('#account-dropdown').addClass('hidden');
+          $('#btn-account').find('[data-lucide="chevron-down"]').removeClass('rotate-180');
+        }
+      });
+
+      // === 4. 新建排期按钮 ===
+      // 后续可实现：1. 弹出"新建排期"对话框（包含选题、平台、账号、定时时间配置）；2. 表单校验后提交到后端；3. 成功后刷新日历视图
+      $('#btn-new-schedule').on('click', function () {
+        console.log('打开新建排期对话框');
+      });
+
+      // === 5. 周导航箭头 ===
+      // 后续可实现：1. 重新计算当前显示的周日期范围；2. 重新拉取该周的排期数据；3. 更新日历表头日期
+      $('#btn-prev-week, #btn-next-week').on('click', function () {
+        const isPrev = $(this).attr('id') === 'btn-prev-week';
+        console.log(isPrev ? '切换到上一周' : '切换到下一周');
+      });
+
+      // === 6. 排期块点击 ===
+      // 后续可实现：1. 弹出该排期的详情卡片（标题、内容、平台、状态、定时时间）；2. 提供编辑/复制/取消/立即发布等操作；3. 支持从详情跳转到内容编辑页
+      $('#week-calendar').on('click', '.schedule-block', function () {
+        const title = $(this).find('.text-\\[11px\\]').first().text();
+        console.log('查看排期详情:', title);
+      });
+
+      // === 7. 日期头部点击 → 显示当日内容队列 popover ===
+      $('.day-header').on('click', function () {
+        const day = $(this).data('day');
+        // 隐藏所有 popover
+        $('.day-popover').addClass('hidden');
+        // 显示对应 popover
+        $('#popover-' + day).removeClass('hidden');
+      });
+      // 点击 popover 外部关闭
+      $(document).on('click', function (e) {
+        if (!$(e.target).closest('.day-header').length && !$(e.target).closest('.day-popover').length) {
+          $('.day-popover').addClass('hidden');
+        }
+      });
+
+      // === 8. 队列 Tab 切换 ===
+      // 简单交互：切换 list 显示状态
+      $('#tab-pending, #tab-today, #tab-week').on('click', function () {
+        const tab = $(this).attr('id');
+        // 切换 tab 样式
+        $('#tab-pending, #tab-today, #tab-week').removeClass('bg-surface text-error border-b-2 border-b-error font-bold').addClass('text-on-surface-variant font-medium hover:text-on-surface hover:bg-surface-container');
+        $(this).removeClass('text-on-surface-variant font-medium hover:text-on-surface hover:bg-surface-container').addClass('bg-surface text-error border-b-2 border-b-error font-bold');
+        $(this).attr('aria-current', 'page').siblings().removeAttr('aria-current');
+        // 切换 list 显示
+        $('#list-pending, #list-today, #list-week').addClass('hidden');
+        if (tab === 'tab-pending') $('#list-pending').removeClass('hidden');
+        if (tab === 'tab-today') $('#list-today').removeClass('hidden');
+        if (tab === 'tab-week') $('#list-week').removeClass('hidden');
+        console.log('切换队列 Tab:', $(this).text().trim());
+      });
+
+      // === 9. 队列项操作按钮 ===
+      // 编辑按钮 - 后续可实现：1. 跳转到内容编辑页（带 content_id 参数）；2. 或弹出内联编辑卡片
+      $('#content-queue').on('click', '.action-edit', function () {
+        const title = $(this).closest('.queue-item').find('.text-sm.font-semibold').text();
+        console.log('编辑内容:', title);
+      });
+      // 审核通过按钮 - 后续可实现：1. 调用后端 API 变更状态为"已排"；2. 自动分配到最近的可发布时段；3. 从待审核列表移除
+      $('#content-queue').on('click', '.action-approve', function () {
+        const title = $(this).closest('.queue-item').find('.text-sm.font-semibold').text();
+        console.log('审核通过:', title);
+        $(this).closest('.queue-item').fadeOut(200);
+      });
+      // 退回按钮 - 后续可实现：1. 弹出退回原因输入框（必填）；2. 状态变为"草稿"；3. 通知作者修改；4. 记录退回历史
+      $('#content-queue').on('click', '.action-reject', function () {
+        const title = $(this).closest('.queue-item').find('.text-sm.font-semibold').text();
+        console.log('退回内容:', title);
+      });
+      // 取消排期按钮
+      $('#content-queue').on('click', '.action-cancel', function () {
+        const title = $(this).closest('.queue-item').find('.text-sm.font-semibold').text();
+        console.log('取消排期:', title);
+      });
+      // 数据复盘按钮 - 后续可实现：跳转到 analytics.html 并带入 content_id 参数查看详细数据
+      $('#content-queue').on('click', '.action-stats', function () {
+        const title = $(this).closest('.queue-item').find('.text-sm.font-semibold').text();
+        window.location.href = 'analytics.html?content=' + encodeURIComponent(title);
+      });
+      // 复用按钮 - 后续可实现：1. 复制该内容到草稿箱；2. 跳转到编辑页进行二次创作
+      $('#content-queue').on('click', '.action-reuse', function () {
+        const title = $(this).closest('.queue-item').find('.text-sm.font-semibold').text();
+        console.log('复用内容:', title);
+      });
+      // 排期按钮 - 草稿 → 已排
+      $('#content-queue').on('click', '.action-schedule', function () {
+        const title = $(this).closest('.queue-item').find('.text-sm.font-semibold').text();
+        console.log('打开排期对话框:', title);
+      });
+
+      // === 10. 自动推送规则面板折叠/展开 ===
+      // 简单交互：切换 content 区域显示
+      $('#btn-toggle-push').on('click', function () {
+        $('#push-content').slideToggle(200);
+        $('#icon-push-toggle').toggleClass('rotate-180');
+      });
+
+      // 重新初始化 lucide 图标
+      lucide.createIcons();
+    });
+  </script>
+</body>
+
+</html>

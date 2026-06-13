@@ -1,0 +1,1132 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <link href="https://lf-code-agent.coze.cn/obj/x-ai-cn/fonts/google/google-all-fonts.css" rel="stylesheet" />
+
+  <script src="https://lf-code-agent.coze.cn/obj/x-ai-cn/cdn/jquery/jquery-3.7.1.min.js"></script>
+  <script src="https://lf-code-agent.coze.cn/obj/x-ai-cn/cdn/lucide/lucide-1.11.0.min.js"></script>
+  <script src="https://lf-code-agent.coze.cn/obj/x-ai-cn/cdn/tailwindcss/tailwindcss-browser-4.2.4.min.js"></script>
+
+  <style type="text/tailwindcss">
+    @theme {
+      /* === 品牌色（机械红） === */
+      --color-primary:              #7f2028;
+      --color-primary-container:    #3a0f13;
+      --color-on-primary:           #fdebec;
+      /* === 背景 / 表面（暗底工业） === */
+      --color-background:                 #050607;
+      --color-surface-container-lowest:   #030405;
+      --color-surface:                    #0a0b0d;
+      --color-surface-container:          #14171a;
+      --color-surface-container-high:     #1c2024;
+      --color-surface-container-highest:  #262a2f;
+      /* === 文字 === */
+      --color-on-surface:           #f0f1f3;
+      --color-on-surface-variant:   #8a8f97;
+      /* === 功能色 === */
+      --color-success:  #4ade80;
+      --color-error:    #ef4444;
+      --color-warning:  #f59e0b;
+      /* === 边框（Ghost Border） === */
+      --color-outline:          rgba(255, 255, 255, 0.10);
+      --color-outline-variant:  rgba(255, 255, 255, 0.06);
+      /* === 圆角（工业硬朗） === */
+      --radius-sm:   0.125rem;
+      --radius-md:   0.25rem;
+      --radius-lg:   0.375rem;
+      --radius-xl:   0.5rem;
+      --radius-2xl:  0.75rem;
+      --radius-full: 9999px;
+      /* === 阴影（暗底加重） === */
+      --shadow-card:   0 1px 0 rgba(255,255,255,0.08) inset, 0 2px 8px rgba(0,0,0,0.5);
+      --shadow-float:  0 1px 0 rgba(255,255,255,0.10) inset, 0 10px 25px rgba(0,0,0,0.6);
+      --shadow-dialog: 0 1px 0 rgba(255,255,255,0.10) inset, 0 25px 50px rgba(0,0,0,0.7);
+      /* === 字体（工业机械+无衬线） === */
+      --font-sans: "Space Grotesk", "Inter", "Noto Sans SC", system-ui, sans-serif;
+      --font-mono: "JetBrains Mono", "Space Mono", ui-monospace, monospace;
+    }
+  </style>
+
+  <style>
+    /* 工业风纹理 */
+    body {
+      background-image:
+        linear-gradient(rgba(127, 32, 40, 0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(127, 32, 40, 0.04) 1px, transparent 1px),
+        radial-gradient(circle at 20% 0%, rgba(127, 32, 40, 0.10), transparent 40%);
+      background-size: 32px 32px, 32px 32px, 100% 100%;
+      background-attachment: fixed;
+    }
+    .tabular { font-variant-numeric: tabular-nums; }
+    .tick-bar { background-image: linear-gradient(90deg, currentColor 50%, transparent 50%); background-size: 6px 1px; background-repeat: repeat-x; }
+    .nav-active { background: linear-gradient(90deg, rgba(127,32,40,0.18), rgba(127,32,40,0.04)); border-left: 2px solid #7f2028; color: #fdebec; }
+    .nav-active i { color: #ef4444; }
+    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    ::-webkit-scrollbar-track { background: #0a0b0d; }
+    ::-webkit-scrollbar-thumb { background: #262a2f; border-radius: 0; }
+    ::-webkit-scrollbar-thumb:hover { background: #7f2028; }
+  </style>
+
+  <script>
+    document.addEventListener('error', function (e) {
+      const img = e.target;
+      if (img.tagName !== 'IMG' || img.dataset.fallback) return;
+      img.dataset.fallback = '1';
+      const esc = s => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+      const cat = img.getAttribute('data-category') || '其他';
+      const alt = img.getAttribute('alt') || '';
+      const label = esc(alt.length > 8 ? alt.slice(0, 8) + '…' : alt);
+      const icons = { '人物': '👤', '自然风景': '🏞', '动物': '🐾', '建筑城市': '🏙', '运动体育': '⚽', '交通工具': '🚗', '食物': '🍽', '服饰时尚': '👗', '商业科技': '💼', '游戏娱乐': '🎮', '艺术': '🎨', '其他': '🖼' };
+      const icon = icons[cat] || '🖼';
+      const w = img.width || 400, h = img.height || 300;
+      const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}"><rect width="100%" height="100%" fill="%231c2024"/><text x="50%" y="45%" text-anchor="middle" font-size="${Math.min(w, h) * 0.18}" fill="%23ef4444" dominant-baseline="central">${icon}</text><text x="50%" y="68%" text-anchor="middle" font-size="${Math.min(w, h) * 0.07}" fill="%238a8f97" font-family="system-ui,sans-serif" dominant-baseline="central">${label}</text></svg>`;
+      img.src = 'data:image/svg+xml,' + svg;
+    }, true);
+  </script>
+</head>
+
+<body class="bg-background text-on-surface font-sans min-h-screen">
+
+  <!-- @nav:start 导航组件，不需要的页面则不要复制此段（从 @nav:start 到 @nav:end） -->
+  <div class="flex min-h-screen" style="height: 100vh;">
+
+    <!-- Sidebar：左侧 240px，工业机械风 -->
+    <aside class="w-60 shrink-0 bg-surface border-r border-outline/20 flex flex-col">
+      <div class="h-16 px-5 flex items-center gap-2.5 border-b border-outline/20">
+        <div class="relative w-8 h-8 bg-primary flex items-center justify-center">
+          <span class="font-mono font-bold text-on-primary text-sm">X</span>
+          <div class="absolute -top-0.5 -right-0.5 w-1.5 h-1.5 bg-primary"></div>
+          <div class="absolute -bottom-0.5 -left-0.5 w-1 h-1 bg-on-primary"></div>
+        </div>
+        <div class="flex-1 min-w-0">
+          <div class="font-mono font-bold text-sm tracking-widest text-on-surface">XHS<span class="text-primary">_</span>CORE</div>
+          <div class="font-mono text-[10px] tracking-wider text-on-surface-variant">XIANLIAO.AI // V2.0</div>
+        </div>
+      </div>
+
+      <div class="px-5 py-3 border-b border-outline/20">
+        <div class="flex items-center justify-between mb-1.5">
+          <span class="font-mono text-[10px] tracking-widest text-on-surface-variant uppercase">System</span>
+          <span class="flex items-center gap-1 font-mono text-[10px] text-success">
+            <span class="w-1.5 h-1.5 bg-success rounded-full"></span>ONLINE
+          </span>
+        </div>
+        <div class="h-px tick-bar text-outline-variant"></div>
+      </div>
+
+      <nav class="flex-1 overflow-y-auto py-3">
+        <div class="px-5 mb-2 font-mono text-[10px] tracking-widest text-on-surface-variant uppercase">// Modules</div>
+        <a href="home.html" class="nav-item flex items-center gap-3 px-5 py-2.5 text-sm font-medium text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors">
+          <i data-lucide="radar" class="w-4 h-4"></i><span>选题引擎</span>
+          <span class="ml-auto font-mono text-[10px] text-primary">28</span>
+        </a>
+        <a href="content-factory.html" class="nav-item flex items-center gap-3 px-5 py-2.5 text-sm font-medium text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors">
+          <i data-lucide="factory" class="w-4 h-4"></i><span>内容工厂</span>
+        </a>
+        <a href="publish.html" class="nav-item flex items-center gap-3 px-5 py-2.5 text-sm font-medium text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors">
+          <i data-lucide="send" class="w-4 h-4"></i><span>发布管理</span>
+          <span class="ml-auto font-mono text-[10px] text-warning">3</span>
+        </a>
+        <a href="analytics.html" class="nav-item flex items-center gap-3 px-5 py-2.5 text-sm font-medium text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors">
+          <i data-lucide="bar-chart-horizontal" class="w-4 h-4"></i><span>数据复盘</span>
+        </a>
+        <a href="knowledge.html" class="nav-item flex items-center gap-3 px-5 py-2.5 text-sm font-medium text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors">
+          <i data-lucide="database" class="w-4 h-4"></i><span>知识库</span>
+        </a>
+
+        <div class="px-5 mt-4 mb-2 font-mono text-[10px] tracking-widest text-on-surface-variant uppercase">// Config</div>
+        <a href="settings.html" class="nav-item flex items-center gap-3 px-5 py-2.5 text-sm font-medium text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors">
+          <i data-lucide="settings" class="w-4 h-4"></i><span>系统设置</span>
+        </a>
+      </nav>
+
+      <div class="border-t border-outline/20 p-3">
+        <div class="bg-surface-container p-2.5 flex items-center gap-2.5">
+          <div class="w-8 h-8 rounded-full bg-primary-container border border-primary/40 flex items-center justify-center text-primary font-mono text-xs font-bold">咸</div>
+          <div class="flex-1 min-w-0">
+            <div class="text-xs font-medium text-on-surface truncate">咸聊AI·主理人</div>
+            <div class="font-mono text-[10px] text-on-surface-variant">@xianliao_ai</div>
+          </div>
+          <i data-lucide="chevrons-up-down" class="w-3.5 h-3.5 text-on-surface-variant"></i>
+        </div>
+      </div>
+    </aside>
+
+    <div class="flex-1 min-w-0 flex flex-col">
+      <header class="h-16 bg-surface border-b border-outline/20 flex items-center px-6 gap-4 shrink-0">
+        <div class="flex items-center gap-3">
+          <span class="font-mono text-[10px] tracking-widest text-on-surface-variant uppercase">// XHS_CORE</span>
+          <span class="text-on-surface-variant/40">/</span>
+          <span id="page-crumb" class="font-mono text-xs text-on-surface tracking-wide uppercase">RADAR</span>
+        </div>
+        <div class="flex-1 max-w-xl mx-auto">
+          <div class="relative">
+            <i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-on-surface-variant"></i>
+            <input type="text" placeholder="SEARCH_TOPIC / KEYWORD / @ACCOUNT..." class="w-full bg-surface-container border border-outline/30 rounded-md pl-10 pr-3 py-2 text-sm font-mono tracking-wide text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/40" />
+            <span class="absolute right-3 top-1/2 -translate-y-1/2 font-mono text-[10px] text-on-surface-variant border border-outline/30 px-1.5 py-0.5">⌘K</span>
+          </div>
+        </div>
+        <div class="flex items-center gap-2">
+          <button class="relative w-9 h-9 flex items-center justify-center border border-outline/30 text-on-surface-variant hover:text-primary hover:border-primary transition-colors">
+            <i data-lucide="bell" class="w-4 h-4"></i>
+            <span class="absolute top-1.5 right-1.5 w-1.5 h-1.5 bg-primary rounded-full"></span>
+          </button>
+          <button class="w-9 h-9 flex items-center justify-center border border-outline/30 text-on-surface-variant hover:text-primary hover:border-primary transition-colors">
+            <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+          </button>
+          <button class="bg-primary hover:bg-primary/90 text-on-primary font-mono font-bold text-xs tracking-widest px-4 h-9 flex items-center gap-2 transition-colors">
+            <i data-lucide="zap" class="w-3.5 h-3.5"></i>RUN_PIPELINE
+          </button>
+        </div>
+      </header>
+
+      <main class="flex-1 min-w-0 overflow-y-auto bg-background">
+        <!-- @main-content:start -->
+
+        <div class="flex h-full">
+          <!-- 左侧二级导航：设置分组（220px） -->
+          <aside class="w-[220px] shrink-0 bg-surface border-r border-outline/20 flex flex-col overflow-y-auto" id="settings-subnav">
+            <div class="px-5 py-4 border-b border-outline/20">
+              <div class="font-mono text-[10px] tracking-widest text-on-surface-variant uppercase mb-1">// CONFIG_CENTER</div>
+              <h2 class="text-base font-semibold text-on-surface">系统设置</h2>
+              <p class="text-[11px] text-on-surface-variant mt-0.5">9 个分组 · 已保存 2 分钟前</p>
+            </div>
+
+            <nav class="flex-1 p-2 space-y-0.5" id="settings-subnav-list">
+              <!-- 设置分组-账号接入 -->
+              <a href="#account" data-subnav-key="account" class="sub-nav-item flex items-center gap-2.5 px-3 py-2 text-sm font-medium text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors border-l-2 border-transparent">
+                <i data-lucide="key-round" class="w-3.5 h-3.5 shrink-0"></i>
+                <span class="flex-1 truncate">账号接入</span>
+                <span class="font-mono text-[10px] text-success">●</span>
+              </a>
+              <!-- 设置分组-AI 模型（当前选中） -->
+              <a href="#ai-model" data-subnav-key="ai-model" aria-current="page" class="sub-nav-item flex items-center gap-2.5 px-3 py-2 text-sm font-medium border-l-2" style="background: linear-gradient(90deg, rgba(127,32,40,0.18), rgba(127,32,40,0.04)); border-left-color: #7f2028; color: #fdebec;">
+                <i data-lucide="brain-circuit" class="w-3.5 h-3.5 shrink-0" style="color: #ef4444;"></i>
+                <span class="flex-1 truncate">AI 模型</span>
+                <span class="font-mono text-[10px] text-primary">3</span>
+              </a>
+              <!-- 设置分组-抓取规则 -->
+              <a href="#scrape" data-subnav-key="scrape" class="sub-nav-item flex items-center gap-2.5 px-3 py-2 text-sm font-medium text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors border-l-2 border-transparent">
+                <i data-lucide="rss" class="w-3.5 h-3.5 shrink-0"></i>
+                <span class="flex-1 truncate">抓取规则</span>
+              </a>
+              <!-- 设置分组-发布通道 -->
+              <a href="#publish" data-subnav-key="publish" class="sub-nav-item flex items-center gap-2.5 px-3 py-2 text-sm font-medium text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors border-l-2 border-transparent">
+                <i data-lucide="send" class="w-3.5 h-3.5 shrink-0"></i>
+                <span class="flex-1 truncate">发布通道</span>
+                <span class="font-mono text-[10px] text-warning">2</span>
+              </a>
+              <!-- 设置分组-通知推送 -->
+              <a href="#notify" data-subnav-key="notify" class="sub-nav-item flex items-center gap-2.5 px-3 py-2 text-sm font-medium text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors border-l-2 border-transparent">
+                <i data-lucide="bell" class="w-3.5 h-3.5 shrink-0"></i>
+                <span class="flex-1 truncate">通知推送</span>
+                <span class="font-mono text-[10px] text-success">●</span>
+              </a>
+              <!-- 设置分组-数据备份 -->
+              <a href="#backup" data-subnav-key="backup" class="sub-nav-item flex items-center gap-2.5 px-3 py-2 text-sm font-medium text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors border-l-2 border-transparent">
+                <i data-lucide="hard-drive-download" class="w-3.5 h-3.5 shrink-0"></i>
+                <span class="flex-1 truncate">数据备份</span>
+              </a>
+              <!-- 设置分组-团队成员 -->
+              <a href="#team" data-subnav-key="team" class="sub-nav-item flex items-center gap-2.5 px-3 py-2 text-sm font-medium text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors border-l-2 border-transparent">
+                <i data-lucide="users" class="w-3.5 h-3.5 shrink-0"></i>
+                <span class="flex-1 truncate">团队成员</span>
+                <span class="font-mono text-[10px] text-on-surface-variant">4</span>
+              </a>
+              <!-- 设置分组-计费与额度 -->
+              <a href="#billing" data-subnav-key="billing" class="sub-nav-item flex items-center gap-2.5 px-3 py-2 text-sm font-medium text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors border-l-2 border-transparent">
+                <i data-lucide="credit-card" class="w-3.5 h-3.5 shrink-0"></i>
+                <span class="flex-1 truncate">计费与额度</span>
+              </a>
+              <!-- 设置分组-关于系统 -->
+              <a href="#about" data-subnav-key="about" class="sub-nav-item flex items-center gap-2.5 px-3 py-2 text-sm font-medium text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors border-l-2 border-transparent">
+                <i data-lucide="info" class="w-3.5 h-3.5 shrink-0"></i>
+                <span class="flex-1 truncate">关于系统</span>
+              </a>
+            </nav>
+
+            <div class="p-3 border-t border-outline/20">
+              <div class="bg-surface-container p-2.5">
+                <div class="flex items-center justify-between mb-1.5">
+                  <span class="font-mono text-[10px] tracking-widest text-on-surface-variant uppercase">// USAGE</span>
+                  <span class="font-mono text-[10px] text-warning">78%</span>
+                </div>
+                <div class="h-1 bg-surface-container-highest rounded-sm overflow-hidden mb-1.5">
+                  <div class="h-full bg-primary" style="width: 78%;"></div>
+                </div>
+                <div class="text-[10px] text-on-surface-variant">本月调用 78,420 / 100,000 次</div>
+              </div>
+            </div>
+          </aside>
+
+          <!-- 主内容区 -->
+          <div class="flex-1 min-w-0 flex flex-col">
+            <!-- 顶部 Tab 切换各分组 -->
+            <div class="bg-surface border-b border-outline/20 px-6 shrink-0">
+              <div class="flex items-center gap-1 overflow-x-auto" id="settings-tabs" style="scrollbar-width: thin;">
+                <!-- Tab-账号接入 -->
+                <button data-tab-key="account" class="tab-item shrink-0 px-4 py-3 text-sm font-medium text-on-surface-variant hover:text-on-surface border-b-2 border-transparent transition-colors">账号接入</button>
+                <!-- Tab-AI 模型（当前选中） -->
+                <button data-tab-key="ai-model" aria-current="page" class="tab-item shrink-0 px-4 py-3 text-sm font-medium text-on-surface border-b-2 border-primary transition-colors" style="color: #fdebec;">AI 模型</button>
+                <!-- Tab-抓取规则 -->
+                <button data-tab-key="scrape" class="tab-item shrink-0 px-4 py-3 text-sm font-medium text-on-surface-variant hover:text-on-surface border-b-2 border-transparent transition-colors">抓取规则</button>
+                <!-- Tab-发布通道 -->
+                <button data-tab-key="publish" class="tab-item shrink-0 px-4 py-3 text-sm font-medium text-on-surface-variant hover:text-on-surface border-b-2 border-transparent transition-colors">发布通道</button>
+                <!-- Tab-通知推送 -->
+                <button data-tab-key="notify" class="tab-item shrink-0 px-4 py-3 text-sm font-medium text-on-surface-variant hover:text-on-surface border-b-2 border-transparent transition-colors">通知推送</button>
+                <!-- Tab-数据备份 -->
+                <button data-tab-key="backup" class="tab-item shrink-0 px-4 py-3 text-sm font-medium text-on-surface-variant hover:text-on-surface border-b-2 border-transparent transition-colors">数据备份</button>
+                <!-- Tab-团队成员 -->
+                <button data-tab-key="team" class="tab-item shrink-0 px-4 py-3 text-sm font-medium text-on-surface-variant hover:text-on-surface border-b-2 border-transparent transition-colors">团队成员</button>
+                <!-- Tab-计费与额度 -->
+                <button data-tab-key="billing" class="tab-item shrink-0 px-4 py-3 text-sm font-medium text-on-surface-variant hover:text-on-surface border-b-2 border-transparent transition-colors">计费与额度</button>
+                <!-- Tab-关于系统 -->
+                <button data-tab-key="about" class="tab-item shrink-0 px-4 py-3 text-sm font-medium text-on-surface-variant hover:text-on-surface border-b-2 border-transparent transition-colors">关于系统</button>
+              </div>
+            </div>
+
+            <!-- 内容滚动区 -->
+            <div class="flex-1 min-w-0 overflow-y-auto p-6 space-y-6" id="settings-content">
+
+              <!-- ====== 分组 1: AI 模型配置 ====== -->
+              <section id="section-ai-model" data-section="ai-model">
+                <!-- 主模型选择 -->
+                <div class="bg-surface rounded-lg shadow-card p-5">
+                  <div class="flex items-center justify-between mb-4">
+                    <div>
+                      <h3 class="text-base font-semibold text-on-surface">主模型选择</h3>
+                      <p class="text-xs text-on-surface-variant mt-0.5">选择用于内容生成的主模型，当前启用项将以机械红描边标识</p>
+                    </div>
+                    <span class="font-mono text-[10px] text-on-surface-variant tracking-widest uppercase">// PRIMARY_MODEL</span>
+                  </div>
+
+                  <div class="grid grid-cols-3 gap-4" id="model-card-grid">
+                    <!-- 主模型卡片-豆包 Seed-1.6（当前启用） -->
+                    <div class="model-card relative bg-surface-container p-4 border-2 border-primary transition-all cursor-pointer" data-model-id="doubao-seed" id="model-card-doubao">
+                      <div class="absolute -top-2 -right-2 z-10">
+                        <span class="inline-flex items-center gap-1 bg-primary text-on-primary font-mono text-[10px] font-bold tracking-widest px-1.5 py-0.5">
+                          <span class="w-1 h-1 bg-on-primary"></span>ACTIVE
+                        </span>
+                      </div>
+                      <div class="flex items-start justify-between mb-3">
+                        <div>
+                          <div class="font-mono text-[10px] tracking-widest text-primary uppercase mb-0.5">// 01</div>
+                          <h4 class="text-sm font-bold text-on-surface">豆包 Seed-1.6</h4>
+                          <p class="text-[11px] text-on-surface-variant mt-0.5">火山引擎 · Doubao</p>
+                        </div>
+                        <div class="w-9 h-9 bg-primary-container border border-primary/40 flex items-center justify-center">
+                          <i data-lucide="sparkles" class="w-4 h-4 text-primary"></i>
+                        </div>
+                      </div>
+                      <div class="flex flex-wrap gap-1 mb-3">
+                        <span class="font-mono text-[10px] text-on-surface-variant border border-outline/30 px-1.5 py-0.5">文字生成</span>
+                        <span class="font-mono text-[10px] text-on-surface-variant border border-outline/30 px-1.5 py-0.5">中文优化</span>
+                        <span class="font-mono text-[10px] text-on-surface-variant border border-outline/30 px-1.5 py-0.5">多模态</span>
+                      </div>
+                      <div class="grid grid-cols-2 gap-2 pt-3 border-t border-outline/20">
+                        <div>
+                          <div class="font-mono text-[9px] text-on-surface-variant uppercase tracking-wider">本月用量</div>
+                          <div class="text-sm font-semibold text-on-surface tabular mt-0.5">287,420 <span class="text-[10px] text-on-surface-variant">tok</span></div>
+                        </div>
+                        <div>
+                          <div class="font-mono text-[9px] text-on-surface-variant uppercase tracking-wider">平均时延</div>
+                          <div class="text-sm font-semibold text-success tabular mt-0.5">~1.2s</div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- 主模型卡片-DeepSeek V3 -->
+                    <div class="model-card relative bg-surface-container p-4 border border-outline/30 hover:border-outline transition-all cursor-pointer" data-model-id="deepseek-v3" id="model-card-deepseek">
+                      <div class="flex items-start justify-between mb-3">
+                        <div>
+                          <div class="font-mono text-[10px] tracking-widest text-on-surface-variant uppercase mb-0.5">// 02</div>
+                          <h4 class="text-sm font-bold text-on-surface">DeepSeek V3</h4>
+                          <p class="text-[11px] text-on-surface-variant mt-0.5">深度求索 · DeepSeek</p>
+                        </div>
+                        <div class="w-9 h-9 bg-surface-container-high border border-outline/30 flex items-center justify-center">
+                          <i data-lucide="cpu" class="w-4 h-4 text-on-surface-variant"></i>
+                        </div>
+                      </div>
+                      <div class="flex flex-wrap gap-1 mb-3">
+                        <span class="font-mono text-[10px] text-on-surface-variant border border-outline/30 px-1.5 py-0.5">文字生成</span>
+                        <span class="font-mono text-[10px] text-on-surface-variant border border-outline/30 px-1.5 py-0.5">推理</span>
+                        <span class="font-mono text-[10px] text-on-surface-variant border border-outline/30 px-1.5 py-0.5">长文本</span>
+                      </div>
+                      <div class="grid grid-cols-2 gap-2 pt-3 border-t border-outline/20">
+                        <div>
+                          <div class="font-mono text-[9px] text-on-surface-variant uppercase tracking-wider">本月用量</div>
+                          <div class="text-sm font-semibold text-on-surface tabular mt-0.5">156,890 <span class="text-[10px] text-on-surface-variant">tok</span></div>
+                        </div>
+                        <div>
+                          <div class="font-mono text-[9px] text-on-surface-variant uppercase tracking-wider">平均时延</div>
+                          <div class="text-sm font-semibold text-on-surface tabular mt-0.5">~1.8s</div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- 主模型卡片-Kimi K2 -->
+                    <div class="model-card relative bg-surface-container p-4 border border-outline/30 hover:border-outline transition-all cursor-pointer" data-model-id="kimi-k2" id="model-card-kimi">
+                      <div class="flex items-start justify-between mb-3">
+                        <div>
+                          <div class="font-mono text-[10px] tracking-widest text-on-surface-variant uppercase mb-0.5">// 03</div>
+                          <h4 class="text-sm font-bold text-on-surface">Kimi K2</h4>
+                          <p class="text-[11px] text-on-surface-variant mt-0.5">月之暗面 · Moonshot</p>
+                        </div>
+                        <div class="w-9 h-9 bg-surface-container-high border border-outline/30 flex items-center justify-center">
+                          <i data-lucide="book-open" class="w-4 h-4 text-on-surface-variant"></i>
+                        </div>
+                      </div>
+                      <div class="flex flex-wrap gap-1 mb-3">
+                        <span class="font-mono text-[10px] text-on-surface-variant border border-outline/30 px-1.5 py-0.5">长文本</span>
+                        <span class="font-mono text-[10px] text-on-surface-variant border border-outline/30 px-1.5 py-0.5">检索增强</span>
+                        <span class="font-mono text-[10px] text-on-surface-variant border border-outline/30 px-1.5 py-0.5">文件解析</span>
+                      </div>
+                      <div class="grid grid-cols-2 gap-2 pt-3 border-t border-outline/20">
+                        <div>
+                          <div class="font-mono text-[9px] text-on-surface-variant uppercase tracking-wider">本月用量</div>
+                          <div class="text-sm font-semibold text-on-surface tabular mt-0.5">89,210 <span class="text-[10px] text-on-surface-variant">tok</span></div>
+                        </div>
+                        <div>
+                          <div class="font-mono text-[9px] text-on-surface-variant uppercase tracking-wider">平均时延</div>
+                          <div class="text-sm font-semibold text-on-surface tabular mt-0.5">~2.1s</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 子模型配置 -->
+                <div class="bg-surface rounded-lg shadow-card p-5">
+                  <div class="flex items-center justify-between mb-4">
+                    <div>
+                      <h3 class="text-base font-semibold text-on-surface">子模型配置</h3>
+                      <p class="text-xs text-on-surface-variant mt-0.5">为不同环节指定专用模型，覆盖评分 / 生成 / 封面</p>
+                    </div>
+                    <span class="font-mono text-[10px] text-on-surface-variant tracking-widest uppercase">// SUB_MODEL</span>
+                  </div>
+
+                  <div class="grid grid-cols-3 gap-4">
+                    <!-- 子模型-评分模型 -->
+                    <div>
+                      <label class="flex items-center gap-1.5 text-xs font-medium text-on-surface-variant mb-1.5">
+                        <i data-lucide="gauge" class="w-3.5 h-3.5"></i>评分模型
+                        <span class="ml-auto font-mono text-[10px] text-on-surface-variant/60">SCORING</span>
+                      </label>
+                      <div class="relative">
+                        <select id="select-score-model" class="w-full appearance-none bg-surface-container border-none rounded-md pl-3 pr-9 py-2.5 text-sm text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/30 transition-colors cursor-pointer">
+                          <option>GPT-4o (OpenAI)</option>
+                          <option>Claude 3.5 Sonnet</option>
+                          <option>豆包 Seed-1.6</option>
+                          <option>DeepSeek V3</option>
+                        </select>
+                        <i data-lucide="chevron-down" class="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-on-surface-variant pointer-events-none"></i>
+                      </div>
+                      <p class="text-[10px] text-on-surface-variant mt-1.5">用于对生成内容做质量打分</p>
+                    </div>
+                    <!-- 子模型-文案生成模型 -->
+                    <div>
+                      <label class="flex items-center gap-1.5 text-xs font-medium text-on-surface-variant mb-1.5">
+                        <i data-lucide="pen-line" class="w-3.5 h-3.5"></i>文案生成模型
+                        <span class="ml-auto font-mono text-[10px] text-on-surface-variant/60">COPYWRITING</span>
+                      </label>
+                      <div class="relative">
+                        <select id="select-copy-model" class="w-full appearance-none bg-surface-container border-none rounded-md pl-3 pr-9 py-2.5 text-sm text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/30 transition-colors cursor-pointer">
+                          <option>豆包 Seed-1.6（默认）</option>
+                          <option>DeepSeek V3</option>
+                          <option>Kimi K2</option>
+                          <option>GPT-4o (OpenAI)</option>
+                        </select>
+                        <i data-lucide="chevron-down" class="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-on-surface-variant pointer-events-none"></i>
+                      </div>
+                      <p class="text-[10px] text-on-surface-variant mt-1.5">用于生成标题 / 正文 / 标签</p>
+                    </div>
+                    <!-- 子模型-封面生成模型 -->
+                    <div>
+                      <label class="flex items-center gap-1.5 text-xs font-medium text-on-surface-variant mb-1.5">
+                        <i data-lucide="image" class="w-3.5 h-3.5"></i>封面生成模型
+                        <span class="ml-auto font-mono text-[10px] text-on-surface-variant/60">COVER</span>
+                      </label>
+                      <div class="relative">
+                        <select id="select-cover-model" class="w-full appearance-none bg-surface-container border-none rounded-md pl-3 pr-9 py-2.5 text-sm text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/30 transition-colors cursor-pointer">
+                          <option>Midjourney v6</option>
+                          <option>Stable Diffusion XL</option>
+                          <option>豆包 Seed-1.6（多模态）</option>
+                          <option>DALL·E 3</option>
+                        </select>
+                        <i data-lucide="chevron-down" class="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-on-surface-variant pointer-events-none"></i>
+                      </div>
+                      <p class="text-[10px] text-on-surface-variant mt-1.5">用于生成小红书封面图</p>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 提示词模板 -->
+                <div class="bg-surface rounded-lg shadow-card p-5">
+                  <div class="flex items-center justify-between mb-4">
+                    <div>
+                      <h3 class="text-base font-semibold text-on-surface">提示词模板</h3>
+                      <p class="text-xs text-on-surface-variant mt-0.5">内置 4 套风格模板，可展开预览并编辑</p>
+                    </div>
+                    <div class="flex items-center gap-2">
+                      <span class="font-mono text-[10px] text-on-surface-variant tracking-widest uppercase">// PROMPTS · 4</span>
+                      <button id="btn-add-prompt" class="text-xs font-medium text-primary hover:underline flex items-center gap-1">
+                        <i data-lucide="plus" class="w-3.5 h-3.5"></i>新建
+                      </button>
+                    </div>
+                  </div>
+
+                  <div class="space-y-2" id="prompt-template-list">
+                    <!-- 提示词模板-犀利观点型 -->
+                    <div class="prompt-item border border-outline/20 rounded-md bg-surface-container overflow-hidden" data-prompt-id="sharp-view">
+                      <div class="prompt-header flex items-center gap-3 px-3 py-3 cursor-pointer hover:bg-surface-container-high transition-colors">
+                        <i data-lucide="chevron-right" class="prompt-chevron w-4 h-4 text-on-surface-variant transition-transform shrink-0"></i>
+                        <i data-lucide="swords" class="w-4 h-4 text-primary shrink-0"></i>
+                        <span class="text-sm font-medium text-on-surface flex-1">犀利观点型 prompt</span>
+                        <span class="font-mono text-[10px] text-on-surface-variant">1.2k 字符</span>
+                        <span class="font-mono text-[10px] text-on-surface-variant border border-outline/30 px-1.5 py-0.5">v3.2</span>
+                        <span class="inline-flex items-center px-2 py-0.5 rounded-sm text-[10px] font-medium bg-success/15 text-success">已启用</span>
+                      </div>
+                      <div class="prompt-body hidden border-t border-outline/20 bg-background p-3">
+                        <pre class="text-[11px] font-mono text-on-surface-variant whitespace-pre-wrap leading-relaxed">你是一位小红书头部观点博主，目标受众是 25-35 岁城市女性。
+要求：
+1. 开头必须用一个反常识 / 颠覆认知的论点（不超过 18 字）
+2. 用 3 个真实生活场景做论据，每个场景 80-120 字
+3. 结尾抛出开放式问题，引导评论区互动
+4. 全文 380-520 字，避免使用「我觉得」「可能」等模糊表达
+5. 情绪基调：冷静 + 锋利，像一个看透规则的人在平静地陈述事实</pre>
+                      </div>
+                    </div>
+
+                    <!-- 提示词模板-故事叙事型 -->
+                    <div class="prompt-item border border-outline/20 rounded-md bg-surface-container overflow-hidden" data-prompt-id="story-narrative">
+                      <div class="prompt-header flex items-center gap-3 px-3 py-3 cursor-pointer hover:bg-surface-container-high transition-colors">
+                        <i data-lucide="chevron-right" class="prompt-chevron w-4 h-4 text-on-surface-variant transition-transform shrink-0"></i>
+                        <i data-lucide="book-heart" class="w-4 h-4 text-primary shrink-0"></i>
+                        <span class="text-sm font-medium text-on-surface flex-1">故事叙事型 prompt</span>
+                        <span class="font-mono text-[10px] text-on-surface-variant">2.4k 字符</span>
+                        <span class="font-mono text-[10px] text-on-surface-variant border border-outline/30 px-1.5 py-0.5">v2.8</span>
+                        <span class="inline-flex items-center px-2 py-0.5 rounded-sm text-[10px] font-medium bg-success/15 text-success">已启用</span>
+                      </div>
+                      <div class="prompt-body hidden border-t border-outline/20 bg-background p-3">
+                        <pre class="text-[11px] font-mono text-on-surface-variant whitespace-pre-wrap leading-relaxed">你是一位擅长讲故事的资深内容人，擅长用第一人称讲述真实经历。
+要求：
+1. 开头用 1 句场景描写（时间 + 地点 + 人物）≤ 30 字
+2. 中间用「冲突 → 转折 → 顿悟」三段式结构
+3. 每段必须有具体的细节（数字 / 对话 / 动作）
+4. 结尾不总结，而是给读者一个意象或余味
+5. 全文 500-700 字，情绪曲线：从压抑 → 释然</pre>
+                      </div>
+                    </div>
+
+                    <!-- 提示词模板-干货清单型 -->
+                    <div class="prompt-item border border-outline/20 rounded-md bg-surface-container overflow-hidden" data-prompt-id="checklist">
+                      <div class="prompt-header flex items-center gap-3 px-3 py-3 cursor-pointer hover:bg-surface-container-high transition-colors">
+                        <i data-lucide="chevron-right" class="prompt-chevron w-4 h-4 text-on-surface-variant transition-transform shrink-0"></i>
+                        <i data-lucide="list-checks" class="w-4 h-4 text-primary shrink-0"></i>
+                        <span class="text-sm font-medium text-on-surface flex-1">干货清单型 prompt</span>
+                        <span class="font-mono text-[10px] text-on-surface-variant">1.8k 字符</span>
+                        <span class="font-mono text-[10px] text-on-surface-variant border border-outline/30 px-1.5 py-0.5">v4.0</span>
+                        <span class="inline-flex items-center px-2 py-0.5 rounded-sm text-[10px] font-medium bg-success/15 text-success">已启用</span>
+                      </div>
+                      <div class="prompt-body hidden border-t border-outline/20 bg-background p-3">
+                        <pre class="text-[11px] font-mono text-on-surface-variant whitespace-pre-wrap leading-relaxed">你是一位小红书干货类博主，擅长把复杂信息拆成可执行的清单。
+要求：
+1. 标题必须包含具体数字（如「7 个」「3 步」）
+2. 正文用 ① ② ③ ④ 的编号结构，每点 60-90 字
+3. 每个清单项必须可执行（动词开头）
+4. 关键步骤用「⚠️」或「💡」做标记
+5. 全文 400-600 字，结构清晰，便于截图保存</pre>
+                      </div>
+                    </div>
+
+                    <!-- 提示词模板-情感共鸣型 -->
+                    <div class="prompt-item border border-outline/20 rounded-md bg-surface-container overflow-hidden" data-prompt-id="emotional">
+                      <div class="prompt-header flex items-center gap-3 px-3 py-3 cursor-pointer hover:bg-surface-container-high transition-colors">
+                        <i data-lucide="chevron-right" class="prompt-chevron w-4 h-4 text-on-surface-variant transition-transform shrink-0"></i>
+                        <i data-lucide="heart-handshake" class="w-4 h-4 text-primary shrink-0"></i>
+                        <span class="text-sm font-medium text-on-surface flex-1">情感共鸣型 prompt</span>
+                        <span class="font-mono text-[10px] text-on-surface-variant">1.5k 字符</span>
+                        <span class="font-mono text-[10px] text-on-surface-variant border border-outline/30 px-1.5 py-0.5">v1.6</span>
+                        <span class="inline-flex items-center px-2 py-0.5 rounded-sm text-[10px] font-medium bg-success/15 text-success">已启用</span>
+                      </div>
+                      <div class="prompt-body hidden border-t border-outline/20 bg-background p-3">
+                        <pre class="text-[11px] font-mono text-on-surface-variant whitespace-pre-wrap leading-relaxed">你是一位温柔而细腻的情感博主，擅长捕捉生活中的微妙感受。
+要求：
+1. 开头用 1 个具体的小细节（≤ 20 字）切入
+2. 全文使用第二人称「你」,建立对话感
+3. 不说教、不鸡汤，只描述感受
+4. 大量使用短句（≤ 15 字），节奏舒缓
+5. 全文 280-420 字，情绪基调：温暖 / 被理解</pre>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 保存按钮 -->
+                <div class="flex items-center justify-between bg-surface rounded-lg shadow-card p-4">
+                  <div class="flex items-center gap-3">
+                    <i data-lucide="info" class="w-4 h-4 text-on-surface-variant"></i>
+                    <p class="text-xs text-on-surface-variant">配置变更后将在下一个 pipeline 周期生效（约 5 分钟）</p>
+                  </div>
+                  <div class="flex items-center gap-2">
+                    <button id="btn-reset-ai" class="bg-surface-container text-on-surface border border-outline/30 px-4 py-2 text-sm font-medium hover:bg-surface-container-high active:scale-[0.98] transition-all">
+                      放弃修改
+                    </button>
+                    <button id="btn-save-ai" class="bg-primary text-on-primary px-4 py-2 text-sm font-medium hover:bg-primary/90 active:scale-[0.98] transition-all inline-flex items-center gap-2">
+                      <i data-lucide="save" class="w-3.5 h-3.5"></i>保存配置
+                    </button>
+                  </div>
+                </div>
+              </section>
+
+              <!-- ====== 分组 2: 抓取规则 ====== -->
+              <section id="section-scrape" data-section="scrape">
+                <div class="bg-surface rounded-lg shadow-card p-5">
+                  <div class="flex items-center justify-between mb-4">
+                    <div>
+                      <h3 class="text-base font-semibold text-on-surface">抓取规则</h3>
+                      <p class="text-xs text-on-surface-variant mt-0.5">配置内容抓取频率、范围与爆款判定阈值</p>
+                    </div>
+                    <span class="font-mono text-[10px] text-on-surface-variant tracking-widest uppercase">// SCRAPE_RULES</span>
+                  </div>
+
+                  <div class="grid grid-cols-3 gap-4 mb-5">
+                    <!-- 抓取频率 -->
+                    <div>
+                      <label class="flex items-center gap-1.5 text-xs font-medium text-on-surface-variant mb-1.5">
+                        <i data-lucide="clock" class="w-3.5 h-3.5"></i>抓取频率
+                      </label>
+                      <div class="relative">
+                        <select id="select-scrape-freq" class="w-full appearance-none bg-surface-container border-none rounded-md pl-3 pr-9 py-2.5 text-sm text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/30 transition-colors cursor-pointer">
+                          <option>每 6 小时</option>
+                          <option>每 12 小时</option>
+                          <option>每 24 小时</option>
+                          <option>实时（每 30 分钟）</option>
+                        </select>
+                        <i data-lucide="chevron-down" class="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-on-surface-variant pointer-events-none"></i>
+                      </div>
+                      <p class="text-[10px] text-on-surface-variant mt-1.5">控制抓取任务调度间隔</p>
+                    </div>
+                    <!-- 抓取范围 -->
+                    <div>
+                      <label class="flex items-center gap-1.5 text-xs font-medium text-on-surface-variant mb-1.5">
+                        <i data-lucide="trophy" class="w-3.5 h-3.5"></i>抓取范围
+                      </label>
+                      <div class="relative">
+                        <select id="select-scrape-range" class="w-full appearance-none bg-surface-container border-none rounded-md pl-3 pr-9 py-2.5 text-sm text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/30 transition-colors cursor-pointer">
+                          <option>热门前 50</option>
+                          <option>热门前 100</option>
+                          <option>热门前 200</option>
+                          <option>热门前 500</option>
+                        </select>
+                        <i data-lucide="chevron-down" class="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-on-surface-variant pointer-events-none"></i>
+                      </div>
+                      <p class="text-[10px] text-on-surface-variant mt-1.5">按热度排序抓取头部内容</p>
+                    </div>
+                    <!-- 爆款阈值 -->
+                    <div>
+                      <label class="flex items-center gap-1.5 text-xs font-medium text-on-surface-variant mb-1.5">
+                        <i data-lucide="flame" class="w-3.5 h-3.5"></i>爆款阈值
+                      </label>
+                      <div class="relative">
+                        <select id="select-viral-threshold" class="w-full appearance-none bg-surface-container border-none rounded-md pl-3 pr-9 py-2.5 text-sm text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/30 transition-colors cursor-pointer">
+                          <option>点赞 ≥ 1,000</option>
+                          <option>点赞 ≥ 5,000</option>
+                          <option>点赞 ≥ 10,000</option>
+                          <option>点赞 ≥ 50,000</option>
+                        </select>
+                        <i data-lucide="chevron-down" class="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-on-surface-variant pointer-events-none"></i>
+                      </div>
+                      <p class="text-[10px] text-on-surface-variant mt-1.5">达到此标准的内容将进入爆款库</p>
+                    </div>
+                  </div>
+
+                  <!-- 对标账号列表 -->
+                  <div>
+                    <div class="flex items-center justify-between mb-3">
+                      <div class="flex items-center gap-2">
+                        <i data-lucide="users-round" class="w-4 h-4 text-on-surface-variant"></i>
+                        <h4 class="text-sm font-semibold text-on-surface">对标账号列表</h4>
+                        <span class="text-[10px] text-on-surface-variant">· 与知识库联动，共 5 个</span>
+                      </div>
+                      <button id="btn-add-account" class="text-xs font-medium text-primary hover:underline flex items-center gap-1">
+                        <i data-lucide="plus" class="w-3.5 h-3.5"></i>添加账号
+                      </button>
+                    </div>
+
+                    <div class="bg-surface-container rounded-md overflow-hidden">
+                      <div class="grid grid-cols-12 gap-3 px-4 py-2.5 bg-surface-container-high text-[10px] font-mono tracking-widest text-on-surface-variant uppercase">
+                        <span class="col-span-1">#</span>
+                        <span class="col-span-4">账号名</span>
+                        <span class="col-span-3">小红书 ID</span>
+                        <span class="col-span-2">已采集</span>
+                        <span class="col-span-1">状态</span>
+                        <span class="col-span-1 text-right">操作</span>
+                      </div>
+                      <div class="divide-y divide-outline/20">
+                        <!-- 对标账号-野生闺蜜菌 -->
+                        <div class="account-row grid grid-cols-12 gap-3 px-4 py-2.5 items-center hover:bg-surface-container-high/40 transition-colors">
+                          <span class="col-span-1 font-mono text-[10px] text-on-surface-variant">01</span>
+                          <div class="col-span-4 flex items-center gap-2.5">
+                            <div class="w-7 h-7 rounded-full bg-primary-container border border-primary/30 flex items-center justify-center text-primary font-mono text-[10px] font-bold shrink-0">闺</div>
+                            <span class="text-sm text-on-surface font-medium">野生闺蜜菌</span>
+                          </div>
+                          <span class="col-span-3 font-mono text-[11px] text-on-surface-variant">@yesheng_guimi</span>
+                          <span class="col-span-2 text-sm text-on-surface tabular">32 篇</span>
+                          <span class="col-span-1"><span class="inline-flex items-center px-1.5 py-0.5 rounded-sm text-[10px] font-medium bg-success/15 text-success">活跃</span></span>
+                          <div class="col-span-1 flex justify-end gap-1">
+                            <button class="btn-edit-account w-7 h-7 flex items-center justify-center text-on-surface-variant hover:text-primary transition-colors" data-account="@yesheng_guimi"><i data-lucide="pencil" class="w-3.5 h-3.5"></i></button>
+                            <button class="btn-remove-account w-7 h-7 flex items-center justify-center text-on-surface-variant hover:text-error transition-colors" data-account="@yesheng_guimi"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
+                          </div>
+                        </div>
+                        <!-- 对标账号-职场阿May -->
+                        <div class="account-row grid grid-cols-12 gap-3 px-4 py-2.5 items-center hover:bg-surface-container-high/40 transition-colors">
+                          <span class="col-span-1 font-mono text-[10px] text-on-surface-variant">02</span>
+                          <div class="col-span-4 flex items-center gap-2.5">
+                            <div class="w-7 h-7 rounded-full bg-surface-container-high border border-outline/30 flex items-center justify-center text-on-surface-variant font-mono text-[10px] font-bold shrink-0">M</div>
+                            <span class="text-sm text-on-surface font-medium">职场阿May</span>
+                          </div>
+                          <span class="col-span-3 font-mono text-[11px] text-on-surface-variant">@amay_work</span>
+                          <span class="col-span-2 text-sm text-on-surface tabular">28 篇</span>
+                          <span class="col-span-1"><span class="inline-flex items-center px-1.5 py-0.5 rounded-sm text-[10px] font-medium bg-success/15 text-success">活跃</span></span>
+                          <div class="col-span-1 flex justify-end gap-1">
+                            <button class="btn-edit-account w-7 h-7 flex items-center justify-center text-on-surface-variant hover:text-primary transition-colors" data-account="@amay_work"><i data-lucide="pencil" class="w-3.5 h-3.5"></i></button>
+                            <button class="btn-remove-account w-7 h-7 flex items-center justify-center text-on-surface-variant hover:text-error transition-colors" data-account="@amay_work"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
+                          </div>
+                        </div>
+                        <!-- 对标账号-心理学陈sir -->
+                        <div class="account-row grid grid-cols-12 gap-3 px-4 py-2.5 items-center hover:bg-surface-container-high/40 transition-colors">
+                          <span class="col-span-1 font-mono text-[10px] text-on-surface-variant">03</span>
+                          <div class="col-span-4 flex items-center gap-2.5">
+                            <div class="w-7 h-7 rounded-full bg-surface-container-high border border-outline/30 flex items-center justify-center text-on-surface-variant font-mono text-[10px] font-bold shrink-0">陈</div>
+                            <span class="text-sm text-on-surface font-medium">心理学陈sir</span>
+                          </div>
+                          <span class="col-span-3 font-mono text-[11px] text-on-surface-variant">@chen_sir_psy</span>
+                          <span class="col-span-2 text-sm text-on-surface tabular">21 篇</span>
+                          <span class="col-span-1"><span class="inline-flex items-center px-1.5 py-0.5 rounded-sm text-[10px] font-medium bg-success/15 text-success">活跃</span></span>
+                          <div class="col-span-1 flex justify-end gap-1">
+                            <button class="btn-edit-account w-7 h-7 flex items-center justify-center text-on-surface-variant hover:text-primary transition-colors" data-account="@chen_sir_psy"><i data-lucide="pencil" class="w-3.5 h-3.5"></i></button>
+                            <button class="btn-remove-account w-7 h-7 flex items-center justify-center text-on-surface-variant hover:text-error transition-colors" data-account="@chen_sir_psy"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
+                          </div>
+                        </div>
+                        <!-- 对标账号-美食探店Bobo -->
+                        <div class="account-row grid grid-cols-12 gap-3 px-4 py-2.5 items-center hover:bg-surface-container-high/40 transition-colors">
+                          <span class="col-span-1 font-mono text-[10px] text-on-surface-variant">04</span>
+                          <div class="col-span-4 flex items-center gap-2.5">
+                            <div class="w-7 h-7 rounded-full bg-surface-container-high border border-outline/30 flex items-center justify-center text-on-surface-variant font-mono text-[10px] font-bold shrink-0">B</div>
+                            <span class="text-sm text-on-surface font-medium">美食探店Bobo</span>
+                          </div>
+                          <span class="col-span-3 font-mono text-[11px] text-on-surface-variant">@bobo_food</span>
+                          <span class="col-span-2 text-sm text-on-surface tabular">19 篇</span>
+                          <span class="col-span-1"><span class="inline-flex items-center px-1.5 py-0.5 rounded-sm text-[10px] font-medium bg-warning/15 text-warning">暂停</span></span>
+                          <div class="col-span-1 flex justify-end gap-1">
+                            <button class="btn-edit-account w-7 h-7 flex items-center justify-center text-on-surface-variant hover:text-primary transition-colors" data-account="@bobo_food"><i data-lucide="pencil" class="w-3.5 h-3.5"></i></button>
+                            <button class="btn-remove-account w-7 h-7 flex items-center justify-center text-on-surface-variant hover:text-error transition-colors" data-account="@bobo_food"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
+                          </div>
+                        </div>
+                        <!-- 对标账号-美妆圈小绿 -->
+                        <div class="account-row grid grid-cols-12 gap-3 px-4 py-2.5 items-center hover:bg-surface-container-high/40 transition-colors">
+                          <span class="col-span-1 font-mono text-[10px] text-on-surface-variant">05</span>
+                          <div class="col-span-4 flex items-center gap-2.5">
+                            <div class="w-7 h-7 rounded-full bg-surface-container-high border border-outline/30 flex items-center justify-center text-on-surface-variant font-mono text-[10px] font-bold shrink-0">绿</div>
+                            <span class="text-sm text-on-surface font-medium">美妆圈小绿</span>
+                          </div>
+                          <span class="col-span-3 font-mono text-[11px] text-on-surface-variant">@xiaolv_beauty</span>
+                          <span class="col-span-2 text-sm text-on-surface tabular">15 篇</span>
+                          <span class="col-span-1"><span class="inline-flex items-center px-1.5 py-0.5 rounded-sm text-[10px] font-medium bg-success/15 text-success">活跃</span></span>
+                          <div class="col-span-1 flex justify-end gap-1">
+                            <button class="btn-edit-account w-7 h-7 flex items-center justify-center text-on-surface-variant hover:text-primary transition-colors" data-account="@xiaolv_beauty"><i data-lucide="pencil" class="w-3.5 h-3.5"></i></button>
+                            <button class="btn-remove-account w-7 h-7 flex items-center justify-center text-on-surface-variant hover:text-error transition-colors" data-account="@xiaolv_beauty"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </section>
+
+              <!-- ====== 分组 3: 通知推送 ====== -->
+              <section id="section-notify" data-section="notify">
+                <div class="bg-surface rounded-lg shadow-card p-5">
+                  <div class="flex items-center justify-between mb-4">
+                    <div>
+                      <h3 class="text-base font-semibold text-on-surface">通知推送</h3>
+                      <p class="text-xs text-on-surface-variant mt-0.5">配置飞书 / 邮件等推送通道与触发条件</p>
+                    </div>
+                    <span class="font-mono text-[10px] text-on-surface-variant tracking-widest uppercase">// NOTIFY</span>
+                  </div>
+
+                  <!-- 飞书 Webhook -->
+                  <div class="mb-5 pb-5 border-b border-outline/20">
+                    <div class="flex items-center gap-2 mb-2">
+                      <i data-lucide="message-square" class="w-4 h-4 text-primary"></i>
+                      <label for="input-feishu-webhook" class="text-xs font-semibold text-on-surface">飞书 Webhook</label>
+                      <span class="flex items-center gap-1.5 font-mono text-[10px] text-success">
+                        <span class="w-1.5 h-1.5 bg-success rounded-full"></span>已连接
+                      </span>
+                      <span class="ml-auto font-mono text-[10px] text-on-surface-variant/60">FEISHU</span>
+                    </div>
+                    <div class="flex gap-2">
+                      <div class="relative flex-1">
+                        <i data-lucide="link" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-on-surface-variant"></i>
+                        <input id="input-feishu-webhook" type="text" value="https://open.feishu.cn/open-apis/bot/v2/hook/oc_8a3f****2b9e" class="w-full bg-surface-container border-none rounded-md pl-10 pr-3 py-2.5 text-sm font-mono text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:ring-2 focus:ring-primary/30 transition-colors" />
+                      </div>
+                      <button id="btn-test-feishu" class="bg-surface-container border border-outline/30 text-on-surface px-4 py-2 text-sm font-medium hover:bg-surface-container-high active:scale-[0.98] transition-all">
+                        发送测试
+                      </button>
+                    </div>
+                    <p class="text-[10px] text-on-surface-variant mt-2">用于推送选题预警、内容生成完成、违禁词命中提醒</p>
+                  </div>
+
+                  <!-- 邮件推送 -->
+                  <div class="mb-5 pb-5 border-b border-outline/20">
+                    <div class="flex items-center gap-3">
+                      <i data-lucide="mail" class="w-4 h-4 text-primary"></i>
+                      <div class="flex-1">
+                        <div class="text-xs font-semibold text-on-surface">邮件推送</div>
+                        <div class="text-[10px] text-on-surface-variant mt-0.5">当前接收邮箱：<span class="font-mono text-on-surface">ops@xianliao.ai</span></div>
+                      </div>
+                      <span class="font-mono text-[10px] text-on-surface-variant/60">EMAIL</span>
+                      <label class="relative inline-block w-10 h-5 shrink-0 cursor-pointer">
+                        <input id="switch-email" type="checkbox" class="peer sr-only" checked>
+                        <span class="absolute inset-0 bg-surface-container-high rounded-full peer-checked:bg-primary transition-colors"></span>
+                        <span class="absolute top-0.5 left-0.5 w-4 h-4 bg-on-surface rounded-full peer-checked:translate-x-5 transition-transform"></span>
+                      </label>
+                    </div>
+                  </div>
+
+                  <!-- 推送触发 -->
+                  <div>
+                    <div class="flex items-center gap-2 mb-3">
+                      <i data-lucide="zap" class="w-4 h-4 text-primary"></i>
+                      <h4 class="text-sm font-semibold text-on-surface">推送触发条件</h4>
+                      <span class="text-[10px] text-on-surface-variant">· 4 项</span>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-3">
+                      <!-- 触发-内容生成完成 -->
+                      <div class="bg-surface-container p-3 flex items-center gap-3">
+                        <div class="w-8 h-8 bg-surface-container-high border border-outline/30 flex items-center justify-center shrink-0">
+                          <i data-lucide="check-circle-2" class="w-4 h-4 text-on-surface-variant"></i>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                          <div class="text-xs font-medium text-on-surface">内容生成完成</div>
+                          <div class="text-[10px] text-on-surface-variant">单条内容全流程通过质检时</div>
+                        </div>
+                        <label class="relative inline-block w-9 h-5 shrink-0 cursor-pointer">
+                          <input type="checkbox" class="peer sr-only" checked>
+                          <span class="absolute inset-0 bg-surface-container-high rounded-full peer-checked:bg-primary transition-colors"></span>
+                          <span class="absolute top-0.5 left-0.5 w-3.5 h-3.5 bg-on-surface rounded-full peer-checked:translate-x-4 transition-transform"></span>
+                        </label>
+                      </div>
+                      <!-- 触发-违禁词命中 -->
+                      <div class="bg-surface-container p-3 flex items-center gap-3">
+                        <div class="w-8 h-8 bg-surface-container-high border border-outline/30 flex items-center justify-center shrink-0">
+                          <i data-lucide="alert-triangle" class="w-4 h-4 text-on-surface-variant"></i>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                          <div class="text-xs font-medium text-on-surface">违禁词命中</div>
+                          <div class="text-[10px] text-on-surface-variant">检测到敏感 / 违规表述时立即推送</div>
+                        </div>
+                        <label class="relative inline-block w-9 h-5 shrink-0 cursor-pointer">
+                          <input type="checkbox" class="peer sr-only" checked>
+                          <span class="absolute inset-0 bg-surface-container-high rounded-full peer-checked:bg-primary transition-colors"></span>
+                          <span class="absolute top-0.5 left-0.5 w-3.5 h-3.5 bg-on-surface rounded-full peer-checked:translate-x-4 transition-transform"></span>
+                        </label>
+                      </div>
+                      <!-- 触发-排期提醒 -->
+                      <div class="bg-surface-container p-3 flex items-center gap-3">
+                        <div class="w-8 h-8 bg-surface-container-high border border-outline/30 flex items-center justify-center shrink-0">
+                          <i data-lucide="calendar-clock" class="w-4 h-4 text-on-surface-variant"></i>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                          <div class="text-xs font-medium text-on-surface">排期提醒</div>
+                          <div class="text-[10px] text-on-surface-variant">内容发布前 30 分钟提醒</div>
+                        </div>
+                        <label class="relative inline-block w-9 h-5 shrink-0 cursor-pointer">
+                          <input type="checkbox" class="peer sr-only">
+                          <span class="absolute inset-0 bg-surface-container-high rounded-full peer-checked:bg-primary transition-colors"></span>
+                          <span class="absolute top-0.5 left-0.5 w-3.5 h-3.5 bg-on-surface rounded-full peer-checked:translate-x-4 transition-transform"></span>
+                        </label>
+                      </div>
+                      <!-- 触发-数据复盘周报 -->
+                      <div class="bg-surface-container p-3 flex items-center gap-3">
+                        <div class="w-8 h-8 bg-surface-container-high border border-outline/30 flex items-center justify-center shrink-0">
+                          <i data-lucide="bar-chart-3" class="w-4 h-4 text-on-surface-variant"></i>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                          <div class="text-xs font-medium text-on-surface">数据复盘周报</div>
+                          <div class="text-[10px] text-on-surface-variant">每周一 09:00 推送上周数据</div>
+                        </div>
+                        <label class="relative inline-block w-9 h-5 shrink-0 cursor-pointer">
+                          <input type="checkbox" class="peer sr-only" checked>
+                          <span class="absolute inset-0 bg-surface-container-high rounded-full peer-checked:bg-primary transition-colors"></span>
+                          <span class="absolute top-0.5 left-0.5 w-3.5 h-3.5 bg-on-surface rounded-full peer-checked:translate-x-4 transition-transform"></span>
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </section>
+
+              <!-- ====== 危险区 ====== -->
+              <section id="section-danger">
+                <div class="bg-surface border border-error/30 rounded-lg p-5">
+                  <div class="flex items-center gap-2 mb-1">
+                    <i data-lucide="triangle-alert" class="w-4 h-4 text-error"></i>
+                    <h3 class="text-base font-semibold text-error">危险操作区</h3>
+                    <span class="ml-auto font-mono text-[10px] text-on-surface-variant tracking-widest uppercase">// DANGER_ZONE</span>
+                  </div>
+                  <p class="text-xs text-on-surface-variant mb-4">以下操作将影响系统配置或数据，<span class="text-error font-medium">操作不可恢复</span>，请谨慎执行</p>
+
+                  <div class="grid grid-cols-3 gap-3">
+                    <!-- 清空所有缓存 -->
+                    <button id="btn-clear-cache" class="bg-surface-container border border-error/50 text-error p-4 text-left hover:bg-error/10 active:scale-[0.98] transition-all">
+                      <div class="flex items-center gap-2 mb-1.5">
+                        <i data-lucide="trash" class="w-4 h-4"></i>
+                        <span class="text-sm font-semibold">清空所有缓存</span>
+                      </div>
+                      <p class="text-[11px] text-on-surface-variant">清理本地缓存、临时文件、Token 缓存</p>
+                    </button>
+                    <!-- 重置为默认配置 -->
+                    <button id="btn-reset-default" class="bg-surface-container border border-error/50 text-error p-4 text-left hover:bg-error/10 active:scale-[0.98] transition-all">
+                      <div class="flex items-center gap-2 mb-1.5">
+                        <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
+                        <span class="text-sm font-semibold">重置为默认配置</span>
+                      </div>
+                      <p class="text-[11px] text-on-surface-variant">所有自定义配置将丢失，恢复出厂设置</p>
+                    </button>
+                    <!-- 导出全量数据 -->
+                    <button id="btn-export-data" class="bg-surface-container border border-error/50 text-error p-4 text-left hover:bg-error/10 active:scale-[0.98] transition-all">
+                      <div class="flex items-center gap-2 mb-1.5">
+                        <i data-lucide="download" class="w-4 h-4"></i>
+                        <span class="text-sm font-semibold">导出全量数据</span>
+                      </div>
+                      <p class="text-[11px] text-on-surface-variant">导出全部选题 / 内容 / 数据为 JSON 包</p>
+                    </button>
+                  </div>
+                </div>
+              </section>
+
+            </div>
+          </div>
+        </div>
+
+        <!-- @main-content:end -->
+      </main>
+    </div>
+  </div>
+  <!-- @nav:end 导航组件，不需要的页面则不要复制此段 -->
+
+  <script>
+    // 高亮"系统设置"导航项 + 面包屑
+    window.__highlightNav('settings');
+
+    $(function () {
+      // ================== 子导航点击切换 ==================
+      // 点击左侧 sub-nav 时同步切换 Tab 并滚动到对应 section
+      $('#settings-subnav-list').on('click', '.sub-nav-item', function (e) {
+        e.preventDefault();
+        const key = $(this).data('subnav-key');
+
+        // 1. 清除所有 sub-nav 激活态
+        $('#settings-subnav-list .sub-nav-item').each(function () {
+          $(this).removeAttr('aria-current').removeClass('nav-active')
+            .attr('style', '')
+            .addClass('text-on-surface-variant hover:text-on-surface hover:bg-surface-container border-l-2 border-transparent');
+          $(this).find('i').first().attr('style', '');
+        });
+
+        // 2. 设置当前 sub-nav 激活态
+        $(this).attr('aria-current', 'page')
+          .removeClass('text-on-surface-variant hover:text-on-surface hover:bg-surface-container border-transparent')
+          .attr('style', 'background: linear-gradient(90deg, rgba(127,32,40,0.18), rgba(127,32,40,0.04)); border-left: 2px solid #7f2028; color: #fdebec;');
+        $(this).find('i').first().attr('style', 'color: #ef4444;');
+
+        // 3. 同步切换顶部 Tab
+        switchTab(key);
+
+        // 4. 滚动到对应 section
+        const target = $('#section-' + key);
+        if (target.length) {
+          $('#settings-content').animate({ scrollTop: target.offset().top - $('#settings-content').offset().top + $('#settings-content').scrollTop() }, 320);
+        } else if (key === 'account' || key === 'publish' || key === 'backup' || key === 'team' || key === 'billing' || key === 'about') {
+          // 未展开的分组：提示并跳到 AI 模型演示
+          console.log('分组 [' + key + '] 暂未提供演示内容，已展示在最近邻分组');
+        }
+      });
+
+      // ================== 顶部 Tab 切换 ==================
+      function switchTab(key) {
+        $('#settings-tabs .tab-item').each(function () {
+          $(this).removeAttr('aria-current').removeClass('text-on-surface')
+            .attr('style', '').addClass('text-on-surface-variant border-transparent');
+        });
+        const activeTab = $('#settings-tabs .tab-item[data-tab-key="' + key + '"]');
+        activeTab.attr('aria-current', 'page').removeClass('text-on-surface-variant border-transparent')
+          .addClass('text-on-surface').attr('style', 'color: #fdebec; border-bottom-color: #7f2028;');
+      }
+
+      $('#settings-tabs').on('click', '.tab-item', function () {
+        const key = $(this).data('tab-key');
+        switchTab(key);
+
+        // 同步子导航
+        $('#settings-subnav-list .sub-nav-item').each(function () {
+          $(this).removeAttr('aria-current').removeClass('nav-active')
+            .attr('style', '')
+            .addClass('text-on-surface-variant hover:text-on-surface hover:bg-surface-container border-l-2 border-transparent');
+          $(this).find('i').first().attr('style', '');
+        });
+        const subItem = $('#settings-subnav-list .sub-nav-item[data-subnav-key="' + key + '"]');
+        subItem.attr('aria-current', 'page')
+          .removeClass('text-on-surface-variant hover:text-on-surface hover:bg-surface-container border-transparent')
+          .attr('style', 'background: linear-gradient(90deg, rgba(127,32,40,0.18), rgba(127,32,40,0.04)); border-left: 2px solid #7f2028; color: #fdebec;');
+        subItem.find('i').first().attr('style', 'color: #ef4444;');
+
+        // 滚动
+        const target = $('#section-' + key);
+        if (target.length) {
+          $('#settings-content').animate({ scrollTop: target.offset().top - $('#settings-content').offset().top + $('#settings-content').scrollTop() }, 320);
+        }
+      });
+
+      // ================== 主模型卡片选择 ==================
+      $('#model-card-grid').on('click', '.model-card', function () {
+        const $card = $(this);
+        const modelId = $card.data('model-id');
+
+        // 1. 移除所有卡片的激活态
+        $('#model-card-grid .model-card').each(function () {
+          $(this).removeClass('border-primary').addClass('border-outline/30 hover:border-outline')
+            .find('.absolute.-top-2.-right-2').remove();
+        });
+
+        // 2. 激活当前卡片：机械红描边 + ACTIVE 徽标
+        $card.removeClass('border-outline/30 hover:border-outline').addClass('border-primary border-2');
+        $card.prepend(
+          '<div class="absolute -top-2 -right-2 z-10">' +
+          '<span class="inline-flex items-center gap-1 bg-primary text-on-primary font-mono text-[10px] font-bold tracking-widest px-1.5 py-0.5">' +
+          '<span class="w-1 h-1 bg-on-primary"></span>ACTIVE</span></div>'
+        );
+        lucide.createIcons();
+
+        console.log('已切换主模型:', modelId, '→ 下个 pipeline 周期生效');
+      });
+
+      // ================== 提示词模板展开/折叠 ==================
+      $('#prompt-template-list').on('click', '.prompt-header', function () {
+        const $item = $(this).closest('.prompt-item');
+        const $body = $item.find('.prompt-body');
+        const $chevron = $item.find('.prompt-chevron');
+
+        $body.toggleClass('hidden');
+        $chevron.toggleClass('rotate-90');
+      });
+
+      // ================== 新建提示词模板按钮 ==================
+      // 点击后应实现：
+      // 1. 弹出模态框，表单包含：模板名 / 类型 / 提示词正文 / 启用状态
+      // 2. 提交后 append 一条新的 prompt-item 到 #prompt-template-list，复用现有 DOM 结构
+      // 3. 关闭模态框并显示成功 toast
+      $('#btn-add-prompt').on('click', function () {
+        console.log('新建提示词模板：需弹出模态框（模板名 / 类型 / 提示词正文 / 启用）');
+      });
+
+      // ================== 保存 AI 模型配置 ==================
+      $('#btn-save-ai').on('click', function () {
+        const $btn = $(this);
+        const originalHtml = $btn.html();
+        $btn.html('<i data-lucide="loader" class="w-3.5 h-3.5 animate-spin"></i>保存中...').prop('disabled', true);
+        lucide.createIcons();
+        setTimeout(function () {
+          $btn.html('<i data-lucide="check" class="w-3.5 h-3.5"></i>已保存').removeClass('bg-primary').addClass('bg-success');
+          lucide.createIcons();
+          setTimeout(function () {
+            $btn.html(originalHtml).removeClass('bg-success').addClass('bg-primary').prop('disabled', false);
+            lucide.createIcons();
+          }, 1500);
+        }, 800);
+      });
+
+      // ================== 放弃修改 ==================
+      $('#btn-reset-ai').on('click', function () {
+        // 点击后应实现：
+        // 1. 弹出确认对话框（"确定放弃当前所有未保存的修改？"）
+        // 2. 确认后刷新页面或重置所有表单到上次保存状态
+        // 3. 取消则关闭对话框
+        console.log('放弃修改：需确认后重置表单');
+      });
+
+      // ================== 添加对标账号 ==================
+      // 点击后应实现：
+      // 1. 弹出模态框（账号名 / 小红书 ID / 标签 / 启用状态）
+      // 2. 提交后 append 一条 account-row 到 .divide-y 容器，复用现有 DOM 结构
+      // 3. 同步更新「对标账号 · N 个」计数
+      // 4. 关联知识库：将该账号的文章自动加入抓取队列
+      $('#btn-add-account').on('click', function () {
+        console.log('添加对标账号：需弹出表单模态框');
+      });
+
+      // ================== 编辑对标账号 ==================
+      // 点击后应实现：
+      // 1. 弹出编辑模态框（复用添加表单，预填当前账号信息）
+      // 2. 提交后更新对应 row 的字段（账号名 / ID / 状态）
+      // 3. 关闭模态框并刷新抓取状态
+      $('#prompt-template-list').on('click', '.btn-edit-account', function () { /* placeholder below */ });
+
+      // 修正：用 .account-row 容器事件委托
+      $('#settings-content').on('click', '.btn-edit-account', function () {
+        console.log('编辑对标账号:', $(this).data('account'));
+      });
+
+      // ================== 删除对标账号 ==================
+      // 点击后应实现：
+      // 1. 弹出确认对话框（"删除后该账号的已采集内容将保留，但不再更新，确定？"）
+      // 2. 确认后 fadeOut 移除对应 .account-row
+      // 3. 更新计数和抓取队列
+      $('#settings-content').on('click', '.btn-remove-account', function () {
+        console.log('删除对标账号:', $(this).data('account'));
+      });
+
+      // ================== 飞书 Webhook 测试 ==================
+      $('#btn-test-feishu').on('click', function () {
+        const $btn = $(this);
+        const orig = $btn.text();
+        $btn.text('发送中...').prop('disabled', true);
+        setTimeout(function () {
+          $btn.text('✓ 测试已发送').removeClass('bg-surface-container border-outline/30').addClass('bg-success text-on-primary border-success');
+          setTimeout(function () {
+            $btn.text(orig).removeClass('bg-success text-on-primary border-success').addClass('bg-surface-container border-outline/30').prop('disabled', false);
+          }, 2000);
+        }, 700);
+        console.log('需调用飞书 webhook 测试接口');
+      });
+
+      // ================== 危险区按钮 ==================
+      // 点击后应实现：
+      // 1. 弹出二次确认模态框，必须输入指定关键词（如"DELETE"）才能确认
+      // 2. 清空缓存：调用本地缓存清理接口，刷新页面
+      // 3. 重置配置：调用配置重置接口，刷新所有面板
+      // 4. 导出数据：触发文件下载（JSON 格式），并在导出完成后显示成功提示
+      $('#btn-clear-cache').on('click', function () {
+        console.log('清空所有缓存：需二次确认（输入 DELETE）');
+      });
+      $('#btn-reset-default').on('click', function () {
+        console.log('重置为默认配置：需二次确认（输入 RESET）');
+      });
+      $('#btn-export-data').on('click', function () {
+        console.log('导出全量数据：触发 JSON 文件下载');
+      });
+
+      lucide.createIcons();
+    });
+  </script>
+  <script>lucide.createIcons();</script>
+</body>
+
+</html>

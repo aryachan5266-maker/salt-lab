@@ -1,0 +1,1184 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>内容工厂 // CONTENT_FACTORY</title>
+
+  <link href="https://lf-code-agent.coze.cn/obj/x-ai-cn/fonts/google/google-all-fonts.css" rel="stylesheet" />
+
+  <script src="https://lf-code-agent.coze.cn/obj/x-ai-cn/cdn/jquery/jquery-3.7.1.min.js"></script>
+  <script src="https://lf-code-agent.coze.cn/obj/x-ai-cn/cdn/lucide/lucide-1.11.0.min.js"></script>
+  <script src="https://lf-code-agent.coze.cn/obj/x-ai-cn/cdn/tailwindcss/tailwindcss-browser-4.2.4.min.js"></script>
+
+  <style type="text/tailwindcss">
+    @theme {
+      /* === 品牌色（机械红） === */
+      --color-primary:              #7f2028;
+      --color-primary-container:    #3a0f13;
+      --color-on-primary:           #fdebec;
+      /* === 背景 / 表面（暗底工业） === */
+      --color-background:                 #050607;
+      --color-surface-container-lowest:   #030405;
+      --color-surface:                    #0a0b0d;
+      --color-surface-container:          #14171a;
+      --color-surface-container-high:     #1c2024;
+      --color-surface-container-highest:  #262a2f;
+      /* === 文字 === */
+      --color-on-surface:           #f0f1f3;
+      --color-on-surface-variant:   #8a8f97;
+      /* === 功能色 === */
+      --color-success:  #4ade80;
+      --color-error:    #ef4444;
+      --color-warning:  #f59e0b;
+      /* === 边框（Ghost Border） === */
+      --color-outline:          rgba(255, 255, 255, 0.10);
+      --color-outline-variant:  rgba(255, 255, 255, 0.06);
+      /* === 圆角（工业硬朗） === */
+      --radius-sm:   0.125rem;
+      --radius-md:   0.25rem;
+      --radius-lg:   0.375rem;
+      --radius-xl:   0.5rem;
+      --radius-2xl:  0.75rem;
+      --radius-full: 9999px;
+      /* === 阴影（暗底加重） === */
+      --shadow-card:   0 1px 0 rgba(255,255,255,0.08) inset, 0 2px 8px rgba(0,0,0,0.5);
+      --shadow-float:  0 1px 0 rgba(255,255,255,0.10) inset, 0 10px 25px rgba(0,0,0,0.6);
+      --shadow-dialog: 0 1px 0 rgba(255,255,255,0.10) inset, 0 25px 50px rgba(0,0,0,0.7);
+      /* === 字体（工业机械+无衬线） === */
+      --font-sans: "Space Grotesk", "Inter", "Noto Sans SC", system-ui, sans-serif;
+      --font-mono: "JetBrains Mono", "Space Mono", ui-monospace, monospace;
+    }
+  </style>
+
+  <style>
+    body {
+      background-image:
+        linear-gradient(rgba(127, 32, 40, 0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(127, 32, 40, 0.04) 1px, transparent 1px),
+        radial-gradient(circle at 20% 0%, rgba(127, 32, 40, 0.10), transparent 40%);
+      background-size: 32px 32px, 32px 32px, 100% 100%;
+      background-attachment: fixed;
+    }
+    .tabular { font-variant-numeric: tabular-nums; }
+    .tick-bar { background-image: linear-gradient(90deg, currentColor 50%, transparent 50%); background-size: 6px 1px; background-repeat: repeat-x; }
+    .nav-active { background: linear-gradient(90deg, rgba(127,32,40,0.18), rgba(127,32,40,0.04)); border-left: 2px solid #7f2028; color: #fdebec; }
+    .nav-active i { color: #ef4444; }
+    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    ::-webkit-scrollbar-track { background: #0a0b0d; }
+    ::-webkit-scrollbar-thumb { background: #262a2f; border-radius: 0; }
+    ::-webkit-scrollbar-thumb:hover { background: #7f2028; }
+    /* 工业斜角刻度：步骤标记（平行四边形） */
+    .step-marker { clip-path: polygon(14% 0, 100% 0, 86% 100%, 0 100%); }
+    .step-marker-r { clip-path: polygon(0 0, 86% 0, 100% 100%, 14% 100%); }
+    /* 进度条连接线：斜角刻度 */
+    .progress-track {
+      background-image:
+        repeating-linear-gradient(90deg, currentColor 0, currentColor 4px, transparent 4px, transparent 8px);
+      height: 1px;
+    }
+    /* 脉冲点 */
+    @keyframes pulse-ring {
+      0%   { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.55); }
+      70%  { box-shadow: 0 0 0 12px rgba(239, 68, 68, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+    }
+    .pulse-dot { animation: pulse-ring 1.8s ease-out infinite; }
+    /* 卡片角标（机械装饰） */
+    .corner-mark::before, .corner-mark::after {
+      content: ""; position: absolute; width: 8px; height: 8px;
+      border-color: #7f2028; border-style: solid;
+    }
+    .corner-mark::before { top: -1px; left: -1px; border-width: 1px 0 0 1px; }
+    .corner-mark::after  { top: -1px; right: -1px; border-width: 1px 1px 0 0; }
+  </style>
+
+  <script>
+    document.addEventListener('error', function (e) {
+      const img = e.target;
+      if (img.tagName !== 'IMG' || img.dataset.fallback) return;
+      img.dataset.fallback = '1';
+      const esc = s => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+      const cat = img.getAttribute('data-category') || '其他';
+      const alt = img.getAttribute('alt') || '';
+      const label = esc(alt.length > 8 ? alt.slice(0, 8) + '…' : alt);
+      const icons = { '人物': '👤', '自然风景': '🏞', '动物': '🐾', '建筑城市': '🏙', '运动体育': '⚽', '交通工具': '🚗', '食物': '🍽', '服饰时尚': '👗', '商业科技': '💼', '游戏娱乐': '🎮', '艺术': '🎨', '其他': '🖼' };
+      const icon = icons[cat] || '🖼';
+      const w = img.width || 400, h = img.height || 300;
+      const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}"><rect width="100%" height="100%" fill="%231c2024"/><text x="50%" y="45%" text-anchor="middle" font-size="${Math.min(w, h) * 0.18}" fill="%23ef4444" dominant-baseline="central">${icon}</text><text x="50%" y="68%" text-anchor="middle" font-size="${Math.min(w, h) * 0.07}" fill="%238a8f97" font-family="system-ui,sans-serif" dominant-baseline="central">${label}</text></svg>`;
+      img.src = 'data:image/svg+xml,' + svg;
+    }, true);
+  </script>
+</head>
+
+<body class="bg-background text-on-surface font-sans min-h-screen">
+
+  <!-- @nav:start -->
+  <div class="flex min-h-screen" style="height: 100vh;">
+
+    <!-- Sidebar -->
+    <aside class="w-60 shrink-0 bg-surface border-r border-outline/20 flex flex-col">
+      <div class="h-16 px-5 flex items-center gap-2.5 border-b border-outline/20">
+        <div class="relative w-8 h-8 bg-primary flex items-center justify-center">
+          <span class="font-mono font-bold text-on-primary text-sm">X</span>
+          <div class="absolute -top-0.5 -right-0.5 w-1.5 h-1.5 bg-primary"></div>
+          <div class="absolute -bottom-0.5 -left-0.5 w-1 h-1 bg-on-primary"></div>
+        </div>
+        <div class="flex-1 min-w-0">
+          <div class="font-mono font-bold text-sm tracking-widest text-on-surface">XHS<span class="text-primary">_</span>CORE</div>
+          <div class="font-mono text-[10px] tracking-wider text-on-surface-variant">XIANLIAO.AI // V2.0</div>
+        </div>
+      </div>
+
+      <div class="px-5 py-3 border-b border-outline/20">
+        <div class="flex items-center justify-between mb-1.5">
+          <span class="font-mono text-[10px] tracking-widest text-on-surface-variant uppercase">System</span>
+          <span class="flex items-center gap-1 font-mono text-[10px] text-success">
+            <span class="w-1.5 h-1.5 bg-success rounded-full"></span>ONLINE
+          </span>
+        </div>
+        <div class="h-px tick-bar text-outline-variant"></div>
+      </div>
+
+      <nav class="flex-1 overflow-y-auto py-3">
+        <div class="px-5 mb-2 font-mono text-[10px] tracking-widest text-on-surface-variant uppercase">// Modules</div>
+        <a href="home.html" class="nav-item flex items-center gap-3 px-5 py-2.5 text-sm font-medium text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors">
+          <i data-lucide="radar" class="w-4 h-4"></i><span>选题引擎</span>
+          <span class="ml-auto font-mono text-[10px] text-primary">28</span>
+        </a>
+        <a href="content-factory.html" class="nav-item flex items-center gap-3 px-5 py-2.5 text-sm font-medium text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors">
+          <i data-lucide="factory" class="w-4 h-4"></i><span>内容工厂</span>
+        </a>
+        <a href="publish.html" class="nav-item flex items-center gap-3 px-5 py-2.5 text-sm font-medium text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors">
+          <i data-lucide="send" class="w-4 h-4"></i><span>发布管理</span>
+          <span class="ml-auto font-mono text-[10px] text-warning">3</span>
+        </a>
+        <a href="analytics.html" class="nav-item flex items-center gap-3 px-5 py-2.5 text-sm font-medium text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors">
+          <i data-lucide="bar-chart-horizontal" class="w-4 h-4"></i><span>数据复盘</span>
+        </a>
+        <a href="knowledge.html" class="nav-item flex items-center gap-3 px-5 py-2.5 text-sm font-medium text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors">
+          <i data-lucide="database" class="w-4 h-4"></i><span>知识库</span>
+        </a>
+
+        <div class="px-5 mt-4 mb-2 font-mono text-[10px] tracking-widest text-on-surface-variant uppercase">// Config</div>
+        <a href="settings.html" class="nav-item flex items-center gap-3 px-5 py-2.5 text-sm font-medium text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors">
+          <i data-lucide="settings" class="w-4 h-4"></i><span>系统设置</span>
+        </a>
+      </nav>
+
+      <div class="border-t border-outline/20 p-3">
+        <div class="bg-surface-container p-2.5 flex items-center gap-2.5">
+          <div class="w-8 h-8 rounded-full bg-primary-container border border-primary/40 flex items-center justify-center text-primary font-mono text-xs font-bold">咸</div>
+          <div class="flex-1 min-w-0">
+            <div class="text-xs font-medium text-on-surface truncate">咸聊AI·主理人</div>
+            <div class="font-mono text-[10px] text-on-surface-variant">@xianliao_ai</div>
+          </div>
+          <i data-lucide="chevrons-up-down" class="w-3.5 h-3.5 text-on-surface-variant"></i>
+        </div>
+      </div>
+    </aside>
+
+    <div class="flex-1 min-w-0 flex flex-col">
+      <header class="h-16 bg-surface border-b border-outline/20 flex items-center px-6 gap-4 shrink-0">
+        <div class="flex items-center gap-3">
+          <span class="font-mono text-[10px] tracking-widest text-on-surface-variant uppercase">// XHS_CORE</span>
+          <span class="text-on-surface-variant/40">/</span>
+          <span id="page-crumb" class="font-mono text-xs text-on-surface tracking-wide uppercase">FACTORY / CONTENT_GEN</span>
+        </div>
+        <div class="flex-1 max-w-xl mx-auto">
+          <div class="relative">
+            <i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-on-surface-variant"></i>
+            <input type="text" placeholder="SEARCH_TOPIC / KEYWORD / @ACCOUNT..." class="w-full bg-surface-container border border-outline/30 rounded-md pl-10 pr-3 py-2 text-sm font-mono tracking-wide text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/40" />
+            <span class="absolute right-3 top-1/2 -translate-y-1/2 font-mono text-[10px] text-on-surface-variant border border-outline/30 px-1.5 py-0.5">⌘K</span>
+          </div>
+        </div>
+        <div class="flex items-center gap-2">
+          <button class="relative w-9 h-9 flex items-center justify-center border border-outline/30 text-on-surface-variant hover:text-primary hover:border-primary transition-colors">
+            <i data-lucide="bell" class="w-4 h-4"></i>
+            <span class="absolute top-1.5 right-1.5 w-1.5 h-1.5 bg-primary rounded-full"></span>
+          </button>
+          <button class="w-9 h-9 flex items-center justify-center border border-outline/30 text-on-surface-variant hover:text-primary hover:border-primary transition-colors">
+            <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+          </button>
+          <button class="bg-primary hover:bg-primary/90 text-on-primary font-mono font-bold text-xs tracking-widest px-4 h-9 flex items-center gap-2 transition-colors">
+            <i data-lucide="zap" class="w-3.5 h-3.5"></i>RUN_PIPELINE
+          </button>
+        </div>
+      </header>
+
+      <main class="flex-1 min-w-0 overflow-y-auto bg-background">
+        <!-- @main-content:start -->
+
+        <!-- ============== Section 1: 顶部"生产工作流"进度条 ============== -->
+        <section class="px-6 pt-6">
+          <div class="bg-surface border border-outline/20 shadow-card relative overflow-hidden">
+            <!-- 装饰刻度条 -->
+            <div class="absolute top-0 left-0 right-0 h-px progress-track text-primary/40"></div>
+
+            <div class="p-5">
+              <!-- Header -->
+              <div class="flex items-start justify-between mb-6">
+                <div>
+                  <div class="flex items-center gap-2 mb-2">
+                    <span class="w-1.5 h-1.5 bg-primary"></span>
+                    <span class="font-mono text-[10px] tracking-widest text-primary uppercase">// 01. PIPELINE_STATUS</span>
+                    <span class="font-mono text-[10px] tracking-widest text-on-surface-variant uppercase">/ 5_STEPS</span>
+                  </div>
+                  <h1 class="text-xl font-bold text-on-surface flex items-baseline gap-2">
+                    生产工作流
+                    <span class="font-mono text-sm font-normal text-on-surface-variant tracking-widest">/ PRODUCTION_WORKFLOW</span>
+                  </h1>
+                </div>
+                <div class="flex items-center gap-6">
+                  <div class="text-right">
+                    <div class="font-mono text-[10px] tracking-widest text-on-surface-variant uppercase">Progress</div>
+                    <div class="font-mono text-2xl font-bold text-primary tabular leading-none mt-1">40<span class="text-sm">%</span></div>
+                  </div>
+                  <div class="text-right">
+                    <div class="font-mono text-[10px] tracking-widest text-on-surface-variant uppercase">Step</div>
+                    <div class="font-mono text-2xl font-bold text-on-surface tabular leading-none mt-1">03<span class="text-sm text-on-surface-variant">/05</span></div>
+                  </div>
+                  <div class="text-right">
+                    <div class="font-mono text-[10px] tracking-widest text-on-surface-variant uppercase">ETA</div>
+                    <div class="font-mono text-2xl font-bold text-on-surface tabular leading-none mt-1">00<span class="text-sm text-on-surface-variant">:38s</span></div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 5-Step Progress Bar -->
+              <div class="relative">
+                <!-- Track background (刻度线) -->
+                <div class="absolute left-[8%] right-[8%] top-[19px] h-px progress-track text-outline"></div>
+                <!-- Active progress fill (前40%已通过) -->
+                <div class="absolute left-[8%] top-[19px] h-px bg-primary" style="width: 16%; box-shadow: 0 0 8px rgba(127,32,40,0.6);"></div>
+
+                <div class="grid grid-cols-5 gap-2">
+                  <!-- Step 01: 选题 - DONE -->
+                  <div class="flex flex-col items-center" id="step-01">
+                    <div class="step-marker w-10 h-10 bg-primary flex items-center justify-center">
+                      <span class="font-mono font-bold text-on-primary text-sm">01</span>
+                    </div>
+                    <div class="mt-3 text-center">
+                      <div class="text-sm font-semibold text-on-surface">选题</div>
+                      <div class="font-mono text-[10px] tracking-widest text-success uppercase mt-0.5">✓ DONE</div>
+                      <div class="font-mono text-[10px] text-on-surface-variant tabular mt-0.5">02.8s</div>
+                    </div>
+                  </div>
+
+                  <!-- Step 02: 封面生成 - DONE -->
+                  <div class="flex flex-col items-center" id="step-02">
+                    <div class="step-marker w-10 h-10 bg-primary flex items-center justify-center">
+                      <span class="font-mono font-bold text-on-primary text-sm">02</span>
+                    </div>
+                    <div class="mt-3 text-center">
+                      <div class="text-sm font-semibold text-on-surface">封面生成</div>
+                      <div class="font-mono text-[10px] tracking-widest text-success uppercase mt-0.5">✓ DONE</div>
+                      <div class="font-mono text-[10px] text-on-surface-variant tabular mt-0.5">11.4s</div>
+                    </div>
+                  </div>
+
+                  <!-- Step 03: 文案生成 - IN PROGRESS (current) -->
+                  <div class="flex flex-col items-center" id="step-03">
+                    <div class="relative">
+                      <div class="absolute inset-0 bg-error/30 pulse-dot w-10 h-10 step-marker"></div>
+                      <div class="relative step-marker w-10 h-10 bg-error flex items-center justify-center border border-primary">
+                        <span class="font-mono font-bold text-on-primary text-sm">03</span>
+                      </div>
+                    </div>
+                    <div class="mt-3 text-center">
+                      <div class="text-sm font-semibold text-on-surface">文案生成</div>
+                      <div class="font-mono text-[10px] tracking-widest text-error uppercase mt-0.5 flex items-center justify-center gap-1">
+                        <span class="w-1 h-1 bg-error rounded-full pulse-dot inline-block"></span>RUNNING
+                      </div>
+                      <div class="font-mono text-[10px] text-primary tabular mt-0.5">08.2s</div>
+                    </div>
+                  </div>
+
+                  <!-- Step 04: 违禁词检测 - PENDING -->
+                  <div class="flex flex-col items-center" id="step-04">
+                    <div class="step-marker-r w-10 h-10 bg-surface-container border border-outline/40 flex items-center justify-center">
+                      <span class="font-mono font-bold text-on-surface-variant text-sm">04</span>
+                    </div>
+                    <div class="mt-3 text-center">
+                      <div class="text-sm font-medium text-on-surface-variant">违禁词检测</div>
+                      <div class="font-mono text-[10px] tracking-widest text-on-surface-variant uppercase mt-0.5">○ QUEUE</div>
+                      <div class="font-mono text-[10px] text-on-surface-variant/60 tabular mt-0.5">--</div>
+                    </div>
+                  </div>
+
+                  <!-- Step 05: 入队发布 - PENDING -->
+                  <div class="flex flex-col items-center" id="step-05">
+                    <div class="step-marker-r w-10 h-10 bg-surface-container border border-outline/40 flex items-center justify-center">
+                      <span class="font-mono font-bold text-on-surface-variant text-sm">05</span>
+                    </div>
+                    <div class="mt-3 text-center">
+                      <div class="text-sm font-medium text-on-surface-variant">入队发布</div>
+                      <div class="font-mono text-[10px] tracking-widest text-on-surface-variant uppercase mt-0.5">○ QUEUE</div>
+                      <div class="font-mono text-[10px] text-on-surface-variant/60 tabular mt-0.5">--</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ============== Section 2: 主体两栏（输入配置 + 生成结果对比） ============== -->
+        <section class="px-6 py-5">
+          <div class="grid grid-cols-5 gap-5">
+
+            <!-- ========== LEFT: 输入与配置面板 40% (col-span-2) ========== -->
+            <div class="col-span-2 space-y-4">
+
+              <!-- ① 选中选题信息卡 -->
+              <div class="bg-surface border border-outline/20 shadow-card relative corner-mark" id="topic-card">
+                <div class="px-4 py-2.5 border-b border-outline/20 flex items-center justify-between">
+                  <div class="flex items-center gap-2">
+                    <i data-lucide="crosshair" class="w-3.5 h-3.5 text-primary"></i>
+                    <span class="font-mono text-[10px] tracking-widest text-primary uppercase">// 02. SELECTED_TOPIC</span>
+                  </div>
+                  <span class="font-mono text-[10px] tracking-widest text-success uppercase flex items-center gap-1">
+                    <i data-lucide="check" class="w-3 h-3"></i>LOCKED
+                  </span>
+                </div>
+                <div class="p-4 space-y-3">
+                  <!-- 标题 -->
+                  <div>
+                    <div class="text-base font-bold text-on-surface leading-snug">30岁创业第3年，我终于学会不解释</div>
+                    <div class="font-mono text-[10px] text-on-surface-variant mt-1"># 30Y.O. / FOUNDER.STAGE_03 / LESSON_LOG</div>
+                  </div>
+                  <!-- 评分指标 -->
+                  <div class="grid grid-cols-3 gap-2 pt-2 border-t border-dashed border-outline/30">
+                    <div>
+                      <div class="font-mono text-[10px] tracking-widest text-on-surface-variant uppercase">Heat</div>
+                      <div class="font-mono text-lg font-bold text-primary tabular leading-none mt-1">92</div>
+                      <div class="font-mono text-[9px] text-on-surface-variant">/100</div>
+                    </div>
+                    <div>
+                      <div class="font-mono text-[10px] tracking-widest text-on-surface-variant uppercase">Persona</div>
+                      <div class="font-mono text-lg font-bold text-success tabular leading-none mt-1">95<span class="text-xs">%</span></div>
+                      <div class="font-mono text-[9px] text-on-surface-variant">MATCH</div>
+                    </div>
+                    <div>
+                      <div class="font-mono text-[10px] tracking-widest text-on-surface-variant uppercase">Seeds</div>
+                      <div class="font-mono text-lg font-bold text-warning tabular leading-none mt-1">14</div>
+                      <div class="font-mono text-[9px] text-on-surface-variant">RAW_IDEA</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- ② 风格模板切换 -->
+              <div class="bg-surface border border-outline/20 shadow-card" id="style-templates">
+                <div class="px-4 py-2.5 border-b border-outline/20 flex items-center justify-between">
+                  <div class="flex items-center gap-2">
+                    <i data-lucide="palette" class="w-3.5 h-3.5 text-primary"></i>
+                    <span class="font-mono text-[10px] tracking-widest text-primary uppercase">// 03. STYLE_TEMPLATE</span>
+                  </div>
+                  <span class="font-mono text-[10px] text-on-surface-variant">4 OPTIONS</span>
+                </div>
+                <div class="p-4 space-y-3">
+                  <div class="grid grid-cols-2 gap-2" id="style-grid">
+                    <!-- 犀利观点型 - ACTIVE -->
+                    <button id="style-sharp" data-style="sharp" class="style-btn relative bg-primary text-on-primary px-3 py-2.5 rounded-md text-xs font-semibold border border-primary transition-all text-left">
+                      <div class="flex items-center justify-between">
+                        <span>犀利观点型</span>
+                        <i data-lucide="check" class="w-3 h-3"></i>
+                      </div>
+                      <div class="font-mono text-[9px] tracking-widest opacity-80 mt-0.5">SHARP_OPINION</div>
+                    </button>
+                    <!-- 故事叙事型 -->
+                    <button id="style-story" data-style="story" class="style-btn relative bg-surface-container text-on-surface-variant hover:text-on-surface hover:border-primary/50 px-3 py-2.5 rounded-md text-xs font-semibold border border-outline/30 transition-all text-left">
+                      <div class="flex items-center justify-between">
+                        <span>故事叙事型</span>
+                      </div>
+                      <div class="font-mono text-[9px] tracking-widest text-on-surface-variant mt-0.5">STORY_NARRATIVE</div>
+                    </button>
+                    <!-- 清单干货型 -->
+                    <button id="style-list" data-style="list" class="style-btn relative bg-surface-container text-on-surface-variant hover:text-on-surface hover:border-primary/50 px-3 py-2.5 rounded-md text-xs font-semibold border border-outline/30 transition-all text-left">
+                      <div class="flex items-center justify-between">
+                        <span>清单干货型</span>
+                      </div>
+                      <div class="font-mono text-[9px] tracking-widest text-on-surface-variant mt-0.5">LIST_DRYGOODS</div>
+                    </button>
+                    <!-- 反差对比型 -->
+                    <button id="style-contrast" data-style="contrast" class="style-btn relative bg-surface-container text-on-surface-variant hover:text-on-surface hover:border-primary/50 px-3 py-2.5 rounded-md text-xs font-semibold border border-outline/30 transition-all text-left">
+                      <div class="flex items-center justify-between">
+                        <span>反差对比型</span>
+                      </div>
+                      <div class="font-mono text-[9px] tracking-widest text-on-surface-variant mt-0.5">CONTRAST_PAIR</div>
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- ③ 目标受众 + 字数/调性滑块 -->
+              <div class="bg-surface border border-outline/20 shadow-card" id="audience-config">
+                <div class="px-4 py-2.5 border-b border-outline/20 flex items-center justify-between">
+                  <div class="flex items-center gap-2">
+                    <i data-lucide="users" class="w-3.5 h-3.5 text-primary"></i>
+                    <span class="font-mono text-[10px] tracking-widest text-primary uppercase">// 04. AUDIENCE & TONE</span>
+                  </div>
+                </div>
+                <div class="p-4 space-y-4">
+                  <!-- 目标受众 -->
+                  <div>
+                    <div class="flex items-center justify-between mb-2">
+                      <span class="text-xs text-on-surface-variant">目标受众</span>
+                      <span class="font-mono text-[10px] text-on-surface-variant">3 TAGS</span>
+                    </div>
+                    <div class="flex flex-wrap gap-1.5" id="audience-tags">
+                      <span class="inline-flex items-center gap-1 px-2 py-1 bg-primary/15 text-primary border border-primary/40 rounded-sm text-xs font-medium">
+                        <i data-lucide="user" class="w-3 h-3"></i>创业者
+                      </span>
+                      <span class="inline-flex items-center gap-1 px-2 py-1 bg-primary/15 text-primary border border-primary/40 rounded-sm text-xs font-medium">
+                        <i data-lucide="user" class="w-3 h-3"></i>女性
+                      </span>
+                      <span class="inline-flex items-center gap-1 px-2 py-1 bg-primary/15 text-primary border border-primary/40 rounded-sm text-xs font-medium">
+                        <i data-lucide="calendar" class="w-3 h-3"></i>25-35岁
+                      </span>
+                      <button id="btn-add-audience" class="inline-flex items-center gap-1 px-2 py-1 bg-surface-container text-on-surface-variant hover:text-primary border border-dashed border-outline/40 rounded-sm text-xs transition-colors">
+                        <i data-lucide="plus" class="w-3 h-3"></i>添加
+                      </button>
+                    </div>
+                  </div>
+
+                  <!-- 标题字数滑块 -->
+                  <div>
+                    <div class="flex items-center justify-between mb-1.5">
+                      <span class="text-xs text-on-surface-variant">标题字数</span>
+                      <span class="font-mono text-xs text-primary tabular font-bold">14 / 20 字</span>
+                    </div>
+                    <div class="relative h-2 bg-surface-container border border-outline/30" id="slider-title">
+                      <div class="absolute inset-y-0 left-0 bg-primary" style="width: 70%;"></div>
+                      <div class="absolute top-1/2 -translate-y-1/2 w-3 h-3 bg-primary border-2 border-on-surface cursor-pointer" style="left: calc(70% - 6px);"></div>
+                    </div>
+                    <div class="flex justify-between mt-1 font-mono text-[9px] text-on-surface-variant">
+                      <span>6</span><span>10</span><span>14</span><span>18</span><span>20</span>
+                    </div>
+                  </div>
+
+                  <!-- 正文字数滑块 -->
+                  <div>
+                    <div class="flex items-center justify-between mb-1.5">
+                      <span class="text-xs text-on-surface-variant">正文字数</span>
+                      <span class="font-mono text-xs text-primary tabular font-bold">600 / 1200 字</span>
+                    </div>
+                    <div class="relative h-2 bg-surface-container border border-outline/30" id="slider-body">
+                      <div class="absolute inset-y-0 left-0 bg-primary" style="width: 50%;"></div>
+                      <div class="absolute top-1/2 -translate-y-1/2 w-3 h-3 bg-primary border-2 border-on-surface cursor-pointer" style="left: calc(50% - 6px);"></div>
+                    </div>
+                    <div class="flex justify-between mt-1 font-mono text-[9px] text-on-surface-variant">
+                      <span>200</span><span>500</span><span>800</span><span>1200</span>
+                    </div>
+                  </div>
+
+                  <!-- 调性滑块 -->
+                  <div>
+                    <div class="flex items-center justify-between mb-1.5">
+                      <span class="text-xs text-on-surface-variant">情绪调性</span>
+                      <span class="font-mono text-xs text-primary tabular font-bold">犀利 ←→ 共情</span>
+                    </div>
+                    <div class="relative h-2 bg-surface-container border border-outline/30" id="slider-tone">
+                      <div class="absolute inset-y-0 left-0 bg-primary" style="width: 80%;"></div>
+                      <div class="absolute top-1/2 -translate-y-1/2 w-3 h-3 bg-primary border-2 border-on-surface cursor-pointer" style="left: calc(80% - 6px);"></div>
+                    </div>
+                    <div class="flex justify-between mt-1 font-mono text-[9px] text-on-surface-variant">
+                      <span>犀利</span><span>克制</span><span>温和</span><span>共情</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- ④ 操作按钮 -->
+              <div class="bg-surface border border-primary/40 shadow-card" id="action-panel">
+                <div class="p-4 space-y-2.5">
+                  <!-- 主按钮：生成内容 -->
+                  <button id="btn-generate" class="w-full bg-primary hover:bg-primary/90 text-on-primary rounded-md py-3.5 font-bold text-sm tracking-wide flex items-center justify-center gap-2 transition-all active:scale-[0.99] shadow-float">
+                    <i data-lucide="dices" class="w-4 h-4"></i>
+                    <span>🎲 生成内容 / GENERATE</span>
+                    <span class="font-mono text-[10px] ml-1 opacity-70">⌘↵</span>
+                  </button>
+                  <!-- 次按钮 -->
+                  <div class="grid grid-cols-2 gap-2.5">
+                    <button id="btn-regenerate" class="bg-surface-container text-on-surface hover:bg-surface-container-high border border-outline/30 rounded-md py-2.5 text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors">
+                      <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>重新生成
+                    </button>
+                    <button id="btn-save-draft" class="bg-surface-container text-on-surface hover:bg-surface-container-high border border-outline/30 rounded-md py-2.5 text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors">
+                      <i data-lucide="bookmark" class="w-3.5 h-3.5"></i>存草稿
+                    </button>
+                  </div>
+                  <!-- 生成日志 -->
+                  <div class="pt-2 border-t border-dashed border-outline/30 grid grid-cols-3 gap-2 font-mono text-[10px]">
+                    <div>
+                      <div class="text-on-surface-variant">SEED_TEMP</div>
+                      <div class="text-primary tabular">0.72</div>
+                    </div>
+                    <div>
+                      <div class="text-on-surface-variant">TOKENS</div>
+                      <div class="text-on-surface tabular">1,247</div>
+                    </div>
+                    <div>
+                      <div class="text-on-surface-variant">COST</div>
+                      <div class="text-warning tabular">¥0.18</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- ========== RIGHT: 生成结果对比区 60% (col-span-3) ========== -->
+            <div class="col-span-3 space-y-4">
+
+              <!-- Tab Bar + Tabs 内容 -->
+              <div class="bg-surface border border-outline/20 shadow-card" id="result-panel">
+                <!-- Tab Bar -->
+                <div class="px-4 py-2.5 border-b border-outline/20 flex items-center justify-between">
+                  <div class="flex items-center gap-2">
+                    <i data-lucide="layers" class="w-3.5 h-3.5 text-primary"></i>
+                    <span class="font-mono text-[10px] tracking-widest text-primary uppercase">// 05. GENERATED_OUTPUT</span>
+                  </div>
+                  <div class="flex items-center gap-1" id="result-tabs" role="tablist">
+                    <button id="tab-cover" data-tab="cover" role="tab" aria-selected="true" class="result-tab px-3 py-1.5 text-xs font-semibold bg-primary text-on-primary border border-primary rounded-sm transition-all flex items-center gap-1.5">
+                      <i data-lucide="image" class="w-3 h-3"></i>封面候选
+                      <span class="font-mono text-[9px] opacity-80">×3</span>
+                    </button>
+                    <button id="tab-copy" data-tab="copy" role="tab" aria-selected="false" class="result-tab px-3 py-1.5 text-xs font-semibold bg-transparent text-on-surface-variant hover:text-on-surface border border-outline/30 rounded-sm transition-all flex items-center gap-1.5">
+                      <i data-lucide="file-text" class="w-3 h-3"></i>文案 A vs B
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Tab: 封面候选视图（默认显示） -->
+                <div id="panel-cover" class="p-4" role="tabpanel">
+                  <div class="grid grid-cols-3 gap-3" id="cover-grid">
+                    <!-- 候选 1 -->
+                    <div class="cover-card relative bg-surface-container border border-outline/30 rounded-md overflow-hidden" data-cover-id="01">
+                      <!-- 顶部大图 -->
+                      <div class="relative aspect-[3/4] overflow-hidden bg-black">
+                        <img src="https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=400&q=80"
+                             alt="深夜办公桌冷光"
+                             data-category="商业科技"
+                             class="w-full h-full object-cover opacity-70" />
+                        <!-- 红色光晕 -->
+                        <div class="absolute inset-0 bg-gradient-to-t from-primary/40 via-transparent to-transparent"></div>
+                        <!-- 候选编号角标 -->
+                        <div class="absolute top-2 left-2 step-marker bg-primary px-2 py-0.5">
+                          <span class="font-mono text-[10px] font-bold text-on-primary tracking-widest">C.01</span>
+                        </div>
+                        <!-- 状态徽章 -->
+                        <div class="absolute top-2 right-2 font-mono text-[9px] tracking-widest text-success bg-black/60 border border-success/40 px-1.5 py-0.5">
+                          92% MATCH
+                        </div>
+                        <!-- 封面文案预览 -->
+                        <div class="absolute bottom-0 left-0 right-0 p-3">
+                          <div class="text-on-primary text-lg font-bold leading-tight" style="text-shadow: 0 2px 8px rgba(0,0,0,0.8);">
+                            30岁，我才<br/>学会闭嘴
+                          </div>
+                          <div class="font-mono text-[10px] text-on-primary/80 mt-1 tracking-wider">// SILENCE.LESSON_03</div>
+                        </div>
+                      </div>
+                      <!-- 操作区 -->
+                      <div class="p-2.5 space-y-1.5">
+                        <button class="btn-use-cover w-full bg-primary hover:bg-primary/90 text-on-primary text-xs font-semibold py-1.5 rounded-sm flex items-center justify-center gap-1 transition-colors">
+                          <i data-lucide="check" class="w-3 h-3"></i>使用此款
+                        </button>
+                        <div class="grid grid-cols-2 gap-1.5">
+                          <button class="btn-adjust-text bg-surface text-on-surface-variant hover:text-primary border border-outline/30 text-[11px] py-1 rounded-sm flex items-center justify-center gap-0.5 transition-colors">
+                            <i data-lucide="type" class="w-3 h-3"></i>调文案
+                          </button>
+                          <button class="btn-adjust-pos bg-surface text-on-surface-variant hover:text-primary border border-outline/30 text-[11px] py-1 rounded-sm flex items-center justify-center gap-0.5 transition-colors">
+                            <i data-lucide="move" class="w-3 h-3"></i>调位置
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- 候选 2 -->
+                    <div class="cover-card relative bg-surface-container border border-primary/60 rounded-md overflow-hidden" data-cover-id="02">
+                      <div class="relative aspect-[3/4] overflow-hidden bg-black">
+                        <img src="https://images.unsplash.com/photo-1551836022-deb4988cc6c0?w=400&q=80"
+                             alt="女性剪影轮廓"
+                             data-category="人物"
+                             class="w-full h-full object-cover opacity-70" />
+                        <div class="absolute inset-0 bg-gradient-to-t from-primary/40 via-transparent to-transparent"></div>
+                        <div class="absolute top-2 left-2 step-marker bg-primary px-2 py-0.5">
+                          <span class="font-mono text-[10px] font-bold text-on-primary tracking-widest">C.02</span>
+                        </div>
+                        <div class="absolute top-2 right-2 font-mono text-[9px] tracking-widest text-warning bg-black/60 border border-warning/40 px-1.5 py-0.5">
+                          ★ RECOMMEND
+                        </div>
+                        <div class="absolute bottom-0 left-0 right-0 p-3">
+                          <div class="text-on-primary text-lg font-bold leading-tight" style="text-shadow: 0 2px 8px rgba(0,0,0,0.8);">
+                            创业第3年<br/>我不再解释
+                          </div>
+                          <div class="font-mono text-[10px] text-on-primary/80 mt-1 tracking-wider">// NO.EXPLAIN.STAGE_3</div>
+                        </div>
+                      </div>
+                      <div class="p-2.5 space-y-1.5">
+                        <button class="btn-use-cover w-full bg-primary hover:bg-primary/90 text-on-primary text-xs font-semibold py-1.5 rounded-sm flex items-center justify-center gap-1 transition-colors">
+                          <i data-lucide="check" class="w-3 h-3"></i>使用此款
+                        </button>
+                        <div class="grid grid-cols-2 gap-1.5">
+                          <button class="btn-adjust-text bg-surface text-on-surface-variant hover:text-primary border border-outline/30 text-[11px] py-1 rounded-sm flex items-center justify-center gap-0.5 transition-colors">
+                            <i data-lucide="type" class="w-3 h-3"></i>调文案
+                          </button>
+                          <button class="btn-adjust-pos bg-surface text-on-surface-variant hover:text-primary border border-outline/30 text-[11px] py-1 rounded-sm flex items-center justify-center gap-0.5 transition-colors">
+                            <i data-lucide="move" class="w-3 h-3"></i>调位置
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- 候选 3 -->
+                    <div class="cover-card relative bg-surface-container border border-outline/30 rounded-md overflow-hidden" data-cover-id="03">
+                      <div class="relative aspect-[3/4] overflow-hidden bg-black">
+                        <img src="https://images.unsplash.com/photo-1493612276216-ee3925520721?w=400&q=80"
+                             alt="暗色金属质感"
+                             data-category="艺术"
+                             class="w-full h-full object-cover opacity-70" />
+                        <div class="absolute inset-0 bg-gradient-to-t from-primary/40 via-transparent to-transparent"></div>
+                        <div class="absolute top-2 left-2 step-marker bg-primary px-2 py-0.5">
+                          <span class="font-mono text-[10px] font-bold text-on-primary tracking-widest">C.03</span>
+                        </div>
+                        <div class="absolute top-2 right-2 font-mono text-[9px] tracking-widest text-on-surface-variant bg-black/60 border border-outline/40 px-1.5 py-0.5">
+                          87% MATCH
+                        </div>
+                        <div class="absolute bottom-0 left-0 right-0 p-3">
+                          <div class="text-on-primary text-lg font-bold leading-tight" style="text-shadow: 0 2px 8px rgba(0,0,0,0.8);">
+                            30岁 不解释<br/>是最好的回答
+                          </div>
+                          <div class="font-mono text-[10px] text-on-primary/80 mt-1 tracking-wider">// ANSWER.NULL</div>
+                        </div>
+                      </div>
+                      <div class="p-2.5 space-y-1.5">
+                        <button class="btn-use-cover w-full bg-primary hover:bg-primary/90 text-on-primary text-xs font-semibold py-1.5 rounded-sm flex items-center justify-center gap-1 transition-colors">
+                          <i data-lucide="check" class="w-3 h-3"></i>使用此款
+                        </button>
+                        <div class="grid grid-cols-2 gap-1.5">
+                          <button class="btn-adjust-text bg-surface text-on-surface-variant hover:text-primary border border-outline/30 text-[11px] py-1 rounded-sm flex items-center justify-center gap-0.5 transition-colors">
+                            <i data-lucide="type" class="w-3 h-3"></i>调文案
+                          </button>
+                          <button class="btn-adjust-pos bg-surface text-on-surface-variant hover:text-primary border border-outline/30 text-[11px] py-1 rounded-sm flex items-center justify-center gap-0.5 transition-colors">
+                            <i data-lucide="move" class="w-3 h-3"></i>调位置
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- 底部辅助操作 -->
+                  <div class="mt-3 pt-3 border-t border-dashed border-outline/30 flex items-center justify-between">
+                    <div class="flex items-center gap-3 font-mono text-[10px] text-on-surface-variant">
+                      <span><span class="text-primary tabular">3</span> COVERS</span>
+                      <span class="text-on-surface-variant/40">|</span>
+                      <span>RES: <span class="text-on-surface tabular">1080×1440</span></span>
+                      <span class="text-on-surface-variant/40">|</span>
+                      <span>RATIO: <span class="text-on-surface tabular">3:4</span></span>
+                    </div>
+                    <button id="btn-regenerate-covers" class="text-xs text-primary hover:underline flex items-center gap-1">
+                      <i data-lucide="refresh-cw" class="w-3 h-3"></i>重生成 3 张
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Tab: 文案 A vs B 视图（默认隐藏） -->
+                <div id="panel-copy" class="p-4 hidden" role="tabpanel">
+                  <div class="grid grid-cols-2 gap-3" id="copy-compare">
+                    <!-- ============ 版本 A ============ -->
+                    <div class="copy-card relative bg-surface-container border border-outline/30 rounded-md overflow-hidden" data-version="A">
+                      <!-- Header -->
+                      <div class="px-3 py-2 border-b border-outline/20 flex items-center justify-between bg-primary/10">
+                        <div class="flex items-center gap-2">
+                          <div class="step-marker bg-primary w-7 h-7 flex items-center justify-center">
+                            <span class="font-mono font-bold text-on-primary text-xs">A</span>
+                          </div>
+                          <div>
+                            <div class="text-sm font-semibold text-on-surface">方案 A · 锐利直给</div>
+                            <div class="font-mono text-[9px] text-on-surface-variant tracking-wider">SHARP_DIRECT</div>
+                          </div>
+                        </div>
+                        <div class="font-mono text-[10px] text-success tabular">SCORE 94</div>
+                      </div>
+                      <!-- Body -->
+                      <div class="p-3 space-y-3">
+                        <!-- 标题备选 -->
+                        <div>
+                          <div class="flex items-center gap-1.5 mb-1.5">
+                            <i data-lucide="type" class="w-3 h-3 text-primary"></i>
+                            <span class="font-mono text-[9px] tracking-widest text-primary uppercase">// TITLES (3)</span>
+                          </div>
+                          <ol class="space-y-1 text-xs text-on-surface">
+                            <li class="flex items-start gap-1.5 bg-primary/5 border border-primary/20 px-2 py-1 rounded-sm">
+                              <span class="font-mono text-primary text-[10px] mt-0.5">01.</span>
+                              <span>30岁创业第3年，我终于学会了不解释</span>
+                            </li>
+                            <li class="flex items-start gap-1.5 bg-surface px-2 py-1 rounded-sm">
+                              <span class="font-mono text-on-surface-variant text-[10px] mt-0.5">02.</span>
+                              <span>你越解释，越没人愿意听</span>
+                            </li>
+                            <li class="flex items-start gap-1.5 bg-surface px-2 py-1 rounded-sm">
+                              <span class="font-mono text-on-surface-variant text-[10px] mt-0.5">03.</span>
+                              <span>成年人的沉默，是最有力的回应</span>
+                            </li>
+                          </ol>
+                        </div>
+                        <!-- 正文预览 -->
+                        <div>
+                          <div class="flex items-center gap-1.5 mb-1.5">
+                            <i data-lucide="file-text" class="w-3 h-3 text-primary"></i>
+                            <span class="font-mono text-[9px] tracking-widest text-primary uppercase">// BODY</span>
+                            <span class="font-mono text-[9px] text-on-surface-variant ml-auto">624字 · 3段</span>
+                          </div>
+                          <div class="text-xs text-on-surface leading-relaxed bg-surface p-2.5 rounded-sm space-y-1.5">
+                            <p>🚨 <b>30岁创业第3年，我终于学会不解释。</b></p>
+                            <p>以前别人问我"为什么不做 X 而是做 Y"，我会列 10 条理由。后来发现，<b>解释是最无效的社交货币</b>。</p>
+                            <p>懂你的人不需要解释，不懂你的人——解释了也白搭。</p>
+                            <p>这一年我最大的成长：<b>关掉评论区，锁上朋友圈</b>，把时间还给自己。</p>
+                          </div>
+                        </div>
+                        <!-- 话题标签 -->
+                        <div>
+                          <div class="flex items-center gap-1.5 mb-1.5">
+                            <i data-lucide="hash" class="w-3 h-3 text-primary"></i>
+                            <span class="font-mono text-[9px] tracking-widest text-primary uppercase">// TAGS</span>
+                          </div>
+                          <div class="flex flex-wrap gap-1">
+                            <span class="text-[10px] text-primary font-mono">#30岁创业</span>
+                            <span class="text-[10px] text-primary font-mono">#女性创始人</span>
+                            <span class="text-[10px] text-primary font-mono">#不解释的勇气</span>
+                            <span class="text-[10px] text-primary font-mono">#创业心得</span>
+                            <span class="text-[10px] text-primary font-mono">#认知觉醒</span>
+                            <span class="text-[10px] text-primary font-mono">#自我成长</span>
+                            <span class="text-[10px] text-primary font-mono">#极简生活</span>
+                          </div>
+                        </div>
+                      </div>
+                      <!-- Footer -->
+                      <div class="p-2.5 border-t border-outline/20">
+                        <button class="btn-pick-version w-full bg-primary hover:bg-primary/90 text-on-primary text-xs font-bold py-2 rounded-sm flex items-center justify-center gap-1 transition-colors" data-version="A">
+                          <i data-lucide="check" class="w-3.5 h-3.5"></i>选 A 方案
+                        </button>
+                      </div>
+                    </div>
+
+                    <!-- ============ 版本 B ============ -->
+                    <div class="copy-card relative bg-surface-container border border-outline/30 rounded-md overflow-hidden" data-version="B">
+                      <div class="px-3 py-2 border-b border-outline/20 flex items-center justify-between bg-surface">
+                        <div class="flex items-center gap-2">
+                          <div class="step-marker-r bg-surface-container-high border border-outline/40 w-7 h-7 flex items-center justify-center">
+                            <span class="font-mono font-bold text-on-surface text-xs">B</span>
+                          </div>
+                          <div>
+                            <div class="text-sm font-semibold text-on-surface">方案 B · 故事叙事</div>
+                            <div class="font-mono text-[9px] text-on-surface-variant tracking-wider">STORY_NARRATIVE</div>
+                          </div>
+                        </div>
+                        <div class="font-mono text-[10px] text-on-surface-variant tabular">SCORE 87</div>
+                      </div>
+                      <div class="p-3 space-y-3">
+                        <div>
+                          <div class="flex items-center gap-1.5 mb-1.5">
+                            <i data-lucide="type" class="w-3 h-3 text-primary"></i>
+                            <span class="font-mono text-[9px] tracking-widest text-primary uppercase">// TITLES (3)</span>
+                          </div>
+                          <ol class="space-y-1 text-xs text-on-surface">
+                            <li class="flex items-start gap-1.5 bg-surface px-2 py-1 rounded-sm">
+                              <span class="font-mono text-on-surface-variant text-[10px] mt-0.5">01.</span>
+                              <span>创业第3年，我给十年前的自己写了一封信</span>
+                            </li>
+                            <li class="flex items-start gap-1.5 bg-surface px-2 py-1 rounded-sm">
+                              <span class="font-mono text-on-surface-variant text-[10px] mt-0.5">02.</span>
+                              <span>那些解释过的人，最后都沉默了</span>
+                            </li>
+                            <li class="flex items-start gap-1.5 bg-surface px-2 py-1 rounded-sm">
+                              <span class="font-mono text-on-surface-variant text-[10px] mt-0.5">03.</span>
+                              <span>从话多到闭嘴，一个创业者的1085天</span>
+                            </li>
+                          </ol>
+                        </div>
+                        <div>
+                          <div class="flex items-center gap-1.5 mb-1.5">
+                            <i data-lucide="file-text" class="w-3 h-3 text-primary"></i>
+                            <span class="font-mono text-[9px] tracking-widest text-primary uppercase">// BODY</span>
+                            <span class="font-mono text-[9px] text-on-surface-variant ml-auto">658字 · 4段</span>
+                          </div>
+                          <div class="text-xs text-on-surface leading-relaxed bg-surface p-2.5 rounded-sm space-y-1.5">
+                            <p>📖 <b>凌晨两点，写字楼只剩我一个人。</b></p>
+                            <p>手机弹出前同事的消息："你创业后悔吗？" 我盯着这行字看了很久，没回。</p>
+                            <p>三年前的我会解释——解释赛道、解释融资、解释为什么辞掉大厂。但现在，我只是把对话框关掉。</p>
+                            <p>后来我才明白，<b>沉默是给所有解释画上句号</b>。🌙</p>
+                          </div>
+                        </div>
+                        <div>
+                          <div class="flex items-center gap-1.5 mb-1.5">
+                            <i data-lucide="hash" class="w-3 h-3 text-primary"></i>
+                            <span class="font-mono text-[9px] tracking-widest text-primary uppercase">// TAGS</span>
+                          </div>
+                          <div class="flex flex-wrap gap-1">
+                            <span class="text-[10px] text-primary font-mono">#创业故事</span>
+                            <span class="text-[10px] text-primary font-mono">#深夜独白</span>
+                            <span class="text-[10px] text-primary font-mono">#女性力量</span>
+                            <span class="text-[10px] text-primary font-mono">#个人成长</span>
+                            <span class="text-[10px] text-primary font-mono">#治愈系</span>
+                            <span class="text-[10px] text-primary font-mono">#清醒女孩</span>
+                            <span class="text-[10px] text-primary font-mono">#30岁感悟</span>
+                            <span class="text-[10px] text-primary font-mono">#创业日记</span>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="p-2.5 border-t border-outline/20">
+                        <button class="btn-pick-version w-full bg-surface-container-high hover:bg-primary hover:text-on-primary text-on-surface text-xs font-bold py-2 rounded-sm flex items-center justify-center gap-1 transition-colors border border-outline/30" data-version="B">
+                          <i data-lucide="check" class="w-3.5 h-3.5"></i>选 B 方案
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- 底部辅助操作 -->
+                  <div class="mt-3 pt-3 border-t border-dashed border-outline/30 flex items-center justify-between">
+                    <div class="flex items-center gap-3 font-mono text-[10px] text-on-surface-variant">
+                      <span><span class="text-primary tabular">2</span> VERSIONS</span>
+                      <span class="text-on-surface-variant/40">|</span>
+                      <span>TOKENS: <span class="text-on-surface tabular">2,108</span></span>
+                      <span class="text-on-surface-variant/40">|</span>
+                      <span>Δ SCORE: <span class="text-warning tabular">+7</span></span>
+                    </div>
+                    <button id="btn-regenerate-copies" class="text-xs text-primary hover:underline flex items-center gap-1">
+                      <i data-lucide="refresh-cw" class="w-3 h-3"></i>重生成 A/B
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 违禁词检测侧栏面板 -->
+              <div class="bg-surface border border-outline/20 shadow-card" id="compliance-panel">
+                <div class="px-4 py-2.5 border-b border-outline/20 flex items-center justify-between">
+                  <div class="flex items-center gap-2">
+                    <i data-lucide="shield-alert" class="w-3.5 h-3.5 text-warning"></i>
+                    <span class="font-mono text-[10px] tracking-widest text-warning uppercase">// 06. COMPLIANCE_CHECK</span>
+                  </div>
+                  <div class="flex items-center gap-2">
+                    <span class="flex items-center gap-1 font-mono text-[10px] text-success">
+                      <span class="w-1.5 h-1.5 bg-success rounded-full"></span>SCANNED
+                    </span>
+                    <span class="font-mono text-[10px] text-on-surface-variant">已扫描 <span class="text-on-surface tabular">658</span> 字 · 发现 <span class="text-error tabular font-bold">3</span> 处</span>
+                  </div>
+                </div>
+                <div class="p-4 space-y-2.5" id="violation-list">
+                  <!-- 违规 1：高敏 -->
+                  <div class="violation-item flex items-start gap-3 bg-error/5 border border-error/30 p-3 rounded-sm" data-severity="high">
+                    <div class="step-marker w-8 h-8 bg-error flex items-center justify-center shrink-0">
+                      <i data-lucide="alert-triangle" class="w-3.5 h-3.5 text-on-primary"></i>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                      <div class="flex items-center gap-2 mb-1">
+                        <span class="font-mono text-[9px] tracking-widest text-error uppercase">HIGH_SENSITIVE</span>
+                        <span class="font-mono text-[9px] text-on-surface-variant">·</span>
+                        <span class="font-mono text-[9px] text-on-surface-variant">LINE 03 / PARA 02</span>
+                      </div>
+                      <div class="text-sm">
+                        <span class="text-on-surface">命中词：</span>
+                        <code class="px-1.5 py-0.5 bg-error/15 text-error font-mono text-xs rounded-sm">"赚钱"</code>
+                        <span class="text-on-surface-variant mx-1">→</span>
+                        <span class="text-on-surface">建议改：</span>
+                        <code class="px-1.5 py-0.5 bg-success/15 text-success font-mono text-xs rounded-sm">"创收"</code>
+                      </div>
+                      <div class="text-[10px] text-on-surface-variant mt-1">依据：广告法第9条·金融诱导敏感词</div>
+                    </div>
+                    <div class="flex gap-1.5 shrink-0">
+                      <button class="btn-accept-suggest text-[10px] bg-success/15 text-success border border-success/30 px-2 py-1 rounded-sm hover:bg-success/25 transition-colors">采纳</button>
+                      <button class="btn-ignore-warn text-[10px] text-on-surface-variant hover:text-error border border-outline/30 px-2 py-1 rounded-sm transition-colors">忽略</button>
+                    </div>
+                  </div>
+
+                  <!-- 违规 2：极限词 -->
+                  <div class="violation-item flex items-start gap-3 bg-warning/5 border border-warning/30 p-3 rounded-sm" data-severity="medium">
+                    <div class="step-marker w-8 h-8 bg-warning flex items-center justify-center shrink-0">
+                      <i data-lucide="alert-circle" class="w-3.5 h-3.5 text-on-primary"></i>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                      <div class="flex items-center gap-2 mb-1">
+                        <span class="font-mono text-[9px] tracking-widest text-warning uppercase">EXTREME_WORD</span>
+                        <span class="font-mono text-[9px] text-on-surface-variant">·</span>
+                        <span class="font-mono text-[9px] text-on-surface-variant">LINE 07 / PARA 01</span>
+                      </div>
+                      <div class="text-sm">
+                        <span class="text-on-surface">命中词：</span>
+                        <code class="px-1.5 py-0.5 bg-warning/15 text-warning font-mono text-xs rounded-sm">"绝对"</code>
+                        <span class="text-on-surface-variant mx-1">→</span>
+                        <span class="text-on-surface">建议：</span>
+                        <code class="px-1.5 py-0.5 bg-surface-container text-on-surface font-mono text-xs rounded-sm">直接删除</code>
+                      </div>
+                      <div class="text-[10px] text-on-surface-variant mt-1">依据：广告法第8条·极限用语</div>
+                    </div>
+                    <div class="flex gap-1.5 shrink-0">
+                      <button class="btn-accept-suggest text-[10px] bg-success/15 text-success border border-success/30 px-2 py-1 rounded-sm hover:bg-success/25 transition-colors">采纳</button>
+                      <button class="btn-ignore-warn text-[10px] text-on-surface-variant hover:text-error border border-outline/30 px-2 py-1 rounded-sm transition-colors">忽略</button>
+                    </div>
+                  </div>
+
+                  <!-- 违规 3：极限词组合 -->
+                  <div class="violation-item flex items-start gap-3 bg-warning/5 border border-warning/30 p-3 rounded-sm" data-severity="medium">
+                    <div class="step-marker w-8 h-8 bg-warning flex items-center justify-center shrink-0">
+                      <i data-lucide="alert-circle" class="w-3.5 h-3.5 text-on-primary"></i>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                      <div class="flex items-center gap-2 mb-1">
+                        <span class="font-mono text-[9px] tracking-widest text-warning uppercase">EXTREME_WORD</span>
+                        <span class="font-mono text-[9px] text-on-surface-variant">·</span>
+                        <span class="font-mono text-[9px] text-on-surface-variant">LINE 12 / PARA 03</span>
+                      </div>
+                      <div class="text-sm">
+                        <span class="text-on-surface">命中词：</span>
+                        <code class="px-1.5 py-0.5 bg-warning/15 text-warning font-mono text-xs rounded-sm">"第一"</code>
+                        <code class="px-1.5 py-0.5 bg-warning/15 text-warning font-mono text-xs rounded-sm">"最佳"</code>
+                        <code class="px-1.5 py-0.5 bg-warning/15 text-warning font-mono text-xs rounded-sm">"顶级"</code>
+                        <span class="text-on-surface-variant mx-1">→</span>
+                        <span class="text-on-surface">建议改：</span>
+                        <code class="px-1.5 py-0.5 bg-success/15 text-success font-mono text-xs rounded-sm">"前列"</code>
+                      </div>
+                      <div class="text-[10px] text-on-surface-variant mt-1">依据：广告法第8条·极限用语·共3个命中</div>
+                    </div>
+                    <div class="flex gap-1.5 shrink-0">
+                      <button class="btn-accept-suggest text-[10px] bg-success/15 text-success border border-success/30 px-2 py-1 rounded-sm hover:bg-success/25 transition-colors">采纳</button>
+                      <button class="btn-ignore-warn text-[10px] text-on-surface-variant hover:text-error border border-outline/30 px-2 py-1 rounded-sm transition-colors">忽略</button>
+                    </div>
+                  </div>
+                </div>
+                <!-- Footer 操作 -->
+                <div class="px-4 py-2.5 border-t border-outline/20 flex items-center justify-between">
+                  <div class="flex items-center gap-3 font-mono text-[10px] text-on-surface-variant">
+                    <span>HIT: <span class="text-error tabular font-bold">3</span></span>
+                    <span class="text-on-surface-variant/40">|</span>
+                    <span>CHECKED: <span class="text-on-surface tabular">1,284</span> <span class="text-on-surface-variant">words</span></span>
+                    <span class="text-on-surface-variant/40">|</span>
+                    <span>RULES: <span class="text-on-surface tabular">V2024.06</span></span>
+                  </div>
+                  <button id="btn-rescan" class="text-xs text-primary hover:underline flex items-center gap-1">
+                    <i data-lucide="scan-line" class="w-3 h-3"></i>重新扫描
+                  </button>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </section>
+
+        <!-- @main-content:end -->
+      </main>
+    </div>
+  </div>
+  <!-- @nav:end -->
+
+  <script>
+    // 高亮当前页面导航
+    window.__highlightNav('factory');
+    lucide.createIcons();
+  </script>
+
+  <script>
+    // ============== 页面交互逻辑 ==============
+    $(function () {
+
+      // ---------- Tab 切换：封面候选 / 文案 A vs B ----------
+      $('#result-tabs').on('click', '.result-tab', function () {
+        const tab = $(this).data('tab');
+        $('.result-tab').removeClass('bg-primary text-on-primary border-primary')
+                        .addClass('bg-transparent text-on-surface-variant border-outline/30')
+                        .attr('aria-selected', 'false');
+        $(this).addClass('bg-primary text-on-primary border-primary')
+               .removeClass('bg-transparent text-on-surface-variant border-outline/30')
+               .attr('aria-selected', 'true');
+        if (tab === 'cover') {
+          $('#panel-cover').removeClass('hidden');
+          $('#panel-copy').addClass('hidden');
+        } else {
+          $('#panel-cover').addClass('hidden');
+          $('#panel-copy').removeClass('hidden');
+        }
+      });
+
+      // ---------- 风格模板切换 ----------
+      $('#style-grid').on('click', '.style-btn', function () {
+        $('.style-btn').removeClass('bg-primary text-on-primary border-primary')
+                       .addClass('bg-surface-container text-on-surface-variant border-outline/30')
+                       .find('i[data-lucide="check"]').remove();
+        $(this).addClass('bg-primary text-on-primary border-primary')
+               .removeClass('bg-surface-container text-on-surface-variant border-outline/30')
+               .prepend('<i data-lucide="check" class="w-3 h-3" style="display:none"></i>');
+        // 选中态：把 check 图标放回右上
+        $(this).find('span').first().append(' <i data-lucide="check" class="w-3 h-3"></i>');
+        lucide.createIcons();
+        console.log('切换风格模板 →', $(this).data('style'));
+      });
+
+      // ---------- 滑块交互（视觉占位） ----------
+      // 当前为视觉占位，后续应实现：
+      // 1. 鼠标按下 thumb 后进入拖拽态
+      // 2. 移动鼠标时计算 thumb 在 track 上的 left% （受 min/max 限制）
+      // 3. 同步更新进度条 fill 宽度与右侧数值显示（如 14/20 字）
+      // 4. 同步更新正文字数到「已扫描 658 字」与违禁词扫描的命中数
+      // 5. 鼠标松开解除拖拽
+      ['#slider-title', '#slider-body', '#slider-tone'].forEach(function (sel) {
+        const $track = $(sel);
+        const $thumb = $track.find('div').last();
+        const $fill = $track.find('div').first();
+        let dragging = false;
+        const update = function (clientX) {
+          const rect = $track[0].getBoundingClientRect();
+          let pct = ((clientX - rect.left) / rect.width) * 100;
+          pct = Math.max(0, Math.min(100, pct));
+          $fill.css('width', pct + '%');
+          $thumb.css('left', 'calc(' + pct + '% - 6px)');
+        };
+        $thumb.on('mousedown', function (e) {
+          dragging = true; e.preventDefault();
+        });
+        $(document).on('mousemove', function (e) {
+          if (dragging) update(e.clientX);
+        });
+        $(document).on('mouseup', function () { dragging = false; });
+        $track.on('click', function (e) {
+          if (e.target === $thumb[0]) return;
+          update(e.clientX);
+        });
+      });
+
+      // ---------- 添加受众标签 ----------
+      $('#btn-add-audience').on('click', function () {
+        // 复杂交互：后续应实现
+        // 1. 弹出下拉/输入弹窗，列出预设受众（行业/性别/年龄层/地域/兴趣）
+        // 2. 支持多选/搜索/自定义输入
+        // 3. 选中的标签按顺序追加到 #audience-tags 列表
+        // 4. 已存在标签右上角可点击 × 移除
+        // 5. 修改后联动右侧"人设匹配度"95% 重新计算
+        console.log('需要实现受众标签选择弹窗');
+      });
+
+      // ---------- 使用某款封面 ----------
+      $('#cover-grid').on('click', '.btn-use-cover', function () {
+        const id = $(this).closest('.cover-card').data('cover-id');
+        console.log('使用封面 C.' + id + ' → 应触发后续：');
+        console.log('1. 将该封面设为主稿并显示选中态（红边 + 勾）');
+        console.log('2. 切换到 "文案 A vs B" Tab 准备最后挑选');
+        console.log('3. 解锁 STEP.04 违禁词检测按钮');
+        $(this).closest('.cover-card').css('border-color', '#7f2028');
+        $(this).html('<i data-lucide="check-circle-2" class="w-3 h-3"></i>已选用');
+        lucide.createIcons();
+      });
+
+      // ---------- 调整文案 / 调整位置 ----------
+      $('#cover-grid').on('click', '.btn-adjust-text', function () {
+        // 复杂交互：后续应实现
+        // 1. 弹出一个内联编辑器覆盖在该封面上
+        // 2. 左侧实时渲染封面图，右侧编辑 标题/副标题/标签文字
+        // 3. 支持多语言、字号、字色、字距、对齐位置（左下/居中/右下）
+        // 4. 编辑实时同步到左侧预览
+        // 5. 保存后生成新的封面图（调用图像生成 API）
+        console.log('需要实现封面文案内联编辑器');
+      });
+      $('#cover-grid').on('click', '.btn-adjust-pos', function () {
+        // 复杂交互：后续应实现
+        // 1. 在封面上叠加 9 宫格定位指示
+        // 2. 用户点击/拖动选择文案落位区域
+        // 3. 支持自由拖动微调，吸附到 1/3 网格线
+        // 4. 实时更新预览，确认后保存新位置
+        console.log('需要实现封面文字定位编辑器');
+      });
+
+      // ---------- 重生成封面 ----------
+      $('#btn-regenerate-covers').on('click', function () {
+        console.log('重生成 3 张封面 → 调用图像生成 API');
+        lucide.createIcons();
+      });
+
+      // ---------- 选中 A/B 方案 ----------
+      $('#copy-compare').on('click', '.btn-pick-version', function () {
+        const v = $(this).data('version');
+        console.log('选择方案 ' + v + ' → 应触发后续：');
+        console.log('1. 标记该方案为已选，红色边框 + 选中徽章');
+        console.log('2. 将 STEP.04 违禁词检测 标记为 RUNNING');
+        console.log('3. 自动执行扫描，结果填充到 #compliance-panel');
+        $('.copy-card').removeClass('border-primary');
+        $('.copy-card[data-version="' + v + '"]').addClass('border-primary');
+        lucide.createIcons();
+      });
+
+      // ---------- 重生成 A/B ----------
+      $('#btn-regenerate-copies').on('click', function () {
+        console.log('重生成 A/B 方案 → 调用 LLM');
+        lucide.createIcons();
+      });
+
+      // ---------- 违禁词：采纳 / 忽略 ----------
+      $('#violation-list').on('click', '.btn-accept-suggest', function () {
+        const $item = $(this).closest('.violation-item');
+        // 后续应实现：
+        // 1. 将原文中的违规词替换为建议词（基于 data-severity 区分替换/删除）
+        // 2. 该条目变为"已修复"态：背景变 success/5，icon 变为 check
+        // 3. 更新顶部统计 HIT 数字 -1
+        // 4. 当 HIT=0 时触发"可进入下一步"提示
+        $item.removeClass('bg-error/5 border-error/30 bg-warning/5 border-warning/30')
+             .addClass('bg-success/5 border-success/30');
+        $(this).html('<i data-lucide="check" class="w-3 h-3"></i>已修复');
+        lucide.createIcons();
+      });
+      $('#violation-list').on('click', '.btn-ignore-warn', function () {
+        const $item = $(this).closest('.violation-item');
+        // 后续应实现：
+        // 1. 弹出二次确认：忽略该违规可能影响发布，建议人工审核
+        // 2. 确认后该项变为"已忽略"态：半透明 + 删除线
+        // 3. 同步更新顶部统计
+        $item.css('opacity', '0.55').find('*').css('text-decoration', 'line-through');
+        $(this).html('<i data-lucide="eye-off" class="w-3 h-3"></i>已忽略');
+        lucide.createIcons();
+      });
+
+      // ---------- 重新扫描 ----------
+      $('#btn-rescan').on('click', function () {
+        // 后续应实现：
+        // 1. 显示扫描中动画（spinner + 进度条）
+        // 2. 调用违禁词检测 API（按规则库 V2024.06 扫描）
+        // 3. 扫描完成后重新渲染 #violation-list
+        // 4. 更新顶部"已扫描 N 字 · 发现 N 处"
+        console.log('重新扫描 → 调用违禁词检测 API');
+        lucide.createIcons();
+      });
+
+      // ---------- 主操作：生成内容 ----------
+      $('#btn-generate').on('click', function () {
+        // 后续应实现：
+        // 1. 校验选题是否已选中、风格是否已选
+        // 2. 显示生成进度（更新 STEP.03 文案生成的 08.2s 计时器）
+        // 3. 完成后：
+        //    a. 自动切换到"文案 A vs B" Tab
+        //    b. 触发违禁词扫描，更新 #compliance-panel
+        //    c. 解锁 STEP.04 → STEP.05
+        // 4. 失败时显示错误 toast
+        console.log('🎲 生成内容 → 调用 LLM + 图像生成 + 合规扫描 pipeline');
+        lucide.createIcons();
+      });
+      $('#btn-regenerate').on('click', function () {
+        console.log('↻ 重新生成（保持当前配置）');
+        lucide.createIcons();
+      });
+      $('#btn-save-draft').on('click', function () {
+        // 后续应实现：
+        // 1. 将当前选题+风格+字数配置+生成的封面/文案保存为草稿
+        // 2. 跳转到"知识库"页或显示保存成功 toast
+        // 3. 草稿数据写入 localStorage 或后端
+        console.log('💾 保存草稿');
+        lucide.createIcons();
+      });
+
+      // ---------- 顶部 RUN_PIPELINE 全局按钮 ----------
+      // 此按钮在顶栏；后续应实现：执行整个 5 步流水线（选题→封面→文案→合规→入队）
+      // 此处仅占位，实际应绑定到顶栏 #RUN_PIPELINE 按钮
+
+      lucide.createIcons();
+    });
+  </script>
+</body>
+
+</html>
