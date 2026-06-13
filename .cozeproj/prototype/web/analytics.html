@@ -13,20 +13,22 @@
 
   <style type="text/tailwindcss">
     @theme {
-      /* === 品牌色（机械红） === */
-      --color-primary:              #7f2028;
-      --color-primary-container:    #3a0f13;
-      --color-on-primary:           #fdebec;
-      /* === 背景 / 表面（暗底工业） === */
-      --color-background:                 #050607;
-      --color-surface-container-lowest:   #030405;
-      --color-surface:                    #0a0b0d;
-      --color-surface-container:          #14171a;
-      --color-surface-container-high:     #1c2024;
-      --color-surface-container-highest:  #262a2f;
+      /* === 品牌色（机械红微调，更暖更友好） === */
+      --color-primary:              #b2323a;
+      --color-primary-container:    #3a1a1d;
+      --color-on-primary:           #fff5f3;
+      --color-accent:               #d4a574;   /* 暖金辅色 */
+      --color-accent-container:     #3a2e22;
+      /* === 背景 / 表面（暗底+微暖） === */
+      --color-background:                 #0c0a0b;
+      --color-surface-container-lowest:   #08070a;
+      --color-surface:                    #14111a;
+      --color-surface-container:          #1c1924;
+      --color-surface-container-high:     #25222e;
+      --color-surface-container-highest:  #2f2c3a;
       /* === 文字 === */
-      --color-on-surface:           #f0f1f3;
-      --color-on-surface-variant:   #8a8f97;
+      --color-on-surface:           #f4ecf2;
+      --color-on-surface-variant:   #a39aa6;
       /* === 功能色 === */
       --color-success:  #4ade80;
       --color-error:    #ef4444;
@@ -34,48 +36,135 @@
       /* === 边框（Ghost Border） === */
       --color-outline:          rgba(255, 255, 255, 0.10);
       --color-outline-variant:  rgba(255, 255, 255, 0.06);
-      /* === 圆角（工业硬朗） === */
-      --radius-sm:   0.125rem;
-      --radius-md:   0.25rem;
-      --radius-lg:   0.375rem;
-      --radius-xl:   0.5rem;
-      --radius-2xl:  0.5rem;
+      /* === 圆角（友好化：2 → 4 → 6 → 8 → 12 → full） === */
+      --radius-sm:   0.25rem;
+      --radius-md:   0.5rem;
+      --radius-lg:   0.75rem;
+      --radius-xl:   1rem;
+      --radius-2xl:  1.25rem;
       --radius-full: 9999px;
       /* === 阴影（暗底加重） === */
-      --shadow-card:   0 1px 0 rgba(255,255,255,0.08) inset, 0 2px 8px rgba(0,0,0,0.5);
-      --shadow-float:  0 1px 0 rgba(255,255,255,0.10) inset, 0 10px 25px rgba(0,0,0,0.6);
-      --shadow-dialog: 0 1px 0 rgba(255,255,255,0.10) inset, 0 25px 50px rgba(0,0,0,0.7);
-      /* === 字体（工业机械+无衬线） === */
-      --font-sans: "Space Grotesk", "Inter", "Noto Sans SC", system-ui, sans-serif;
-      --font-mono: "JetBrains Mono", "Space Mono", ui-monospace, monospace;
+      --shadow-card:   0 1px 0 rgba(255,255,255,0.06) inset, 0 4px 12px rgba(0,0,0,0.5);
+      --shadow-float:  0 1px 0 rgba(255,255,255,0.08) inset, 0 10px 25px rgba(0,0,0,0.6);
+      --shadow-dialog: 0 1px 0 rgba(255,255,255,0.08) inset, 0 25px 50px rgba(0,0,0,0.7);
+      /* === 字体（中性无衬线+可选等宽） === */
+      --font-sans: "Inter", "Noto Sans SC", "PingFang SC", system-ui, sans-serif;
+      --font-mono: "JetBrains Mono", ui-monospace, monospace;
     }
   </style>
 
   <style>
+    /* 全局背景：暗底 + 顶部一抹暖光 */
     body {
-      background-image:
-        linear-gradient(rgba(127, 32, 40, 0.04) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(127, 32, 40, 0.04) 1px, transparent 1px),
-        radial-gradient(circle at 20% 0%, rgba(127, 32, 40, 0.10), transparent 40%);
-      background-size: 32px 32px, 32px 32px, 100% 100%;
+      background:
+        radial-gradient(ellipse 1200px 400px at 50% -100px, rgba(178, 50, 58, 0.10), transparent 60%),
+        radial-gradient(ellipse 800px 300px at 100% 10%, rgba(212, 165, 116, 0.04), transparent 60%),
+        #0c0a0b;
       background-attachment: fixed;
     }
-    .tabular { font-variant-numeric: tabular-nums; }
-    .tick-bar { background-image: linear-gradient(90deg, currentColor 50%, transparent 50%); background-size: 6px 1px; background-repeat: repeat-x; }
-    .nav-active { background: linear-gradient(90deg, rgba(127,32,40,0.18), rgba(127,32,40,0.04)); border-left: 2px solid #7f2028; color: #fdebec; }
-    .nav-active i { color: #ef4444; }
+    /* 滚动条 */
     ::-webkit-scrollbar { width: 8px; height: 8px; }
-    ::-webkit-scrollbar-track { background: #0a0b0d; }
-    ::-webkit-scrollbar-thumb { background: #262a2f; border-radius: 0; }
-    ::-webkit-scrollbar-thumb:hover { background: #7f2028; }
+    ::-webkit-scrollbar-track { background: #0c0a0b; }
+    ::-webkit-scrollbar-thumb { background: #2f2c3a; border-radius: 9999px; }
+    ::-webkit-scrollbar-thumb:hover { background: #b2323a; }
 
-    /* 图表：网格线 */
+    /* 导航激活态：主色低透明背景 + 左侧 3px 主色边 + 文字主色 */
+    .nav-active {
+      background: linear-gradient(90deg, rgba(178, 50, 58, 0.18), rgba(178, 50, 58, 0.04));
+      border-left: 3px solid #b2323a;
+      color: #fff5f3;
+    }
+    .nav-active i { color: #ef4444; }
+
+    /* 工具按钮 hover 动画 */
+    .btn-press { transition: transform 0.08s ease, opacity 0.15s ease, background-color 0.15s ease; }
+    .btn-press:active { transform: translateY(1px) scale(0.98); }
+
+    /* Toast 提示 */
+    .toast {
+      position: fixed; bottom: 24px; right: 24px; z-index: 9999;
+      background: linear-gradient(135deg, #1c1924, #25222e);
+      color: #f4ecf2; padding: 12px 20px; border-radius: 12px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+      border: 1px solid rgba(178, 50, 58, 0.4);
+      font-size: 13px; display: flex; align-items: center; gap: 10px;
+      animation: toast-in 0.3s ease, toast-out 0.3s ease 2.7s forwards;
+    }
+    .toast.success { border-color: rgba(74, 222, 128, 0.4); }
+    .toast.error { border-color: rgba(239, 68, 68, 0.4); }
+    @keyframes toast-in { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+    @keyframes toast-out { to { transform: translateY(20px); opacity: 0; } }
+
+    /* 状态灯呼吸 */
+    .status-dot { animation: pulse-soft 2s ease-in-out infinite; }
+    @keyframes pulse-soft {
+      0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.4); }
+      50% { opacity: 0.7; box-shadow: 0 0 0 6px rgba(74, 222, 128, 0); }
+    }
+
+    /* 状态徽章 */
+    .badge { display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; border-radius: 9999px; font-size: 11px; font-weight: 500; }
+    .badge-red { background: rgba(178, 50, 58, 0.15); color: #f87171; }
+    .badge-gold { background: rgba(212, 165, 116, 0.15); color: #d4a574; }
+    .badge-green { background: rgba(74, 222, 128, 0.15); color: #4ade80; }
+    .badge-gray { background: rgba(163, 154, 166, 0.12); color: #a39aa6; }
+
+    /* 卡片浮起效果 */
+    .hover-lift { transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease; }
+    .hover-lift:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0,0,0,0.5); }
+
+    /* 表格数字 */
+    .tabular { font-variant-numeric: tabular-nums; }
+
+    /* === 图表：网格线 === */
     .chart-grid line { stroke: rgba(255,255,255,0.05); stroke-width: 1; }
-    .chart-axis text { font-family: "JetBrains Mono", monospace; font-size: 10px; fill: #8a8f97; }
+    .chart-axis text { font-family: "JetBrains Mono", monospace; font-size: 10px; fill: #a39aa6; }
 
-    /* 表格紧凑 */
-    .row-odd { background: rgba(255,255,255,0.015); }
-    .row-even { background: transparent; }
+    /* 趋势图系列显隐（用 opacity 更柔和） */
+    .chart-series { transition: opacity 0.25s ease, stroke-opacity 0.25s ease, fill-opacity 0.25s ease; }
+    .chart-series.is-dimmed { stroke-opacity: 0.1; fill-opacity: 0.02; }
+    .legend-item { transition: opacity 0.2s ease; }
+    .legend-item.is-dimmed { opacity: 0.4; }
+    .legend-item.is-dimmed .legend-line { background: #a39aa6 !important; }
+
+    /* 时间 Tab 切换 */
+    .period-tab.active {
+      background: linear-gradient(135deg, #b2323a 0%, #8a232a 100%);
+      color: #fff5f3;
+    }
+
+    /* AI 采纳按钮：暖色渐变 */
+    .btn-ai-accept {
+      background: linear-gradient(135deg, #b2323a 0%, #d4a574 100%);
+      color: #fff5f3;
+      transition: all 0.2s ease;
+    }
+    .btn-ai-accept:hover { box-shadow: 0 4px 12px rgba(178, 50, 58, 0.35); transform: translateY(-1px); }
+    .btn-ai-accept:active { transform: translateY(0); }
+    .btn-ai-accept.is-adopted {
+      background: linear-gradient(135deg, rgba(74, 222, 128, 0.15) 0%, rgba(74, 222, 128, 0.25) 100%);
+      color: #4ade80;
+      cursor: default;
+    }
+
+    /* 表格行激活态 */
+    .perf-row { transition: background-color 0.15s ease; }
+    .perf-row.is-active { background: linear-gradient(90deg, rgba(178, 50, 58, 0.12), rgba(178, 50, 58, 0.04)) !important; box-shadow: inset 3px 0 0 #b2323a; }
+    .perf-row { cursor: pointer; }
+
+    /* 滑出面板动画 */
+    #row-detail-panel { transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
+    #row-detail-panel.is-closed { transform: translateX(100%); }
+    #row-detail-panel:not(.is-closed) { transform: translateX(0); }
+
+    /* 弹窗 */
+    #card-detail-modal { transition: opacity 0.2s ease; }
+    #card-detail-modal.is-closed { opacity: 0; pointer-events: none; }
+    #card-detail-modal:not(.is-closed) { opacity: 1; }
+
+    /* KPI 卡片 hover */
+    .kpi-card { transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease; }
+    .kpi-card:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0,0,0,0.45); border-color: rgba(212, 165, 116, 0.3); }
   </style>
 
   <script>
@@ -90,7 +179,7 @@
       const icons = { '人物': '👤', '自然风景': '🏞', '动物': '🐾', '建筑城市': '🏙', '运动体育': '⚽', '交通工具': '🚗', '食物': '🍽', '服饰时尚': '👗', '商业科技': '💼', '游戏娱乐': '🎮', '艺术': '🎨', '其他': '🖼' };
       const icon = icons[cat] || '🖼';
       const w = img.width || 400, h = img.height || 300;
-      const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}"><rect width="100%" height="100%" fill="%231c2024"/><text x="50%" y="45%" text-anchor="middle" font-size="${Math.min(w, h) * 0.18}" fill="%23ef4444" dominant-baseline="central">${icon}</text><text x="50%" y="68%" text-anchor="middle" font-size="${Math.min(w, h) * 0.07}" fill="%238a8f97" font-family="system-ui,sans-serif" dominant-baseline="central">${label}</text></svg>`;
+      const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}"><rect width="100%" height="100%" fill="%231c1924"/><text x="50%" y="45%" text-anchor="middle" font-size="${Math.min(w, h) * 0.18}" fill="%23b2323a" dominant-baseline="central">${icon}</text><text x="50%" y="68%" text-anchor="middle" font-size="${Math.min(w, h) * 0.07}" fill="%23a39aa6" font-family="system-ui,sans-serif" dominant-baseline="central">${label}</text></svg>`;
       img.src = 'data:image/svg+xml,' + svg;
     }, true);
   </script>
@@ -103,91 +192,98 @@
 
     <!-- Sidebar -->
     <aside class="w-60 shrink-0 bg-surface border-r border-outline/20 flex flex-col">
-      <div class="h-16 px-5 flex items-center gap-2.5 border-b border-outline/20">
-        <div class="relative w-8 h-8 bg-primary flex items-center justify-center">
-          <span class="font-mono font-bold text-on-primary text-sm">X</span>
-          <div class="absolute -top-0.5 -right-0.5 w-1.5 h-1.5 bg-primary"></div>
-          <div class="absolute -bottom-0.5 -left-0.5 w-1 h-1 bg-on-primary"></div>
+      <!-- Logo 区 -->
+      <div class="h-16 px-5 flex items-center gap-3 border-b border-outline/20">
+        <div class="relative w-9 h-9 rounded-xl flex items-center justify-center text-white font-bold text-base shadow-card" style="background: linear-gradient(135deg, #b2323a 0%, #7a1d24 100%);">
+          咸
+          <div class="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full bg-success status-dot border-2 border-surface"></div>
         </div>
         <div class="flex-1 min-w-0">
-          <div class="font-mono font-bold text-sm tracking-widest text-on-surface">XHS<span class="text-primary">_</span>CORE</div>
-          <div class="font-mono text-[10px] tracking-wider text-on-surface-variant">XIANLIAO.AI // V2.0</div>
+          <div class="font-semibold text-[15px] text-on-surface tracking-tight">咸聊 AI</div>
+          <div class="text-[11px] text-on-surface-variant">内容中台 · 小红书版</div>
         </div>
       </div>
 
-      <div class="px-5 py-3 border-b border-outline/20">
-        <div class="flex items-center justify-between mb-1.5">
-          <span class="font-mono text-[10px] tracking-widest text-on-surface-variant uppercase">System</span>
-          <span class="flex items-center gap-1 font-mono text-[10px] text-success">
-            <span class="w-1.5 h-1.5 bg-success rounded-full"></span>ONLINE
-          </span>
-        </div>
-        <div class="h-px tick-bar text-outline-variant"></div>
+      <!-- AI 助手条 -->
+      <div class="px-4 py-3 border-b border-outline/20">
+        <button id="btn-ai-assistant" class="w-full bg-gradient-to-r from-primary/15 to-accent/10 hover:from-primary/25 hover:to-accent/15 border border-primary/20 rounded-lg px-3 py-2.5 flex items-center gap-2.5 transition-colors">
+          <div class="w-7 h-7 rounded-full flex items-center justify-center text-white text-xs font-bold" style="background: linear-gradient(135deg, #b2323a, #d4a574);">咸</div>
+          <div class="flex-1 text-left min-w-0">
+            <div class="text-xs font-medium text-on-surface">问问小咸</div>
+            <div class="text-[10px] text-on-surface-variant truncate">"今天适合发什么选题？"</div>
+          </div>
+          <i data-lucide="sparkles" class="w-3.5 h-3.5 text-accent"></i>
+        </button>
       </div>
 
+      <!-- 导航菜单 -->
       <nav class="flex-1 overflow-y-auto py-3">
-        <div class="px-5 mb-2 font-mono text-[10px] tracking-widest text-on-surface-variant uppercase">// Modules</div>
-        <a href="home.html" class="nav-item flex items-center gap-3 px-5 py-2.5 text-sm font-medium text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors">
+        <div class="px-5 mb-2 text-[11px] font-medium text-on-surface-variant">主功能</div>
+        <a href="home.html" data-nav="radar" class="nav-item flex items-center gap-3 px-5 py-2.5 text-sm font-medium text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors">
           <i data-lucide="radar" class="w-4 h-4"></i><span>选题引擎</span>
-          <span class="ml-auto font-mono text-[10px] text-primary">28</span>
+          <span class="ml-auto badge badge-red" data-nav-count="radar">28</span>
         </a>
-        <a href="content-factory.html" class="nav-item flex items-center gap-3 px-5 py-2.5 text-sm font-medium text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors">
+        <a href="content-factory.html" data-nav="factory" class="nav-item flex items-center gap-3 px-5 py-2.5 text-sm font-medium text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors">
           <i data-lucide="factory" class="w-4 h-4"></i><span>内容工厂</span>
         </a>
-        <a href="publish.html" class="nav-item flex items-center gap-3 px-5 py-2.5 text-sm font-medium text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors">
+        <a href="publish.html" data-nav="publish" class="nav-item flex items-center gap-3 px-5 py-2.5 text-sm font-medium text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors">
           <i data-lucide="send" class="w-4 h-4"></i><span>发布管理</span>
-          <span class="ml-auto font-mono text-[10px] text-warning">3</span>
+          <span class="ml-auto badge badge-gold" data-nav-count="publish">3</span>
         </a>
-        <a href="analytics.html" class="nav-item flex items-center gap-3 px-5 py-2.5 text-sm font-medium text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors">
+        <a href="analytics.html" data-nav="analytics" class="nav-item flex items-center gap-3 px-5 py-2.5 text-sm font-medium text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors">
           <i data-lucide="bar-chart-horizontal" class="w-4 h-4"></i><span>数据复盘</span>
         </a>
-        <a href="knowledge.html" class="nav-item flex items-center gap-3 px-5 py-2.5 text-sm font-medium text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors">
+        <a href="knowledge.html" data-nav="knowledge" class="nav-item flex items-center gap-3 px-5 py-2.5 text-sm font-medium text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors">
           <i data-lucide="database" class="w-4 h-4"></i><span>知识库</span>
         </a>
 
-        <div class="px-5 mt-4 mb-2 font-mono text-[10px] tracking-widest text-on-surface-variant uppercase">// Config</div>
-        <a href="settings.html" class="nav-item flex items-center gap-3 px-5 py-2.5 text-sm font-medium text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors">
+        <div class="px-5 mt-4 mb-2 text-[11px] font-medium text-on-surface-variant">配置</div>
+        <a href="settings.html" data-nav="settings" class="nav-item flex items-center gap-3 px-5 py-2.5 text-sm font-medium text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors">
           <i data-lucide="settings" class="w-4 h-4"></i><span>系统设置</span>
         </a>
       </nav>
 
+      <!-- 底部：当前账号 -->
       <div class="border-t border-outline/20 p-3">
-        <div class="bg-surface-container p-2.5 flex items-center gap-2.5">
-          <div class="w-8 h-8 rounded-full bg-primary-container border border-primary/40 flex items-center justify-center text-primary font-mono text-xs font-bold">咸</div>
+        <div class="bg-surface-container rounded-lg p-2.5 flex items-center gap-2.5">
+          <div class="w-8 h-8 rounded-full flex items-center justify-center text-white font-bold text-xs" style="background: linear-gradient(135deg, #b2323a, #7a1d24);">咸</div>
           <div class="flex-1 min-w-0">
             <div class="text-xs font-medium text-on-surface truncate">咸聊AI·主理人</div>
-            <div class="font-mono text-[10px] text-on-surface-variant">@xianliao_ai</div>
+            <div class="text-[10px] text-on-surface-variant">@xianliao_ai</div>
           </div>
-          <i data-lucide="chevrons-up-down" class="w-3.5 h-3.5 text-on-surface-variant"></i>
+          <button class="text-on-surface-variant hover:text-primary transition-colors" title="切换账号">
+            <i data-lucide="chevrons-up-down" class="w-3.5 h-3.5"></i>
+          </button>
         </div>
       </div>
     </aside>
 
     <!-- Main area -->
     <div class="flex-1 min-w-0 flex flex-col">
-      <header class="h-16 bg-surface border-b border-outline/20 flex items-center px-6 gap-4 shrink-0">
-        <div class="flex items-center gap-3">
-          <span class="font-mono text-[10px] tracking-widest text-on-surface-variant uppercase">// XHS_CORE</span>
-          <span class="text-on-surface-variant/40">/</span>
-          <span id="page-crumb" class="font-mono text-xs text-on-surface tracking-wide uppercase">RADAR</span>
+      <!-- 顶栏 -->
+      <header class="h-16 bg-surface/80 backdrop-blur border-b border-outline/20 flex items-center px-6 gap-4 shrink-0">
+        <div class="flex items-center gap-2 text-sm">
+          <span class="text-on-surface-variant">咸聊 AI</span>
+          <i data-lucide="chevron-right" class="w-3.5 h-3.5 text-on-surface-variant/50"></i>
+          <span id="page-crumb" class="text-on-surface font-medium">数据复盘</span>
         </div>
         <div class="flex-1 max-w-xl mx-auto">
           <div class="relative">
             <i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-on-surface-variant"></i>
-            <input type="text" placeholder="SEARCH_TOPIC / KEYWORD / @ACCOUNT..." class="w-full bg-surface-container border border-outline/30 rounded-md pl-10 pr-3 py-2 text-sm font-mono tracking-wide text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/40" />
-            <span class="absolute right-3 top-1/2 -translate-y-1/2 font-mono text-[10px] text-on-surface-variant border border-outline/30 px-1.5 py-0.5">⌘K</span>
+            <input id="global-search" type="text" placeholder="搜选题、关键词、账号..." class="w-full bg-surface-container border border-outline/30 rounded-lg pl-10 pr-12 py-2 text-sm text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/30 transition-colors" />
+            <kbd class="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] text-on-surface-variant border border-outline/30 rounded px-1.5 py-0.5 font-mono">⌘K</kbd>
           </div>
         </div>
         <div class="flex items-center gap-2">
-          <button class="relative w-9 h-9 flex items-center justify-center border border-outline/30 text-on-surface-variant hover:text-primary hover:border-primary transition-colors">
+          <button id="btn-bell" class="relative w-9 h-9 rounded-lg flex items-center justify-center text-on-surface-variant hover:text-primary hover:bg-surface-container transition-colors" title="消息">
             <i data-lucide="bell" class="w-4 h-4"></i>
             <span class="absolute top-1.5 right-1.5 w-1.5 h-1.5 bg-primary rounded-full"></span>
           </button>
-          <button class="w-9 h-9 flex items-center justify-center border border-outline/30 text-on-surface-variant hover:text-primary hover:border-primary transition-colors">
+          <button id="btn-refresh" class="w-9 h-9 rounded-lg flex items-center justify-center text-on-surface-variant hover:text-primary hover:bg-surface-container transition-colors btn-press" title="刷新数据">
             <i data-lucide="refresh-cw" class="w-4 h-4"></i>
           </button>
-          <button class="bg-primary hover:bg-primary/90 text-on-primary font-mono font-bold text-xs tracking-widest px-4 h-9 flex items-center gap-2 transition-colors">
-            <i data-lucide="zap" class="w-3.5 h-3.5"></i>RUN_PIPELINE
+          <button id="btn-pipeline" class="bg-gradient-to-r from-primary to-primary/85 hover:from-primary/95 hover:to-primary/80 text-on-primary font-medium text-sm px-4 h-9 rounded-lg flex items-center gap-2 transition-colors shadow-card btn-press">
+            <i data-lucide="zap" class="w-4 h-4"></i>立即生成内容
           </button>
         </div>
       </header>
@@ -195,63 +291,240 @@
       <main class="flex-1 min-w-0 overflow-y-auto bg-background">
         <!-- @main-content:start -->
 
-        <!-- 页面顶部：标题 + 时间 Tab + 状态徽章 -->
+        <!-- ============== 顶部：标题 + 时间 Tab ============== -->
         <div class="px-6 pt-6 pb-4 border-b border-outline/20">
           <div class="flex items-end justify-between gap-4 flex-wrap">
             <div>
               <div class="flex items-center gap-2 mb-1.5">
-                <span class="font-mono text-[10px] tracking-widest text-primary uppercase">// MODULE_04</span>
-                <span class="text-on-surface-variant/40">/</span>
-                <span class="font-mono text-[10px] tracking-widest text-on-surface-variant uppercase">CONTENT_PERFORMANCE_REVIEW</span>
+                <span class="inline-flex items-center gap-1 text-[11px] font-medium text-primary bg-primary/10 px-2 py-0.5 rounded-md">
+                  <i data-lucide="bar-chart-horizontal" class="w-3 h-3"></i>数据复盘
+                </span>
+                <span class="text-on-surface-variant/40">·</span>
+                <span class="text-[11px] text-on-surface-variant">基于近 7 天数据生成内容效果分析与迭代建议</span>
               </div>
-              <h1 class="text-2xl font-bold text-on-surface tracking-wide">数据复盘</h1>
-              <p class="text-sm text-on-surface-variant mt-1">基于近 7 天数据生成内容效果分析与迭代建议</p>
+              <h1 class="text-2xl font-bold text-on-surface tracking-tight">数据复盘</h1>
+              <p class="text-sm text-on-surface-variant mt-1">看清表现，定位问题，AI 给出下一步动作</p>
             </div>
 
             <!-- 时间节点 Tab -->
-            <div id="period-tabs" class="flex items-stretch border border-outline/30 bg-surface">
-              <button data-period="48h" class="period-tab px-4 py-2 text-xs font-mono font-bold tracking-widest text-on-surface-variant hover:text-on-surface transition-colors">
-                48H
-              </button>
-              <button data-period="7d" class="period-tab px-4 py-2 text-xs font-mono font-bold tracking-widest text-on-surface transition-colors border-x border-outline/30 bg-primary text-on-primary">
-                7D
-              </button>
-              <button data-period="30d" class="period-tab px-4 py-2 text-xs font-mono font-bold tracking-widest text-on-surface-variant hover:text-on-surface transition-colors">
-                30D
+            <div class="flex items-center gap-3">
+              <div id="period-tabs" class="inline-flex items-stretch rounded-lg overflow-hidden border border-outline/30 bg-surface">
+                <button data-period="48h" class="period-tab px-4 py-2 text-xs font-medium text-on-surface-variant hover:text-on-surface transition-colors">
+                  48小时
+                </button>
+                <button data-period="7d" class="period-tab px-4 py-2 text-xs font-medium text-on-surface transition-colors border-l border-r border-outline/30 active">
+                  7天
+                </button>
+                <button data-period="30d" class="period-tab px-4 py-2 text-xs font-medium text-on-surface-variant hover:text-on-surface transition-colors">
+                  30天
+                </button>
+              </div>
+              <button id="btn-export" class="inline-flex items-center gap-1.5 h-9 px-3 rounded-lg bg-surface border border-outline/30 text-on-surface hover:border-primary hover:text-primary transition-colors text-sm">
+                <i data-lucide="download" class="w-4 h-4"></i>
+                导出报表
               </button>
             </div>
           </div>
         </div>
 
-        <!-- 中部：左侧主图区 65% + 右侧建议面板 35% -->
+        <!-- ============== KPI 总览：6 个指标卡 + sparkline ============== -->
+        <div class="px-6 py-5">
+          <div class="grid grid-cols-6 gap-3">
+
+            <!-- KPI-1 累计曝光 -->
+            <div id="kpi-impressions" class="kpi-card bg-surface border border-outline/20 rounded-lg p-4 relative shadow-card">
+              <div class="flex items-start justify-between mb-2">
+                <span class="text-[11px] text-on-surface-variant">累计曝光</span>
+                <i data-lucide="eye" class="w-3.5 h-3.5 text-on-surface-variant/60"></i>
+              </div>
+              <div class="text-2xl font-bold text-on-surface tabular leading-none">
+                <span class="kpi-value" data-48h="624,182" data-7d="1,284,392" data-30d="4,827,539">1,284,392</span>
+              </div>
+              <div class="flex items-center gap-1.5 mt-2 mb-3">
+                <span class="kpi-delta inline-flex items-center gap-0.5 text-[11px] font-medium text-success" data-48h="+8.1%" data-7d="+12.4%" data-30d="+18.6%">
+                  <i data-lucide="trending-up" class="w-3 h-3"></i>+12.4%
+                </span>
+                <span class="text-[10px] text-on-surface-variant">vs 上周</span>
+              </div>
+              <svg viewBox="0 0 120 28" class="w-full h-7" preserveAspectRatio="none">
+                <defs>
+                  <linearGradient id="kpi-grad-1" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#b2323a" stop-opacity="0.3"/>
+                    <stop offset="100%" stop-color="#b2323a" stop-opacity="0"/>
+                  </linearGradient>
+                </defs>
+                <polyline class="kpi-spark" data-48h="0,20 12,18 24,22 36,15 48,17 60,10 72,12 84,7 96,9 108,4 120,6" data-7d="0,20 12,18 24,22 36,15 48,17 60,10 72,12 84,7 96,9 108,4 120,6" data-30d="0,24 12,22 24,20 36,17 48,19 60,15 72,17 84,12 96,14 108,9 120,11" data-active="7d" points="0,20 12,18 24,22 36,15 48,17 60,10 72,12 84,7 96,9 108,4 120,6" fill="none" stroke="#b2323a" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"/>
+                <polyline class="kpi-spark-fill" data-48h="0,20 12,18 24,22 36,15 48,17 60,10 72,12 84,7 96,9 108,4 120,6 120,28 0,28" data-7d="0,20 12,18 24,22 36,15 48,17 60,10 72,12 84,7 96,9 108,4 120,6 120,28 0,28" data-30d="0,24 12,22 24,20 36,17 48,19 60,15 72,17 84,12 96,14 108,9 120,11 120,28 0,28" data-active="7d" points="0,20 12,18 24,22 36,15 48,17 60,10 72,12 84,7 96,9 108,4 120,6 120,28 0,28" fill="url(#kpi-grad-1)" stroke="none"/>
+              </svg>
+            </div>
+
+            <!-- KPI-2 累计互动 -->
+            <div id="kpi-engagements" class="kpi-card bg-surface border border-outline/20 rounded-lg p-4 relative shadow-card">
+              <div class="flex items-start justify-between mb-2">
+                <span class="text-[11px] text-on-surface-variant">累计互动</span>
+                <i data-lucide="activity" class="w-3.5 h-3.5 text-on-surface-variant/60"></i>
+              </div>
+              <div class="text-2xl font-bold text-on-surface tabular leading-none">
+                <span class="kpi-value" data-48h="34,827" data-7d="86,231" data-30d="312,548">86,231</span>
+              </div>
+              <div class="flex items-center gap-1.5 mt-2 mb-3">
+                <span class="kpi-delta inline-flex items-center gap-0.5 text-[11px] font-medium text-success" data-48h="+11.2%" data-7d="+18.2%" data-30d="+24.3%">
+                  <i data-lucide="trending-up" class="w-3 h-3"></i>+18.2%
+                </span>
+                <span class="text-[10px] text-on-surface-variant">vs 上周</span>
+              </div>
+              <svg viewBox="0 0 120 28" class="w-full h-7" preserveAspectRatio="none">
+                <defs>
+                  <linearGradient id="kpi-grad-2" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#4ade80" stop-opacity="0.28"/>
+                    <stop offset="100%" stop-color="#4ade80" stop-opacity="0"/>
+                  </linearGradient>
+                </defs>
+                <polyline class="kpi-spark" data-48h="0,22 12,20 24,17 36,19 48,14 60,15 72,11 84,13 96,6 108,8 120,3" data-7d="0,22 12,20 24,17 36,19 48,14 60,15 72,11 84,13 96,6 108,8 120,3" data-30d="0,25 12,22 24,20 36,21 48,16 60,17 72,13 84,15 96,9 108,10 120,5" data-active="7d" points="0,22 12,20 24,17 36,19 48,14 60,15 72,11 84,13 96,6 108,8 120,3" fill="none" stroke="#4ade80" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"/>
+                <polyline class="kpi-spark-fill" data-48h="0,22 12,20 24,17 36,19 48,14 60,15 72,11 84,13 96,6 108,8 120,3 120,28 0,28" data-7d="0,22 12,20 24,17 36,19 48,14 60,15 72,11 84,13 96,6 108,8 120,3 120,28 0,28" data-30d="0,25 12,22 24,20 36,21 48,16 60,17 72,13 84,15 96,9 108,10 120,5 120,28 0,28" data-active="7d" points="0,22 12,20 24,17 36,19 48,14 60,15 72,11 84,13 96,6 108,8 120,3 120,28 0,28" fill="url(#kpi-grad-2)" stroke="none"/>
+              </svg>
+            </div>
+
+            <!-- KPI-3 爆款率 -->
+            <div id="kpi-viral" class="kpi-card bg-surface border border-outline/20 rounded-lg p-4 relative shadow-card">
+              <div class="flex items-start justify-between mb-2">
+                <span class="text-[11px] text-on-surface-variant">爆款率</span>
+                <i data-lucide="flame" class="w-3.5 h-3.5 text-on-surface-variant/60"></i>
+              </div>
+              <div class="text-2xl font-bold text-on-surface tabular leading-none">
+                <span class="kpi-value" data-48h="18.2" data-7d="23.5" data-30d="28.4">23.5</span><span class="text-base text-on-surface-variant">%</span>
+              </div>
+              <div class="flex items-center gap-1.5 mt-2 mb-3">
+                <span class="kpi-delta inline-flex items-center gap-0.5 text-[11px] font-medium text-success" data-48h="+2.1pt" data-7d="+4.1pt" data-30d="+7.2pt">
+                  <i data-lucide="trending-up" class="w-3 h-3"></i>+4.1pt
+                </span>
+                <span class="text-[10px] text-on-surface-variant">vs 上周</span>
+              </div>
+              <svg viewBox="0 0 120 28" class="w-full h-7" preserveAspectRatio="none">
+                <defs>
+                  <linearGradient id="kpi-grad-3" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#d4a574" stop-opacity="0.30"/>
+                    <stop offset="100%" stop-color="#d4a574" stop-opacity="0"/>
+                  </linearGradient>
+                </defs>
+                <polyline class="kpi-spark" data-48h="0,18 12,16 24,20 36,14 48,11 60,13 72,8 84,10 96,5 108,7 120,2" data-7d="0,18 12,16 24,20 36,14 48,11 60,13 72,8 84,10 96,5 108,7 120,2" data-30d="0,22 12,20 24,18 36,16 48,13 60,15 72,10 84,12 96,7 108,9 120,4" data-active="7d" points="0,18 12,16 24,20 36,14 48,11 60,13 72,8 84,10 96,5 108,7 120,2" fill="none" stroke="#d4a574" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"/>
+                <polyline class="kpi-spark-fill" data-48h="0,18 12,16 24,20 36,14 48,11 60,13 72,8 84,10 96,5 108,7 120,2 120,28 0,28" data-7d="0,18 12,16 24,20 36,14 48,11 60,13 72,8 84,10 96,5 108,7 120,2 120,28 0,28" data-30d="0,22 12,20 24,18 36,16 48,13 60,15 72,10 84,12 96,7 108,9 120,4 120,28 0,28" data-active="7d" points="0,18 12,16 24,20 36,14 48,11 60,13 72,8 84,10 96,5 108,7 120,2 120,28 0,28" fill="url(#kpi-grad-3)" stroke="none"/>
+              </svg>
+            </div>
+
+            <!-- KPI-4 平均互动率 -->
+            <div id="kpi-er" class="kpi-card bg-surface border border-outline/20 rounded-lg p-4 relative shadow-card">
+              <div class="flex items-start justify-between mb-2">
+                <span class="text-[11px] text-on-surface-variant">平均互动率</span>
+                <i data-lucide="percent" class="w-3.5 h-3.5 text-on-surface-variant/60"></i>
+              </div>
+              <div class="text-2xl font-bold text-on-surface tabular leading-none">
+                <span class="kpi-value" data-48h="5.9" data-7d="6.7" data-30d="6.5">6.7</span><span class="text-base text-on-surface-variant">%</span>
+              </div>
+              <div class="flex items-center gap-1.5 mt-2 mb-3">
+                <span class="kpi-delta inline-flex items-center gap-0.5 text-[11px] font-medium text-error" data-48h="-0.2pt" data-7d="-0.8pt" data-30d="-1.1pt">
+                  <i data-lucide="trending-down" class="w-3 h-3"></i>-0.8pt
+                </span>
+                <span class="text-[10px] text-on-surface-variant">vs 上周</span>
+              </div>
+              <svg viewBox="0 0 120 28" class="w-full h-7" preserveAspectRatio="none">
+                <defs>
+                  <linearGradient id="kpi-grad-4" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#a39aa6" stop-opacity="0.20"/>
+                    <stop offset="100%" stop-color="#a39aa6" stop-opacity="0"/>
+                  </linearGradient>
+                </defs>
+                <polyline class="kpi-spark" data-48h="0,8 12,10 24,7 36,12 48,9 60,14 72,11 84,16 96,13 108,17 120,15" data-7d="0,8 12,10 24,7 36,12 48,9 60,14 72,11 84,16 96,13 108,17 120,15" data-30d="0,6 12,8 24,5 36,10 48,7 60,12 72,9 84,14 96,11 108,15 120,13" data-active="7d" points="0,8 12,10 24,7 36,12 48,9 60,14 72,11 84,16 96,13 108,17 120,15" fill="none" stroke="#a39aa6" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"/>
+                <polyline class="kpi-spark-fill" data-48h="0,8 12,10 24,7 36,12 48,9 60,14 72,11 84,16 96,13 108,17 120,15 120,28 0,28" data-7d="0,8 12,10 24,7 36,12 48,9 60,14 72,11 84,16 96,13 108,17 120,15 120,28 0,28" data-30d="0,6 12,8 24,5 36,10 48,7 60,12 72,9 84,14 96,11 108,15 120,13 120,28 0,28" data-active="7d" points="0,8 12,10 24,7 36,12 48,9 60,14 72,11 84,16 96,13 108,17 120,15 120,28 0,28" fill="url(#kpi-grad-4)" stroke="none"/>
+              </svg>
+            </div>
+
+            <!-- KPI-5 粉丝净增 -->
+            <div id="kpi-followers" class="kpi-card bg-surface border border-outline/20 rounded-lg p-4 relative shadow-card">
+              <div class="flex items-start justify-between mb-2">
+                <span class="text-[11px] text-on-surface-variant">粉丝净增</span>
+                <i data-lucide="user-plus" class="w-3.5 h-3.5 text-on-surface-variant/60"></i>
+              </div>
+              <div class="text-2xl font-bold text-on-surface tabular leading-none">
+                <span class="kpi-value" data-48h="+1,247" data-7d="+3,842" data-30d="+11,506">+3,842</span>
+              </div>
+              <div class="flex items-center gap-1.5 mt-2 mb-3">
+                <span class="kpi-delta inline-flex items-center gap-0.5 text-[11px] font-medium text-success" data-48h="+12.4%" data-7d="+24.6%" data-30d="+38.2%">
+                  <i data-lucide="trending-up" class="w-3 h-3"></i>+24.6%
+                </span>
+                <span class="text-[10px] text-on-surface-variant">vs 上周</span>
+              </div>
+              <svg viewBox="0 0 120 28" class="w-full h-7" preserveAspectRatio="none">
+                <defs>
+                  <linearGradient id="kpi-grad-5" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#4ade80" stop-opacity="0.28"/>
+                    <stop offset="100%" stop-color="#4ade80" stop-opacity="0"/>
+                  </linearGradient>
+                </defs>
+                <polyline class="kpi-spark" data-48h="0,24 12,22 24,18 36,20 48,15 60,16 72,11 84,12 96,7 108,8 120,4" data-7d="0,24 12,22 24,18 36,20 48,15 60,16 72,11 84,12 96,7 108,8 120,4" data-30d="0,26 12,24 24,20 36,22 48,17 60,18 72,13 84,14 96,9 108,10 120,6" data-active="7d" points="0,24 12,22 24,18 36,20 48,15 60,16 72,11 84,12 96,7 108,8 120,4" fill="none" stroke="#4ade80" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"/>
+                <polyline class="kpi-spark-fill" data-48h="0,24 12,22 24,18 36,20 48,15 60,16 72,11 84,12 96,7 108,8 120,4 120,28 0,28" data-7d="0,24 12,22 24,18 36,20 48,15 60,16 72,11 84,12 96,7 108,8 120,4 120,28 0,28" data-30d="0,26 12,24 24,20 36,22 48,17 60,18 72,13 84,14 96,9 108,10 120,6 120,28 0,28" data-active="7d" points="0,24 12,22 24,18 36,20 48,15 60,16 72,11 84,12 96,7 108,8 120,4 120,28 0,28" fill="url(#kpi-grad-5)" stroke="none"/>
+              </svg>
+            </div>
+
+            <!-- KPI-6 投资回报率 -->
+            <div id="kpi-roi" class="kpi-card bg-surface border border-primary/30 rounded-lg p-4 relative shadow-card" style="background: linear-gradient(135deg, rgba(178, 50, 58, 0.08), rgba(212, 165, 116, 0.04));">
+              <div class="flex items-start justify-between mb-2">
+                <span class="text-[11px] text-on-surface-variant">投资回报率</span>
+                <i data-lucide="trending-up" class="w-3.5 h-3.5 text-primary"></i>
+              </div>
+              <div class="text-2xl font-bold text-primary tabular leading-none">
+                <span class="kpi-value" data-48h="3.6" data-7d="4.2" data-30d="5.1">4.2</span><span class="text-base">x</span>
+              </div>
+              <div class="flex items-center gap-1.5 mt-2 mb-3">
+                <span class="kpi-delta inline-flex items-center gap-0.5 text-[11px] font-medium text-success" data-48h="+0.2x" data-7d="+0.3x" data-30d="+0.7x">
+                  <i data-lucide="trending-up" class="w-3 h-3"></i>+0.3x
+                </span>
+                <span class="text-[10px] text-on-surface-variant">vs 上周</span>
+              </div>
+              <svg viewBox="0 0 120 28" class="w-full h-7" preserveAspectRatio="none">
+                <defs>
+                  <linearGradient id="kpi-grad-6" x1="0" y1="0" x2="1" y2="0">
+                    <stop offset="0%" stop-color="#b2323a" stop-opacity="0.30"/>
+                    <stop offset="100%" stop-color="#d4a574" stop-opacity="0.10"/>
+                  </linearGradient>
+                </defs>
+                <polyline class="kpi-spark" data-48h="0,20 12,18 24,15 36,17 48,12 60,10 72,12 84,7 96,8 108,4 120,2" data-7d="0,20 12,18 24,15 36,17 48,12 60,10 72,12 84,7 96,8 108,4 120,2" data-30d="0,22 12,20 24,17 36,19 48,14 60,12 72,14 84,9 96,10 108,6 120,4" data-active="7d" points="0,20 12,18 24,15 36,17 48,12 60,10 72,12 84,7 96,8 108,4 120,2" fill="none" stroke="#b2323a" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+                <polyline class="kpi-spark-fill" data-48h="0,20 12,18 24,15 36,17 48,12 60,10 72,12 84,7 96,8 108,4 120,2 120,28 0,28" data-7d="0,20 12,18 24,15 36,17 48,12 60,10 72,12 84,7 96,8 108,4 120,2 120,28 0,28" data-30d="0,22 12,20 24,17 36,19 48,14 60,12 72,14 84,9 96,10 108,6 120,4 120,28 0,28" data-active="7d" points="0,20 12,18 24,15 36,17 48,12 60,10 72,12 84,7 96,8 108,4 120,2 120,28 0,28" fill="url(#kpi-grad-6)" stroke="none"/>
+              </svg>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- ============== 中部：左侧主图区 + 右侧建议面板 ============== -->
         <div class="px-6 pb-6">
           <div class="grid grid-cols-[1.85fr_1fr] gap-5">
 
             <!-- ========== 左侧主图区 ========== -->
             <div class="space-y-5">
 
-              <!-- 趋势图表卡：30D 4 线 -->
-              <div class="bg-surface border border-outline/20 shadow-card">
+              <!-- 趋势图表卡 -->
+              <div class="bg-surface border border-outline/20 rounded-lg shadow-card">
                 <!-- 头部 -->
                 <div class="flex items-center justify-between px-5 py-3.5 border-b border-outline/20">
                   <div class="flex items-center gap-2.5">
-                    <span class="font-mono text-sm font-bold text-primary">//</span>
-                    <h2 class="font-mono text-sm font-bold tracking-widest text-on-surface">30D_METRIC_TREND</h2>
-                    <span class="font-mono text-[10px] text-on-surface-variant tracking-wider ml-2">2024-01-15 ~ 2024-02-13</span>
+                    <i data-lucide="line-chart" class="w-4 h-4 text-primary"></i>
+                    <h2 class="text-sm font-semibold text-on-surface">指标趋势</h2>
+                    <span class="kpi-chart-range text-[11px] text-on-surface-variant ml-2">2024-02-07 ~ 2024-02-13</span>
                   </div>
                   <!-- 图例 -->
                   <div id="chart-legend" class="flex items-center gap-1">
-                    <button data-metric="impressions" class="legend-item flex items-center gap-1.5 px-2 py-1 text-[10px] font-mono tracking-wider text-on-surface">
-                      <span class="w-3 h-0.5 bg-primary"></span>曝光
+                    <button data-metric="impressions" class="legend-item flex items-center gap-1.5 px-2 py-1 text-[11px] text-on-surface hover:bg-surface-container rounded-md transition-colors">
+                      <span class="legend-line w-3 h-0.5 bg-primary rounded-full"></span>曝光
                     </button>
-                    <button data-metric="likes" class="legend-item flex items-center gap-1.5 px-2 py-1 text-[10px] font-mono tracking-wider text-on-surface">
-                      <span class="w-3 h-0.5 bg-success"></span>点赞
+                    <button data-metric="likes" class="legend-item flex items-center gap-1.5 px-2 py-1 text-[11px] text-on-surface hover:bg-surface-container rounded-md transition-colors">
+                      <span class="legend-line w-3 h-0.5 bg-success rounded-full"></span>点赞
                     </button>
-                    <button data-metric="favs" class="legend-item flex items-center gap-1.5 px-2 py-1 text-[10px] font-mono tracking-wider text-on-surface-variant/50 line-through">
-                      <span class="w-3 h-0.5 bg-warning"></span>收藏
+                    <button data-metric="favs" class="legend-item is-dimmed flex items-center gap-1.5 px-2 py-1 text-[11px] text-on-surface hover:bg-surface-container rounded-md transition-colors">
+                      <span class="legend-line w-3 h-0.5 bg-warning rounded-full"></span>收藏
                     </button>
-                    <button data-metric="comments" class="legend-item flex items-center gap-1.5 px-2 py-1 text-[10px] font-mono tracking-wider text-on-surface">
-                      <span class="w-3 h-0.5 bg-error"></span>评论
+                    <button data-metric="comments" class="legend-item flex items-center gap-1.5 px-2 py-1 text-[11px] text-on-surface hover:bg-surface-container rounded-md transition-colors">
+                      <span class="legend-line w-3 h-0.5 bg-error rounded-full"></span>评论
                     </button>
                   </div>
                 </div>
@@ -259,6 +532,12 @@
                 <!-- SVG 图表 -->
                 <div class="p-5">
                   <svg id="trend-chart" viewBox="0 0 720 280" class="w-full h-auto" preserveAspectRatio="none">
+                    <defs>
+                      <linearGradient id="trend-grad-imp" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stop-color="#b2323a" stop-opacity="0.25"/>
+                        <stop offset="100%" stop-color="#b2323a" stop-opacity="0"/>
+                      </linearGradient>
+                    </defs>
                     <!-- 横向网格 -->
                     <g class="chart-grid">
                       <line x1="50" y1="40" x2="710" y2="40"/>
@@ -275,188 +554,194 @@
                     </g>
                     <!-- X 轴标签 -->
                     <g class="chart-axis">
-                      <text x="60" y="260" text-anchor="middle">01-15</text>
-                      <text x="160" y="260" text-anchor="middle">01-22</text>
-                      <text x="260" y="260" text-anchor="middle">01-29</text>
-                      <text x="360" y="260" text-anchor="middle">02-05</text>
-                      <text x="460" y="260" text-anchor="middle">02-09</text>
-                      <text x="560" y="260" text-anchor="middle">02-11</text>
+                      <text x="80" y="260" text-anchor="middle">02-07</text>
+                      <text x="180" y="260" text-anchor="middle">02-08</text>
+                      <text x="280" y="260" text-anchor="middle">02-09</text>
+                      <text x="380" y="260" text-anchor="middle">02-10</text>
+                      <text x="480" y="260" text-anchor="middle">02-11</text>
+                      <text x="580" y="260" text-anchor="middle">02-12</text>
                       <text x="700" y="260" text-anchor="middle">02-13</text>
                     </g>
 
-                    <!-- 曝光（primary，最粗） -->
-                    <path data-series="impressions" d="M 60,180 L 100,165 L 140,170 L 180,140 L 220,150 L 260,120 L 300,130 L 340,95 L 380,110 L 420,75 L 460,85 L 500,60 L 540,70 L 580,50 L 620,55 L 700,40" fill="none" stroke="#7f2028" stroke-width="2.2" stroke-linejoin="round"/>
-                    <path data-series="impressions" d="M 60,180 L 100,165 L 140,170 L 180,140 L 220,150 L 260,120 L 300,130 L 340,95 L 380,110 L 420,75 L 460,85 L 500,60 L 540,70 L 580,50 L 620,55 L 700,40 L 700,220 L 60,220 Z" fill="rgba(127,32,40,0.08)" stroke="none"/>
+                    <!-- 曝光（primary，最粗） + 填充 -->
+                    <path data-series="impressions" class="chart-series" d="M 80,180 L 180,165 L 280,170 L 380,140 L 480,150 L 580,120 L 700,110 L 700,220 L 80,220 Z" fill="url(#trend-grad-imp)" stroke="none"/>
+                    <path data-series="impressions" class="chart-series" d="M 80,180 L 180,165 L 280,170 L 380,140 L 480,150 L 580,120 L 700,110" fill="none" stroke="#b2323a" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"/>
 
                     <!-- 点赞（success） -->
-                    <path data-series="likes" d="M 60,200 L 100,195 L 140,190 L 180,180 L 220,170 L 260,160 L 300,155 L 340,135 L 380,140 L 420,118 L 460,120 L 500,100 L 540,108 L 580,88 L 620,95 L 700,80" fill="none" stroke="#4ade80" stroke-width="1.8" stroke-linejoin="round"/>
+                    <path data-series="likes" class="chart-series" d="M 80,200 L 180,195 L 280,190 L 380,180 L 480,170 L 580,160 L 700,140" fill="none" stroke="#4ade80" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"/>
 
-                    <!-- 收藏（warning，隐藏示例） -->
-                    <path data-series="favs" d="M 60,210 L 100,208 L 140,200 L 180,205 L 220,195 L 260,190 L 300,180 L 340,178 L 380,170 L 420,165 L 460,158 L 500,150 L 540,148 L 580,140 L 620,142 L 700,135" fill="none" stroke="#f59e0b" stroke-width="1.5" stroke-linejoin="round" stroke-dasharray="3 2" opacity="0.4"/>
+                    <!-- 收藏（warning，默认隐藏） -->
+                    <path data-series="favs" class="chart-series is-dimmed" d="M 80,210 L 180,208 L 280,200 L 380,205 L 480,195 L 580,190 L 700,170" fill="none" stroke="#f59e0b" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray="3 3"/>
 
                     <!-- 评论（red） -->
-                    <path data-series="comments" d="M 60,218 L 100,215 L 140,212 L 180,208 L 220,210 L 260,202 L 300,205 L 340,198 L 380,200 L 420,193 L 460,195 L 500,188 L 540,190 L 580,184 L 620,186 L 700,180" fill="none" stroke="#ef4444" stroke-width="1.5" stroke-linejoin="round"/>
+                    <path data-series="comments" class="chart-series" d="M 80,218 L 180,215 L 280,212 L 380,208 L 480,210 L 580,202 L 700,190" fill="none" stroke="#ef4444" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"/>
 
                     <!-- 标注：爆款峰值 -->
                     <g>
-                      <line x1="620" y1="55" x2="620" y2="245" stroke="#7f2028" stroke-dasharray="2 2" opacity="0.4"/>
-                      <circle cx="620" cy="55" r="4" fill="#7f2028"/>
-                      <circle cx="620" cy="55" r="8" fill="none" stroke="#7f2028" stroke-width="1" opacity="0.5"/>
-                      <rect x="560" y="20" width="120" height="18" fill="#0a0b0d" stroke="#7f2028"/>
-                      <text x="620" y="32" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#7f2028">PEAK · 02-12 · 爆款</text>
+                      <line x1="580" y1="120" x2="580" y2="245" stroke="#b2323a" stroke-dasharray="3 3" opacity="0.4"/>
+                      <circle cx="580" cy="120" r="5" fill="#b2323a"/>
+                      <circle cx="580" cy="120" r="9" fill="none" stroke="#b2323a" stroke-width="1" opacity="0.5"/>
+                      <rect x="510" y="20" width="140" height="20" rx="4" fill="#1c1924" stroke="#b2323a" stroke-opacity="0.5"/>
+                      <text x="580" y="33" text-anchor="middle" font-size="10" fill="#f4ecf2" font-family="system-ui,sans-serif">峰值 · 02-12 · 爆款</text>
                     </g>
                   </svg>
                 </div>
               </div>
 
               <!-- 爆款分析 TOP 3 -->
-              <div class="bg-surface border border-outline/20 shadow-card">
+              <div class="bg-surface border border-outline/20 rounded-lg shadow-card">
                 <div class="flex items-center justify-between px-5 py-3.5 border-b border-outline/20">
                   <div class="flex items-center gap-2.5">
                     <i data-lucide="flame" class="w-4 h-4 text-primary"></i>
-                    <h2 class="font-mono text-sm font-bold tracking-widest text-on-surface uppercase">TOP_VIRAL // 上周爆款</h2>
+                    <h2 class="text-sm font-semibold text-on-surface">表现优秀 TOP 3</h2>
                   </div>
-                  <span class="font-mono text-[10px] text-on-surface-variant tracking-wider">CTR &gt; 8% 入选</span>
+                  <span class="text-[11px] text-on-surface-variant bg-surface-container px-2 py-0.5 rounded-md">互动率 ≥ 8%</span>
                 </div>
 
                 <div id="viral-list" class="divide-y divide-outline-variant/50">
                   <!-- 爆款-1 -->
-                  <div class="flex items-center gap-4 p-4 hover:bg-surface-container/40 transition-colors">
-                    <div class="w-7 h-7 bg-primary flex items-center justify-center font-mono text-xs font-bold text-on-primary shrink-0">01</div>
-                    <img src="https://images.unsplash.com/photo-1551836022-d5d88e9218df?w=200&h=200&fit=crop" alt="职场女性思考" data-category="人物" class="w-14 h-14 object-cover border border-outline/30 shrink-0"/>
+                  <div class="viral-card flex items-center gap-4 p-4 hover:bg-surface-container/40 transition-colors cursor-pointer" data-id="v1" data-title="为什么我30岁才明白：富婆都在用的3个反常识理财法" data-views="482K" data-er="9.2%" data-time="02-12 21:00" data-tags="高反差标题,晚 21:00,强钩子首句">
+                    <div class="w-7 h-7 rounded-md bg-gradient-to-br from-primary to-accent flex items-center justify-center text-white font-bold text-xs shrink-0 shadow-card">01</div>
+                    <img src="https://images.unsplash.com/photo-1551836022-d5d88e9218df?w=200&h=200&fit=crop" alt="职场女性思考" data-category="人物" class="w-14 h-14 object-cover rounded-md border border-outline/30 shrink-0"/>
                     <div class="flex-1 min-w-0">
                       <div class="text-sm font-medium text-on-surface truncate">为什么我30岁才明白：富婆都在用的3个反常识理财法</div>
                       <div class="flex flex-wrap items-center gap-1.5 mt-1.5">
-                        <span class="font-mono text-[10px] text-on-surface-variant bg-surface-container px-1.5 py-0.5">#高反差标题</span>
-                        <span class="font-mono text-[10px] text-on-surface-variant bg-surface-container px-1.5 py-0.5">#晚 21:00</span>
-                        <span class="font-mono text-[10px] text-on-surface-variant bg-surface-container px-1.5 py-0.5">#强钩子首句</span>
+                        <span class="text-[10px] text-on-surface-variant bg-surface-container px-1.5 py-0.5 rounded">#高反差标题</span>
+                        <span class="text-[10px] text-on-surface-variant bg-surface-container px-1.5 py-0.5 rounded">#晚 21:00</span>
+                        <span class="text-[10px] text-on-surface-variant bg-surface-container px-1.5 py-0.5 rounded">#强钩子首句</span>
                       </div>
                     </div>
                     <div class="text-right shrink-0 w-28">
-                      <div class="font-mono text-base font-bold text-on-surface tabular">482K</div>
-                      <div class="font-mono text-[10px] text-on-surface-variant">阅读量</div>
+                      <div class="text-base font-bold text-on-surface tabular">482K</div>
+                      <div class="text-[10px] text-on-surface-variant">阅读量</div>
                     </div>
                     <div class="text-right shrink-0 w-20">
-                      <div class="font-mono text-base font-bold text-primary tabular">9.2%</div>
-                      <div class="font-mono text-[10px] text-on-surface-variant">点赞率</div>
+                      <div class="text-base font-bold text-primary tabular">9.2%</div>
+                      <div class="text-[10px] text-on-surface-variant">互动率</div>
                     </div>
+                    <i data-lucide="chevron-right" class="w-4 h-4 text-on-surface-variant/40 shrink-0"></i>
                   </div>
 
                   <!-- 爆款-2 -->
-                  <div class="flex items-center gap-4 p-4 hover:bg-surface-container/40 transition-colors">
-                    <div class="w-7 h-7 bg-primary flex items-center justify-center font-mono text-xs font-bold text-on-primary shrink-0">02</div>
-                    <img src="https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=200&h=200&fit=crop" alt="深夜独处" data-category="人物" class="w-14 h-14 object-cover border border-outline/30 shrink-0"/>
+                  <div class="viral-card flex items-center gap-4 p-4 hover:bg-surface-container/40 transition-colors cursor-pointer" data-id="v2" data-title="凌晨3点醒来的女人，藏着普通人不愿承认的真相" data-views="356K" data-er="8.7%" data-time="02-10 22:30" data-tags="共情痛点,深夜档,身份认同">
+                    <div class="w-7 h-7 rounded-md bg-gradient-to-br from-primary/90 to-accent/80 flex items-center justify-center text-white font-bold text-xs shrink-0 shadow-card">02</div>
+                    <img src="https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=200&h=200&fit=crop" alt="深夜独处" data-category="人物" class="w-14 h-14 object-cover rounded-md border border-outline/30 shrink-0"/>
                     <div class="flex-1 min-w-0">
                       <div class="text-sm font-medium text-on-surface truncate">凌晨3点醒来的女人，藏着普通人不愿承认的真相</div>
                       <div class="flex flex-wrap items-center gap-1.5 mt-1.5">
-                        <span class="font-mono text-[10px] text-on-surface-variant bg-surface-container px-1.5 py-0.5">#共情痛点</span>
-                        <span class="font-mono text-[10px] text-on-surface-variant bg-surface-container px-1.5 py-0.5">#深夜档</span>
-                        <span class="font-mono text-[10px] text-on-surface-variant bg-surface-container px-1.5 py-0.5">#身份认同</span>
+                        <span class="text-[10px] text-on-surface-variant bg-surface-container px-1.5 py-0.5 rounded">#共情痛点</span>
+                        <span class="text-[10px] text-on-surface-variant bg-surface-container px-1.5 py-0.5 rounded">#深夜档</span>
+                        <span class="text-[10px] text-on-surface-variant bg-surface-container px-1.5 py-0.5 rounded">#身份认同</span>
                       </div>
                     </div>
                     <div class="text-right shrink-0 w-28">
-                      <div class="font-mono text-base font-bold text-on-surface tabular">356K</div>
-                      <div class="font-mono text-[10px] text-on-surface-variant">阅读量</div>
+                      <div class="text-base font-bold text-on-surface tabular">356K</div>
+                      <div class="text-[10px] text-on-surface-variant">阅读量</div>
                     </div>
                     <div class="text-right shrink-0 w-20">
-                      <div class="font-mono text-base font-bold text-primary tabular">8.7%</div>
-                      <div class="font-mono text-[10px] text-on-surface-variant">点赞率</div>
+                      <div class="text-base font-bold text-primary tabular">8.7%</div>
+                      <div class="text-[10px] text-on-surface-variant">互动率</div>
                     </div>
+                    <i data-lucide="chevron-right" class="w-4 h-4 text-on-surface-variant/40 shrink-0"></i>
                   </div>
 
                   <!-- 爆款-3 -->
-                  <div class="flex items-center gap-4 p-4 hover:bg-surface-container/40 transition-colors">
-                    <div class="w-7 h-7 bg-primary flex items-center justify-center font-mono text-xs font-bold text-on-primary shrink-0">03</div>
-                    <img src="https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?w=200&h=200&fit=crop" alt="女性职场" data-category="人物" class="w-14 h-14 object-cover border border-outline/30 shrink-0"/>
+                  <div class="viral-card flex items-center gap-4 p-4 hover:bg-surface-container/40 transition-colors cursor-pointer" data-id="v3" data-title="我辞掉月薪5万的工作，全网都在骂我" data-views="298K" data-er="7.9%" data-time="02-08 20:00" data-tags="争议性,反差人设,标题党">
+                    <div class="w-7 h-7 rounded-md bg-gradient-to-br from-accent to-primary/70 flex items-center justify-center text-white font-bold text-xs shrink-0 shadow-card">03</div>
+                    <img src="https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?w=200&h=200&fit=crop" alt="女性职场" data-category="人物" class="w-14 h-14 object-cover rounded-md border border-outline/30 shrink-0"/>
                     <div class="flex-1 min-w-0">
                       <div class="text-sm font-medium text-on-surface truncate">我辞掉月薪5万的工作，全网都在骂我</div>
                       <div class="flex flex-wrap items-center gap-1.5 mt-1.5">
-                        <span class="font-mono text-[10px] text-on-surface-variant bg-surface-container px-1.5 py-0.5">#争议性</span>
-                        <span class="font-mono text-[10px] text-on-surface-variant bg-surface-container px-1.5 py-0.5">#反差人设</span>
-                        <span class="font-mono text-[10px] text-on-surface-variant bg-surface-container px-1.5 py-0.5">#标题党</span>
+                        <span class="text-[10px] text-on-surface-variant bg-surface-container px-1.5 py-0.5 rounded">#争议性</span>
+                        <span class="text-[10px] text-on-surface-variant bg-surface-container px-1.5 py-0.5 rounded">#反差人设</span>
+                        <span class="text-[10px] text-on-surface-variant bg-surface-container px-1.5 py-0.5 rounded">#标题党</span>
                       </div>
                     </div>
                     <div class="text-right shrink-0 w-28">
-                      <div class="font-mono text-base font-bold text-on-surface tabular">298K</div>
-                      <div class="font-mono text-[10px] text-on-surface-variant">阅读量</div>
+                      <div class="text-base font-bold text-on-surface tabular">298K</div>
+                      <div class="text-[10px] text-on-surface-variant">阅读量</div>
                     </div>
                     <div class="text-right shrink-0 w-20">
-                      <div class="font-mono text-base font-bold text-primary tabular">7.9%</div>
-                      <div class="font-mono text-[10px] text-on-surface-variant">点赞率</div>
+                      <div class="text-base font-bold text-primary tabular">7.9%</div>
+                      <div class="text-[10px] text-on-surface-variant">互动率</div>
                     </div>
+                    <i data-lucide="chevron-right" class="w-4 h-4 text-on-surface-variant/40 shrink-0"></i>
                   </div>
                 </div>
               </div>
 
               <!-- 掉队分析 BOTTOM 3 -->
-              <div class="bg-surface border border-outline/20 shadow-card">
+              <div class="bg-surface border border-outline/20 rounded-lg shadow-card">
                 <div class="flex items-center justify-between px-5 py-3.5 border-b border-outline/20">
                   <div class="flex items-center gap-2.5">
                     <i data-lucide="trending-down" class="w-4 h-4 text-error"></i>
-                    <h2 class="font-mono text-sm font-bold tracking-widest text-on-surface uppercase">BOTTOM_UNDER // 掉队归因</h2>
+                    <h2 class="text-sm font-semibold text-on-surface">表现掉队 BOTTOM 3</h2>
                   </div>
-                  <span class="font-mono text-[10px] text-on-surface-variant tracking-wider">CTR &lt; 1.2% 入选</span>
+                  <span class="text-[11px] text-on-surface-variant bg-surface-container px-2 py-0.5 rounded-md">互动率 &lt; 1.2%</span>
                 </div>
 
                 <div id="bottom-list" class="divide-y divide-outline-variant/50">
                   <!-- 掉队-1 -->
-                  <div class="flex items-center gap-4 p-4 hover:bg-surface-container/40 transition-colors">
-                    <div class="w-7 h-7 bg-surface-container border border-error/30 flex items-center justify-center font-mono text-xs font-bold text-error shrink-0">L1</div>
+                  <div class="bottom-card flex items-center gap-4 p-4 hover:bg-surface-container/40 transition-colors cursor-pointer" data-id="b1" data-title="关于自律的100个小习惯" data-views="12K" data-er="0.8%" data-time="02-08 10:00" data-reason="选题太大，泛泛而谈">
+                    <div class="w-7 h-7 rounded-md bg-surface-container-high border border-error/30 flex items-center justify-center text-error text-xs font-bold shrink-0">L1</div>
                     <div class="flex-1 min-w-0">
                       <div class="text-sm font-medium text-on-surface truncate">关于自律的100个小习惯</div>
                       <div class="flex flex-wrap items-center gap-1.5 mt-1.5">
-                        <span class="font-mono text-[10px] text-error bg-error/10 px-1.5 py-0.5">归因：选题太大，泛泛而谈</span>
-                        <span class="font-mono text-[10px] text-on-surface-variant bg-surface-container px-1.5 py-0.5">02-08 10:00</span>
+                        <span class="text-[10px] text-error bg-error/10 px-1.5 py-0.5 rounded">归因：选题太大，泛泛而谈</span>
+                        <span class="text-[10px] text-on-surface-variant bg-surface-container px-1.5 py-0.5 rounded">02-08 10:00</span>
                       </div>
                     </div>
                     <div class="text-right shrink-0 w-20">
-                      <div class="font-mono text-base font-bold text-on-surface-variant tabular">12K</div>
-                      <div class="font-mono text-[10px] text-on-surface-variant">阅读量</div>
+                      <div class="text-base font-bold text-on-surface-variant tabular">12K</div>
+                      <div class="text-[10px] text-on-surface-variant">阅读量</div>
                     </div>
                     <div class="text-right shrink-0 w-20">
-                      <div class="font-mono text-base font-bold text-error tabular">0.8%</div>
-                      <div class="font-mono text-[10px] text-on-surface-variant">点赞率</div>
+                      <div class="text-base font-bold text-error tabular">0.8%</div>
+                      <div class="text-[10px] text-on-surface-variant">互动率</div>
                     </div>
+                    <i data-lucide="chevron-right" class="w-4 h-4 text-on-surface-variant/40 shrink-0"></i>
                   </div>
 
                   <!-- 掉队-2 -->
-                  <div class="flex items-center gap-4 p-4 hover:bg-surface-container/40 transition-colors">
-                    <div class="w-7 h-7 bg-surface-container border border-error/30 flex items-center justify-center font-mono text-xs font-bold text-error shrink-0">L2</div>
+                  <div class="bottom-card flex items-center gap-4 p-4 hover:bg-surface-container/40 transition-colors cursor-pointer" data-id="b2" data-title="今日穿搭分享｜简约通勤风" data-views="8K" data-er="0.5%" data-time="02-09 14:30" data-reason="标题无钩子，无差异点">
+                    <div class="w-7 h-7 rounded-md bg-surface-container-high border border-error/30 flex items-center justify-center text-error text-xs font-bold shrink-0">L2</div>
                     <div class="flex-1 min-w-0">
                       <div class="text-sm font-medium text-on-surface truncate">今日穿搭分享｜简约通勤风</div>
                       <div class="flex flex-wrap items-center gap-1.5 mt-1.5">
-                        <span class="font-mono text-[10px] text-error bg-error/10 px-1.5 py-0.5">归因：标题无钩子，无差异点</span>
-                        <span class="font-mono text-[10px] text-on-surface-variant bg-surface-container px-1.5 py-0.5">02-09 14:30</span>
+                        <span class="text-[10px] text-error bg-error/10 px-1.5 py-0.5 rounded">归因：标题无钩子，无差异点</span>
+                        <span class="text-[10px] text-on-surface-variant bg-surface-container px-1.5 py-0.5 rounded">02-09 14:30</span>
                       </div>
                     </div>
                     <div class="text-right shrink-0 w-20">
-                      <div class="font-mono text-base font-bold text-on-surface-variant tabular">8K</div>
-                      <div class="font-mono text-[10px] text-on-surface-variant">阅读量</div>
+                      <div class="text-base font-bold text-on-surface-variant tabular">8K</div>
+                      <div class="text-[10px] text-on-surface-variant">阅读量</div>
                     </div>
                     <div class="text-right shrink-0 w-20">
-                      <div class="font-mono text-base font-bold text-error tabular">0.5%</div>
-                      <div class="font-mono text-[10px] text-on-surface-variant">点赞率</div>
+                      <div class="text-base font-bold text-error tabular">0.5%</div>
+                      <div class="text-[10px] text-on-surface-variant">互动率</div>
                     </div>
+                    <i data-lucide="chevron-right" class="w-4 h-4 text-on-surface-variant/40 shrink-0"></i>
                   </div>
 
                   <!-- 掉队-3 -->
-                  <div class="flex items-center gap-4 p-4 hover:bg-surface-container/40 transition-colors">
-                    <div class="w-7 h-7 bg-surface-container border border-error/30 flex items-center justify-center font-mono text-xs font-bold text-error shrink-0">L3</div>
+                  <div class="bottom-card flex items-center gap-4 p-4 hover:bg-surface-container/40 transition-colors cursor-pointer" data-id="b3" data-title="读书笔记：《置身事内》第二章" data-views="6K" data-er="0.3%" data-time="02-07 09:00" data-reason="周三上午发布，受众窄">
+                    <div class="w-7 h-7 rounded-md bg-surface-container-high border border-error/30 flex items-center justify-center text-error text-xs font-bold shrink-0">L3</div>
                     <div class="flex-1 min-w-0">
                       <div class="text-sm font-medium text-on-surface truncate">读书笔记：《置身事内》第二章</div>
                       <div class="flex flex-wrap items-center gap-1.5 mt-1.5">
-                        <span class="font-mono text-[10px] text-error bg-error/10 px-1.5 py-0.5">归因：周三上午发布，受众窄</span>
-                        <span class="font-mono text-[10px] text-on-surface-variant bg-surface-container px-1.5 py-0.5">02-07 09:00</span>
+                        <span class="text-[10px] text-error bg-error/10 px-1.5 py-0.5 rounded">归因：周三上午发布，受众窄</span>
+                        <span class="text-[10px] text-on-surface-variant bg-surface-container px-1.5 py-0.5 rounded">02-07 09:00</span>
                       </div>
                     </div>
                     <div class="text-right shrink-0 w-20">
-                      <div class="font-mono text-base font-bold text-on-surface-variant tabular">6K</div>
-                      <div class="font-mono text-[10px] text-on-surface-variant">阅读量</div>
+                      <div class="text-base font-bold text-on-surface-variant tabular">6K</div>
+                      <div class="text-[10px] text-on-surface-variant">阅读量</div>
                     </div>
                     <div class="text-right shrink-0 w-20">
-                      <div class="font-mono text-base font-bold text-error tabular">0.3%</div>
-                      <div class="font-mono text-[10px] text-on-surface-variant">点赞率</div>
+                      <div class="text-base font-bold text-error tabular">0.3%</div>
+                      <div class="text-[10px] text-on-surface-variant">互动率</div>
                     </div>
+                    <i data-lucide="chevron-right" class="w-4 h-4 text-on-surface-variant/40 shrink-0"></i>
                   </div>
                 </div>
               </div>
@@ -467,132 +752,116 @@
             <div class="space-y-5">
 
               <!-- AI 建议 -->
-              <div class="bg-surface border border-primary/40 shadow-card">
-                <div class="flex items-center justify-between px-4 py-3.5 border-b border-primary/30">
+              <div class="bg-surface border border-primary/30 rounded-lg shadow-card" style="background: linear-gradient(180deg, rgba(178, 50, 58, 0.06), transparent 30%);">
+                <div class="flex items-center justify-between px-4 py-3.5 border-b border-primary/20">
                   <div class="flex items-center gap-2">
-                    <div class="w-7 h-7 bg-primary/15 border border-primary/40 flex items-center justify-center">
+                    <div class="w-7 h-7 rounded-lg bg-primary/15 border border-primary/40 flex items-center justify-center">
                       <i data-lucide="bot" class="w-3.5 h-3.5 text-primary"></i>
                     </div>
                     <div>
-                      <div class="font-mono text-sm font-bold tracking-widest text-on-surface uppercase">AI_ITERATION_PLAN</div>
-                      <div class="font-mono text-[10px] text-on-surface-variant tracking-wider">GPT-4O · V2.0 · 基于 7D 数据</div>
+                      <div class="text-sm font-semibold text-on-surface">AI 复盘建议</div>
+                      <div class="text-[10px] text-on-surface-variant">基于近 7 天数据 · 置信度 87%</div>
                     </div>
                   </div>
-                  <span class="font-mono text-[9px] tracking-widest text-primary border border-primary/40 px-1.5 py-0.5">◆ LIVE</span>
+                  <div class="flex items-center gap-1.5">
+                    <span id="adopted-count" class="inline-flex items-center gap-1 text-[10px] font-medium text-success bg-success/15 px-1.5 py-0.5 rounded-full">
+                      <i data-lucide="check" class="w-3 h-3"></i>
+                      <span id="adopted-num">0</span>/4
+                    </span>
+                    <button id="btn-regen" class="w-7 h-7 rounded-md text-on-surface-variant hover:text-primary hover:bg-surface-container transition-colors" title="重新生成">
+                      <i data-lucide="refresh-cw" class="w-3.5 h-3.5 mx-auto"></i>
+                    </button>
+                  </div>
                 </div>
 
                 <div id="ai-suggestions" class="p-4 space-y-3">
                   <!-- 建议-1 -->
-                  <div class="suggestion-item bg-surface-container border border-outline/30 p-3.5">
+                  <div class="suggestion-item bg-surface-container border border-outline/30 rounded-lg p-3.5" data-suggestion-id="s1">
                     <div class="flex items-start justify-between gap-2 mb-2">
                       <div class="flex items-center gap-1.5">
-                        <span class="font-mono text-[10px] font-bold text-primary tracking-widest">[01] TOPIC</span>
-                        <span class="font-mono text-[10px] text-on-surface-variant">选题方向</span>
+                        <span class="text-[10px] font-bold text-primary bg-primary/15 px-1.5 py-0.5 rounded">01</span>
+                        <span class="text-[11px] font-medium text-on-surface">选题方向</span>
                       </div>
-                      <span class="font-mono text-[10px] font-bold text-success tabular">+32%</span>
+                      <span class="text-[10px] font-bold text-success bg-success/15 px-1.5 py-0.5 rounded tabular">+32%</span>
                     </div>
-                    <p class="text-sm text-on-surface leading-relaxed">下周聚焦<span class="text-primary font-medium">「女性 + 商业 + 反常识」</span>角度，预期互动提升 <span class="font-mono font-bold text-success tabular">32%</span>。参考爆款 #01 的内容范式。</p>
+                    <p class="text-sm text-on-surface leading-relaxed">下周聚焦<span class="text-primary font-medium">「女性 + 商业 + 反常识」</span>角度，预期互动提升 <span class="font-bold text-success tabular">+32%</span>。参考爆款 #01 的内容范式。</p>
                     <div class="flex items-center gap-2 mt-3">
-                      <button class="btn-accept flex-1 bg-primary text-on-primary font-mono text-[10px] font-bold tracking-widest py-1.5 hover:opacity-90 transition-opacity">
-                        ✓ 采纳
-                      </button>
-                      <button class="btn-dismiss flex-1 bg-surface-container-high text-on-surface-variant font-mono text-[10px] font-bold tracking-widest py-1.5 border border-outline/30 hover:text-on-surface transition-colors">
-                        ✕ 忽略
-                      </button>
+                      <button class="btn-ai-accept flex-1 text-[11px] font-medium py-1.5 rounded-md">✓ 采纳</button>
+                      <button class="btn-ai-dismiss flex-1 bg-surface-container-high text-on-surface-variant text-[11px] font-medium py-1.5 rounded-md border border-outline/30 hover:text-on-surface transition-colors">✕ 忽略</button>
                     </div>
                   </div>
 
                   <!-- 建议-2 -->
-                  <div class="suggestion-item bg-surface-container border border-outline/30 p-3.5">
+                  <div class="suggestion-item bg-surface-container border border-outline/30 rounded-lg p-3.5" data-suggestion-id="s2">
                     <div class="flex items-start justify-between gap-2 mb-2">
                       <div class="flex items-center gap-1.5">
-                        <span class="font-mono text-[10px] font-bold text-primary tracking-widest">[02] TITLE</span>
-                        <span class="font-mono text-[10px] text-on-surface-variant">标题句式</span>
+                        <span class="text-[10px] font-bold text-primary bg-primary/15 px-1.5 py-0.5 rounded">02</span>
+                        <span class="text-[11px] font-medium text-on-surface">标题策略</span>
                       </div>
-                      <span class="font-mono text-[10px] font-bold text-success tabular">+18%</span>
+                      <span class="text-[10px] font-bold text-success bg-success/15 px-1.5 py-0.5 rounded tabular">+18%</span>
                     </div>
-                    <p class="text-sm text-on-surface leading-relaxed">句式从 <span class="line-through text-on-surface-variant">「X个方法」</span> 改为 <span class="text-primary font-medium">「为什么我X」</span>，爆款率提升 <span class="font-mono font-bold text-success tabular">+18%</span>。</p>
+                    <p class="text-sm text-on-surface leading-relaxed">句式从 <span class="line-through text-on-surface-variant">「X个方法」</span> 改为 <span class="text-primary font-medium">「为什么我X」</span>，爆款率提升 <span class="font-bold text-success tabular">+18%</span>。</p>
                     <div class="flex items-center gap-2 mt-3">
-                      <button class="btn-accept flex-1 bg-primary text-on-primary font-mono text-[10px] font-bold tracking-widest py-1.5 hover:opacity-90 transition-opacity">
-                        ✓ 采纳
-                      </button>
-                      <button class="btn-dismiss flex-1 bg-surface-container-high text-on-surface-variant font-mono text-[10px] font-bold tracking-widest py-1.5 border border-outline/30 hover:text-on-surface transition-colors">
-                        ✕ 忽略
-                      </button>
+                      <button class="btn-ai-accept flex-1 text-[11px] font-medium py-1.5 rounded-md">✓ 采纳</button>
+                      <button class="btn-ai-dismiss flex-1 bg-surface-container-high text-on-surface-variant text-[11px] font-medium py-1.5 rounded-md border border-outline/30 hover:text-on-surface transition-colors">✕ 忽略</button>
                     </div>
                   </div>
 
                   <!-- 建议-3 -->
-                  <div class="suggestion-item bg-surface-container border border-outline/30 p-3.5">
+                  <div class="suggestion-item bg-surface-container border border-outline/30 rounded-lg p-3.5" data-suggestion-id="s3">
                     <div class="flex items-start justify-between gap-2 mb-2">
                       <div class="flex items-center gap-1.5">
-                        <span class="font-mono text-[10px] font-bold text-primary tracking-widest">[03] TIMING</span>
-                        <span class="font-mono text-[10px] text-on-surface-variant">发布时间</span>
+                        <span class="text-[10px] font-bold text-primary bg-primary/15 px-1.5 py-0.5 rounded">03</span>
+                        <span class="text-[11px] font-medium text-on-surface">发布时段</span>
                       </div>
-                      <span class="font-mono text-[10px] font-bold text-success tabular">PEAK</span>
+                      <span class="text-[10px] font-bold text-success bg-success/15 px-1.5 py-0.5 rounded tabular">峰值</span>
                     </div>
-                    <p class="text-sm text-on-surface leading-relaxed">最佳发布时段：<span class="text-primary font-mono font-bold">周二 / 周四 20:30 ~ 21:30</span>，平均曝光较其他时段高 <span class="font-mono font-bold text-success tabular">2.4x</span>。</p>
+                    <p class="text-sm text-on-surface leading-relaxed">最佳发布时段：<span class="text-primary font-bold">周二 / 周四 20:30 ~ 21:30</span>，平均曝光较其他时段高 <span class="font-bold text-success tabular">2.4 倍</span>。</p>
                     <div class="flex items-center gap-2 mt-3">
-                      <button class="btn-accept flex-1 bg-primary text-on-primary font-mono text-[10px] font-bold tracking-widest py-1.5 hover:opacity-90 transition-opacity">
-                        ✓ 采纳
-                      </button>
-                      <button class="btn-dismiss flex-1 bg-surface-container-high text-on-surface-variant font-mono text-[10px] font-bold tracking-widest py-1.5 border border-outline/30 hover:text-on-surface transition-colors">
-                        ✕ 忽略
-                      </button>
+                      <button class="btn-ai-accept flex-1 text-[11px] font-medium py-1.5 rounded-md">✓ 采纳</button>
+                      <button class="btn-ai-dismiss flex-1 bg-surface-container-high text-on-surface-variant text-[11px] font-medium py-1.5 rounded-md border border-outline/30 hover:text-on-surface transition-colors">✕ 忽略</button>
                     </div>
                   </div>
 
                   <!-- 建议-4 -->
-                  <div class="suggestion-item bg-surface-container border border-outline/30 p-3.5">
+                  <div class="suggestion-item bg-surface-container border border-outline/30 rounded-lg p-3.5" data-suggestion-id="s4">
                     <div class="flex items-start justify-between gap-2 mb-2">
                       <div class="flex items-center gap-1.5">
-                        <span class="font-mono text-[10px] font-bold text-primary tracking-widest">[04] COVER</span>
-                        <span class="font-mono text-[10px] text-on-surface-variant">封面策略</span>
+                        <span class="text-[10px] font-bold text-primary bg-primary/15 px-1.5 py-0.5 rounded">04</span>
+                        <span class="text-[11px] font-medium text-on-surface">封面风格</span>
                       </div>
-                      <span class="font-mono text-[10px] font-bold text-success tabular">+27%</span>
+                      <span class="text-[10px] font-bold text-success bg-success/15 px-1.5 py-0.5 rounded tabular">+27%</span>
                     </div>
-                    <p class="text-sm text-on-surface leading-relaxed">封面：<span class="text-primary font-medium">暗红主图 + 大字号白字 + 人物侧脸</span>组合点击率最高，较浅色封面高 <span class="font-mono font-bold text-success tabular">27%</span>。</p>
+                    <p class="text-sm text-on-surface leading-relaxed">封面：<span class="text-primary font-medium">暗红主图 + 大字号白字 + 人物侧脸</span>组合点击率最高，较浅色封面高 <span class="font-bold text-success tabular">+27%</span>。</p>
                     <div class="flex items-center gap-2 mt-3">
-                      <button class="btn-accept flex-1 bg-primary text-on-primary font-mono text-[10px] font-bold tracking-widest py-1.5 hover:opacity-90 transition-opacity">
-                        ✓ 采纳
-                      </button>
-                      <button class="btn-dismiss flex-1 bg-surface-container-high text-on-surface-variant font-mono text-[10px] font-bold tracking-widest py-1.5 border border-outline/30 hover:text-on-surface transition-colors">
-                        ✕ 忽略
-                      </button>
+                      <button class="btn-ai-accept flex-1 text-[11px] font-medium py-1.5 rounded-md">✓ 采纳</button>
+                      <button class="btn-ai-dismiss flex-1 bg-surface-container-high text-on-surface-variant text-[11px] font-medium py-1.5 rounded-md border border-outline/30 hover:text-on-surface transition-colors">✕ 忽略</button>
                     </div>
                   </div>
-                </div>
-
-                <!-- 面板底 -->
-                <div class="border-t border-outline/20 px-4 py-2.5 flex items-center justify-between">
-                  <span class="font-mono text-[10px] text-on-surface-variant tracking-wider">CONFIDENCE 87% · SAMPLE n=42</span>
-                  <button id="btn-regen" class="font-mono text-[10px] font-bold text-primary tracking-widest hover:underline">
-                    ↻ 重新生成
-                  </button>
                 </div>
               </div>
 
               <!-- 复盘动作队列 -->
-              <div class="bg-surface border border-outline/20 p-4 shadow-card">
+              <div class="bg-surface border border-outline/20 rounded-lg p-4 shadow-card">
                 <div class="flex items-center justify-between mb-3">
                   <div class="flex items-center gap-2">
                     <i data-lucide="list-checks" class="w-4 h-4 text-primary"></i>
-                    <h3 class="font-mono text-xs font-bold tracking-widest text-on-surface uppercase">ACTION_QUEUE</h3>
+                    <h3 class="text-sm font-semibold text-on-surface">复盘动作队列</h3>
                   </div>
-                  <span class="font-mono text-[10px] text-on-surface-variant">3 待执行</span>
+                  <span id="queue-count" class="text-[10px] text-on-surface-variant bg-surface-container px-1.5 py-0.5 rounded">3 待执行</span>
                 </div>
-                <ul class="space-y-2.5 text-xs text-on-surface">
-                  <li class="flex items-start gap-2">
-                    <span class="w-1 h-1 bg-primary mt-1.5 shrink-0"></span>
-                    <span>02-15 周四 20:30 发布「女性理财反常识」选题</span>
+                <ul id="action-queue" class="space-y-2.5 text-xs text-on-surface">
+                  <li class="queue-item flex items-start gap-2 p-2 -mx-2 rounded-md hover:bg-surface-container/40 transition-colors" data-id="q1">
+                    <i data-lucide="circle" class="w-3.5 h-3.5 text-primary mt-0.5 shrink-0"></i>
+                    <span class="flex-1">02-15 周四 20:30 发布「女性理财反常识」选题</span>
                   </li>
-                  <li class="flex items-start gap-2">
-                    <span class="w-1 h-1 bg-primary mt-1.5 shrink-0"></span>
-                    <span>套用「为什么我X」句式批量改写 3 篇旧标题</span>
+                  <li class="queue-item flex items-start gap-2 p-2 -mx-2 rounded-md hover:bg-surface-container/40 transition-colors" data-id="q2">
+                    <i data-lucide="circle" class="w-3.5 h-3.5 text-primary mt-0.5 shrink-0"></i>
+                    <span class="flex-1">套用「为什么我X」句式批量改写 3 篇旧标题</span>
                   </li>
-                  <li class="flex items-start gap-2">
-                    <span class="w-1 h-1 bg-on-surface-variant mt-1.5 shrink-0"></span>
-                    <span class="text-on-surface-variant">下周一前交付新版封面模板（设计 @小初）</span>
+                  <li class="queue-item flex items-start gap-2 p-2 -mx-2 rounded-md hover:bg-surface-container/40 transition-colors opacity-60" data-id="q3">
+                    <i data-lucide="circle" class="w-3.5 h-3.5 text-on-surface-variant mt-0.5 shrink-0"></i>
+                    <span class="flex-1">下周一前交付新版封面模板（设计 @小初）</span>
                   </li>
                 </ul>
               </div>
@@ -602,32 +871,32 @@
           </div>
         </div>
 
-        <!-- 底部：内容表现明细表 -->
+        <!-- ============== 底部：内容表现明细表 ============== -->
         <div class="px-6 pb-8">
-          <div class="bg-surface border border-outline/20 shadow-card">
+          <div class="bg-surface border border-outline/20 rounded-lg shadow-card overflow-hidden">
             <!-- 表头 -->
             <div class="flex items-center justify-between px-5 py-3.5 border-b border-outline/20">
               <div class="flex items-center gap-2.5">
                 <i data-lucide="table-2" class="w-4 h-4 text-primary"></i>
-                <h2 class="font-mono text-sm font-bold tracking-widest text-on-surface uppercase">CONTENT_PERFORMANCE_TABLE</h2>
-                <span class="font-mono text-[10px] text-on-surface-variant tracking-wider ml-1">// 共 8 条</span>
+                <h2 class="text-sm font-semibold text-on-surface">内容表现明细</h2>
+                <span class="text-[11px] text-on-surface-variant">· 共 8 条</span>
               </div>
               <div class="flex items-center gap-2">
-                <span class="font-mono text-[10px] text-on-surface-variant tracking-wider">排序：</span>
-                <button id="sort-er" class="font-mono text-[10px] font-bold tracking-widest text-primary border border-primary/40 px-2 py-1">
+                <span class="text-[11px] text-on-surface-variant">排序：</span>
+                <button id="sort-er" data-sort="er" class="sort-btn text-[11px] font-medium px-2.5 py-1 rounded-md bg-primary/15 text-primary border border-primary/30">
                   互动率 ↓
                 </button>
-                <button id="sort-imp" class="font-mono text-[10px] font-bold tracking-widest text-on-surface-variant border border-outline/30 px-2 py-1 hover:text-on-surface transition-colors">
+                <button id="sort-imp" data-sort="imp" class="sort-btn text-[11px] font-medium px-2.5 py-1 rounded-md text-on-surface-variant border border-outline/30 hover:text-on-surface transition-colors">
                   曝光 ↓
                 </button>
-                <button id="sort-time" class="font-mono text-[10px] font-bold tracking-widest text-on-surface-variant border border-outline/30 px-2 py-1 hover:text-on-surface transition-colors">
+                <button id="sort-time" data-sort="time" class="sort-btn text-[11px] font-medium px-2.5 py-1 rounded-md text-on-surface-variant border border-outline/30 hover:text-on-surface transition-colors">
                   时间 ↓
                 </button>
               </div>
             </div>
 
             <!-- 表头行 -->
-            <div class="grid grid-cols-[3.5fr_1.1fr_1fr_0.8fr_0.8fr_0.8fr_0.9fr_0.7fr] px-5 py-2.5 bg-surface-container border-b border-outline/20 text-[10px] font-mono font-bold tracking-widest text-on-surface-variant uppercase">
+            <div class="grid grid-cols-[3.5fr_1.1fr_1fr_0.8fr_0.8fr_0.8fr_0.9fr_0.7fr] px-5 py-2.5 bg-surface-container border-b border-outline/20 text-[10px] font-semibold text-on-surface-variant">
               <span>标题</span>
               <span>发布时间</span>
               <span class="text-right">曝光</span>
@@ -642,129 +911,129 @@
             <div id="perf-table-body" class="divide-y divide-outline-variant/40">
 
               <!-- 表格-行1 -->
-              <div class="perf-row grid grid-cols-[3.5fr_1.1fr_1fr_0.8fr_0.8fr_0.8fr_0.9fr_0.7fr] px-5 py-2.5 row-odd hover:bg-surface-container/40 transition-colors items-center">
+              <div class="perf-row grid grid-cols-[3.5fr_1.1fr_1fr_0.8fr_0.8fr_0.8fr_0.9fr_0.7fr] px-5 py-2.5 hover:bg-surface-container/40 transition-colors items-center" data-id="r1" data-er="9.2" data-imp="482310" data-time="1707753600" data-title="为什么我30岁才明白：富婆都在用的3个反常识理财法" data-pubtime="02-12 21:00" data-views="482,310" data-likes="12,847" data-favs="8,420" data-comments="1,932" data-status="爆款" data-status-type="red">
                 <div class="text-sm text-on-surface truncate pr-3">为什么我30岁才明白：富婆都在用的3个反常识理财法</div>
-                <div class="font-mono text-xs text-on-surface-variant">02-12 21:00</div>
-                <div class="font-mono text-sm text-on-surface tabular text-right">482,310</div>
-                <div class="font-mono text-sm text-on-surface tabular text-right">12,847</div>
-                <div class="font-mono text-sm text-on-surface tabular text-right">8,420</div>
-                <div class="font-mono text-sm text-on-surface tabular text-right">1,932</div>
-                <div class="font-mono text-sm font-bold text-success tabular text-right">9.2%</div>
+                <div class="text-xs text-on-surface-variant">02-12 21:00</div>
+                <div class="text-sm text-on-surface tabular text-right">482,310</div>
+                <div class="text-sm text-on-surface tabular text-right">12,847</div>
+                <div class="text-sm text-on-surface tabular text-right">8,420</div>
+                <div class="text-sm text-on-surface tabular text-right">1,932</div>
+                <div class="text-sm font-bold text-success tabular text-right">9.2%</div>
                 <div class="text-right">
-                  <span class="inline-flex items-center gap-1 font-mono text-[10px] font-bold tracking-widest bg-primary/15 text-primary px-1.5 py-0.5">
-                    <span class="w-1 h-1 bg-primary"></span>爆款
+                  <span class="inline-flex items-center gap-1 text-[10px] font-medium bg-primary/15 text-primary px-2 py-0.5 rounded-full">
+                    <span class="w-1.5 h-1.5 bg-primary rounded-full"></span>爆款
                   </span>
                 </div>
               </div>
 
               <!-- 表格-行2 -->
-              <div class="perf-row grid grid-cols-[3.5fr_1.1fr_1fr_0.8fr_0.8fr_0.8fr_0.9fr_0.7fr] px-5 py-2.5 row-even hover:bg-surface-container/40 transition-colors items-center">
+              <div class="perf-row grid grid-cols-[3.5fr_1.1fr_1fr_0.8fr_0.8fr_0.8fr_0.9fr_0.7fr] px-5 py-2.5 hover:bg-surface-container/40 transition-colors items-center" data-id="r2" data-er="8.7" data-imp="356420" data-time="1707584400" data-title="凌晨3点醒来的女人，藏着普通人不愿承认的真相" data-pubtime="02-10 22:30" data-views="356,420" data-likes="9,238" data-favs="6,541" data-comments="1,487" data-status="爆款" data-status-type="red">
                 <div class="text-sm text-on-surface truncate pr-3">凌晨3点醒来的女人，藏着普通人不愿承认的真相</div>
-                <div class="font-mono text-xs text-on-surface-variant">02-10 22:30</div>
-                <div class="font-mono text-sm text-on-surface tabular text-right">356,420</div>
-                <div class="font-mono text-sm text-on-surface tabular text-right">9,238</div>
-                <div class="font-mono text-sm text-on-surface tabular text-right">6,541</div>
-                <div class="font-mono text-sm text-on-surface tabular text-right">1,487</div>
-                <div class="font-mono text-sm font-bold text-success tabular text-right">8.7%</div>
+                <div class="text-xs text-on-surface-variant">02-10 22:30</div>
+                <div class="text-sm text-on-surface tabular text-right">356,420</div>
+                <div class="text-sm text-on-surface tabular text-right">9,238</div>
+                <div class="text-sm text-on-surface tabular text-right">6,541</div>
+                <div class="text-sm text-on-surface tabular text-right">1,487</div>
+                <div class="text-sm font-bold text-success tabular text-right">8.7%</div>
                 <div class="text-right">
-                  <span class="inline-flex items-center gap-1 font-mono text-[10px] font-bold tracking-widest bg-primary/15 text-primary px-1.5 py-0.5">
-                    <span class="w-1 h-1 bg-primary"></span>爆款
+                  <span class="inline-flex items-center gap-1 text-[10px] font-medium bg-primary/15 text-primary px-2 py-0.5 rounded-full">
+                    <span class="w-1.5 h-1.5 bg-primary rounded-full"></span>爆款
                   </span>
                 </div>
               </div>
 
               <!-- 表格-行3 -->
-              <div class="perf-row grid grid-cols-[3.5fr_1.1fr_1fr_0.8fr_0.8fr_0.8fr_0.9fr_0.7fr] px-5 py-2.5 row-odd hover:bg-surface-container/40 transition-colors items-center">
+              <div class="perf-row grid grid-cols-[3.5fr_1.1fr_1fr_0.8fr_0.8fr_0.8fr_0.9fr_0.7fr] px-5 py-2.5 hover:bg-surface-container/40 transition-colors items-center" data-id="r3" data-er="7.9" data-imp="298124" data-time="1707400800" data-title="我辞掉月薪5万的工作，全网都在骂我" data-pubtime="02-08 20:00" data-views="298,124" data-likes="7,842" data-favs="4,231" data-comments="1,203" data-status="爆款" data-status-type="red">
                 <div class="text-sm text-on-surface truncate pr-3">我辞掉月薪5万的工作，全网都在骂我</div>
-                <div class="font-mono text-xs text-on-surface-variant">02-08 20:00</div>
-                <div class="font-mono text-sm text-on-surface tabular text-right">298,124</div>
-                <div class="font-mono text-sm text-on-surface tabular text-right">7,842</div>
-                <div class="font-mono text-sm text-on-surface tabular text-right">4,231</div>
-                <div class="font-mono text-sm text-on-surface tabular text-right">1,203</div>
-                <div class="font-mono text-sm font-bold text-success tabular text-right">7.9%</div>
+                <div class="text-xs text-on-surface-variant">02-08 20:00</div>
+                <div class="text-sm text-on-surface tabular text-right">298,124</div>
+                <div class="text-sm text-on-surface tabular text-right">7,842</div>
+                <div class="text-sm text-on-surface tabular text-right">4,231</div>
+                <div class="text-sm text-on-surface tabular text-right">1,203</div>
+                <div class="text-sm font-bold text-success tabular text-right">7.9%</div>
                 <div class="text-right">
-                  <span class="inline-flex items-center gap-1 font-mono text-[10px] font-bold tracking-widest bg-primary/15 text-primary px-1.5 py-0.5">
-                    <span class="w-1 h-1 bg-primary"></span>爆款
+                  <span class="inline-flex items-center gap-1 text-[10px] font-medium bg-primary/15 text-primary px-2 py-0.5 rounded-full">
+                    <span class="w-1.5 h-1.5 bg-primary rounded-full"></span>爆款
                   </span>
                 </div>
               </div>
 
               <!-- 表格-行4 -->
-              <div class="perf-row grid grid-cols-[3.5fr_1.1fr_1fr_0.8fr_0.8fr_0.8fr_0.9fr_0.7fr] px-5 py-2.5 row-even hover:bg-surface-container/40 transition-colors items-center">
+              <div class="perf-row grid grid-cols-[3.5fr_1.1fr_1fr_0.8fr_0.8fr_0.8fr_0.9fr_0.7fr] px-5 py-2.5 hover:bg-surface-container/40 transition-colors items-center" data-id="r4" data-er="5.2" data-imp="186732" data-time="1707673200" data-title="一个被裁员的35岁中层，决定不再装高级" data-pubtime="02-11 21:30" data-views="186,732" data-likes="5,124" data-favs="3,287" data-comments="892" data-status="优秀" data-status-type="green">
                 <div class="text-sm text-on-surface truncate pr-3">一个被裁员的35岁中层，决定不再装高级</div>
-                <div class="font-mono text-xs text-on-surface-variant">02-11 21:30</div>
-                <div class="font-mono text-sm text-on-surface tabular text-right">186,732</div>
-                <div class="font-mono text-sm text-on-surface tabular text-right">5,124</div>
-                <div class="font-mono text-sm text-on-surface tabular text-right">3,287</div>
-                <div class="font-mono text-sm text-on-surface tabular text-right">892</div>
-                <div class="font-mono text-sm font-bold text-on-surface tabular text-right">5.2%</div>
+                <div class="text-xs text-on-surface-variant">02-11 21:30</div>
+                <div class="text-sm text-on-surface tabular text-right">186,732</div>
+                <div class="text-sm text-on-surface tabular text-right">5,124</div>
+                <div class="text-sm text-on-surface tabular text-right">3,287</div>
+                <div class="text-sm text-on-surface tabular text-right">892</div>
+                <div class="text-sm font-bold text-on-surface tabular text-right">5.2%</div>
                 <div class="text-right">
-                  <span class="inline-flex items-center gap-1 font-mono text-[10px] font-bold tracking-widest bg-success/15 text-success px-1.5 py-0.5">
-                    <span class="w-1 h-1 bg-success"></span>优秀
+                  <span class="inline-flex items-center gap-1 text-[10px] font-medium bg-success/15 text-success px-2 py-0.5 rounded-full">
+                    <span class="w-1.5 h-1.5 bg-success rounded-full"></span>优秀
                   </span>
                 </div>
               </div>
 
               <!-- 表格-行5 -->
-              <div class="perf-row grid grid-cols-[3.5fr_1.1fr_1fr_0.8fr_0.8fr_0.8fr_0.9fr_0.7fr] px-5 py-2.5 row-odd hover:bg-surface-container/40 transition-colors items-center">
-                <div class="text-sm text-on-surface truncate pr-3">普通人想翻身，先把这3个"消费幻觉"戒了</div>
-                <div class="font-mono text-xs text-on-surface-variant">02-13 20:30</div>
-                <div class="font-mono text-sm text-on-surface tabular text-right">142,580</div>
-                <div class="font-mono text-sm text-on-surface tabular text-right">3,892</div>
-                <div class="font-mono text-sm text-on-surface tabular text-right">2,541</div>
-                <div class="font-mono text-sm text-on-surface tabular text-right">687</div>
-                <div class="font-mono text-sm text-on-surface tabular text-right">4.1%</div>
+              <div class="perf-row grid grid-cols-[3.5fr_1.1fr_1fr_0.8fr_0.8fr_0.8fr_0.9fr_0.7fr] px-5 py-2.5 hover:bg-surface-container/40 transition-colors items-center" data-id="r5" data-er="4.1" data-imp="142580" data-time="1707830400" data-title="普通人想翻身，先把这3个「消费幻觉」戒了" data-pubtime="02-13 20:30" data-views="142,580" data-likes="3,892" data-favs="2,541" data-comments="687" data-status="优秀" data-status-type="green">
+                <div class="text-sm text-on-surface truncate pr-3">普通人想翻身，先把这3个「消费幻觉」戒了</div>
+                <div class="text-xs text-on-surface-variant">02-13 20:30</div>
+                <div class="text-sm text-on-surface tabular text-right">142,580</div>
+                <div class="text-sm text-on-surface tabular text-right">3,892</div>
+                <div class="text-sm text-on-surface tabular text-right">2,541</div>
+                <div class="text-sm text-on-surface tabular text-right">687</div>
+                <div class="text-sm text-on-surface tabular text-right">4.1%</div>
                 <div class="text-right">
-                  <span class="inline-flex items-center gap-1 font-mono text-[10px] font-bold tracking-widest bg-success/15 text-success px-1.5 py-0.5">
-                    <span class="w-1 h-1 bg-success"></span>优秀
+                  <span class="inline-flex items-center gap-1 text-[10px] font-medium bg-success/15 text-success px-2 py-0.5 rounded-full">
+                    <span class="w-1.5 h-1.5 bg-success rounded-full"></span>优秀
                   </span>
                 </div>
               </div>
 
               <!-- 表格-行6 -->
-              <div class="perf-row grid grid-cols-[3.5fr_1.1fr_1fr_0.8fr_0.8fr_0.8fr_0.9fr_0.7fr] px-5 py-2.5 row-even hover:bg-surface-container/40 transition-colors items-center">
+              <div class="perf-row grid grid-cols-[3.5fr_1.1fr_1fr_0.8fr_0.8fr_0.8fr_0.9fr_0.7fr] px-5 py-2.5 hover:bg-surface-container/40 transition-colors items-center" data-id="r6" data-er="3.6" data-imp="98420" data-time="1707498000" data-title="为什么你存不下钱？不是收入问题" data-pubtime="02-09 21:00" data-views="98,420" data-likes="2,341" data-favs="1,287" data-comments="432" data-status="正常" data-status-type="gray">
                 <div class="text-sm text-on-surface truncate pr-3">为什么你存不下钱？不是收入问题</div>
-                <div class="font-mono text-xs text-on-surface-variant">02-09 21:00</div>
-                <div class="font-mono text-sm text-on-surface tabular text-right">98,420</div>
-                <div class="font-mono text-sm text-on-surface tabular text-right">2,341</div>
-                <div class="font-mono text-sm text-on-surface tabular text-right">1,287</div>
-                <div class="font-mono text-sm text-on-surface tabular text-right">432</div>
-                <div class="font-mono text-sm text-on-surface tabular text-right">3.6%</div>
+                <div class="text-xs text-on-surface-variant">02-09 21:00</div>
+                <div class="text-sm text-on-surface tabular text-right">98,420</div>
+                <div class="text-sm text-on-surface tabular text-right">2,341</div>
+                <div class="text-sm text-on-surface tabular text-right">1,287</div>
+                <div class="text-sm text-on-surface tabular text-right">432</div>
+                <div class="text-sm text-on-surface tabular text-right">3.6%</div>
                 <div class="text-right">
-                  <span class="inline-flex items-center gap-1 font-mono text-[10px] font-bold tracking-widest bg-surface-container-high text-on-surface-variant px-1.5 py-0.5">
-                    <span class="w-1 h-1 bg-on-surface-variant"></span>正常
+                  <span class="inline-flex items-center gap-1 text-[10px] font-medium bg-surface-container-high text-on-surface-variant px-2 py-0.5 rounded-full">
+                    <span class="w-1.5 h-1.5 bg-on-surface-variant rounded-full"></span>正常
                   </span>
                 </div>
               </div>
 
               <!-- 表格-行7 -->
-              <div class="perf-row grid grid-cols-[3.5fr_1.1fr_1fr_0.8fr_0.8fr_0.8fr_0.9fr_0.7fr] px-5 py-2.5 row-odd hover:bg-surface-container/40 transition-colors items-center">
+              <div class="perf-row grid grid-cols-[3.5fr_1.1fr_1fr_0.8fr_0.8fr_0.8fr_0.9fr_0.7fr] px-5 py-2.5 hover:bg-surface-container/40 transition-colors items-center" data-id="r7" data-er="0.8" data-imp="12480" data-time="1707400800" data-title="关于自律的100个小习惯" data-pubtime="02-08 10:00" data-views="12,480" data-likes="98" data-favs="42" data-comments="12" data-status="掉队" data-status-type="error">
                 <div class="text-sm text-on-surface truncate pr-3">关于自律的100个小习惯</div>
-                <div class="font-mono text-xs text-on-surface-variant">02-08 10:00</div>
-                <div class="font-mono text-sm text-on-surface tabular text-right">12,480</div>
-                <div class="font-mono text-sm text-on-surface tabular text-right">98</div>
-                <div class="font-mono text-sm text-on-surface tabular text-right">42</div>
-                <div class="font-mono text-sm text-on-surface tabular text-right">12</div>
-                <div class="font-mono text-sm text-on-surface tabular text-right">0.8%</div>
+                <div class="text-xs text-on-surface-variant">02-08 10:00</div>
+                <div class="text-sm text-on-surface tabular text-right">12,480</div>
+                <div class="text-sm text-on-surface tabular text-right">98</div>
+                <div class="text-sm text-on-surface tabular text-right">42</div>
+                <div class="text-sm text-on-surface tabular text-right">12</div>
+                <div class="text-sm text-on-surface tabular text-right">0.8%</div>
                 <div class="text-right">
-                  <span class="inline-flex items-center gap-1 font-mono text-[10px] font-bold tracking-widest bg-error/15 text-error px-1.5 py-0.5">
-                    <span class="w-1 h-1 bg-error"></span>掉队
+                  <span class="inline-flex items-center gap-1 text-[10px] font-medium bg-error/15 text-error px-2 py-0.5 rounded-full">
+                    <span class="w-1.5 h-1.5 bg-error rounded-full"></span>掉队
                   </span>
                 </div>
               </div>
 
               <!-- 表格-行8 -->
-              <div class="perf-row grid grid-cols-[3.5fr_1.1fr_1fr_0.8fr_0.8fr_0.8fr_0.9fr_0.7fr] px-5 py-2.5 row-even hover:bg-surface-container/40 transition-colors items-center">
+              <div class="perf-row grid grid-cols-[3.5fr_1.1fr_1fr_0.8fr_0.8fr_0.8fr_0.9fr_0.7fr] px-5 py-2.5 hover:bg-surface-container/40 transition-colors items-center" data-id="r8" data-er="0.5" data-imp="8124" data-time="1707498000" data-title="今日穿搭分享｜简约通勤风" data-pubtime="02-09 14:30" data-views="8,124" data-likes="42" data-favs="18" data-comments="6" data-status="掉队" data-status-type="error">
                 <div class="text-sm text-on-surface truncate pr-3">今日穿搭分享｜简约通勤风</div>
-                <div class="font-mono text-xs text-on-surface-variant">02-09 14:30</div>
-                <div class="font-mono text-sm text-on-surface tabular text-right">8,124</div>
-                <div class="font-mono text-sm text-on-surface tabular text-right">42</div>
-                <div class="font-mono text-sm text-on-surface tabular text-right">18</div>
-                <div class="font-mono text-sm text-on-surface tabular text-right">6</div>
-                <div class="font-mono text-sm text-on-surface tabular text-right">0.5%</div>
+                <div class="text-xs text-on-surface-variant">02-09 14:30</div>
+                <div class="text-sm text-on-surface tabular text-right">8,124</div>
+                <div class="text-sm text-on-surface tabular text-right">42</div>
+                <div class="text-sm text-on-surface tabular text-right">18</div>
+                <div class="text-sm text-on-surface tabular text-right">6</div>
+                <div class="text-sm text-on-surface tabular text-right">0.5%</div>
                 <div class="text-right">
-                  <span class="inline-flex items-center gap-1 font-mono text-[10px] font-bold tracking-widest bg-error/15 text-error px-1.5 py-0.5">
-                    <span class="w-1 h-1 bg-error"></span>掉队
+                  <span class="inline-flex items-center gap-1 text-[10px] font-medium bg-error/15 text-error px-2 py-0.5 rounded-full">
+                    <span class="w-1.5 h-1.5 bg-error rounded-full"></span>掉队
                   </span>
                 </div>
               </div>
@@ -772,12 +1041,57 @@
             </div>
 
             <!-- 表尾 -->
-            <div class="px-5 py-3 border-t border-outline/20 flex items-center justify-between bg-surface-container/30">
-              <span class="font-mono text-[10px] text-on-surface-variant tracking-wider">SHOWING 1-8 OF 8 · 本周已发布</span>
-              <button class="font-mono text-[10px] font-bold tracking-widest text-primary hover:underline">
-                EXPORT_CSV →
+            <div class="px-5 py-3 border-t border-outline/20 flex items-center justify-between bg-surface-container/40">
+              <span class="text-[11px] text-on-surface-variant">本周已发布 8 条</span>
+              <button id="btn-export-csv" class="inline-flex items-center gap-1 text-[11px] font-medium text-primary hover:underline">
+                导出报表
+                <i data-lucide="arrow-right" class="w-3 h-3"></i>
               </button>
             </div>
+          </div>
+        </div>
+
+        <!-- ============== 弹窗：内容详情 ============== -->
+        <div id="card-detail-modal" class="is-closed fixed inset-0 z-50 flex items-center justify-center p-4" style="background: rgba(8, 7, 10, 0.7); backdrop-filter: blur(4px);">
+          <div class="bg-surface border border-outline/30 rounded-xl shadow-dialog max-w-md w-full max-h-[90vh] overflow-y-auto">
+            <div class="flex items-center justify-between p-5 border-b border-outline/20">
+              <div class="flex items-center gap-2">
+                <div class="w-8 h-8 rounded-lg bg-primary/15 flex items-center justify-center">
+                  <i data-lucide="file-text" class="w-4 h-4 text-primary"></i>
+                </div>
+                <h3 id="modal-title" class="text-base font-semibold text-on-surface">内容详情</h3>
+              </div>
+              <button id="btn-modal-close" class="w-8 h-8 rounded-md text-on-surface-variant hover:text-primary hover:bg-surface-container transition-colors flex items-center justify-center">
+                <i data-lucide="x" class="w-4 h-4"></i>
+              </button>
+            </div>
+            <div id="modal-content" class="p-5 space-y-4">
+              <!-- JS 动态填充 -->
+            </div>
+            <div class="p-5 border-t border-outline/20 flex items-center justify-end gap-2">
+              <button id="btn-modal-dismiss" class="px-4 h-9 rounded-md text-on-surface-variant text-sm hover:bg-surface-container transition-colors">关闭</button>
+              <button id="btn-modal-action" class="px-4 h-9 rounded-md bg-primary text-on-primary text-sm font-medium hover:opacity-90 transition-opacity">查看完整数据</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- ============== 滑出面板：表格行详情 ============== -->
+        <div id="row-detail-panel" class="is-closed fixed top-0 right-0 h-full w-96 bg-surface border-l border-outline/20 shadow-dialog z-50 overflow-y-auto">
+          <div class="sticky top-0 bg-surface border-b border-outline/20 px-5 py-4 flex items-center justify-between z-10">
+            <div>
+              <div class="text-xs text-on-surface-variant">内容详情</div>
+              <div id="panel-status-badge" class="text-sm font-semibold text-on-surface mt-0.5">-</div>
+            </div>
+            <button id="btn-panel-close" class="w-8 h-8 rounded-md text-on-surface-variant hover:text-primary hover:bg-surface-container transition-colors flex items-center justify-center">
+              <i data-lucide="x" class="w-4 h-4"></i>
+            </button>
+          </div>
+          <div id="panel-content" class="p-5 space-y-5">
+            <!-- JS 动态填充 -->
+          </div>
+          <div class="sticky bottom-0 bg-surface border-t border-outline/20 px-5 py-3 flex items-center gap-2">
+            <button id="btn-panel-action" class="flex-1 h-9 rounded-md bg-primary text-on-primary text-sm font-medium hover:opacity-90 transition-opacity">加入选题库</button>
+            <button id="btn-panel-dismiss" class="flex-1 h-9 rounded-md text-on-surface-variant text-sm border border-outline/30 hover:bg-surface-container transition-colors">仅查看</button>
           </div>
         </div>
 
@@ -787,253 +1101,453 @@
   </div>
   <!-- @nav:end 导航组件 -->
 
-  <script>
-    // ============================================================
-    // 交互：时间节点 Tab 切换（48H / 7D / 30D）
-    // ============================================================
-    // 简单交互：仅切换激活样式
-    // 完整行为：切换时应该重新拉取对应时间范围的 KPI、趋势图、爆款/掉队、表格数据
-    // 1. 根据 data-period 调用后端接口 /api/analytics?range=xxx
-    // 2. 用 loading 态替换六个 KPI 卡片、SVG 折线图、列表区域
-    // 3. 数据返回后逐项写入 DOM
-    $('#period-tabs').on('click', '.period-tab', function () {
-      const $btn = $(this);
-      const period = $btn.data('period');
-      if ($btn.hasClass('bg-primary')) return;
-      $('#period-tabs .period-tab').removeClass('bg-primary text-on-primary border-x border-outline/30').addClass('text-on-surface-variant').removeClass('border-x border-outline/30');
-      $btn.removeClass('text-on-surface-variant').addClass('bg-primary text-on-primary border-x border-outline/30');
-      console.log('切换时间窗口:', period);
-    });
-
-    // ============================================================
-    // 交互：图表图例切换（点击显隐对应折线）
-    // ============================================================
-    // 简单交互：切换 SVG path 的 display 样式 + 图例按钮的线删除样式
-    $('#chart-legend').on('click', '.legend-item', function () {
-      const $btn = $(this);
-      const metric = $btn.data('metric');
-      const $paths = $('#trend-chart').find('path[data-series="' + metric + '"]');
-      if ($paths.eq(0).attr('display') === 'none') {
-        $paths.show();
-        $btn.removeClass('line-through text-on-surface-variant/50').addClass('text-on-surface');
-      } else {
-        $paths.hide();
-        $btn.addClass('line-through text-on-surface-variant/50').removeClass('text-on-surface');
-      }
-    });
-
-    // ============================================================
-    // 交互：AI 建议"采纳 / 忽略"按钮
-    // ============================================================
-    // 简单交互：切换本条建议的视觉态（已采纳 / 已忽略）
-    // 完整行为：
-    // 1. 采纳：将建议项从列表移到 ACTION_QUEUE 面板，调用 /api/suggestion/:id/accept
-    // 2. 忽略：从本面板移除该条，调用 /api/suggestion/:id/dismiss
-    $('#ai-suggestions').on('click', '.btn-accept', function () {
-      const $item = $(this).closest('.suggestion-item');
-      $item.removeClass('border-outline/30').addClass('border-success/40 bg-success/5');
-      $item.find('.btn-accept, .btn-dismiss').remove();
-      $item.append('<div class="mt-3 font-mono text-[10px] font-bold tracking-widest text-success">✓ 已采纳 · 已加入 ACTION_QUEUE</div>');
-      console.log('AI 建议采纳:', $item.find('p').text().slice(0, 30));
-    });
-
-    $('#ai-suggestions').on('click', '.btn-dismiss', function () {
-      const $item = $(this).closest('.suggestion-item');
-      $item.fadeOut(200, function () { $(this).remove(); });
-      console.log('AI 建议忽略');
-    });
-
-    // ============================================================
-    // 交互：重新生成 AI 建议
-    // ============================================================
-    // 完整行为：
-    // 1. 显示面板内 loading 态
-    // 2. 调用 /api/analytics/regen-suggestion
-    // 3. 接收 4 条新建议后重新渲染 #ai-suggestions 节点
-    $('#btn-regen').on('click', function () {
-      console.log('需要重新调用 AI 生成迭代建议');
-      $(this).text('↻ 生成中...').prop('disabled', true);
-      setTimeout(() => {
-        $(this).text('↻ 重新生成').prop('disabled', false);
-      }, 1200);
-    });
-
-    // ============================================================
-    // 交互：表格排序（按互动率 / 曝光 / 时间）
-    // ============================================================
-    // 简单交互：仅切换按钮激活样式，提示后续应做真实排序
-    // 完整行为：
-    // 1. 提取 #perf-table-body 下所有 .perf-row
-    // 2. 根据当前 sort 维度解析各行对应单元格数值（互动率 7th cell，曝光 3rd cell，时间 2nd cell）
-    // 3. 排序后重新 append 到容器；保留行原有的奇偶底色类（按 sort 后顺序重算 odd/even）
-    $('#sort-er, #sort-imp, #sort-time').on('click', function () {
-      const $btn = $(this);
-      if ($btn.hasClass('text-primary')) {
-        // 已经是当前排序，不处理
-        return;
-      }
-      const $siblings = $btn.siblings();
-      $siblings.removeClass('text-primary border-primary/40').addClass('text-on-surface-variant border-outline/30');
-      $btn.removeClass('text-on-surface-variant border-outline/30').addClass('text-primary border-primary/40');
-      console.log('表格切换排序:', $btn.attr('id'));
-    });
-
-    // ============================================================
-    // 初始化：当前页高亮"数据复盘"
-    // ============================================================
-    window.__highlightNav('analytics');
-  </script>
+  <div id="toast-container"></div>
 
   <script>
-    // 子 Agent 调用此函数来高亮当前页面对应的导航项
+    /* ============================================================
+       全局共享：Store / Toast / 高亮导航（与骨架一致）
+       ============================================================ */
+
+    // 复用骨架的 Store 字段
+    window.AnalyticsStore = {
+      KEY: 'xhs_analytics_v1',
+      state: { adopted: [], dismissed: [], period: '7d' },
+      load() {
+        try {
+          const raw = localStorage.getItem(this.KEY);
+          if (raw) this.state = Object.assign(this.state, JSON.parse(raw));
+        } catch(e){}
+        return this.state;
+      },
+      save() {
+        localStorage.setItem(this.KEY, JSON.stringify(this.state));
+      },
+      adopt(id) {
+        if (this.state.adopted.indexOf(id) === -1) {
+          this.state.adopted.push(id);
+          this.save();
+        }
+      },
+      dismiss(id) {
+        if (this.state.dismissed.indexOf(id) === -1) {
+          this.state.dismissed.push(id);
+          this.save();
+        }
+      },
+      isAdopted(id) { return this.state.adopted.indexOf(id) !== -1; },
+      isDismissed(id) { return this.state.dismissed.indexOf(id) !== -1; }
+    };
+    AnalyticsStore.load();
+
+    // Toast（与骨架一致）
+    window.toast = function(message, type) {
+      const id = 'toast-' + Date.now();
+      const iconName = type === 'success' ? 'check-circle' : (type === 'error' ? 'x-circle' : 'info');
+      const colorCls = type === 'success' ? 'text-success' : (type === 'error' ? 'text-error' : 'text-primary');
+      const $t = $('<div class="toast ' + (type || '') + '"></div>').attr('id', id);
+      const $i = $('<i></i>').addClass('w-4 h-4 ' + colorCls);
+      $i.attr('data-lucide', iconName);
+      $t.append($i).append('<span>' + message + '</span>');
+      $('#toast-container').append($t);
+      lucide.createIcons();
+      setTimeout(() => $('#' + id).remove(), 3000);
+    };
+
+    // 导航激活（jQuery 写法）
     window.__highlightNav = function (key) {
-      const map = {
-        'radar': 'home.html',
-        'factory': 'content-factory.html',
-        'publish': 'publish.html',
-        'analytics': 'analytics.html',
-        'knowledge': 'knowledge.html',
-        'settings': 'settings.html'
-      };
       const crumbMap = {
-        'radar': 'RADAR / TOPIC_ENGINE',
-        'factory': 'FACTORY / CONTENT_GEN',
-        'publish': 'PUBLISH / SCHEDULER',
-        'analytics': 'ANALYTICS / REVIEW',
-        'knowledge': 'KNOWLEDGE / KB',
-        'settings': 'SETTINGS / SYSTEM'
+        radar: '选题引擎',
+        factory: '内容工厂',
+        publish: '发布管理',
+        analytics: '数据复盘',
+        knowledge: '知识库',
+        settings: '系统设置'
       };
-      document.querySelectorAll('.nav-item').forEach(el => {
-        el.classList.remove('nav-active');
-        if (el.getAttribute('href') === map[key]) el.classList.add('nav-active');
+      $('.nav-item').each(function() {
+        const $el = $(this);
+        $el.removeClass('nav-active');
+        if ($el.attr('data-nav') === key) $el.addClass('nav-active');
       });
-      const crumb = document.getElementById('page-crumb');
-      if (crumb) crumb.textContent = crumbMap[key] || '';
+      const $crumb = $('#page-crumb');
+      if ($crumb.length) $crumb.text(crumbMap[key] || '');
       lucide.createIcons();
     };
-    lucide.createIcons();
+
+    /* ============================================================
+       页面交互
+       ============================================================ */
+    $(function() {
+
+      // —— 顶栏按钮 ——
+      $('#btn-bell').on('click', function() {
+        toast('暂无新消息，去选题引擎看看新热点吧～', 'info');
+      });
+      $('#btn-refresh').on('click', function() {
+        const $i = $(this).find('i');
+        $i.css('transition', 'transform 0.6s ease').css('transform', 'rotate(360deg)');
+        setTimeout(() => $i.css('transform', ''), 700);
+        toast('已刷新最新数据', 'success');
+        // 触发页面自定义事件
+        window.dispatchEvent(new CustomEvent('page:refresh'));
+      });
+      $('#btn-ai-assistant').on('click', function() {
+        toast('小咸正在赶来…（开发中，敬请期待）', 'info');
+      });
+      $('#global-search').on('keydown', function(e) {
+        if (e.key === 'Enter' && this.value.trim()) {
+          toast(`正在搜索 "${this.value}" …`, 'info');
+        }
+      });
+      $('#btn-pipeline').on('click', function() {
+        toast('正在跳转到内容工厂…', 'info');
+        setTimeout(() => location.href = 'content-factory.html', 600);
+      });
+
+      // —— 时间 Tab 切换 ——
+      function switchPeriod(period) {
+        // 切换 active 态
+        $('#period-tabs .period-tab').removeClass('active').addClass('text-on-surface-variant');
+        $('#period-tabs .period-tab[data-period="' + period + '"]').addClass('active').removeClass('text-on-surface-variant');
+
+        // 更新 KPI 数值
+        $('.kpi-value').each(function() {
+          const $el = $(this);
+          const v = $el.data(period);
+          if (v !== undefined) $el.text(v);
+        });
+        // 更新 KPI 涨跌
+        $('.kpi-delta').each(function() {
+          const $el = $(this);
+          const v = $el.data(period);
+          if (v !== undefined) {
+            // 保留前面的图标，更新文本
+            const $icon = $el.find('i').clone();
+            $el.empty().append($icon).append(document.createTextNode(' ' + v));
+          }
+        });
+        // 更新 sparkline
+        $('.kpi-spark, .kpi-spark-fill').each(function() {
+          const $el = $(this);
+          const v = $el.data(period);
+          if (v !== undefined) $el.attr('points', v);
+        });
+
+        // 切换趋势图 X 轴日期（简化：用 3 套静态区间）
+        const rangeMap = {
+          '48h': '02-12 ~ 02-13',
+          '7d':  '2024-02-07 ~ 2024-02-13',
+          '30d': '2024-01-15 ~ 2024-02-13'
+        };
+        $('.kpi-chart-range').text(rangeMap[period] || '');
+
+        // 持久化
+        AnalyticsStore.state.period = period;
+        AnalyticsStore.save();
+        toast('已切换至' + ({'48h':'48小时','7d':'7天','30d':'30天'}[period] || period) + '视图', 'success');
+      }
+      $('#period-tabs').on('click', '.period-tab', function() {
+        const period = $(this).data('period');
+        if ($(this).hasClass('active')) return;
+        switchPeriod(period);
+      });
+
+      // —— 趋势图图例切换 ——
+      $('#chart-legend').on('click', '.legend-item', function() {
+        const $btn = $(this);
+        const metric = $btn.data('metric');
+        const isDimmed = $btn.hasClass('is-dimmed');
+        if (isDimmed) {
+          $btn.removeClass('is-dimmed');
+          $('#trend-chart').find('path[data-series="' + metric + '"]').removeClass('is-dimmed');
+          toast('已显示' + ({impressions:'曝光',likes:'点赞',favs:'收藏',comments:'评论'}[metric] || metric) + '曲线', 'info');
+        } else {
+          $btn.addClass('is-dimmed');
+          $('#trend-chart').find('path[data-series="' + metric + '"]').addClass('is-dimmed');
+          toast('已隐藏' + ({impressions:'曝光',likes:'点赞',favs:'收藏',comments:'评论'}[metric] || metric) + '曲线', 'info');
+        }
+      });
+
+      // —— AI 建议 采纳 / 忽略 ——
+      function updateAdoptedCount() {
+        const n = AnalyticsStore.state.adopted.length;
+        $('#adopted-num').text(n);
+      }
+      // 初始化：恢复已采纳 / 已忽略状态
+      $('.suggestion-item').each(function() {
+        const id = $(this).data('suggestion-id');
+        if (AnalyticsStore.isAdopted(id)) {
+          $(this).find('.btn-ai-accept').addClass('is-adopted').text('✓ 已采纳');
+        }
+        if (AnalyticsStore.isDismissed(id)) {
+          $(this).addClass('opacity-50').find('p').addClass('line-through text-on-surface-variant');
+          $(this).find('.btn-ai-dismiss').text('已忽略').prop('disabled', true);
+        }
+      });
+      updateAdoptedCount();
+
+      $('#ai-suggestions').on('click', '.btn-ai-accept', function() {
+        const $item = $(this).closest('.suggestion-item');
+        const id = $item.data('suggestion-id');
+        if (AnalyticsStore.isAdopted(id)) {
+          toast('该建议已采纳', 'info');
+          return;
+        }
+        AnalyticsStore.adopt(id);
+        $(this).addClass('is-adopted').text('✓ 已采纳');
+        $item.css('border-color', 'rgba(74, 222, 128, 0.4)');
+        updateAdoptedCount();
+        // 加入动作队列
+        const $queue = $('#action-queue');
+        const queueCount = $queue.children().length;
+        $('#queue-count').text((queueCount + 1) + ' 待执行');
+        const labels = {
+          s1: '聚焦「女性+商业+反常识」选题方向（7 天）',
+          s2: '批量改写 3 篇旧标题为「为什么我X」句式',
+          s3: '调整发布时段为周二/周四 20:30 ~ 21:30',
+          s4: '设计暗红+大字号+侧脸组合的封面模板'
+        };
+        $queue.prepend('<li class="queue-item flex items-start gap-2 p-2 -mx-2 rounded-md bg-primary/5 border border-primary/20" data-id="q' + Date.now() + '"><i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-primary mt-0.5 shrink-0"></i><span class="flex-1">' + (labels[id] || '已采纳 AI 建议') + '</span></li>');
+        lucide.createIcons();
+        toast('已采纳 · 已加入复盘动作队列', 'success');
+      });
+
+      $('#ai-suggestions').on('click', '.btn-ai-dismiss', function() {
+        const $item = $(this).closest('.suggestion-item');
+        const id = $item.data('suggestion-id');
+        AnalyticsStore.dismiss(id);
+        $item.addClass('opacity-50');
+        $item.find('p').addClass('line-through text-on-surface-variant');
+        $(this).text('已忽略').prop('disabled', true);
+        toast('已忽略该建议', 'info');
+      });
+
+      // —— 重新生成 ——
+      // 完整行为：
+      // 1. 显示面板内 loading 态：建议卡片淡出
+      // 2. 调用 /api/analytics/regen-suggestion
+      // 3. 接收 4 条新建议后重新渲染 #ai-suggestions 节点
+      $('#btn-regen').on('click', function() {
+        const $icon = $(this).find('i');
+        $icon.css('transition', 'transform 0.8s ease').css('transform', 'rotate(360deg)');
+        setTimeout(() => $icon.css('transform', ''), 800);
+        toast('正在基于最新数据重新生成 4 条建议…', 'info');
+        setTimeout(() => {
+          // 重新启用所有按钮并重置视觉态
+          $('.suggestion-item').removeClass('opacity-50').css('border-color', '');
+          $('.suggestion-item p').removeClass('line-through text-on-surface-variant');
+          $('.btn-ai-dismiss').text('✕ 忽略').prop('disabled', false);
+          // 已采纳的保留状态
+          toast('已生成 4 条新建议', 'success');
+        }, 1200);
+      });
+
+      // —— TOP 3 / BOTTOM 3 卡片点击 → 弹窗 ——
+      function openCardModal(card) {
+        const $card = $(card);
+        const title = $card.data('title');
+        const views = $card.data('views');
+        const er = $card.data('er');
+        const time = $card.data('time');
+        const tags = ($card.data('tags') || '').split(',');
+        const reason = $card.data('reason');
+
+        $('#modal-title').text(title || '内容详情');
+
+        let tagsHtml = tags.filter(t => t.trim()).map(t => '<span class="text-[11px] text-on-surface-variant bg-surface-container px-2 py-0.5 rounded-md">#' + t.trim() + '</span>').join('');
+        let reasonHtml = reason ? '<div class="p-3 rounded-lg bg-error/10 border border-error/20"><div class="text-[10px] font-semibold text-error uppercase tracking-wide mb-1">归因分析</div><div class="text-sm text-on-surface">' + reason + '</div></div>' : '';
+
+        const isBottom = $card.hasClass('bottom-card');
+        const hintBlock = isBottom ? '' : '<div class="p-3 rounded-lg bg-success/10 border border-success/20"><div class="text-[10px] font-semibold text-success uppercase tracking-wide mb-1">成功要素</div><div class="text-sm text-on-surface">标题高反差、晚 21:00 黄金时段、首句强钩子，三者叠加带来 9% 以上互动率。</div></div>';
+
+        $('#modal-content').html(
+          '<div class="flex items-center gap-2">' +
+            '<span class="inline-flex items-center gap-1 text-[10px] font-medium bg-primary/15 text-primary px-2 py-0.5 rounded-full"><i data-lucide="eye" class="w-3 h-3"></i>阅读量 ' + views + '</span>' +
+            '<span class="inline-flex items-center gap-1 text-[10px] font-medium bg-success/15 text-success px-2 py-0.5 rounded-full"><i data-lucide="activity" class="w-3 h-3"></i>互动率 ' + er + '</span>' +
+          '</div>' +
+          '<div class="text-sm text-on-surface leading-relaxed">' + title + '</div>' +
+          '<div class="grid grid-cols-2 gap-3 text-xs">' +
+            '<div class="p-3 rounded-lg bg-surface-container"><div class="text-on-surface-variant mb-1">发布时间</div><div class="font-semibold text-on-surface">' + time + '</div></div>' +
+            '<div class="p-3 rounded-lg bg-surface-container"><div class="text-on-surface-variant mb-1">状态</div><div class="font-semibold text-on-surface">' + (isBottom ? '掉队' : '爆款') + '</div></div>' +
+          '</div>' +
+          (tagsHtml ? '<div><div class="text-xs text-on-surface-variant mb-2">内容标签</div><div class="flex flex-wrap gap-1.5">' + tagsHtml + '</div></div>' : '') +
+          reasonHtml + hintBlock
+        );
+        lucide.createIcons();
+        $('#card-detail-modal').removeClass('is-closed');
+      }
+      $('#viral-list, #bottom-list').on('click', '.viral-card, .bottom-card', function() {
+        openCardModal(this);
+      });
+      $('#btn-modal-close, #btn-modal-dismiss').on('click', function() {
+        $('#card-detail-modal').addClass('is-closed');
+      });
+      $('#card-detail-modal').on('click', function(e) {
+        if (e.target === this) $(this).addClass('is-closed');
+      });
+      $('#btn-modal-action').on('click', function() {
+        toast('已跳转到内容详细数据分析页（演示）', 'info');
+        $('#card-detail-modal').addClass('is-closed');
+      });
+
+      // —— 表格行点击 → 滑出详情面板 ——
+      function openRowPanel(row) {
+        const $row = $(row);
+        const title = $row.data('title');
+        const pubtime = $row.data('pubtime');
+        const views = $row.data('views');
+        const likes = $row.data('likes');
+        const favs = $row.data('favs');
+        const comments = $row.data('comments');
+        const er = $row.data('er');
+        const status = $row.data('status');
+        const statusType = $row.data('status-type');
+
+        // 高亮
+        $('.perf-row').removeClass('is-active');
+        $row.addClass('is-active');
+
+        // 状态徽章颜色
+        const colorMap = { red: 'primary', green: 'success', gray: 'on-surface-variant', error: 'error' };
+        const color = colorMap[statusType] || 'on-surface';
+        $('#panel-status-badge').html('<span class="inline-flex items-center gap-1 text-xs font-medium bg-' + color + '/15 text-' + color + ' px-2 py-0.5 rounded-full"><span class="w-1.5 h-1.5 bg-' + color + ' rounded-full"></span>' + status + '</span>');
+
+        const erNum = parseFloat(er);
+        const erColor = erNum >= 7 ? 'text-success' : (erNum >= 3 ? 'text-on-surface' : 'text-error');
+
+        $('#panel-content').html(
+          '<div>' +
+            '<div class="text-base font-semibold text-on-surface leading-snug">' + title + '</div>' +
+            '<div class="text-xs text-on-surface-variant mt-2 flex items-center gap-2"><i data-lucide="clock" class="w-3 h-3"></i>' + pubtime + '</div>' +
+          '</div>' +
+          '<div class="grid grid-cols-2 gap-3">' +
+            '<div class="p-3 rounded-lg bg-surface-container"><div class="text-[10px] text-on-surface-variant mb-1">曝光</div><div class="text-lg font-bold text-on-surface tabular">' + views + '</div></div>' +
+            '<div class="p-3 rounded-lg bg-surface-container"><div class="text-[10px] text-on-surface-variant mb-1">点赞</div><div class="text-lg font-bold text-on-surface tabular">' + likes + '</div></div>' +
+            '<div class="p-3 rounded-lg bg-surface-container"><div class="text-[10px] text-on-surface-variant mb-1">收藏</div><div class="text-lg font-bold text-on-surface tabular">' + favs + '</div></div>' +
+            '<div class="p-3 rounded-lg bg-surface-container"><div class="text-[10px] text-on-surface-variant mb-1">评论</div><div class="text-lg font-bold text-on-surface tabular">' + comments + '</div></div>' +
+          '</div>' +
+          '<div class="p-3 rounded-lg bg-surface-container flex items-center justify-between">' +
+            '<div class="text-[10px] text-on-surface-variant">综合互动率</div>' +
+            '<div class="text-xl font-bold ' + erColor + ' tabular">' + er + '</div>' +
+          '</div>' +
+          '<div class="p-3 rounded-lg border border-outline/20 bg-surface-container/40">' +
+            '<div class="text-xs font-semibold text-on-surface mb-2">数据洞察</div>' +
+            '<ul class="space-y-1.5 text-xs text-on-surface-variant">' +
+              (erNum >= 7
+                ? '<li class="flex items-start gap-2"><i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-success mt-0.5 shrink-0"></i><span>该内容已超过爆款阈值（7%），建议提炼为模板复用</span></li>' +
+                  '<li class="flex items-start gap-2"><i data-lucide="trending-up" class="w-3.5 h-3.5 text-primary mt-0.5 shrink-0"></i><span>表现远超账号均值（6.7%），可作为新选题方向参考</span></li>'
+                : (erNum >= 3
+                    ? '<li class="flex items-start gap-2"><i data-lucide="minus-circle" class="w-3.5 h-3.5 text-on-surface-variant mt-0.5 shrink-0"></i><span>表现中规中矩，接近账号平均水平</span></li>' +
+                      '<li class="flex items-start gap-2"><i data-lucide="lightbulb" class="w-3.5 h-3.5 text-warning mt-0.5 shrink-0"></i><span>可参考 TOP 3 爆款的标题/封面策略进行微调</span></li>'
+                    : '<li class="flex items-start gap-2"><i data-lucide="alert-triangle" class="w-3.5 h-3.5 text-error mt-0.5 shrink-0"></i><span>互动率严重低于 1.2% 警戒线</span></li>' +
+                      '<li class="flex items-start gap-2"><i data-lucide="x-circle" class="w-3.5 h-3.5 text-error mt-0.5 shrink-0"></i><span>建议暂停同类选题，复盘选题方向与发布时间</span></li>')) +
+            '</ul>' +
+          '</div>'
+        );
+        lucide.createIcons();
+        $('#row-detail-panel').removeClass('is-closed');
+      }
+      $('#perf-table-body').on('click', '.perf-row', function() {
+        openRowPanel(this);
+      });
+      $('#btn-panel-close, #btn-panel-dismiss').on('click', function() {
+        $('#row-detail-panel').addClass('is-closed');
+        $('.perf-row').removeClass('is-active');
+      });
+      $('#btn-panel-action').on('click', function() {
+        const $active = $('.perf-row.is-active');
+        const title = $active.data('title') || '该内容';
+        toast('已把「' + title + '」加入选题库', 'success');
+        setTimeout(() => {
+          $('#row-detail-panel').addClass('is-closed');
+          $('.perf-row').removeClass('is-active');
+        }, 600);
+      });
+      // ESC 关闭弹窗 / 面板
+      $(document).on('keydown', function(e) {
+        if (e.key === 'Escape') {
+          $('#card-detail-modal').addClass('is-closed');
+          $('#row-detail-panel').addClass('is-closed');
+          $('.perf-row').removeClass('is-active');
+        }
+      });
+
+      // —— 表格排序 ——
+      function sortTable(by) {
+        const $rows = $('#perf-table-body .perf-row').get();
+        $rows.sort(function(a, b) {
+          let av = $(a).data(by);
+          let bv = $(b).data(by);
+          if (by === 'time') {
+            av = parseInt(av, 10) || 0;
+            bv = parseInt(bv, 10) || 0;
+          } else {
+            av = parseFloat(av) || 0;
+            bv = parseFloat(bv) || 0;
+          }
+          return bv - av; // 降序
+        });
+        $('#perf-table-body').empty().append($rows);
+        // 切换按钮 active
+        $('.sort-btn').removeClass('bg-primary/15 text-primary border-primary/30').addClass('text-on-surface-variant border-outline/30');
+        $('#sort-' + by).addClass('bg-primary/15 text-primary border-primary/30').removeClass('text-on-surface-variant border-outline/30');
+        const labelMap = { er: '互动率', imp: '曝光', time: '时间' };
+        toast('已按' + (labelMap[by] || by) + '降序排列', 'success');
+      }
+      $('#sort-er, #sort-imp, #sort-time').on('click', function() {
+        const by = $(this).data('sort');
+        if ($(this).hasClass('text-primary')) return;
+        sortTable(by);
+      });
+
+      // —— 导出报表 ——
+      $('#btn-export, #btn-export-csv').on('click', function() {
+        toast('报表已生成（演示），实际部署会下载 CSV', 'success');
+      });
+
+      // —— page:refresh 事件：数字微微变化 ——
+      $(window).on('page:refresh', function() {
+        // KPI 数值 ±0.3% 抖动
+        $('.kpi-value').each(function() {
+          const $el = $(this);
+          const cur = $el.text();
+          const num = parseFloat(cur.replace(/,/g, '').replace('+', ''));
+          if (isNaN(num)) return;
+          const sign = cur.trim().startsWith('+') ? 1 : 1;
+          const delta = num * (Math.random() * 0.006 - 0.003);
+          const newNum = Math.max(0, num + delta);
+          let formatted;
+          if (cur.indexOf(',') !== -1) {
+            formatted = Math.round(newNum).toLocaleString();
+          } else if (cur.endsWith('%')) {
+            formatted = newNum.toFixed(1);
+          } else if (cur.endsWith('x')) {
+            formatted = newNum.toFixed(1);
+          } else {
+            formatted = Math.round(newNum).toString();
+          }
+          if (sign > 0 && cur.trim().startsWith('+')) formatted = '+' + formatted;
+          $el.text(formatted);
+        });
+      });
+
+      // —— 队列项点击 ——
+      $('#action-queue').on('click', '.queue-item', function() {
+        $(this).toggleClass('line-through opacity-50');
+      });
+
+      // —— 初始化当前页 nav 激活 ——
+      window.__highlightNav('analytics');
+
+      // 恢复上次的时间 Tab
+      if (AnalyticsStore.state.period && AnalyticsStore.state.period !== '7d') {
+        switchPeriod(AnalyticsStore.state.period);
+      }
+
+      lucide.createIcons();
+    });
   </script>
+
+  <script>lucide.createIcons();</script>
 </body>
 
-</html>        <!-- KPI 总览：6 个指标卡 + sparkline -->
-        <div class="px-6 py-5">
-          <div class="grid grid-cols-6 gap-3">
-
-            <!-- KPI-1 累计曝光 -->
-            <div id="kpi-impressions" class="bg-surface border border-outline/20 p-4 relative">
-              <div class="flex items-start justify-between mb-2">
-                <span class="font-mono text-[10px] tracking-widest text-on-surface-variant uppercase">// IMPRESSIONS</span>
-                <i data-lucide="eye" class="w-3.5 h-3.5 text-on-surface-variant/60"></i>
-              </div>
-              <div class="font-mono text-2xl font-bold text-on-surface tabular leading-none">1,284,392</div>
-              <div class="flex items-center gap-1.5 mt-2 mb-3">
-                <span class="inline-flex items-center gap-0.5 font-mono text-[10px] font-bold text-success">
-                  <i data-lucide="arrow-up-right" class="w-3 h-3"></i>+12.4%
-                </span>
-                <span class="font-mono text-[10px] text-on-surface-variant">vs 上周</span>
-              </div>
-              <svg viewBox="0 0 120 28" class="w-full h-7" preserveAspectRatio="none">
-                <polyline points="0,20 12,18 24,22 36,15 48,17 60,10 72,12 84,7 96,9 108,4 120,6" fill="none" stroke="#7f2028" stroke-width="1.5" stroke-linejoin="round"/>
-                <polyline points="0,20 12,18 24,22 36,15 48,17 60,10 72,12 84,7 96,9 108,4 120,6 120,28 0,28" fill="rgba(127,32,40,0.12)" stroke="none"/>
-              </svg>
-            </div>
-
-            <!-- KPI-2 累计互动 -->
-            <div id="kpi-engagements" class="bg-surface border border-outline/20 p-4 relative">
-              <div class="flex items-start justify-between mb-2">
-                <span class="font-mono text-[10px] tracking-widest text-on-surface-variant uppercase">// ENGAGEMENTS</span>
-                <i data-lucide="activity" class="w-3.5 h-3.5 text-on-surface-variant/60"></i>
-              </div>
-              <div class="font-mono text-2xl font-bold text-on-surface tabular leading-none">86,231</div>
-              <div class="flex items-center gap-1.5 mt-2 mb-3">
-                <span class="inline-flex items-center gap-0.5 font-mono text-[10px] font-bold text-success">
-                  <i data-lucide="arrow-up-right" class="w-3 h-3"></i>+18.2%
-                </span>
-                <span class="font-mono text-[10px] text-on-surface-variant">vs 上周</span>
-              </div>
-              <svg viewBox="0 0 120 28" class="w-full h-7" preserveAspectRatio="none">
-                <polyline points="0,22 12,20 24,17 36,19 48,14 60,15 72,11 84,13 96,6 108,8 120,3" fill="none" stroke="#4ade80" stroke-width="1.5" stroke-linejoin="round"/>
-                <polyline points="0,22 12,20 24,17 36,19 48,14 60,15 72,11 84,13 96,6 108,8 120,3 120,28 0,28" fill="rgba(74,222,128,0.10)" stroke="none"/>
-              </svg>
-            </div>
-
-            <!-- KPI-3 爆款率 -->
-            <div id="kpi-viral" class="bg-surface border border-outline/20 p-4 relative">
-              <div class="flex items-start justify-between mb-2">
-                <span class="font-mono text-[10px] tracking-widest text-on-surface-variant uppercase">// VIRAL_RATE</span>
-                <i data-lucide="flame" class="w-3.5 h-3.5 text-on-surface-variant/60"></i>
-              </div>
-              <div class="font-mono text-2xl font-bold text-on-surface tabular leading-none">23.5<span class="text-base text-on-surface-variant">%</span></div>
-              <div class="flex items-center gap-1.5 mt-2 mb-3">
-                <span class="inline-flex items-center gap-0.5 font-mono text-[10px] font-bold text-success">
-                  <i data-lucide="arrow-up-right" class="w-3 h-3"></i>+4.1pt
-                </span>
-                <span class="font-mono text-[10px] text-on-surface-variant">vs 上周</span>
-              </div>
-              <svg viewBox="0 0 120 28" class="w-full h-7" preserveAspectRatio="none">
-                <polyline points="0,18 12,16 24,20 36,14 48,11 60,13 72,8 84,10 96,5 108,7 120,2" fill="none" stroke="#f59e0b" stroke-width="1.5" stroke-linejoin="round"/>
-                <polyline points="0,18 12,16 24,20 36,14 48,11 60,13 72,8 84,10 96,5 108,7 120,2 120,28 0,28" fill="rgba(245,158,11,0.10)" stroke="none"/>
-              </svg>
-            </div>
-
-            <!-- KPI-4 平均互动率 -->
-            <div id="kpi-er" class="bg-surface border border-outline/20 p-4 relative">
-              <div class="flex items-start justify-between mb-2">
-                <span class="font-mono text-[10px] tracking-widest text-on-surface-variant uppercase">// AVG_ER</span>
-                <i data-lucide="percent" class="w-3.5 h-3.5 text-on-surface-variant/60"></i>
-              </div>
-              <div class="font-mono text-2xl font-bold text-on-surface tabular leading-none">6.7<span class="text-base text-on-surface-variant">%</span></div>
-              <div class="flex items-center gap-1.5 mt-2 mb-3">
-                <span class="inline-flex items-center gap-0.5 font-mono text-[10px] font-bold text-error">
-                  <i data-lucide="arrow-down-right" class="w-3 h-3"></i>-0.8pt
-                </span>
-                <span class="font-mono text-[10px] text-on-surface-variant">vs 上周</span>
-              </div>
-              <svg viewBox="0 0 120 28" class="w-full h-7" preserveAspectRatio="none">
-                <polyline points="0,8 12,10 24,7 36,12 48,9 60,14 72,11 84,16 96,13 108,17 120,15" fill="none" stroke="#8a8f97" stroke-width="1.5" stroke-linejoin="round"/>
-                <polyline points="0,8 12,10 24,7 36,12 48,9 60,14 72,11 84,16 96,13 108,17 120,15 120,28 0,28" fill="rgba(138,143,151,0.08)" stroke="none"/>
-              </svg>
-            </div>
-
-            <!-- KPI-5 粉丝净增 -->
-            <div id="kpi-followers" class="bg-surface border border-outline/20 p-4 relative">
-              <div class="flex items-start justify-between mb-2">
-                <span class="font-mono text-[10px] tracking-widest text-on-surface-variant uppercase">// NET_FANS</span>
-                <i data-lucide="user-plus" class="w-3.5 h-3.5 text-on-surface-variant/60"></i>
-              </div>
-              <div class="font-mono text-2xl font-bold text-on-surface tabular leading-none">+3,842</div>
-              <div class="flex items-center gap-1.5 mt-2 mb-3">
-                <span class="inline-flex items-center gap-0.5 font-mono text-[10px] font-bold text-success">
-                  <i data-lucide="arrow-up-right" class="w-3 h-3"></i>+24.6%
-                </span>
-                <span class="font-mono text-[10px] text-on-surface-variant">vs 上周</span>
-              </div>
-              <svg viewBox="0 0 120 28" class="w-full h-7" preserveAspectRatio="none">
-                <polyline points="0,24 12,22 24,18 36,20 48,15 60,16 72,11 84,12 96,7 108,8 120,4" fill="none" stroke="#4ade80" stroke-width="1.5" stroke-linejoin="round"/>
-                <polyline points="0,24 12,22 24,18 36,20 48,15 60,16 72,11 84,12 96,7 108,8 120,4 120,28 0,28" fill="rgba(74,222,128,0.10)" stroke="none"/>
-              </svg>
-            </div>
-
-            <!-- KPI-6 ROI -->
-            <div id="kpi-roi" class="bg-surface border border-primary/40 p-4 relative">
-              <div class="absolute top-2 right-2 font-mono text-[9px] tracking-widest text-primary">◆ CORE</div>
-              <div class="flex items-start justify-between mb-2">
-                <span class="font-mono text-[10px] tracking-widest text-on-surface-variant uppercase">// ROI</span>
-                <i data-lucide="trending-up" class="w-3.5 h-3.5 text-primary"></i>
-              </div>
-              <div class="font-mono text-2xl font-bold text-primary tabular leading-none">4.2<span class="text-base">x</span></div>
-              <div class="flex items-center gap-1.5 mt-2 mb-3">
-                <span class="inline-flex items-center gap-0.5 font-mono text-[10px] font-bold text-success">
-                  <i data-lucide="arrow-up-right" class="w-3 h-3"></i>+0.3x
-                </span>
-                <span class="font-mono text-[10px] text-on-surface-variant">vs 上周</span>
-              </div>
-              <svg viewBox="0 0 120 28" class="w-full h-7" preserveAspectRatio="none">
-                <polyline points="0,20 12,18 24,15 36,17 48,12 60,10 72,12 84,7 96,8 108,4 120,2" fill="none" stroke="#7f2028" stroke-width="1.8" stroke-linejoin="round"/>
-                <polyline points="0,20 12,18 24,15 36,17 48,12 60,10 72,12 84,7 96,8 108,4 120,2 120,28 0,28" fill="rgba(127,32,40,0.18)" stroke="none"/>
-              </svg>
-            </div>
-
-          </div>
-        </div>
-
+</html>
