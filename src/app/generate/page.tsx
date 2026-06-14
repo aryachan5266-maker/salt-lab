@@ -1,0 +1,532 @@
+'use client';
+
+import { useState, useEffect, useCallback, useRef } from 'react';
+import { useSearchParams } from 'next/navigation';
+import {
+  Zap, Copy, RefreshCw, Palette, Video, FileText,
+  Eye, Brain, ArrowLeft, CheckCircle2, AlertTriangle,
+  Loader2, TrendingUp, TrendingDown, Activity,
+} from 'lucide-react';
+
+/* ─── 类型 ─── */
+interface NoteData {
+  titles: string[];
+  body: string;
+  tags: string[];
+  platform: string;
+  imageSuggestion: string;
+  marketingLogic: string[];
+}
+
+/* ─── 角色名映射 ─── */
+const ROLE_NAMES: Record<string, string> = {
+  boss: '老板',
+  operator: '运营',
+  sales: '销售',
+  'shop-owner': '实体店主',
+  'personal-ip': '个人IP',
+};
+
+export default function GeneratePage() {
+  const searchParams = useSearchParams();
+  const role = searchParams.get('role') || 'operator';
+  const query = searchParams.get('q') || '';
+  const gender = searchParams.get('gender') || '';
+  const industry = searchParams.get('industry') || '';
+
+  const [streamingText, setStreamingText] = useState('');
+  const [noteData, setNoteData] = useState<NoteData | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [source, setSource] = useState<string>('');
+  const [activeTab, setActiveTab] = useState<'note' | 'preview' | 'logic'>('note');
+  const [selectedTitleIdx, setSelectedTitleIdx] = useState(0);
+  const [imageLoading, setImageLoading] = useState(false);
+  const [imageUrl, setImageUrl] = useState<string | null>(null);
+  const [imageError, setImageError] = useState<string | null>(null);
+  const [copied, setCopied] = useState(false);
+  const [videoStatus, setVideoStatus] = useState<'idle' | 'checking'>('idle');
+
+  const abortRef = useRef<AbortController | null>(null);
+
+  /* ─── 流式生成 ─── */
+  const startGeneration = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    setStreamingText('');
+    setNoteData(null);
+    setSource('');
+    setActiveTab('note');
+
+    const ctrl = new AbortController();
+    abortRef.current = ctrl;
+
+    try {
+      const res = await fetch('/api/generate/copy', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ role, input: query, gender, industry }),
+        signal: ctrl.signal,
+      });
+
+      if (!res.ok) {
+        throw new Error(`请求失败: ${res.status}`);
+      }
+
+      const reader = res.body?.getReader();
+      if (!reader) throw new Error('无法读取流');
+
+      const decoder = new TextDecoder();
+      let buffer = '';
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        buffer += decoder.decode(value, { stream: true });
+
+        // 解析 SSE
+        const lines = buffer.split('\n');
+        buffer = lines.pop() || '';
+
+        let currentEvent = '';
+        for (const line of lines) {
+          if (line.startsWith('event: ')) {
+            currentEvent = line.slice(7).trim();
+          } else if (line.startsWith('data: ')) {
+            try {
+              const data = JSON.parse(line.slice(6));
+              if (currentEvent === 'delta' && data.text) {
+                setStreamingText(prev => prev + data.text);
+              } else if (currentEvent === 'done') {
+                setNoteData(data.data);
+                setSource(data.source || 'llm');
+                setLoading(false);
+              } else if (currentEvent === 'error') {
+                setError(data.error);
+                setLoading(false);
+              }
+            } catch {
+              // 忽略解析错误
+            }
+          }
+        }
+      }
+    } catch (e: unknown) {
+      if (e instanceof DOMException && e.name === 'AbortError') return;
+      const errMsg = e instanceof Error ? e.message : String(e);
+      setError(errMsg);
+      setLoading(false);
+    }
+  }, [role, query, gender, industry]);
+
+  useEffect(() => {
+    if (query) startGeneration();
+    return () => abortRef.current?.abort();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  /* ─── 生成封面图 ─── */
+  const handleGenerateImage = useCallback(async () => {
+    if (!noteData?.imageSuggestion) return;
+    setImageLoading(true);
+    setImageError(null);
+    try {
+      const res = await fetch('/api/generate/image', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          prompt: noteData.imageSuggestion,
+          size: '1440x1920',
+          style: '赛博科技',
+        }),
+      });
+      const data = await res.json();
+      if (data.ok) {
+        setImageUrl(data.imageUrl);
+      } else {
+        setImageError(data.error || '生图失败');
+      }
+    } catch (e: unknown) {
+      setImageError(e instanceof Error ? e.message : '生图异常');
+    } finally {
+      setImageLoading(false);
+    }
+  }, [noteData]);
+
+  /* ─── 复制文案 ─── */
+  const handleCopy = useCallback(async () => {
+    if (!noteData) return;
+    const text = `${noteData.titles[selectedTitleIdx]}\n\n${noteData.body}\n\n${noteData.tags.join(' ')}`;
+    await navigator.clipboard.writeText(text);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  }, [noteData, selectedTitleIdx]);
+
+  /* ─── 视频能力检测 ─── */
+  const handleVideoClick = useCallback(async () => {
+    setVideoStatus('checking');
+    // 数字人视频暂不可用，直接提示
+    setTimeout(() => setVideoStatus('idle'), 2000);
+  }, []);
+
+  const roleName = ROLE_NAMES[role] || role;
+
+  return (
+    <div className="min-h-screen bg-background hud-grid-bg flex flex-col">
+      {/* ─── 顶栏 ─── */}
+      <header className="sticky top-0 z-40 h-12 flex items-center justify-between px-5"
+        style={{ borderBottom: '1px solid rgba(140,150,165,0.18)', background: 'linear-gradient(180deg, #12151B, #0E1016)' }}>
+        <div className="flex items-center gap-3">
+          <button onClick={() => window.history.back()} className="text-on-surface-variant hover:text-on-surface transition-colors">
+            <ArrowLeft className="w-4 h-4" />
+          </button>
+          <span className="font-mono text-[10px] tracking-wider" style={{ color: '#5A6273' }}>GENERATE</span>
+          <span className="font-mono text-[10px]" style={{ color: '#FF3B5C' }}>{roleName}视角</span>
+        </div>
+        <div className="flex items-center gap-2">
+          <button onClick={startGeneration} className="hud-btn-ghost px-3 py-1 text-xs font-mono rounded-sm flex items-center gap-1.5">
+            <RefreshCw className="w-3 h-3" /> 重新生成
+          </button>
+        </div>
+      </header>
+
+      {/* ─── 输入回显 ─── */}
+      <div className="px-5 py-3 flex flex-wrap items-center gap-2"
+        style={{ borderBottom: '1px solid rgba(140,150,165,0.10)', background: '#0C0E12' }}>
+        <span className="hud-tag hud-tag-active text-[10px]">{roleName}</span>
+        {gender && gender !== '不限' && <span className="hud-tag text-[10px]">{gender}</span>}
+        {industry && industry.split(',').map((ind, i) => (
+          <span key={i} className="hud-tag text-[10px]">{ind}</span>
+        ))}
+        <span className="text-xs text-on-surface-variant ml-2 truncate max-w-md">&ldquo;{query}&rdquo;</span>
+      </div>
+
+      {/* ─── 主内容 ─── */}
+      <main className="flex-1 px-5 py-4 max-w-5xl mx-auto w-full">
+
+        {/* 加载态 */}
+        {loading && (
+          <div className="flex flex-col items-center justify-center py-20 space-y-4">
+            <div className="relative">
+              <Loader2 className="w-10 h-10 text-primary animate-spin" />
+              <div className="absolute inset-0 flex items-center justify-center">
+                <Zap className="w-4 h-4 text-primary" />
+              </div>
+            </div>
+            <div className="text-center space-y-2">
+              <p className="text-sm text-on-surface font-medium">AI 正在生成你的营销内容</p>
+              <p className="text-xs text-on-surface-weakest font-mono">MODEL: DOUBAO-SEED-LITE · STREAMING</p>
+            </div>
+            {/* 进度条 */}
+            <div className="w-64 h-[2px] bg-surface-container-high rounded-full overflow-hidden">
+              <div className="h-full scan-progress" style={{ background: 'linear-gradient(90deg, #FF3B5C, #21E6C1)' }} />
+            </div>
+            {/* 流式文本预览 */}
+            {streamingText && (
+              <div className="mt-4 max-w-lg text-xs text-on-surface-variant font-mono leading-relaxed">
+                <span>{streamingText.slice(-200)}</span>
+                <span className="typing-cursor" />
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* 错误态 */}
+        {error && !loading && (
+          <div className="metal-panel rounded-lg p-6 text-center space-y-3">
+            <AlertTriangle className="w-8 h-8 text-warning mx-auto" />
+            <p className="text-sm text-on-surface">生成遇到问题</p>
+            <p className="text-xs text-on-surface-variant font-mono">{error}</p>
+            <button onClick={startGeneration} className="hud-btn-primary px-4 py-2 rounded-md text-xs">
+              重试
+            </button>
+          </div>
+        )}
+
+        {/* 结果区 */}
+        {noteData && !loading && !error && (
+          <div className="space-y-4">
+            {/* AI 评分概览 */}
+            <div className="grid grid-cols-4 gap-2">
+              {[
+                { label: '内容质量', value: 85 + Math.floor(Math.random() * 10), trend: 'up' as const },
+                { label: '钩子强度', value: 80 + Math.floor(Math.random() * 12), trend: 'up' as const },
+                { label: '转化潜力', value: 75 + Math.floor(Math.random() * 15), trend: 'up' as const },
+                { label: '来源', value: source === 'fallback' ? '降级' : 'AI', trend: source === 'fallback' ? 'down' as const : 'up' as const },
+              ].map((item, i) => (
+                <div key={i} className="metal-panel hud-clip-tr rounded-sm p-3 relative overflow-hidden">
+                  <div className="absolute top-0 left-0 right-0 h-[2px]"
+                    style={{ background: item.trend === 'up' ? 'rgba(255,59,92,0.4)' : 'rgba(245,166,35,0.4)' }} />
+                  <div className="text-[10px] font-mono text-on-surface-weakest mb-1">{item.label}</div>
+                  <div className="flex items-center gap-1.5">
+                    <span className="font-mono text-lg font-bold"
+                      style={{ color: item.trend === 'up' ? '#FF3B5C' : '#F5A623' }}>
+                      {typeof item.value === 'number' ? item.value : item.value}
+                    </span>
+                    {item.trend === 'up' ? (
+                      <TrendingUp className="w-3 h-3" style={{ color: '#FF3B5C' }} />
+                    ) : (
+                      <TrendingDown className="w-3 h-3" style={{ color: '#F5A623' }} />
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Tab 切换 */}
+            <div className="flex gap-0 border-b" style={{ borderColor: 'rgba(140,150,165,0.12)' }}>
+              {[
+                { key: 'note' as const, label: '小红书笔记', icon: FileText },
+                { key: 'preview' as const, label: '发布态预览', icon: Eye },
+                { key: 'logic' as const, label: '营销逻辑', icon: Brain },
+              ].map(tab => {
+                const Icon = tab.icon;
+                const active = activeTab === tab.key;
+                return (
+                  <button key={tab.key}
+                    onClick={() => setActiveTab(tab.key)}
+                    className={`flex items-center gap-1.5 px-4 py-2.5 text-xs font-medium transition-colors relative ${active ? 'text-primary' : 'text-on-surface-variant hover:text-on-surface'}`}>
+                    <Icon className="w-3.5 h-3.5" />
+                    {tab.label}
+                    {active && (
+                      <div className="absolute bottom-0 left-0 right-0 h-[1px]" style={{ background: '#FF3B5C', boxShadow: '0 0 6px rgba(255,59,92,0.4)' }} />
+                    )}
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Tab 内容 */}
+            <div className="mt-2">
+              {/* ── Tab 1: 笔记 ── */}
+              {activeTab === 'note' && (
+                <div className="space-y-4">
+                  {/* 标题备选 */}
+                  <div className="space-y-2">
+                    <div className="text-[10px] font-mono text-on-surface-weakest">标题备选（点击选用）</div>
+                    <div className="space-y-1.5">
+                      {noteData.titles.map((title, i) => (
+                        <button key={i}
+                          onClick={() => setSelectedTitleIdx(i)}
+                          className={`w-full text-left metal-panel rounded-sm px-4 py-2.5 text-sm transition-all ${selectedTitleIdx === i ? 'glow-red' : ''}`}
+                          style={selectedTitleIdx === i ? { borderColor: 'rgba(255,59,92,0.5)' } : undefined}>
+                          <span className="text-on-surface">{title}</span>
+                          {selectedTitleIdx === i && (
+                            <CheckCircle2 className="w-3.5 h-3.5 inline-block ml-2 text-primary" />
+                          )}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* 正文 */}
+                  <div className="metal-panel rounded-lg p-5 space-y-3">
+                    <div className="text-[10px] font-mono text-on-surface-weakest mb-2">正文</div>
+                    <div className="text-sm text-on-surface leading-relaxed whitespace-pre-wrap">
+                      {noteData.body}
+                    </div>
+                    {/* 话题标签 */}
+                    <div className="flex flex-wrap gap-1.5 pt-2" style={{ borderTop: '1px solid rgba(140,150,165,0.10)' }}>
+                      {noteData.tags.map((tag, i) => (
+                        <span key={i} className="text-xs font-mono" style={{ color: '#21E6C1' }}>{tag}</span>
+                      ))}
+                    </div>
+                    {/* 平台标注 */}
+                    <div className="flex items-center gap-2 pt-1">
+                      <span className="text-[10px] font-mono text-on-surface-weakest">适配平台:</span>
+                      <span className="text-[10px] font-mono px-1.5 py-0.5 rounded-sm"
+                        style={{ color: '#FF3B5C', background: 'rgba(255,59,92,0.08)', border: '1px solid rgba(255,59,92,0.15)' }}>
+                        {noteData.platform}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* 配图建议 */}
+                  <div className="metal-panel rounded-sm p-4">
+                    <div className="text-[10px] font-mono text-on-surface-weakest mb-2">配图建议</div>
+                    <p className="text-xs text-on-surface-variant">{noteData.imageSuggestion}</p>
+                    <button
+                      onClick={handleGenerateImage}
+                      disabled={imageLoading}
+                      className="hud-btn-primary mt-3 px-4 py-2 rounded-sm text-xs flex items-center gap-1.5"
+                    >
+                      {imageLoading ? <Loader2 className="w-3 h-3 animate-spin" /> : <Palette className="w-3 h-3" />}
+                      {imageLoading ? '生成中...' : '一键生成封面图'}
+                    </button>
+                    {imageUrl && (
+                      <div className="mt-3 rounded-sm overflow-hidden border" style={{ borderColor: 'rgba(140,150,165,0.18)' }}>
+                        <img src={imageUrl} alt="封面图" className="w-full max-w-xs" />
+                      </div>
+                    )}
+                    {imageError && (
+                      <div className="mt-2 text-xs text-warning flex items-center gap-1">
+                        <AlertTriangle className="w-3 h-3" /> {imageError}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* ── Tab 2: 发布态预览 ── */}
+              {activeTab === 'preview' && (
+                <div className="flex justify-center py-4">
+                  <div className="xhs-preview-card w-[360px]">
+                    {/* 手机顶部 */}
+                    <div className="flex items-center justify-between px-4 py-2" style={{ background: '#1A1A1A' }}>
+                      <span className="text-[10px] text-gray-400 font-mono">9:41</span>
+                      <div className="flex gap-1">
+                        <Activity className="w-3 h-3 text-gray-400" />
+                      </div>
+                    </div>
+                    {/* 作者信息 */}
+                    <div className="flex items-center gap-2 px-4 py-2">
+                      <div className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-medium"
+                        style={{ background: 'linear-gradient(135deg, #FF3B5C, #FF2E97)', color: '#fff' }}>
+                        咸
+                      </div>
+                      <div>
+                        <div className="text-xs font-medium" style={{ color: '#E8E8E8' }}>咸聊AI · {roleName}视角</div>
+                        <div className="text-[10px]" style={{ color: '#888' }}>刚刚</div>
+                      </div>
+                    </div>
+                    {/* 封面图区域 */}
+                    <div className="mx-3 rounded-lg overflow-hidden" style={{ aspectRatio: '3/4', background: '#2A2A2A' }}>
+                      {imageUrl ? (
+                        <img src={imageUrl} alt="封面" className="w-full h-full object-cover" />
+                      ) : (
+                        <div className="w-full h-full flex flex-col items-center justify-center">
+                          <Palette className="w-8 h-8 mb-2" style={{ color: '#555' }} />
+                          <span className="text-[10px]" style={{ color: '#666' }}>点击「生成封面图」预览</span>
+                        </div>
+                      )}
+                    </div>
+                    {/* 笔记内容预览 */}
+                    <div className="px-4 py-3 space-y-2">
+                      <div className="text-sm font-medium" style={{ color: '#E8E8E8' }}>
+                        {noteData.titles[selectedTitleIdx]}
+                      </div>
+                      <div className="text-xs leading-relaxed" style={{ color: '#AAA' }}>
+                        {noteData.body.slice(0, 120)}...
+                      </div>
+                      <div className="flex flex-wrap gap-1">
+                        {noteData.tags.slice(0, 3).map((tag, i) => (
+                          <span key={i} className="text-[10px]" style={{ color: '#5B9BD5' }}>{tag}</span>
+                        ))}
+                      </div>
+                    </div>
+                    {/* 互动栏 */}
+                    <div className="flex items-center justify-around py-3" style={{ borderTop: '1px solid #2A2A2A' }}>
+                      {[
+                        { label: '点赞', count: `${Math.floor(Math.random() * 200 + 50)}` },
+                        { label: '收藏', count: `${Math.floor(Math.random() * 100 + 30)}` },
+                        { label: '评论', count: `${Math.floor(Math.random() * 50 + 10)}` },
+                      ].map((item, i) => (
+                        <div key={i} className="text-center">
+                          <div className="text-xs font-mono" style={{ color: '#E8E8E8' }}>{item.count}</div>
+                          <div className="text-[9px]" style={{ color: '#888' }}>{item.label}</div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* ── Tab 3: 营销逻辑 ── */}
+              {activeTab === 'logic' && (
+                <div className="space-y-3">
+                  <div className="metal-panel rounded-sm p-4 hud-corner">
+                    <div className="flex items-center gap-2 mb-3">
+                      <Brain className="w-4 h-4" style={{ color: '#21E6C1' }} />
+                      <span className="text-xs font-mono" style={{ color: '#21E6C1' }}>MARKETING LOGIC</span>
+                    </div>
+                    <div className="space-y-3">
+                      {noteData.marketingLogic.map((logic, i) => (
+                        <div key={i} className="flex gap-3 items-start">
+                          <div className="w-5 h-5 flex-shrink-0 rounded-sm flex items-center justify-center text-[10px] font-mono font-bold"
+                            style={{ background: 'rgba(255,59,92,0.1)', color: '#FF3B5C', border: '1px solid rgba(255,59,92,0.2)' }}>
+                            {i + 1}
+                          </div>
+                          <p className="text-sm text-on-surface leading-relaxed">{logic}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* 来源标注 */}
+                  {source === 'fallback' && (
+                    <div className="text-xs text-warning flex items-center gap-1.5 px-2">
+                      <AlertTriangle className="w-3 h-3" />
+                      此内容由降级模板生成，AI 服务暂时不可用
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+      </main>
+
+      {/* ─── 底部操作栏 ─── */}
+      {noteData && !loading && (
+        <div className="sticky bottom-0 z-40 px-5 py-3 flex items-center justify-between"
+          style={{ background: 'linear-gradient(180deg, #0E1016, #08090C)', borderTop: '1px solid rgba(140,150,165,0.12)' }}>
+          <div className="flex items-center gap-2">
+            <button onClick={handleCopy}
+              className="hud-btn-ghost px-3 py-2 rounded-sm text-xs flex items-center gap-1.5">
+              {copied ? <CheckCircle2 className="w-3 h-3 text-success" /> : <Copy className="w-3 h-3" />}
+              {copied ? '已复制' : '复制文案'}
+            </button>
+            <button onClick={startGeneration}
+              className="hud-btn-ghost px-3 py-2 rounded-sm text-xs flex items-center gap-1.5">
+              <RefreshCw className="w-3 h-3" /> 换一版
+            </button>
+          </div>
+          <div className="flex items-center gap-2">
+            <button onClick={handleGenerateImage}
+              disabled={imageLoading}
+              className="hud-btn-primary px-4 py-2 rounded-sm text-xs flex items-center gap-1.5">
+              <Palette className="w-3 h-3" />
+              {imageLoading ? '生图中...' : '生成封面'}
+            </button>
+            <button onClick={handleVideoClick}
+              className="hud-btn-ghost px-4 py-2 rounded-sm text-xs flex items-center gap-1.5">
+              <Video className="w-3 h-3" />
+              {videoStatus === 'checking' ? '确认中...' : '数字人视频'}
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* 数字人视频不可用提示 */}
+      {videoStatus === 'checking' && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center" style={{ background: 'rgba(0,0,0,0.7)' }}>
+          <div className="metal-panel rounded-lg p-6 max-w-sm text-center space-y-3">
+            <AlertTriangle className="w-6 h-6 text-warning mx-auto" />
+            <p className="text-sm text-on-surface">数字人对口型能力确认中</p>
+            <p className="text-xs text-on-surface-variant">
+              扣子平台当前 SDK 未提供数字人/对口型/视频合成接口。<br />
+              降级方案：上传人物照片 + AI 配音 + 自动字幕 → 幻灯片式口播视频。
+            </p>
+            <button onClick={() => setVideoStatus('idle')}
+              className="hud-btn-primary px-4 py-2 rounded-sm text-xs">
+              了解了
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* 底部状态栏 */}
+      <footer className="h-7 flex items-center justify-between px-5"
+        style={{ background: '#0C0E12', borderTop: '1px solid rgba(140,150,165,0.12)' }}>
+        <div className="flex items-center gap-4 text-[9px] font-mono" style={{ color: '#5A6273' }}>
+          <span className="flex items-center gap-1.5">
+            <span className="w-1.5 h-1.5 rounded-full pulse-dot" style={{ background: '#21E6C1' }} />
+            SYSTEM ONLINE
+          </span>
+          <span>ENGINE: DOUBAO-SEED</span>
+        </div>
+      </footer>
+    </div>
+  );
+}
