@@ -1,11 +1,12 @@
 'use client';
 
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback, useRef, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import {
   Zap, Copy, RefreshCw, Palette, Video, FileText,
   Eye, Brain, ArrowLeft, CheckCircle2, AlertTriangle,
-  Loader2, TrendingUp, TrendingDown, Activity,
+  Loader2, TrendingUp, TrendingDown, Activity, Shield,
+  Lock, Sparkles, ShieldAlert, ShieldCheck, Search, XCircle,
 } from 'lucide-react';
 
 /* ─── 类型 ─── */
@@ -27,7 +28,37 @@ const ROLE_NAMES: Record<string, string> = {
   'personal-ip': '个人IP',
 };
 
-export default function GeneratePage() {
+/* ─── 违禁词结果 ─── */
+interface ForbiddenResult {
+  ok: boolean;
+  hits: Array<{
+    word: string;
+    category: string;
+    suggestion: string;
+    severity: 'high' | 'medium' | 'low';
+  }>;
+  quota: { remaining: number; total: number; isPro: boolean };
+  upgradeHint?: string;
+  pricingHint?: { free: string; pro: string; enterprise: string };
+}
+
+/* ─── 额度信息 ─── */
+interface CreditsInfo {
+  total: number;
+  used: number;
+  remaining: number;
+  plan: string;
+}
+
+export default function GeneratePageWrapper() {
+  return (
+    <Suspense fallback={<div className="flex items-center justify-center h-screen text-muted-foreground">加载中...</div>}>
+      <GeneratePage />
+    </Suspense>
+  );
+}
+
+function GeneratePage() {
   const searchParams = useSearchParams();
   const role = searchParams.get('role') || 'operator';
   const query = searchParams.get('q') || '';
@@ -45,7 +76,15 @@ export default function GeneratePage() {
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [imageError, setImageError] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
-  const [videoStatus, setVideoStatus] = useState<'idle' | 'checking'>('idle');
+  const [videoStatus, setVideoStatus] = useState<'idle' | 'checking'>('checking');
+
+  /* ─── 违禁词检测 ─── */
+  const [forbiddenResult, setForbiddenResult] = useState<ForbiddenResult | null>(null);
+  const [forbiddenLoading, setForbiddenLoading] = useState(false);
+  const [forbiddenError, setForbiddenError] = useState<string | null>(null);
+
+  /* ─── 额度信息 ─── */
+  const [credits, setCredits] = useState<CreditsInfo>({ total: 100, used: 0, remaining: 100, plan: 'free' });
 
   const abortRef = useRef<AbortController | null>(null);
 
@@ -102,6 +141,8 @@ export default function GeneratePage() {
                 setNoteData(data.data);
                 setSource(data.source || 'llm');
                 setLoading(false);
+                // 自动触发违禁词检测
+                handleForbiddenCheck();
               } else if (currentEvent === 'error') {
                 setError(data.error);
                 setLoading(false);
@@ -117,13 +158,42 @@ export default function GeneratePage() {
       const errMsg = e instanceof Error ? e.message : String(e);
       setError(errMsg);
       setLoading(false);
+      // 重新获取额度
+      fetchCredits();
     }
   }, [role, query, gender, industry]);
 
   useEffect(() => {
     if (query) startGeneration();
+    // 获取额度信息
+    fetchCredits();
     return () => abortRef.current?.abort();
     // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  /* ─── 违禁词检测 ─── */
+  const handleForbiddenCheck = useCallback(async () => {
+    if (!noteData?.body) return;
+    setForbiddenLoading(true);
+    try {
+      const res = await fetch('/api/check/forbidden', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text: `${noteData.titles?.[0] || ''}\n${noteData.body}`, userId: 'default' }),
+      });
+      const data = await res.json();
+      setForbiddenResult(data);
+    } catch { setForbiddenResult(null); }
+    finally { setForbiddenLoading(false); }
+  }, [noteData]);
+
+  /* ─── 获取额度 ─── */
+  const fetchCredits = useCallback(async () => {
+    try {
+      const res = await fetch('/api/credits');
+      const data = await res.json();
+      if (data.ok) setCredits(data.credits);
+    } catch { /* ignore */ }
   }, []);
 
   /* ─── 生成封面图 ─── */
@@ -342,6 +412,79 @@ export default function GeneratePage() {
                     </div>
                   </div>
 
+                  {/* ━━━ 违禁词检测（付费钩子）━━━ */}
+                  <div className="metal-panel rounded-sm overflow-hidden"
+                    style={{ borderColor: forbiddenResult ? (forbiddenResult.hits.length > 0 ? 'rgba(255,59,92,0.4)' : 'rgba(21,224,160,0.3)') : 'rgba(245,166,35,0.3)' }}>
+                    <div className="flex items-center justify-between px-4 py-2.5"
+                      style={{ borderBottom: '1px solid rgba(140,150,165,0.08)' }}>
+                      <div className="flex items-center gap-2">
+                        <ShieldAlert className="w-4 h-4" style={{ color: forbiddenResult ? (forbiddenResult.hits.length > 0 ? '#FF3B5C' : '#15E0A0') : '#F5A623' }} />
+                        <span className="text-xs font-mono font-bold tracking-wider"
+                          style={{ color: forbiddenResult ? (forbiddenResult.hits.length > 0 ? '#FF3B5C' : '#15E0A0') : '#F5A623' }}>
+                          FORBIDDEN WORD SCAN
+                        </span>
+                        {forbiddenResult && (
+                          <span className="text-[10px] font-mono px-1.5 py-0.5 rounded-sm"
+                            style={{ background: forbiddenResult.hits.length > 0 ? 'rgba(255,59,92,0.12)' : 'rgba(21,224,160,0.12)', color: forbiddenResult.hits.length > 0 ? '#FF3B5C' : '#15E0A0' }}>
+                            {forbiddenResult.hits.length > 0 ? `${forbiddenResult.hits.length} 处风险` : '通过'}
+                          </span>
+                        )}
+                      </div>
+                      <button onClick={handleForbiddenCheck}
+                        disabled={forbiddenLoading}
+                        className="px-3 py-1.5 rounded-sm text-[10px] font-mono flex items-center gap-1 transition-all"
+                        style={{ background: 'rgba(255,59,92,0.08)', color: '#FF3B5C', border: '1px solid rgba(255,59,92,0.25)' }}>
+                        {forbiddenLoading ? <Loader2 className="w-3 h-3 animate-spin" /> : <Search className="w-3 h-3" />}
+                        {forbiddenLoading ? '扫描中...' : '一键扫描'}
+                      </button>
+                    </div>
+                    {forbiddenResult ? (
+                      <div className="px-4 py-3 space-y-2">
+                        {forbiddenResult.hits.length === 0 ? (
+                          <div className="flex items-center gap-2">
+                            <CheckCircle2 className="w-4 h-4 text-success" />
+                            <span className="text-xs text-on-surface">未发现违禁词，内容安全可发布</span>
+                          </div>
+                        ) : (
+                          <>
+                            <div className="text-xs text-on-surface-variant mb-2">发现 {forbiddenResult.hits.length} 处违禁/限流词：</div>
+                            {forbiddenResult.hits.map((item: { word: string; category: string; suggestion: string; severity: string }, i: number) => (
+                              <div key={i} className="flex items-start gap-2 px-2 py-1.5 rounded-sm"
+                                style={{ background: 'rgba(255,59,92,0.06)' }}>
+                                <XCircle className="w-3 h-3 mt-0.5 text-primary flex-shrink-0" />
+                                <div>
+                                  <span className="text-xs text-primary font-medium line-through">{item.word}</span>
+                                  <span className="text-[10px] text-on-surface-variant ml-2">{item.category}</span>
+                                  <span className="text-[10px] ml-1" style={{ color: '#15E0A0' }}>→ {item.suggestion}</span>
+                                </div>
+                              </div>
+                            ))}
+                            <div className="mt-3 px-3 py-2 rounded-sm flex items-center justify-between"
+                              style={{ background: 'rgba(245,166,35,0.06)', border: '1px solid rgba(245,166,35,0.15)' }}>
+                              <div className="flex items-center gap-1.5">
+                                <Lock className="w-3 h-3" style={{ color: '#F5A623' }} />
+                                <span className="text-[10px] font-mono" style={{ color: '#F5A623' }}>一键替换违禁词 · PRO 功能</span>
+                              </div>
+                              <button className="px-2 py-1 rounded-sm text-[10px] font-mono"
+                                style={{ background: 'rgba(255,59,92,0.1)', color: '#FF3B5C', border: '1px solid rgba(255,59,92,0.3)' }}>
+                                升级 PRO
+                              </button>
+                            </div>
+                          </>
+                        )}
+                        <div className="flex items-center justify-between text-[10px] font-mono text-on-surface-weakest">
+                          <span>今日免费扫描: {forbiddenResult.quota.total - forbiddenResult.quota.remaining}/{forbiddenResult.quota.total}</span>
+                          <span>PRO 无限次 · 违规限流封号防护</span>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="px-4 py-3">
+                        <p className="text-xs text-on-surface-variant">发布前扫描违禁词/限流词，避免被平台限流或封号</p>
+                        <p className="text-[10px] font-mono mt-1" style={{ color: '#F5A623' }}>实体店主/销售最怕违规限流 — 扫一下更安心</p>
+                      </div>
+                    )}
+                  </div>
+
                   {/* 配图建议 */}
                   <div className="metal-panel rounded-sm p-4">
                     <div className="text-[10px] font-mono text-on-surface-weakest mb-2">配图建议</div>
@@ -415,16 +558,17 @@ export default function GeneratePage() {
                         ))}
                       </div>
                     </div>
-                    {/* 互动栏 */}
+                    {/* 互动栏 - 稳定数据 */}
                     <div className="flex items-center justify-around py-3" style={{ borderTop: '1px solid #2A2A2A' }}>
                       {[
-                        { label: '点赞', count: `${Math.floor(Math.random() * 200 + 50)}` },
-                        { label: '收藏', count: `${Math.floor(Math.random() * 100 + 30)}` },
-                        { label: '评论', count: `${Math.floor(Math.random() * 50 + 10)}` },
+                        { label: '点赞', count: '128', color: '#FF3B5C' },
+                        { label: '收藏', count: '67', color: '#F5A623' },
+                        { label: '评论', count: '23', color: '#21E6C1' },
+                        { label: '分享', count: '', color: '#888' },
                       ].map((item, i) => (
-                        <div key={i} className="text-center">
-                          <div className="text-xs font-mono" style={{ color: '#E8E8E8' }}>{item.count}</div>
-                          <div className="text-[9px]" style={{ color: '#888' }}>{item.label}</div>
+                        <div key={i} className="flex flex-col items-center gap-0.5">
+                          <div className="text-xs font-mono" style={{ color: item.color }}>{item.count || item.label}</div>
+                          <div className="text-[9px]" style={{ color: '#888' }}>{item.count ? item.label : ''}</div>
                         </div>
                       ))}
                     </div>
