@@ -1,78 +1,46 @@
 'use client';
 
 /**
- * NACL Logo — 几何三角形符号 + NACL 字样
- * 基于「盐·连接·系统·Agent」品牌视觉：NaCl 化学式 → 三角形 A 符号 + 前卫等宽字
+ * NACL Logo — 严格还原品牌视觉指南
+ * N: 几何直线构成 / A: 无横杠锐角三角 / C: 圆弧开口方切 / L: 直角折线
+ * 配色：白色 (#FFFFFF)，保持品牌纯粹性
  */
 
 interface NACLLogoProps {
-  size?: 'sm' | 'md' | 'lg';
-  showText?: boolean;
+  size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
   className?: string;
 }
 
 const SIZES = {
-  sm: { symbol: 16, text: 'text-xs', gap: 1.5 },
-  md: { symbol: 22, text: 'text-sm', gap: 2 },
-  lg: { symbol: 40, text: 'text-3xl', gap: 3 },
+  xs: 56,
+  sm: 80,
+  md: 120,
+  lg: 200,
+  xl: 320,
 } as const;
 
-export function NACLLogo({ size = 'md', showText = true, className = '' }: NACLLogoProps) {
-  const s = SIZES[size];
+export function NACLLogo({ size = 'md', className = '' }: NACLLogoProps) {
+  const w = SIZES[size];
+  /* viewBox 0 0 200 50，字母间保持统一间距 */
   return (
-    <div className={`flex items-center ${className}`} style={{ gap: s.gap }}>
-      {/* 三角形 A 符号 */}
-      <svg
-        width={s.symbol}
-        height={s.symbol}
-        viewBox="0 0 32 32"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        {/* 外三角 — 金属银描边 */}
-        <path
-          d="M16 3L29 27H3L16 3Z"
-          stroke="url(#nacl-grad)"
-          strokeWidth="1.5"
-          fill="none"
-          strokeLinejoin="miter"
-        />
-        {/* 内三角 — 红色填充点缀 */}
-        <path
-          d="M16 9L23 24H9L16 9Z"
-          fill="rgba(255,59,92,0.08)"
-          stroke="rgba(255,59,92,0.35)"
-          strokeWidth="0.75"
-          strokeLinejoin="miter"
-        />
-        {/* 中心横杠 — A 的横线 */}
-        <line
-          x1="10.5"
-          y1="20"
-          x2="21.5"
-          y2="20"
-          stroke="rgba(255,59,92,0.6)"
-          strokeWidth="1"
-        />
-        {/* 顶部顶点发光点 */}
-        <circle cx="16" cy="4" r="1" fill="#FF3B5C" opacity="0.8" />
-        <defs>
-          <linearGradient id="nacl-grad" x1="3" y1="27" x2="29" y2="3">
-            <stop stopColor="#D6DCE6" />
-            <stop offset="0.5" stopColor="#9AA3B2" />
-            <stop offset="1" stopColor="#D6DCE6" />
-          </linearGradient>
-        </defs>
-      </svg>
+    <svg
+      width={w}
+      viewBox="0 0 200 50"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      className={className}
+    >
+      {/* N — 左竖短 + 斜线 + 右竖长 */}
+      <path d="M10 42V14L36 42V14" stroke="white" strokeWidth="4" strokeLinecap="square" strokeLinejoin="miter" />
 
-      {/* NACL 字样 */}
-      {showText && (
-        <span
-          className={`font-display font-bold tracking-[0.25em] metal-text ${s.text}`}
-        >
-          NACL
-        </span>
-      )}
-    </div>
+      {/* A — 无横杠，两斜线交于顶点 */}
+      <path d="M54 42L70 8L86 42" stroke="white" strokeWidth="4" strokeLinecap="square" strokeLinejoin="miter" />
+
+      {/* C — 圆弧开口，末端方切 */}
+      <path d="M126 14A22 22 0 1 0 126 36" stroke="white" strokeWidth="4" strokeLinecap="square" strokeLinejoin="miter" />
+
+      {/* L — 横线短 + 竖线长，直角 */}
+      <path d="M142 8V42H168" stroke="white" strokeWidth="4" strokeLinecap="square" strokeLinejoin="miter" />
+    </svg>
   );
 }

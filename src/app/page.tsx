@@ -25,60 +25,93 @@ const INDUSTRIES = [
   '健身', '家居', '金融', '本地生活', '电商', '文旅',
 ] as const;
 
-/* ─── 迷你 Sparkline 组件 — 股票走势线 ─── */
-function Sparkline({ data, color, width = 60, height = 20 }: {
-  data: number[]; color: string; width?: number; height?: number;
-}) {
-  const max = Math.max(...data);
-  const min = Math.min(...data);
-  const range = max - min || 1;
-  const points = data.map((v, i) => {
-    const x = (i / (data.length - 1)) * width;
-    const y = height - ((v - min) / range) * (height - 2) - 1;
-    return `${x},${y}`;
-  }).join(' ');
+/* ─── 多层 Sparkline — 半透明背景走势线 ─── */
+function BackgroundSparklines() {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const frameRef = useRef<number>(0);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    /* 4 条走势线的配置 */
+    const lines = [
+      { color: 'rgba(255,59,92,0.12)', speed: 0.008, amp: 0.35, freq: 0.02, phase: 0, y: 0.25 },
+      { color: 'rgba(21,224,160,0.10)', speed: 0.006, amp: 0.25, freq: 0.015, phase: 2, y: 0.50 },
+      { color: 'rgba(33,230,193,0.08)', speed: 0.010, amp: 0.30, freq: 0.025, phase: 4, y: 0.75 },
+      { color: 'rgba(255,46,151,0.07)', speed: 0.007, amp: 0.20, freq: 0.018, phase: 1.5, y: 0.40 },
+    ];
+
+    let t = 0;
+
+    const draw = () => {
+      const w = canvas.width;
+      const h = canvas.height;
+      ctx.clearRect(0, 0, w, h);
+
+      for (const line of lines) {
+        ctx.beginPath();
+        ctx.strokeStyle = line.color;
+        ctx.lineWidth = 1.2;
+
+        for (let x = 0; x < w; x += 2) {
+          const noise = Math.sin(x * line.freq + t * line.speed * 60 + line.phase) * line.amp
+            + Math.sin(x * line.freq * 2.3 + t * line.speed * 40) * line.amp * 0.3;
+          const y = h * line.y + noise * h * 0.5;
+          if (x === 0) ctx.moveTo(x, y);
+          else ctx.lineTo(x, y);
+        }
+        ctx.stroke();
+      }
+
+      t += 1;
+      frameRef.current = requestAnimationFrame(draw);
+    };
+
+    /* 响应式尺寸 */
+    const resize = () => {
+      const rect = canvas.parentElement?.getBoundingClientRect();
+      if (rect) {
+        canvas.width = rect.width * window.devicePixelRatio;
+        canvas.height = rect.height * window.devicePixelRatio;
+        ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+        canvas.style.width = rect.width + 'px';
+        canvas.style.height = rect.height + 'px';
+      }
+    };
+
+    resize();
+    window.addEventListener('resize', resize);
+    frameRef.current = requestAnimationFrame(draw);
+
+    return () => {
+      cancelAnimationFrame(frameRef.current);
+      window.removeEventListener('resize', resize);
+    };
+  }, []);
 
   return (
-    <svg width={width} height={height} className="opacity-60">
-      <polyline points={points} fill="none" stroke={color} strokeWidth="1.2" strokeLinejoin="round" />
-      {/* 末端发光点 */}
-      <circle cx={width} cy={height - ((data[data.length - 1] - min) / range) * (height - 2) - 1}
-        r="1.5" fill={color} opacity="0.9" />
-    </svg>
+    <canvas
+      ref={canvasRef}
+      className="absolute inset-0 w-full h-full pointer-events-none"
+      style={{ opacity: 0.8 }}
+    />
   );
 }
 
-/* ─── 模拟行情数据 ─── */
-const MOCK_TICKERS = [
-  { label: '笔记曝光', value: '12.8K', change: +8.3, data: [40, 55, 48, 62, 58, 75, 82, 78, 90, 95] },
-  { label: '互动率', value: '6.2%', change: +2.1, data: [20, 25, 22, 28, 32, 30, 35, 38, 36, 42] },
-  { label: '获客成本', value: '¥3.2', change: -12.5, data: [80, 72, 68, 65, 60, 55, 50, 48, 42, 38] },
-  { label: '转化率', value: '4.7%', change: +1.5, data: [30, 32, 35, 33, 38, 40, 42, 44, 43, 47] },
-];
-
-/* ─── 滚动数字动画 ─── */
-function AnimatedCounter({ target, suffix = '' }: { target: number; suffix?: string }) {
-  const [current, setCurrent] = useState(0);
-  const ref = useRef(target);
-  useEffect(() => {
-    ref.current = target;
-    let frame: number;
-    const start = current;
-    const diff = target - start;
-    const duration = 800;
-    const startTime = performance.now();
-    const step = (now: number) => {
-      const elapsed = now - startTime;
-      const progress = Math.min(elapsed / duration, 1);
-      const eased = 1 - Math.pow(1 - progress, 3);
-      setCurrent(Math.round(start + diff * eased));
-      if (progress < 1) frame = requestAnimationFrame(step);
-    };
-    frame = requestAnimationFrame(step);
-    return () => cancelAnimationFrame(frame);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [target]);
-  return <>{current}{suffix}</>;
+/* ─── 迷你行情指标 (热点灵感下方) ─── */
+function MiniTicker({ label, value, change }: { label: string; value: string; change: number }) {
+  return (
+    <div className="flex items-center gap-1">
+      <span className="text-[8px] font-mono" style={{ color: '#5A6273' }}>{label}</span>
+      <span className="text-[9px] font-mono font-medium" style={{ color: '#E8EBF0' }}>{value}</span>
+      <span className="text-[8px] font-mono" style={{ color: change > 0 ? '#FF3B5C' : '#15E0A0' }}>
+        {change > 0 ? '+' : ''}{change}%
+      </span>
+    </div>
+  );
 }
 
 export default function HomePage() {
@@ -122,14 +155,13 @@ export default function HomePage() {
       <header className="sticky top-0 z-40 h-11 flex items-center justify-between px-4"
         style={{ borderBottom: '1px solid rgba(140,150,165,0.18)', background: 'linear-gradient(180deg, #12151B 0%, #0E1016 100%)' }}>
         <div className="flex items-center gap-3">
-          <NACLLogo size="sm" />
+          <NACLLogo size="xs" />
           <span className="text-[9px] font-mono px-1.5 py-0.5"
             style={{ color: '#21E6C1', background: 'rgba(33,230,193,0.08)', border: '1px solid rgba(33,230,193,0.15)' }}>
             v2.0
           </span>
         </div>
         <div className="flex items-center gap-2">
-          {/* 额度显示 */}
           {credits !== null && (
             <span className="text-[9px] font-mono px-2 py-0.5"
               style={{ color: '#FF3B5C', background: 'rgba(255,59,92,0.06)', border: '1px solid rgba(255,59,92,0.12)' }}>
@@ -148,39 +180,22 @@ export default function HomePage() {
         </div>
       </header>
 
-      {/* ─── 行情 Ticker 条 ─── */}
-      <div className="flex items-center gap-0 overflow-hidden"
-        style={{ height: 24, background: '#0C0E12', borderBottom: '1px solid rgba(140,150,165,0.08)' }}>
-        {MOCK_TICKERS.map((t, i) => (
-          <div key={i} className="flex items-center gap-1.5 px-3 border-r"
-            style={{ borderRightColor: 'rgba(140,150,165,0.06)' }}>
-            <span className="text-[8px] font-mono whitespace-nowrap" style={{ color: '#5A6273' }}>{t.label}</span>
-            <span className="text-[9px] font-mono font-medium" style={{ color: '#E8EBF0' }}>{t.value}</span>
-            <span className="text-[8px] font-mono flex items-center gap-0.5"
-              style={{ color: t.change > 0 ? '#FF3B5C' : '#15E0A0' }}>
-              {t.change > 0 ? <TrendingUp className="w-2.5 h-2.5" /> : <TrendingDown className="w-2.5 h-2.5" />}
-              {t.change > 0 ? '+' : ''}{t.change}%
-            </span>
-            <Sparkline data={t.data} color={t.change > 0 ? '#FF3B5C' : '#15E0A0'} width={40} height={14} />
-          </div>
-        ))}
-      </div>
-
       {/* ─── 主内容区 ─── */}
       <main className="flex-1 flex items-center justify-center px-4 py-6">
         <div className="w-full max-w-xl space-y-5">
 
-          {/* 品牌 Hero */}
-          <div className="text-center space-y-1.5">
-            <div className="flex justify-center mb-2">
-              <NACLLogo size="lg" showText={false} />
+          {/* 品牌 Hero — NACL Logo + 半透明走势线背景 */}
+          <div className="relative overflow-hidden rounded-sm" style={{ minHeight: 120 }}>
+            {/* 半透明实时跳动走势线 */}
+            <BackgroundSparklines />
+
+            {/* Logo 居中叠在走势线上 */}
+            <div className="relative z-10 flex flex-col items-center justify-center py-6">
+              <NACLLogo size="lg" />
+              <p className="text-[11px] font-mono mt-2" style={{ color: '#5A6273' }}>
+                选角色 · 说一句 · 一键出成品
+              </p>
             </div>
-            <h1 className="font-display text-2xl font-bold tracking-[0.25em] metal-text">
-              NACL
-            </h1>
-            <p className="text-[11px] font-mono" style={{ color: '#5A6273' }}>
-              选角色 · 说一句 · 一键出成品
-            </p>
           </div>
 
           {/* STEP 1：角色 — 紧凑胶囊行 */}
@@ -248,7 +263,6 @@ export default function HomePage() {
             </div>
 
             <div className="flex flex-wrap gap-1.5">
-              {/* 性别标签 */}
               {GENDERS.map(g => (
                 <button key={g}
                   onClick={() => setGender(g)}
@@ -259,7 +273,6 @@ export default function HomePage() {
 
               <span className="text-[9px] font-mono self-center mx-1" style={{ color: '#2A2E36' }}>│</span>
 
-              {/* 行业标签 */}
               {INDUSTRIES.map(ind => (
                 <button key={ind}
                   onClick={() => toggleIndustry(ind)}
@@ -284,7 +297,7 @@ export default function HomePage() {
             <ChevronRight className="w-3.5 h-3.5" />
           </button>
 
-          {/* 快速灵感 — 小卡片行 */}
+          {/* 快速灵感 + 行情指标 */}
           <section>
             <div className="flex items-center gap-2 mb-2">
               <Flame className="w-3 h-3" style={{ color: '#FF3B5C' }} />
@@ -309,6 +322,18 @@ export default function HomePage() {
                   </button>
                 );
               })}
+            </div>
+
+            {/* 行情指标 — 紧凑行，灵感卡片下方 */}
+            <div className="flex items-center justify-between mt-2 px-1 py-1.5 rounded-sm"
+              style={{ background: 'rgba(140,150,165,0.03)', border: '1px solid rgba(140,150,165,0.06)' }}>
+              <MiniTicker label="曝光" value="12.8K" change={8.3} />
+              <span className="text-[6px]" style={{ color: '#2A2E36' }}>│</span>
+              <MiniTicker label="互动" value="6.2%" change={2.1} />
+              <span className="text-[6px]" style={{ color: '#2A2E36' }}>│</span>
+              <MiniTicker label="成本" value="¥3.2" change={-12.5} />
+              <span className="text-[6px]" style={{ color: '#2A2E36' }}>│</span>
+              <MiniTicker label="转化" value="4.7%" change={1.5} />
             </div>
           </section>
         </div>
