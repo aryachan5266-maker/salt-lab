@@ -7,7 +7,7 @@
 
   <!-- 赛博/科技感字体 -->
   <link href="https://lf-code-agent.coze.cn/obj/x-ai-cn/fonts/google/orbitron.css" rel="stylesheet"/>
-  <link href="https://lf-code-agent.coze.cn/obj/x-ai-cn/fonts/google/spacedock.css" rel="stylesheet"/>
+  <link href="https://lf-code-agent.coze.cn/obj/x-ai-cn/fonts/google/share-tech-mono.css" rel="stylesheet"/>
   <link href="https://lf-code-agent.coze.cn/obj/x-ai-cn/fonts/google/noto-sans-sc.css" rel="stylesheet"/>
 
   <script src="https://lf-code-agent.coze.cn/obj/x-ai-cn/cdn/jquery/jquery-3.7.1.min.js"></script>
@@ -16,64 +16,240 @@
 
   <style type="text/tailwindcss">
     @theme {
-      /* === 品牌色（红涨/正向） === */
+      /* === 品牌色（红涨/正向 — 仅用于数据、走势线、激活态边缘光、关键 CTA 描边） === */
       --color-primary:              #FF3B5C;
-      --color-primary-container:    #2A1520;
-      --color-on-primary:           #ffffff;
-      /* === 赛博霓虹点缀色 === */
+      --color-primary-container:    #1F1218;
+      --color-on-primary:           #E8EBF0;
+      /* === 赛博霓虹点缀色（仅用于细线点缀） === */
       --color-cyber-cyan:           #21E6C1;
       --color-cyber-magenta:        #FF2E97;
       --color-cyber-purple:         #8B5CFF;
-      /* === 涨跌语义色（中国股市红涨绿跌） === */
+      /* === 涨跌语义色（中国股市红涨绿跌 — 仅用于数据、走势线） === */
       --color-bull:                 #FF3B5C;
       --color-bear:                 #15E0A0;
-      /* === 背景 / 表面 === */
-      --color-background:                 #0A0E14;
-      --color-surface-container-lowest:   #0D1117;
-      --color-surface:                    #111820;
-      --color-surface-container:          #161D27;
-      --color-surface-container-high:     #1A2332;
-      --color-surface-container-highest:  #1F2937;
+      /* === 金属银色系 === */
+      --color-metal-light:          #D6DCE6;
+      --color-metal-mid:            #9AA3B2;
+      --color-metal-dark:           #6B7585;
+      /* === 背景 / 表面 — 金属枪灰 HUD === */
+      --color-background:                 #08090C;
+      --color-surface-container-lowest:   #0C0E12;
+      --color-surface:                    #12151B;
+      --color-surface-container:          #161A22;
+      --color-surface-container-high:     #1A1E26;
+      --color-surface-container-highest:  #1F2430;
       /* === 文字 === */
-      --color-on-surface:           #F2F5FA;
+      --color-on-surface:           #E8EBF0;
       --color-on-surface-variant:   #8A94A6;
+      --color-on-surface-weakest:   #5A6273;
       /* === 功能色 === */
       --color-success:  #15E0A0;
       --color-error:    #FF3B5C;
       --color-warning:  #F5A623;
-      /* === 边框 === */
-      --color-outline:          #2A3444;
-      --color-outline-variant:  #1E2838;
-      /* === 圆角 === */
-      --radius-sm:   0.375rem;
-      --radius-md:   0.5rem;
-      --radius-lg:   0.75rem;
-      --radius-xl:   1rem;
-      --radius-2xl:  1.5rem;
+      /* === 边框 — 金属 HUD 描边 === */
+      --color-outline:          rgba(140,150,165,0.18);
+      --color-outline-variant:  rgba(140,150,165,0.10);
+      --color-outline-highlight: rgba(210,216,226,0.35);
+      /* === 圆角 — 更锐利 === */
+      --radius-sm:   0.25rem;
+      --radius-md:   0.375rem;
+      --radius-lg:   0.5rem;
+      --radius-xl:   0.75rem;
+      --radius-2xl:  1rem;
       --radius-full: 9999px;
-      /* === 阴影 === */
-      --shadow-card:   0 2px 8px rgba(0,0,0,0.4);
-      --shadow-float:  0 10px 25px rgba(0,0,0,0.5);
-      --shadow-dialog: 0 25px 50px rgba(0,0,0,0.6);
-      --shadow-glow-red:     0 0 20px rgba(255,59,92,0.15);
-      --shadow-glow-cyan:    0 0 20px rgba(33,230,193,0.15);
-      --shadow-glow-magenta: 0 0 20px rgba(255,46,151,0.15);
+      /* === 阴影 — 金属面板质感 === */
+      --shadow-card:   0 1px 3px rgba(0,0,0,0.5), 0 0 1px rgba(200,206,216,0.08);
+      --shadow-float:  0 8px 24px rgba(0,0,0,0.6), 0 0 1px rgba(200,206,216,0.08);
+      --shadow-dialog: 0 20px 48px rgba(0,0,0,0.7), 0 0 1px rgba(200,206,216,0.08);
+      --shadow-glow-red:     0 0 12px rgba(255,59,92,0.10), 0 0 1px rgba(255,59,92,0.3);
+      --shadow-glow-cyan:    0 0 12px rgba(33,230,193,0.10), 0 0 1px rgba(33,230,193,0.3);
+      --shadow-glow-magenta: 0 0 12px rgba(255,46,151,0.10), 0 0 1px rgba(255,46,151,0.3);
       /* === 字体 === */
-      --font-display: "Orbitron", "SpaceDock", monospace;
-      --font-mono: "SpaceDock", "Orbitron", monospace;
+      --font-display: "Orbitron", monospace;
+      --font-mono: "Share Tech Mono", monospace;
       --font-sans: "Noto Sans SC", system-ui, sans-serif;
     }
 
-    /* 自定义滚动条 */
-    ::-webkit-scrollbar { width: 6px; }
-    ::-webkit-scrollbar-track { background: #0A0E14; }
-    ::-webkit-scrollbar-thumb { background: #2A3444; border-radius: 3px; }
-    ::-webkit-scrollbar-thumb:hover { background: #3A4454; }
+    /* 自定义滚动条 — 金属灰 */
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: #08090C; }
+    ::-webkit-scrollbar-thumb { background: rgba(140,150,165,0.25); border-radius: 2px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(140,150,165,0.4); }
 
-    /* 霓虹文字效果 */
-    .neon-text-red { text-shadow: 0 0 10px rgba(255,59,92,0.5), 0 0 20px rgba(255,59,92,0.2); }
-    .neon-text-cyan { text-shadow: 0 0 10px rgba(33,230,193,0.5), 0 0 20px rgba(33,230,193,0.2); }
-    .neon-text-magenta { text-shadow: 0 0 10px rgba(255,46,151,0.5), 0 0 20px rgba(255,46,151,0.2); }
+    /* 金属银渐变文字 */
+    .metal-text {
+      background: linear-gradient(135deg, #D6DCE6 0%, #9AA3B2 50%, #D6DCE6 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    /* 金属面板渐变背景 */
+    .metal-panel {
+      background: linear-gradient(180deg, #12151B 0%, #1A1E26 100%);
+      border: 1px solid rgba(140,150,165,0.18);
+      position: relative;
+    }
+    .metal-panel::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(
+        90deg,
+        transparent,
+        transparent 2px,
+        rgba(200,206,216,0.015) 2px,
+        rgba(200,206,216,0.015) 4px
+      );
+      pointer-events: none;
+      border-radius: inherit;
+    }
+    .metal-panel:hover {
+      border-color: rgba(210,216,226,0.35);
+    }
+
+    /* HUD 切角 — 右上 + 左下 */
+    .hud-clip {
+      clip-path: polygon(
+        0 0,
+        calc(100% - 8px) 0,
+        100% 8px,
+        100% 100%,
+        8px 100%,
+        0 calc(100% - 8px)
+      );
+    }
+
+    /* HUD 切角 — 仅右上 */
+    .hud-clip-tr {
+      clip-path: polygon(
+        0 0,
+        calc(100% - 6px) 0,
+        100% 6px,
+        100% 100%,
+        0 100%
+      );
+    }
+
+    /* 扫描线 overlay — 极淡 */
+    .scanline-overlay {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 9999;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(0,0,0,0.03) 2px,
+        rgba(0,0,0,0.03) 4px
+      );
+    }
+
+    /* 霓虹辉光效果 — 克制版 */
+    .glow-red { box-shadow: 0 0 8px rgba(255,59,92,0.12), inset 0 0 4px rgba(255,59,92,0.06); }
+    .glow-cyan { box-shadow: 0 0 8px rgba(33,230,193,0.12), inset 0 0 4px rgba(33,230,193,0.06); }
+    .glow-magenta { box-shadow: 0 0 8px rgba(255,46,151,0.12), inset 0 0 4px rgba(255,46,151,0.06); }
+
+    /* 霓虹文字效果 — 克制版 */
+    .neon-text-red { text-shadow: 0 0 6px rgba(255,59,92,0.4); }
+    .neon-text-cyan { text-shadow: 0 0 6px rgba(33,230,193,0.4); }
+    .neon-text-magenta { text-shadow: 0 0 6px rgba(255,46,151,0.4); }
+
+    /* HUD 网格背景 */
+    .hud-grid-bg {
+      background-image:
+        linear-gradient(rgba(140,150,165,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(140,150,165,0.04) 1px, transparent 1px);
+      background-size: 40px 40px;
+    }
+
+    /* HUD 角标装饰 */
+    .hud-corner::before,
+    .hud-corner::after {
+      content: '';
+      position: absolute;
+      width: 8px;
+      height: 8px;
+      border-color: rgba(140,150,165,0.3);
+    }
+    .hud-corner::before {
+      top: -1px;
+      left: -1px;
+      border-top: 1px solid;
+      border-left: 1px solid;
+    }
+    .hud-corner::after {
+      bottom: -1px;
+      right: -1px;
+      border-bottom: 1px solid;
+      border-right: 1px solid;
+    }
+
+    /* 呼吸脉冲动画 — 用于状态指示灯 */
+    @keyframes pulse-dot {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+    .pulse-dot { animation: pulse-dot 2s ease-in-out infinite; }
+
+    /* HUD 按钮基础样式 — 枪灰金属底 + 霓虹描边 */
+    .hud-btn-primary {
+      background: linear-gradient(180deg, #1A1E26 0%, #12151B 100%);
+      border: 1px solid rgba(255,59,92,0.5);
+      color: #E8EBF0;
+      position: relative;
+      box-shadow: 0 0 8px rgba(255,59,92,0.10), inset 0 0 6px rgba(255,59,92,0.05);
+      transition: all 0.2s ease;
+    }
+    .hud-btn-primary:hover {
+      border-color: rgba(255,59,92,0.8);
+      box-shadow: 0 0 16px rgba(255,59,92,0.18), inset 0 0 8px rgba(255,59,92,0.08);
+    }
+
+    /* 迷你走势线占位 */
+    .sparkline-placeholder {
+      opacity: 0.4;
+    }
+
+    /* 分类色标竖条 */
+    .cat-stripe-red    { border-left: 3px solid #FF3B5C; }
+    .cat-stripe-cyan   { border-left: 3px solid #21E6C1; }
+    .cat-stripe-magenta { border-left: 3px solid #FF2E97; }
+    .cat-stripe-purple { border-left: 3px solid #8B5CFF; }
+    .cat-stripe-yellow { border-left: 3px solid #F5A623; }
+
+    /* 分类标签色 */
+    .cat-tag-red      { color: #FF3B5C; background: rgba(255,59,92,0.08); border: 1px solid rgba(255,59,92,0.15); }
+    .cat-tag-cyan     { color: #21E6C1; background: rgba(33,230,193,0.08); border: 1px solid rgba(33,230,193,0.15); }
+    .cat-tag-magenta  { color: #FF2E97; background: rgba(255,46,151,0.08); border: 1px solid rgba(255,46,151,0.15); }
+    .cat-tag-purple   { color: #8B5CFF; background: rgba(139,92,255,0.08); border: 1px solid rgba(139,92,255,0.15); }
+    .cat-tag-yellow   { color: #F5A623; background: rgba(245,166,35,0.08); border: 1px solid rgba(245,166,35,0.15); }
+
+    /* 知识卡片 hover 过渡 */
+    .kb-card {
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+    .kb-card:hover {
+      border-color: rgba(210,216,226,0.35) !important;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.4), 0 0 1px rgba(200,206,216,0.1);
+    }
+
+    /* 详情弹窗 overlay */
+    .detail-overlay {
+      display: none;
+    }
+    .detail-overlay.active {
+      display: flex;
+    }
+
+    /* 添加弹窗 overlay */
+    .add-overlay {
+      display: none;
+    }
+    .add-overlay.active {
+      display: flex;
+    }
   </style>
 
   <!-- 图片兜底 -->
@@ -89,359 +265,349 @@
       const icons = { '人物': '👤', '自然风景': '🏞', '动物': '🐾', '建筑城市': '🏙', '运动体育': '⚽', '交通工具': '🚗', '食物': '🍽', '服饰时尚': '👗', '商业科技': '💼', '游戏娱乐': '🎮', '艺术': '🎨', '其他': '🖼' };
       const icon = icons[cat] || '🖼';
       const w = img.width || 400, h = img.height || 300;
-      const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}"><rect width="100%" height="100%" fill="%23111820"/><text x="50%" y="45%" text-anchor="middle" font-size="${Math.min(w, h) * 0.18}" fill="%238A94A6" dominant-baseline="central">${icon}</text><text x="50%" y="68%" text-anchor="middle" font-size="${Math.min(w, h) * 0.07}" fill="%235A6476" font-family="system-ui,sans-serif" dominant-baseline="central">${label}</text></svg>`;
+      const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}"><rect width="100%" height="100%" fill="%2312151B"/><text x="50%" y="45%" text-anchor="middle" font-size="${Math.min(w, h) * 0.18}" fill="%238A94A6" dominant-baseline="central">${icon}</text><text x="50%" y="68%" text-anchor="middle" font-size="${Math.min(w, h) * 0.07}" fill="%235A6273" font-family="system-ui,sans-serif" dominant-baseline="central">${label}</text></svg>`;
       img.src = 'data:image/svg+xml,' + svg;
     }, true);
   </script>
 </head>
 
-<body class="bg-background text-on-surface font-sans">
+<body class="bg-background text-on-surface font-sans" style="letter-spacing: 0.02em;">
+
+  <!-- 扫描线 overlay -->
+  <div class="scanline-overlay"></div>
 
   <!-- @nav:start 导航组件 -->
-  <header class="bg-surface sticky top-0 z-40 h-14 flex items-center justify-between px-5 border-b border-outline-variant/30">
+  <header class="bg-surface sticky top-0 z-40 h-12 flex items-center justify-between px-5" style="border-bottom: 1px solid rgba(140,150,165,0.18); background: linear-gradient(180deg, #12151B 0%, #0E1016 100%);">
     <div class="flex items-center gap-3">
-      <div class="flex items-center gap-2">
-        <div class="w-8 h-8 rounded-md bg-primary/20 flex items-center justify-center">
-          <i data-lucide="zap" class="w-4 h-4 text-primary"></i>
+      <div class="flex items-center gap-2.5">
+        <div class="w-7 h-7 flex items-center justify-center hud-clip-tr" style="background: linear-gradient(180deg, #1A1E26 0%, #12151B 100%); border: 1px solid rgba(140,150,165,0.2);">
+          <i data-lucide="zap" class="w-3.5 h-3.5" style="color: #FF3B5C;"></i>
         </div>
-        <span class="font-display font-bold text-base tracking-wider neon-text-red">XIANLIAO</span>
-        <span class="text-xs text-on-surface-variant font-mono ml-1">AI</span>
+        <span class="font-display font-bold text-sm tracking-[0.2em] metal-text">XIANLIAO</span>
+        <span class="text-[10px] font-mono tracking-wider" style="color: #5A6273;">AI</span>
+        <span class="text-[9px] font-mono px-1.5 py-0.5 ml-1" style="color: #21E6C1; background: rgba(33,230,193,0.08); border: 1px solid rgba(33,230,193,0.15);">v2.0</span>
       </div>
     </div>
-    <div class="flex items-center gap-3">
-      <button class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-on-surface-variant hover:text-on-surface hover:bg-surface-container rounded-md transition-colors">
+    <div class="flex items-center gap-2">
+      <button class="flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium rounded-sm transition-colors" style="color: #8A94A6; border: 1px solid transparent;" onmouseover="this.style.borderColor='rgba(140,150,165,0.2)';this.style.color='#E8EBF0'" onmouseout="this.style.borderColor='transparent';this.style.color='#8A94A6'">
         <i data-lucide="bell" class="w-3.5 h-3.5"></i>
       </button>
-      <div class="w-7 h-7 rounded-full bg-primary/20 flex items-center justify-center text-xs font-medium text-primary">
+      <div class="w-6 h-6 flex items-center justify-center text-[10px] font-medium hud-clip-tr" style="color: #9AA3B2; background: linear-gradient(180deg, #1A1E26 0%, #12151B 100%); border: 1px solid rgba(140,150,165,0.2);">
         咸
       </div>
     </div>
   </header>
 
-  <div class="flex" style="height: calc(100vh - 3.5rem)">
-    <aside class="w-52 shrink-0 bg-surface-container-lowest border-r border-outline-variant/20 overflow-y-auto">
-      <div class="p-3 space-y-0.5">
-        <a href="home.html" class="flex items-center gap-3 px-3 py-2.5 rounded-md text-on-surface-variant hover:bg-surface-container hover:text-on-surface font-medium text-sm transition-colors">
-          <i data-lucide="home" class="w-4 h-4"></i>首页
+  <div class="flex" style="height: calc(100vh - 3rem)">
+    <aside class="w-48 shrink-0 overflow-y-auto" style="background: linear-gradient(180deg, #0C0E12 0%, #08090C 100%); border-right: 1px solid rgba(140,150,165,0.10);">
+      <div class="p-2.5 space-y-0.5">
+        <a href="home.html" class="flex items-center gap-2.5 px-2.5 py-2 rounded-sm text-xs font-medium transition-all" style="color: #8A94A6; border: 1px solid transparent;" onmouseover="this.style.background='rgba(140,150,165,0.06)';this.style.borderColor='rgba(140,150,165,0.12)';this.style.color='#E8EBF0'" onmouseout="this.style.background='';this.style.borderColor='transparent';this.style.color='#8A94A6'">
+          <i data-lucide="home" class="w-3.5 h-3.5"></i>首页
         </a>
-        <a href="generate.html" class="flex items-center gap-3 px-3 py-2.5 rounded-md text-on-surface-variant hover:bg-surface-container hover:text-on-surface font-medium text-sm transition-colors">
-          <i data-lucide="sparkles" class="w-4 h-4"></i>一键生成
+        <a href="generate.html" class="flex items-center gap-2.5 px-2.5 py-2 rounded-sm text-xs font-medium transition-all" style="color: #8A94A6; border: 1px solid transparent;" onmouseover="this.style.background='rgba(140,150,165,0.06)';this.style.borderColor='rgba(140,150,165,0.12)';this.style.color='#E8EBF0'" onmouseout="this.style.background='';this.style.borderColor='transparent';this.style.color='#8A94A6'">
+          <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>一键生成
         </a>
-        <a href="brand-assets.html" class="flex items-center gap-3 px-3 py-2.5 rounded-md text-on-surface-variant hover:bg-surface-container hover:text-on-surface font-medium text-sm transition-colors">
-          <i data-lucide="gem" class="w-4 h-4"></i>品牌资产
+        <a href="brand-assets.html" class="flex items-center gap-2.5 px-2.5 py-2 rounded-sm text-xs font-medium transition-all" style="color: #8A94A6; border: 1px solid transparent;" onmouseover="this.style.background='rgba(140,150,165,0.06)';this.style.borderColor='rgba(140,150,165,0.12)';this.style.color='#E8EBF0'" onmouseout="this.style.background='';this.style.borderColor='transparent';this.style.color='#8A94A6'">
+          <i data-lucide="gem" class="w-3.5 h-3.5"></i>品牌资产
         </a>
 
-        <div class="pt-4 pb-2 px-3">
-          <span class="text-[10px] font-mono uppercase tracking-widest text-on-surface-variant/50">进阶区</span>
+        <div class="pt-3 pb-1.5 px-2.5">
+          <span class="text-[9px] font-mono uppercase tracking-[0.2em]" style="color: #5A6273;">ADVANCED</span>
         </div>
-        <a href="topic-engine.html" class="flex items-center gap-3 px-3 py-2.5 rounded-md text-on-surface-variant hover:bg-surface-container hover:text-on-surface font-medium text-sm transition-colors">
-          <i data-lucide="trending-up" class="w-4 h-4"></i>选题引擎
+        <a href="topic-engine.html" class="flex items-center gap-2.5 px-2.5 py-2 rounded-sm text-xs font-medium transition-all" style="color: #8A94A6; border: 1px solid transparent;" onmouseover="this.style.background='rgba(140,150,165,0.06)';this.style.borderColor='rgba(140,150,165,0.12)';this.style.color='#E8EBF0'" onmouseout="this.style.background='';this.style.borderColor='transparent';this.style.color='#8A94A6'">
+          <i data-lucide="trending-up" class="w-3.5 h-3.5"></i>选题引擎
         </a>
-        <a href="content-factory.html" class="flex items-center gap-3 px-3 py-2.5 rounded-md text-on-surface-variant hover:bg-surface-container hover:text-on-surface font-medium text-sm transition-colors">
-          <i data-lucide="factory" class="w-4 h-4"></i>内容工厂
+        <a href="content-factory.html" class="flex items-center gap-2.5 px-2.5 py-2 rounded-sm text-xs font-medium transition-all" style="color: #8A94A6; border: 1px solid transparent;" onmouseover="this.style.background='rgba(140,150,165,0.06)';this.style.borderColor='rgba(140,150,165,0.12)';this.style.color='#E8EBF0'" onmouseout="this.style.background='';this.style.borderColor='transparent';this.style.color='#8A94A6'">
+          <i data-lucide="factory" class="w-3.5 h-3.5"></i>内容工厂
         </a>
-        <a href="publish.html" class="flex items-center gap-3 px-3 py-2.5 rounded-md text-on-surface-variant hover:bg-surface-container hover:text-on-surface font-medium text-sm transition-colors">
-          <i data-lucide="send" class="w-4 h-4"></i>发布管理
+        <a href="publish.html" class="flex items-center gap-2.5 px-2.5 py-2 rounded-sm text-xs font-medium transition-all" style="color: #8A94A6; border: 1px solid transparent;" onmouseover="this.style.background='rgba(140,150,165,0.06)';this.style.borderColor='rgba(140,150,165,0.12)';this.style.color='#E8EBF0'" onmouseout="this.style.background='';this.style.borderColor='transparent';this.style.color='#8A94A6'">
+          <i data-lucide="send" class="w-3.5 h-3.5"></i>发布管理
         </a>
-        <a href="data-review.html" class="flex items-center gap-3 px-3 py-2.5 rounded-md text-on-surface-variant hover:bg-surface-container hover:text-on-surface font-medium text-sm transition-colors">
-          <i data-lucide="chart-bar" class="w-4 h-4"></i>数据复盘
+        <a href="data-review.html" class="flex items-center gap-2.5 px-2.5 py-2 rounded-sm text-xs font-medium transition-all" style="color: #8A94A6; border: 1px solid transparent;" onmouseover="this.style.background='rgba(140,150,165,0.06)';this.style.borderColor='rgba(140,150,165,0.12)';this.style.color='#E8EBF0'" onmouseout="this.style.background='';this.style.borderColor='transparent';this.style.color='#8A94A6'">
+          <i data-lucide="chart-bar" class="w-3.5 h-3.5"></i>数据复盘
         </a>
-        <a href="knowledge-base.html" class="flex items-center gap-3 px-3 py-2.5 rounded-md bg-primary/10 text-primary font-medium text-sm" aria-current="page">
-          <i data-lucide="brain" class="w-4 h-4"></i>知识库
+        <a href="knowledge-base.html" class="flex items-center gap-2.5 px-2.5 py-2 rounded-sm text-xs font-medium transition-all hud-clip-tr" style="background: rgba(255,59,92,0.08); color: #FF3B5C; border: 1px solid rgba(255,59,92,0.2);" aria-current="page">
+          <i data-lucide="brain" class="w-3.5 h-3.5"></i>知识库
         </a>
-        <a href="settings.html" class="flex items-center gap-3 px-3 py-2.5 rounded-md text-on-surface-variant hover:bg-surface-container hover:text-on-surface font-medium text-sm transition-colors">
-          <i data-lucide="settings" class="w-4 h-4"></i>设置
+        <a href="settings.html" class="flex items-center gap-2.5 px-2.5 py-2 rounded-sm text-xs font-medium transition-all" style="color: #8A94A6; border: 1px solid transparent;" onmouseover="this.style.background='rgba(140,150,165,0.06)';this.style.borderColor='rgba(140,150,165,0.12)';this.style.color='#E8EBF0'" onmouseout="this.style.background='';this.style.borderColor='transparent';this.style.color='#8A94A6'">
+          <i data-lucide="settings" class="w-3.5 h-3.5"></i>设置
         </a>
+      </div>
+
+      <!-- 侧边栏底部状态 -->
+      <div class="absolute bottom-0 left-0 w-48 p-2.5" style="border-top: 1px solid rgba(140,150,165,0.10);">
+        <div class="flex items-center gap-1.5 text-[9px] font-mono" style="color: #5A6273;">
+          <span class="w-1.5 h-1.5 rounded-full pulse-dot" style="background: #21E6C1;"></span>
+          SYSTEM ONLINE
+        </div>
       </div>
     </aside>
 
     <!-- @main-content:start -->
-    <main class="flex-1 min-w-0 overflow-y-auto bg-background p-6">
+    <main class="flex-1 min-w-0 overflow-y-auto bg-background p-6 hud-grid-bg relative">
 
       <!-- 页面标题区 -->
       <div class="flex items-center justify-between mb-6">
         <div>
-          <h1 class="text-2xl font-bold text-on-surface">知识库</h1>
-          <p class="text-sm text-on-surface-variant mt-1">沉淀和复用营销知识，让每一次创作都有据可依</p>
+          <h1 class="font-display font-bold text-xl tracking-[0.15em] metal-text">KNOWLEDGE BASE</h1>
+          <p class="text-xs font-mono mt-1.5" style="color: #5A6273;">知识库管理系统 // 共 <span style="color: #21E6C1;">128</span> 条目 // 上次同步 <span style="color: #9AA3B2;">2024-12-18 14:32</span></p>
         </div>
-        <div class="flex items-center gap-3">
-          <button id="btn-ai-extract" class="bg-cyber-cyan/15 text-cyber-cyan px-4 py-2 rounded-md text-sm font-medium hover:bg-cyber-cyan/25 active:scale-[0.98] transition-all inline-flex items-center gap-2">
-            <i data-lucide="wand-2" class="w-3.5 h-3.5"></i>AI 提取沉淀
-          </button>
-          <button id="btn-add-knowledge" class="bg-primary text-on-primary px-4 py-2 rounded-md text-sm font-medium hover:opacity-90 active:scale-[0.98] transition-all inline-flex items-center gap-2">
-            <i data-lucide="plus" class="w-3.5 h-3.5"></i>添加知识
-          </button>
+        <button id="btn-add-knowledge" class="hud-btn-primary hud-clip-tr px-4 py-2 text-xs font-medium inline-flex items-center gap-2 transition-all">
+          <i data-lucide="plus" class="w-3.5 h-3.5"></i>添加知识
+        </button>
+      </div>
+
+      <!-- 搜索区 -->
+      <div class="mb-5">
+        <div class="relative">
+          <i data-lucide="search" class="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2" style="color: #5A6273;"></i>
+          <input id="input-search" type="text" placeholder="搜索知识条目 — 关键词 / 分类 / 标签" class="w-full bg-surface-container border-none rounded-md pl-11 pr-4 py-3 text-sm text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:ring-2 focus:ring-primary/20 transition-colors" style="font-family: 'Noto Sans SC', system-ui, sans-serif;" />
         </div>
       </div>
 
-      <!-- 搜索框 -->
-      <div class="relative mb-5">
-        <i data-lucide="search" class="w-5 h-5 text-on-surface-variant/50 absolute left-4 top-1/2 -translate-y-1/2"></i>
-        <input id="input-search" type="text" placeholder="搜索知识标题、关键词..." class="w-full bg-surface-container border-none rounded-lg pl-12 pr-4 py-3 text-sm text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:ring-2 focus:ring-primary/30 transition-colors" />
-      </div>
-
-      <!-- 分类筛选标签 -->
+      <!-- 分类标签筛选 -->
       <div class="flex items-center gap-2 mb-6 flex-wrap">
-        <button id="filter-all" class="knowledge-filter-btn px-3 py-1.5 rounded-md text-xs font-medium bg-primary/15 text-primary transition-colors" data-filter="all">全部</button>
-        <button id="filter-industry" class="knowledge-filter-btn px-3 py-1.5 rounded-md text-xs font-medium bg-surface-container text-on-surface-variant hover:bg-surface-container-high transition-colors" data-filter="industry">
-          <span class="inline-block w-2 h-2 rounded-full bg-error mr-1.5"></span>行业洞察
+        <button class="cat-filter-btn active text-[11px] font-medium px-3 py-1.5 rounded-sm transition-all hud-clip-tr" data-cat="all" style="color: #E8EBF0; background: rgba(140,150,165,0.12); border: 1px solid rgba(140,150,165,0.25);">
+          全部
         </button>
-        <button id="filter-hit" class="knowledge-filter-btn px-3 py-1.5 rounded-md text-xs font-medium bg-surface-container text-on-surface-variant hover:bg-surface-container-high transition-colors" data-filter="hit">
-          <span class="inline-block w-2 h-2 rounded-full bg-cyber-cyan mr-1.5"></span>爆款拆解
+        <!-- 分类-行业洞察 -->
+        <button class="cat-filter-btn text-[11px] font-medium px-3 py-1.5 rounded-sm transition-all cat-tag-red" data-cat="industry">
+          <span class="inline-block w-1.5 h-1.5 rounded-full mr-1.5" style="background: #FF3B5C;"></span>行业洞察
         </button>
-        <button id="filter-rule" class="knowledge-filter-btn px-3 py-1.5 rounded-md text-xs font-medium bg-surface-container text-on-surface-variant hover:bg-surface-container-high transition-colors" data-filter="rule">
-          <span class="inline-block w-2 h-2 rounded-full bg-cyber-magenta mr-1.5"></span>平台规则
+        <!-- 分类-爆款拆解 -->
+        <button class="cat-filter-btn text-[11px] font-medium px-3 py-1.5 rounded-sm transition-all cat-tag-cyan" data-cat="viral">
+          <span class="inline-block w-1.5 h-1.5 rounded-full mr-1.5" style="background: #21E6C1;"></span>爆款拆解
         </button>
-        <button id="filter-script" class="knowledge-filter-btn px-3 py-1.5 rounded-md text-xs font-medium bg-surface-container text-on-surface-variant hover:bg-surface-container-high transition-colors" data-filter="script">
-          <span class="inline-block w-2 h-2 rounded-full bg-cyber-purple mr-1.5"></span>话术模板
+        <!-- 分类-平台规则 -->
+        <button class="cat-filter-btn text-[11px] font-medium px-3 py-1.5 rounded-sm transition-all cat-tag-magenta" data-cat="platform">
+          <span class="inline-block w-1.5 h-1.5 rounded-full mr-1.5" style="background: #FF2E97;"></span>平台规则
         </button>
-        <button id="filter-method" class="knowledge-filter-btn px-3 py-1.5 rounded-md text-xs font-medium bg-surface-container text-on-surface-variant hover:bg-surface-container-high transition-colors" data-filter="method">
-          <span class="inline-block w-2 h-2 rounded-full bg-warning mr-1.5"></span>营销方法论
+        <!-- 分类-话术模板 -->
+        <button class="cat-filter-btn text-[11px] font-medium px-3 py-1.5 rounded-sm transition-all cat-tag-purple" data-cat="script">
+          <span class="inline-block w-1.5 h-1.5 rounded-full mr-1.5" style="background: #8B5CFF;"></span>话术模板
         </button>
+        <!-- 分类-营销方法论 -->
+        <button class="cat-filter-btn text-[11px] font-medium px-3 py-1.5 rounded-sm transition-all cat-tag-yellow" data-cat="marketing">
+          <span class="inline-block w-1.5 h-1.5 rounded-full mr-1.5" style="background: #F5A623;"></span>营销方法论
+        </button>
+      </div>
 
-        <div class="ml-auto">
-          <button id="filter-favorite" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium bg-surface-container text-on-surface-variant hover:bg-surface-container-high transition-colors">
-            <i data-lucide="star" class="w-3 h-3"></i>常用知识
-          </button>
+      <!-- 统计指标栏 -->
+      <div class="grid grid-cols-5 gap-3 mb-6">
+        <!-- 统计-总条目 -->
+        <div class="metal-panel hud-clip-tr p-3 rounded-sm relative hud-corner">
+          <div class="relative z-10">
+            <p class="text-[9px] font-mono uppercase tracking-[0.15em]" style="color: #5A6273;">TOTAL</p>
+            <p class="text-xl font-display font-bold mt-1" style="color: #E8EBF0;">128</p>
+          </div>
+        </div>
+        <!-- 统计-行业洞察 -->
+        <div class="metal-panel hud-clip-tr p-3 rounded-sm relative">
+          <div class="relative z-10">
+            <p class="text-[9px] font-mono uppercase tracking-[0.15em]" style="color: #5A6273;">行业洞察</p>
+            <p class="text-xl font-display font-bold mt-1" style="color: #FF3B5C;">34</p>
+          </div>
+        </div>
+        <!-- 统计-爆款拆解 -->
+        <div class="metal-panel hud-clip-tr p-3 rounded-sm relative">
+          <div class="relative z-10">
+            <p class="text-[9px] font-mono uppercase tracking-[0.15em]" style="color: #5A6273;">爆款拆解</p>
+            <p class="text-xl font-display font-bold mt-1" style="color: #21E6C1;">28</p>
+          </div>
+        </div>
+        <!-- 统计-平台规则 -->
+        <div class="metal-panel hud-clip-tr p-3 rounded-sm relative">
+          <div class="relative z-10">
+            <p class="text-[9px] font-mono uppercase tracking-[0.15em]" style="color: #5A6273;">平台规则</p>
+            <p class="text-xl font-display font-bold mt-1" style="color: #FF2E97;">22</p>
+          </div>
+        </div>
+        <!-- 统计-话术+营销 -->
+        <div class="metal-panel hud-clip-tr p-3 rounded-sm relative">
+          <div class="relative z-10">
+            <p class="text-[9px] font-mono uppercase tracking-[0.15em]" style="color: #5A6273;">模板/方法论</p>
+            <p class="text-xl font-display font-bold mt-1" style="color: #8B5CFF;">44</p>
+          </div>
         </div>
       </div>
 
       <!-- 知识卡片列表 -->
-      <div id="knowledge-list" class="grid grid-cols-1 gap-4">
+      <div id="kb-card-list" class="space-y-3">
 
-        <!-- 列表-知识1：行业洞察 -->
-        <div class="knowledge-card bg-surface rounded-lg shadow-card p-5 hover:shadow-float transition-all cursor-pointer group" data-category="industry" data-id="k001">
-          <div class="flex items-start justify-between gap-4">
+        <!-- 列表-知识卡片1: 行业洞察 -->
+        <div class="kb-card metal-panel hud-clip-tr p-4 rounded-sm cursor-pointer cat-stripe-red" data-cat="industry" data-id="1">
+          <div class="relative z-10 flex items-start justify-between gap-4">
             <div class="flex-1 min-w-0">
               <div class="flex items-center gap-2 mb-2">
-                <span class="inline-flex items-center px-2 py-0.5 rounded-sm text-xs font-medium bg-error/15 text-error">行业洞察</span>
-                <span class="text-xs text-on-surface-variant">2024-12-18</span>
+                <span class="text-[10px] font-medium px-2 py-0.5 rounded-sm cat-tag-red">行业洞察</span>
+                <span class="text-[9px] font-mono" style="color: #5A6273;">ID:KB-0034</span>
               </div>
-              <h3 class="text-base font-semibold text-on-surface group-hover:text-primary transition-colors mb-2">2024年美妆行业年末营销趋势：情绪价值成为核心驱动力</h3>
-              <p class="text-sm text-on-surface-variant line-clamp-2">深入分析2024年Q4美妆行业营销数据，发现"情绪价值"关键词搜索量同比增长217%，品牌需从功能性诉求转向情感共鸣策略。报告涵盖小红书、抖音、淘宝三大平台数据...</p>
+              <h3 class="text-sm font-semibold text-on-surface mb-1.5 truncate">2024美妆行业趋势报告：纯净美妆与成分党崛起</h3>
+              <p class="text-xs text-on-surface-variant line-clamp-2 mb-2" style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">深度解析2024年美妆行业三大趋势：纯净美妆市场规模预计突破800亿，成分党消费者占比达62%，"早C晚A"护肤公式带动精华品类增长47%……</p>
+              <div class="flex items-center gap-3">
+                <span class="text-[10px] font-mono" style="color: #5A6273;">2024-12-15</span>
+                <span class="text-[10px] font-mono" style="color: #5A6273;">|</span>
+                <span class="text-[10px] font-mono" style="color: #5A6273;">来源: 艾瑞咨询</span>
+              </div>
             </div>
-            <div class="flex flex-col items-end gap-2 shrink-0">
-              <div class="flex items-center gap-1.5">
-                <i data-lucide="repeat-2" class="w-3.5 h-3.5 text-success"></i>
-                <span class="text-sm font-semibold text-success">32</span>
-                <span class="text-xs text-on-surface-variant">次引用</span>
-              </div>
-              <button class="btn-favorite w-8 h-8 rounded-md flex items-center justify-center hover:bg-surface-container-high transition-colors" data-id="k001" data-favorited="false">
-                <i data-lucide="star" class="w-4 h-4 text-on-surface-variant/50"></i>
-              </button>
+            <div class="shrink-0 text-right">
+              <div class="text-lg font-display font-bold" style="color: #FF3B5C;">32</div>
+              <div class="text-[9px] font-mono" style="color: #5A6273;">引用次数</div>
             </div>
           </div>
         </div>
 
-        <!-- 列表-知识2：爆款拆解 -->
-        <div class="knowledge-card bg-surface rounded-lg shadow-card p-5 hover:shadow-float transition-all cursor-pointer group" data-category="hit" data-id="k002">
-          <div class="flex items-start justify-between gap-4">
+        <!-- 列表-知识卡片2: 爆款拆解 -->
+        <div class="kb-card metal-panel hud-clip-tr p-4 rounded-sm cursor-pointer cat-stripe-cyan" data-cat="viral" data-id="2">
+          <div class="relative z-10 flex items-start justify-between gap-4">
             <div class="flex-1 min-w-0">
               <div class="flex items-center gap-2 mb-2">
-                <span class="inline-flex items-center px-2 py-0.5 rounded-sm text-xs font-medium bg-cyber-cyan/15 text-cyber-cyan">爆款拆解</span>
-                <span class="text-xs text-on-surface-variant">2024-12-15</span>
+                <span class="text-[10px] font-medium px-2 py-0.5 rounded-sm cat-tag-cyan">爆款拆解</span>
+                <span class="text-[9px] font-mono" style="color: #5A6273;">ID:KB-0028</span>
               </div>
-              <h3 class="text-base font-semibold text-on-surface group-hover:text-primary transition-colors mb-2">某品牌"早安打卡"挑战赛7天破亿播放量拆解</h3>
-              <p class="text-sm text-on-surface-variant line-clamp-2">详细拆解某国货护肤品牌发起的#早安打卡挑战赛，从选题策划、内容模板设计、达人矩阵布局到流量投放策略，还原从0到1亿的完整链路，核心在于"低门槛参与+社交货币"设计...</p>
+              <h3 class="text-sm font-semibold text-on-surface mb-1.5 truncate">拆解@花西子：单条视频获赞200万+的国货美妆爆款公式</h3>
+              <p class="text-xs text-on-surface-variant line-clamp-2 mb-2" style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">通过拆解花西子抖音爆款视频，总结"视觉冲击3秒+产品沉浸式体验+品牌故事反转"三段式内容结构，配合苗族印象系列实现品牌破圈……</p>
+              <div class="flex items-center gap-3">
+                <span class="text-[10px] font-mono" style="color: #5A6273;">2024-12-12</span>
+                <span class="text-[10px] font-mono" style="color: #5A6273;">|</span>
+                <span class="text-[10px] font-mono" style="color: #5A6273;">来源: 蝉妈妈数据</span>
+              </div>
             </div>
-            <div class="flex flex-col items-end gap-2 shrink-0">
-              <div class="flex items-center gap-1.5">
-                <i data-lucide="repeat-2" class="w-3.5 h-3.5 text-success"></i>
-                <span class="text-sm font-semibold text-success">56</span>
-                <span class="text-xs text-on-surface-variant">次引用</span>
-              </div>
-              <button class="btn-favorite w-8 h-8 rounded-md flex items-center justify-center hover:bg-surface-container-high transition-colors" data-id="k002" data-favorited="true">
-                <i data-lucide="star" class="w-4 h-4 text-warning"></i>
-              </button>
+            <div class="shrink-0 text-right">
+              <div class="text-lg font-display font-bold" style="color: #21E6C1;">56</div>
+              <div class="text-[9px] font-mono" style="color: #5A6273;">引用次数</div>
             </div>
           </div>
         </div>
 
-        <!-- 列表-知识3：平台规则 -->
-        <div class="knowledge-card bg-surface rounded-lg shadow-card p-5 hover:shadow-float transition-all cursor-pointer group" data-category="rule" data-id="k003">
-          <div class="flex items-start justify-between gap-4">
+        <!-- 列表-知识卡片3: 平台规则 -->
+        <div class="kb-card metal-panel hud-clip-tr p-4 rounded-sm cursor-pointer cat-stripe-magenta" data-cat="platform" data-id="3">
+          <div class="relative z-10 flex items-start justify-between gap-4">
             <div class="flex-1 min-w-0">
               <div class="flex items-center gap-2 mb-2">
-                <span class="inline-flex items-center px-2 py-0.5 rounded-sm text-xs font-medium bg-cyber-magenta/15 text-cyber-magenta">平台规则</span>
-                <span class="text-xs text-on-surface-variant">2024-12-12</span>
+                <span class="text-[10px] font-medium px-2 py-0.5 rounded-sm cat-tag-magenta">平台规则</span>
+                <span class="text-[9px] font-mono" style="color: #5A6273;">ID:KB-0022</span>
               </div>
-              <h3 class="text-base font-semibold text-on-surface group-hover:text-primary transition-colors mb-2">小红书2024年12月社区规范更新：广告笔记标注要求与限流避坑指南</h3>
-              <p class="text-sm text-on-surface-variant line-clamp-2">解读小红书最新社区规范，重点关注广告笔记标注新规、品牌合作报备流程变更、隐性限流触发条件（高频修改、集中发布、互赞互粉检测），提供合规发文checklist...</p>
+              <h3 class="text-sm font-semibold text-on-surface mb-1.5 truncate">小红书2024Q4社区规范更新：限流红线与合规创作指南</h3>
+              <p class="text-xs text-on-surface-variant line-clamp-2 mb-2" style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">整理小红书最新社区规范变更：新增医疗健康类内容资质要求、导流行为处罚升级、品牌合作报备流程更新等6项重要变更……</p>
+              <div class="flex items-center gap-3">
+                <span class="text-[10px] font-mono" style="color: #5A6273;">2024-12-10</span>
+                <span class="text-[10px] font-mono" style="color: #5A6273;">|</span>
+                <span class="text-[10px] font-mono" style="color: #5A6273;">来源: 小红书官方</span>
+              </div>
             </div>
-            <div class="flex flex-col items-end gap-2 shrink-0">
-              <div class="flex items-center gap-1.5">
-                <i data-lucide="repeat-2" class="w-3.5 h-3.5 text-error"></i>
-                <span class="text-sm font-semibold text-error">8</span>
-                <span class="text-xs text-on-surface-variant">次引用</span>
-              </div>
-              <button class="btn-favorite w-8 h-8 rounded-md flex items-center justify-center hover:bg-surface-container-high transition-colors" data-id="k003" data-favorited="false">
-                <i data-lucide="star" class="w-4 h-4 text-on-surface-variant/50"></i>
-              </button>
+            <div class="shrink-0 text-right">
+              <div class="text-lg font-display font-bold" style="color: #FF2E97;">18</div>
+              <div class="text-[9px] font-mono" style="color: #5A6273;">引用次数</div>
             </div>
           </div>
         </div>
 
-        <!-- 列表-知识4：话术模板 -->
-        <div class="knowledge-card bg-surface rounded-lg shadow-card p-5 hover:shadow-float transition-all cursor-pointer group" data-category="script" data-id="k004">
-          <div class="flex items-start justify-between gap-4">
+        <!-- 列表-知识卡片4: 话术模板 -->
+        <div class="kb-card metal-panel hud-clip-tr p-4 rounded-sm cursor-pointer cat-stripe-purple" data-cat="script" data-id="4">
+          <div class="relative z-10 flex items-start justify-between gap-4">
             <div class="flex-1 min-w-0">
               <div class="flex items-center gap-2 mb-2">
-                <span class="inline-flex items-center px-2 py-0.5 rounded-sm text-xs font-medium bg-cyber-purple/15 text-cyber-purple">话术模板</span>
-                <span class="text-xs text-on-surface-variant">2024-12-10</span>
+                <span class="text-[10px] font-medium px-2 py-0.5 rounded-sm cat-tag-purple">话术模板</span>
+                <span class="text-[9px] font-mono" style="color: #5A6273;">ID:KB-0041</span>
               </div>
-              <h3 class="text-base font-semibold text-on-surface group-hover:text-primary transition-colors mb-2">高转化直播话术框架：3分钟停留 + 5分钟转化模型</h3>
-              <p class="text-sm text-on-surface-variant line-clamp-2">总结经过50+场直播验证的高转化话术框架，包含"痛点钩子-场景共鸣-产品方案-限时激励"四段式结构，适配美妆、食品、服饰三大品类，附完整逐字稿模板...</p>
+              <h3 class="text-sm font-semibold text-on-surface mb-1.5 truncate">高转化直播话术框架：从冷启动到持续逼单的5段式模板</h3>
+              <p class="text-xs text-on-surface-variant line-clamp-2 mb-2" style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">基于50场GMV破百万直播间话术拆解，总结"暖场钩子→痛点共鸣→产品展示→信任背书→限时逼单"五段式话术框架……</p>
+              <div class="flex items-center gap-3">
+                <span class="text-[10px] font-mono" style="color: #5A6273;">2024-12-08</span>
+                <span class="text-[10px] font-mono" style="color: #5A6273;">|</span>
+                <span class="text-[10px] font-mono" style="color: #5A6273;">来源: 内部复盘</span>
+              </div>
             </div>
-            <div class="flex flex-col items-end gap-2 shrink-0">
-              <div class="flex items-center gap-1.5">
-                <i data-lucide="repeat-2" class="w-3.5 h-3.5 text-success"></i>
-                <span class="text-sm font-semibold text-success">47</span>
-                <span class="text-xs text-on-surface-variant">次引用</span>
-              </div>
-              <button class="btn-favorite w-8 h-8 rounded-md flex items-center justify-center hover:bg-surface-container-high transition-colors" data-id="k004" data-favorited="true">
-                <i data-lucide="star" class="w-4 h-4 text-warning"></i>
-              </button>
+            <div class="shrink-0 text-right">
+              <div class="text-lg font-display font-bold" style="color: #8B5CFF;">41</div>
+              <div class="text-[9px] font-mono" style="color: #5A6273;">引用次数</div>
             </div>
           </div>
         </div>
 
-        <!-- 列表-知识5：营销方法论 -->
-        <div class="knowledge-card bg-surface rounded-lg shadow-card p-5 hover:shadow-float transition-all cursor-pointer group" data-category="method" data-id="k005">
-          <div class="flex items-start justify-between gap-4">
+        <!-- 列表-知识卡片5: 营销方法论 -->
+        <div class="kb-card metal-panel hud-clip-tr p-4 rounded-sm cursor-pointer cat-stripe-yellow" data-cat="marketing" data-id="5">
+          <div class="relative z-10 flex items-start justify-between gap-4">
             <div class="flex-1 min-w-0">
               <div class="flex items-center gap-2 mb-2">
-                <span class="inline-flex items-center px-2 py-0.5 rounded-sm text-xs font-medium bg-warning/15 text-warning">营销方法论</span>
-                <span class="text-xs text-on-surface-variant">2024-12-08</span>
+                <span class="text-[10px] font-medium px-2 py-0.5 rounded-sm cat-tag-yellow">营销方法论</span>
+                <span class="text-[9px] font-mono" style="color: #5A6273;">ID:KB-0056</span>
               </div>
-              <h3 class="text-base font-semibold text-on-surface group-hover:text-primary transition-colors mb-2">AARRR漏斗在内容营销中的落地：从曝光到复购的5层策略</h3>
-              <p class="text-sm text-on-surface-variant line-clamp-2">将传统AARRR模型适配到内容营销场景，定义每层的关键指标与内容策略：获客层靠爆款选题+投放，激活层靠种草笔记+评论区运营，留存层靠私域+社群，变现层靠直播+橱窗...</p>
+              <h3 class="text-sm font-semibold text-on-surface mb-1.5 truncate">AARRR漏斗在短视频运营中的本土化实践与数据验证</h3>
+              <p class="text-xs text-on-surface-variant line-clamp-2 mb-2" style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">将AARRR模型适配抖音/快手生态，从"刷到→停留→互动→关注→转化"五个节点建立数据指标体系，结合3个品牌案例验证关键转化率基准线……</p>
+              <div class="flex items-center gap-3">
+                <span class="text-[10px] font-mono" style="color: #5A6273;">2024-12-05</span>
+                <span class="text-[10px] font-mono" style="color: #5A6273;">|</span>
+                <span class="text-[10px] font-mono" style="color: #5A6273;">来源: 增长黑盒</span>
+              </div>
             </div>
-            <div class="flex flex-col items-end gap-2 shrink-0">
-              <div class="flex items-center gap-1.5">
-                <i data-lucide="repeat-2" class="w-3.5 h-3.5 text-success"></i>
-                <span class="text-sm font-semibold text-success">23</span>
-                <span class="text-xs text-on-surface-variant">次引用</span>
-              </div>
-              <button class="btn-favorite w-8 h-8 rounded-md flex items-center justify-center hover:bg-surface-container-high transition-colors" data-id="k005" data-favorited="false">
-                <i data-lucide="star" class="w-4 h-4 text-on-surface-variant/50"></i>
-              </button>
+            <div class="shrink-0 text-right">
+              <div class="text-lg font-display font-bold" style="color: #F5A623;">27</div>
+              <div class="text-[9px] font-mono" style="color: #5A6273;">引用次数</div>
             </div>
           </div>
         </div>
 
-        <!-- 列表-知识6：行业洞察 -->
-        <div class="knowledge-card bg-surface rounded-lg shadow-card p-5 hover:shadow-float transition-all cursor-pointer group" data-category="industry" data-id="k006">
-          <div class="flex items-start justify-between gap-4">
+        <!-- 列表-知识卡片6: 行业洞察 -->
+        <div class="kb-card metal-panel hud-clip-tr p-4 rounded-sm cursor-pointer cat-stripe-red" data-cat="industry" data-id="6">
+          <div class="relative z-10 flex items-start justify-between gap-4">
             <div class="flex-1 min-w-0">
               <div class="flex items-center gap-2 mb-2">
-                <span class="inline-flex items-center px-2 py-0.5 rounded-sm text-xs font-medium bg-error/15 text-error">行业洞察</span>
-                <span class="text-xs text-on-surface-variant">2024-12-05</span>
+                <span class="text-[10px] font-medium px-2 py-0.5 rounded-sm cat-tag-red">行业洞察</span>
+                <span class="text-[9px] font-mono" style="color: #5A6273;">ID:KB-0035</span>
               </div>
-              <h3 class="text-base font-semibold text-on-surface group-hover:text-primary transition-colors mb-2">食品饮料赛道Q4复盘：健康化与社交化双主线并行</h3>
-              <p class="text-sm text-on-surface-variant line-clamp-2">食品饮料行业Q4数据复盘，"0添加""低糖"关键词互动量上涨185%，"办公室零食分享""闺蜜下午茶"场景内容产出增长120%。建议品牌同时布局健康成分背书和社交场景种草两条线...</p>
+              <h3 class="text-sm font-semibold text-on-surface mb-1.5 truncate">食品饮料赛道：健康零食品牌如何在红海中突围</h3>
+              <p class="text-xs text-on-surface-variant line-clamp-2 mb-2" style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">聚焦0糖0脂0添加零食赛道，分析每日坚果、鸡胸肉肠、魔芋爽等品类线上增长趋势，消费者决策因子从"口味优先"转向"配料表优先"……</p>
+              <div class="flex items-center gap-3">
+                <span class="text-[10px] font-mono" style="color: #5A6273;">2024-12-03</span>
+                <span class="text-[10px] font-mono" style="color: #5A6273;">|</span>
+                <span class="text-[10px] font-mono" style="color: #5A6273;">来源: CBNDATA</span>
+              </div>
             </div>
-            <div class="flex flex-col items-end gap-2 shrink-0">
-              <div class="flex items-center gap-1.5">
-                <i data-lucide="repeat-2" class="w-3.5 h-3.5 text-error"></i>
-                <span class="text-sm font-semibold text-error">5</span>
-                <span class="text-xs text-on-surface-variant">次引用</span>
+            <div class="shrink-0 text-right">
+              <div class="text-lg font-display font-bold" style="color: #FF3B5C;">15</div>
+              <div class="text-[9px] font-mono" style="color: #5A6273;">引用次数</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 列表-知识卡片7: 爆款拆解 -->
+        <div class="kb-card metal-panel hud-clip-tr p-4 rounded-sm cursor-pointer cat-stripe-cyan" data-cat="viral" data-id="7">
+          <div class="relative z-10 flex items-start justify-between gap-4">
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center gap-2 mb-2">
+                <span class="text-[10px] font-medium px-2 py-0.5 rounded-sm cat-tag-cyan">爆款拆解</span>
+                <span class="text-[9px] font-mono" style="color: #5A6273;">ID:KB-0029</span>
               </div>
-              <button class="btn-favorite w-8 h-8 rounded-md flex items-center justify-center hover:bg-surface-container-high transition-colors" data-id="k006" data-favorited="false">
-                <i data-lucide="star" class="w-4 h-4 text-on-surface-variant/50"></i>
-              </button>
+              <h3 class="text-sm font-semibold text-on-surface mb-1.5 truncate">抖音知识付费爆款：3天涨粉10万的"读书博主"内容公式</h3>
+              <p class="text-xs text-on-surface-variant line-clamp-2 mb-2" style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">拆解"每天一本书"类账号的爆款内容模板：封面统一视觉+金句开头3秒+核心观点提炼+互动引导，单条视频平均播放量50万+……</p>
+              <div class="flex items-center gap-3">
+                <span class="text-[10px] font-mono" style="color: #5A6273;">2024-11-28</span>
+                <span class="text-[10px] font-mono" style="color: #5A6273;">|</span>
+                <span class="text-[10px] font-mono" style="color: #5A6273;">来源: 飞瓜数据</span>
+              </div>
+            </div>
+            <div class="shrink-0 text-right">
+              <div class="text-lg font-display font-bold" style="color: #21E6C1;">8</div>
+              <div class="text-[9px] font-mono" style="color: #5A6273;">引用次数</div>
             </div>
           </div>
         </div>
 
       </div>
 
-      <!-- 知识详情弹窗 -->
-      <div id="detail-modal" class="fixed inset-0 bg-black/60 flex items-center justify-center p-4 z-50 hidden">
-        <div class="bg-surface rounded-xl shadow-dialog max-w-2xl w-full max-h-[85vh] overflow-y-auto">
-          <div class="p-6">
-            <div class="flex items-center justify-between mb-4">
-              <span id="detail-category" class="inline-flex items-center px-2 py-0.5 rounded-sm text-xs font-medium bg-error/15 text-error">行业洞察</span>
-              <button id="btn-close-detail" class="w-8 h-8 rounded-md flex items-center justify-center hover:bg-surface-container-high transition-colors">
-                <i data-lucide="x" class="w-4 h-4 text-on-surface-variant"></i>
-              </button>
-            </div>
-            <h2 id="detail-title" class="text-xl font-bold text-on-surface mb-3">2024年美妆行业年末营销趋势：情绪价值成为核心驱动力</h2>
-            <div class="flex items-center gap-4 mb-5 text-xs text-on-surface-variant">
-              <span id="detail-date" class="inline-flex items-center gap-1"><i data-lucide="calendar" class="w-3 h-3"></i>2024-12-18</span>
-              <span id="detail-refs" class="inline-flex items-center gap-1"><i data-lucide="repeat-2" class="w-3 h-3"></i>32 次引用</span>
-            </div>
-            <div id="detail-content" class="text-sm text-on-surface-variant leading-relaxed space-y-4">
-              <p>深入分析2024年Q4美妆行业营销数据，发现"情绪价值"关键词搜索量同比增长217%，品牌需从功能性诉求转向情感共鸣策略。</p>
-              <p><strong class="text-on-surface">核心发现：</strong></p>
-              <ul class="list-disc pl-5 space-y-1.5">
-                <li>情绪价值相关内容互动率是纯功能内容的3.2倍</li>
-                <li>"治愈""松弛感""自我对话"成为Top3情感关键词</li>
-                <li>短视频中情绪叙事开头的完播率提升45%</li>
-                <li>小红书"情绪种草"笔记的收藏率比普通笔记高68%</li>
-              </ul>
-              <p><strong class="text-on-surface">策略建议：</strong></p>
-              <ul class="list-disc pl-5 space-y-1.5">
-                <li>产品文案从"解决痛点"转向"理解感受"</li>
-                <li>视频内容增加情绪叙事前3秒钩子</li>
-                <li>结合节日/季节情绪节点做内容规划</li>
-                <li>评论区运营引导情绪共鸣互动</li>
-              </ul>
-              <p><strong class="text-on-surface">数据来源：</strong>小红书、抖音、淘宝三大平台2024年Q4公开数据与第三方监测数据交叉验证。</p>
-            </div>
-            <div class="flex items-center gap-3 mt-6 pt-4 border-t border-outline-variant/20">
-              <button id="btn-edit-knowledge" class="bg-primary text-on-primary px-4 py-2 rounded-md text-sm font-medium hover:opacity-90 active:scale-[0.98] transition-all inline-flex items-center gap-2">
-                <i data-lucide="pencil" class="w-3.5 h-3.5"></i>编辑知识
-              </button>
-              <button id="btn-cite-knowledge" class="bg-surface-container text-on-surface px-4 py-2 rounded-md text-sm font-medium hover:bg-surface-container-high active:scale-[0.98] transition-all inline-flex items-center gap-2">
-                <i data-lucide="copy" class="w-3.5 h-3.5"></i>复制引用
-              </button>
-              <button id="btn-favorite-detail" class="bg-surface-container text-on-surface px-4 py-2 rounded-md text-sm font-medium hover:bg-surface-container-high active:scale-[0.98] transition-all inline-flex items-center gap-2">
-                <i data-lucide="star" class="w-3.5 h-3.5"></i>标记常用
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- 添加知识弹窗 -->
-      <div id="add-modal" class="fixed inset-0 bg-black/60 flex items-center justify-center p-4 z-50 hidden">
-        <div class="bg-surface rounded-xl shadow-dialog max-w-lg w-full max-h-[85vh] overflow-y-auto">
-          <div class="p-6">
-            <div class="flex items-center justify-between mb-5">
-              <h2 class="text-lg font-bold text-on-surface">添加知识</h2>
-              <button id="btn-close-add" class="w-8 h-8 rounded-md flex items-center justify-center hover:bg-surface-container-high transition-colors">
-                <i data-lucide="x" class="w-4 h-4 text-on-surface-variant"></i>
-              </button>
-            </div>
-            <div class="space-y-4">
-              <div>
-                <label class="block text-sm font-medium text-on-surface mb-1.5">知识标题</label>
-                <input id="input-title" type="text" placeholder="输入知识标题" class="w-full bg-surface-container border-none rounded-md px-3 py-2 text-sm text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:ring-2 focus:ring-primary/30 transition-colors" />
-              </div>
-              <div>
-                <label class="block text-sm font-medium text-on-surface mb-1.5">分类</label>
-                <select id="select-category" class="w-full bg-surface-container border-none rounded-md px-3 py-2 text-sm text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/30 transition-colors">
-                  <option value="industry">行业洞察</option>
-                  <option value="hit">爆款拆解</option>
-                  <option value="rule">平台规则</option>
-                  <option value="script">话术模板</option>
-                  <option value="method">营销方法论</option>
-                </select>
-              </div>
-              <div>
-                <label class="block text-sm font-medium text-on-surface mb-1.5">内容摘要</label>
-                <textarea id="input-summary" rows="4" placeholder="输入知识内容摘要..." class="w-full bg-surface-container border-none rounded-md px-3 py-2 text-sm text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:ring-2 focus:ring-primary/30 transition-colors resize-none"></textarea>
-              </div>
-              <div>
-                <label class="block text-sm font-medium text-on-surface mb-1.5">详细内容</label>
-                <textarea id="input-content" rows="6" placeholder="输入知识详细内容..." class="w-full bg-surface-container border-none rounded-md px-3 py-2 text-sm text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:ring-2 focus:ring-primary/30 transition-colors resize-none"></textarea>
-              </div>
-            </div>
-            <div class="flex items-center gap-3 mt-6 pt-4 border-t border-outline-variant/20">
-              <button id="btn-submit-knowledge" class="bg-primary text-on-primary px-4 py-2 rounded-md text-sm font-medium hover:opacity-90 active:scale-[0.98] transition-all">保存知识</button>
-              <button id="btn-cancel-add" class="bg-surface-container text-on-surface px-4 py-2 rounded-md text-sm font-medium hover:bg-surface-container-high active:scale-[0.98] transition-all">取消</button>
-            </div>
-          </div>
+      <!-- 分页 -->
+      <div class="flex items-center justify-between mt-6 pt-4" style="border-top: 1px solid rgba(140,150,165,0.10);">
+        <span class="text-[10px] font-mono" style="color: #5A6273;">显示 1-7 / 共 128 条</span>
+        <div class="flex items-center gap-1.5">
+          <button id="btn-prev-page" class="px-3 py-1.5 text-[10px] font-mono rounded-sm transition-all" style="color: #5A6273; background: rgba(140,150,165,0.06); border: 1px solid rgba(140,150,165,0.12);">上一页</button>
+          <button class="px-2.5 py-1.5 text-[10px] font-mono rounded-sm" style="color: #FF3B5C; background: rgba(255,59,92,0.1); border: 1px solid rgba(255,59,92,0.25);">1</button>
+          <button class="px-2.5 py-1.5 text-[10px] font-mono rounded-sm" style="color: #8A94A6; background: rgba(140,150,165,0.06); border: 1px solid rgba(140,150,165,0.10);">2</button>
+          <button class="px-2.5 py-1.5 text-[10px] font-mono rounded-sm" style="color: #8A94A6; background: rgba(140,150,165,0.06); border: 1px solid rgba(140,150,165,0.10);">3</button>
+          <span class="text-[10px] font-mono px-1" style="color: #5A6273;">...</span>
+          <button class="px-2.5 py-1.5 text-[10px] font-mono rounded-sm" style="color: #8A94A6; background: rgba(140,150,165,0.06); border: 1px solid rgba(140,150,165,0.10);">19</button>
+          <button id="btn-next-page" class="px-3 py-1.5 text-[10px] font-mono rounded-sm transition-all" style="color: #8A94A6; background: rgba(140,150,165,0.06); border: 1px solid rgba(140,150,165,0.12);">下一页</button>
         </div>
       </div>
 
@@ -449,216 +615,359 @@
     <!-- @main-content:end -->
   </div>
 
+  <!-- 详情弹窗 -->
+  <div id="detail-modal" class="detail-overlay fixed inset-0 z-50 items-center justify-center p-6" style="background: rgba(0,0,0,0.7);">
+    <div class="metal-panel hud-clip max-w-2xl w-full max-h-[85vh] overflow-y-auto p-6 rounded-sm relative hud-corner">
+      <div class="relative z-10">
+        <!-- 弹窗头部 -->
+        <div class="flex items-start justify-between mb-5">
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center gap-2 mb-2">
+              <span class="text-[10px] font-medium px-2 py-0.5 rounded-sm cat-tag-cyan">爆款拆解</span>
+              <span class="text-[9px] font-mono" style="color: #5A6273;">ID:KB-0028</span>
+              <span class="text-[9px] font-mono" style="color: #5A6273;">//</span>
+              <span class="text-[9px] font-mono" style="color: #21E6C1;">ACTIVE</span>
+            </div>
+            <h2 class="text-base font-semibold text-on-surface">拆解@花西子：单条视频获赞200万+的国货美妆爆款公式</h2>
+          </div>
+          <button id="btn-close-detail" class="shrink-0 ml-4 w-7 h-7 flex items-center justify-center rounded-sm transition-colors" style="color: #5A6273; border: 1px solid rgba(140,150,165,0.15);" onmouseover="this.style.color='#E8EBF0';this.style.borderColor='rgba(140,150,165,0.3)'" onmouseout="this.style.color='#5A6273';this.style.borderColor='rgba(140,150,165,0.15)'">
+            <i data-lucide="x" class="w-3.5 h-3.5"></i>
+          </button>
+        </div>
+
+        <!-- 元信息栏 -->
+        <div class="flex items-center gap-4 mb-5 pb-4" style="border-bottom: 1px solid rgba(140,150,165,0.10);">
+          <div class="flex items-center gap-1.5">
+            <i data-lucide="calendar" class="w-3 h-3" style="color: #5A6273;"></i>
+            <span class="text-[10px] font-mono" style="color: #8A94A6;">2024-12-12</span>
+          </div>
+          <div class="flex items-center gap-1.5">
+            <i data-lucide="database" class="w-3 h-3" style="color: #5A6273;"></i>
+            <span class="text-[10px] font-mono" style="color: #8A94A6;">来源: 蝉妈妈数据</span>
+          </div>
+          <div class="flex items-center gap-1.5">
+            <i data-lucide="repeat" class="w-3 h-3" style="color: #5A6273;"></i>
+            <span class="text-[10px] font-mono" style="color: #21E6C1;">引用 56 次</span>
+          </div>
+        </div>
+
+        <!-- 正文内容 -->
+        <div class="space-y-4 text-sm text-on-surface-variant leading-relaxed" style="font-family: 'Noto Sans SC', system-ui, sans-serif;">
+          <div>
+            <h3 class="text-xs font-semibold text-on-surface mb-2 font-display tracking-wider" style="color: #21E6C1;">01 // 爆款背景</h3>
+            <p>花西子抖音官方账号于2024年11月发布"苗族印象"系列短视频，单条视频48小时内获赞突破200万，评论区互动率高达12.7%，远超美妆行业均值3.2%。该系列共3条视频，累计播放量超3000万。</p>
+          </div>
+          <div>
+            <h3 class="text-xs font-semibold text-on-surface mb-2 font-display tracking-wider" style="color: #21E6C1;">02 // 内容结构拆解</h3>
+            <p><strong style="color: #E8EBF0;">视觉冲击3秒</strong>：开篇使用苗族银饰特写+非遗工艺慢镜头，以极强视觉冲击力留住用户，前3秒完播率达89%。</p>
+            <p class="mt-2"><strong style="color: #E8EBF0;">产品沉浸式体验</strong>：中段切换至产品使用场景，将苗银纹样融入口红管身设计，用"东方美学"叙事串联产品卖点，时长控制在15秒内。</p>
+            <p class="mt-2"><strong style="color: #E8EBF0;">品牌故事反转</strong>：结尾揭示"让世界看见东方美"品牌主张，配合品牌LOGO露出，形成情感共鸣与品牌记忆点。</p>
+          </div>
+          <div>
+            <h3 class="text-xs font-semibold text-on-surface mb-2 font-display tracking-wider" style="color: #21E6C1;">03 // 数据指标</h3>
+            <div class="grid grid-cols-4 gap-3 mt-3">
+              <div class="metal-panel p-2.5 rounded-sm text-center">
+                <div class="relative z-10">
+                  <p class="text-lg font-display font-bold" style="color: #21E6C1;">200W+</p>
+                  <p class="text-[9px] font-mono" style="color: #5A6273;">获赞数</p>
+                </div>
+              </div>
+              <div class="metal-panel p-2.5 rounded-sm text-center">
+                <div class="relative z-10">
+                  <p class="text-lg font-display font-bold" style="color: #FF3B5C;">12.7%</p>
+                  <p class="text-[9px] font-mono" style="color: #5A6273;">互动率</p>
+                </div>
+              </div>
+              <div class="metal-panel p-2.5 rounded-sm text-center">
+                <div class="relative z-10">
+                  <p class="text-lg font-display font-bold" style="color: #E8EBF0;">89%</p>
+                  <p class="text-[9px] font-mono" style="color: #5A6273;">3秒完播</p>
+                </div>
+              </div>
+              <div class="metal-panel p-2.5 rounded-sm text-center">
+                <div class="relative z-10">
+                  <p class="text-lg font-display font-bold" style="color: #8B5CFF;">3000W</p>
+                  <p class="text-[9px] font-mono" style="color: #5A6273;">总播放</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div>
+            <h3 class="text-xs font-semibold text-on-surface mb-2 font-display tracking-wider" style="color: #21E6C1;">04 // 可复用方法论</h3>
+            <p>1. 视觉先行：用极致视觉冲击赢得前3秒注意力<br/>2. 文化赋能：将产品与传统文化深度绑定，构建差异化叙事<br/>3. 情绪收尾：用品牌主张形成情感共鸣，提升品牌记忆度<br/>4. 系列化运营：3条视频形成系列，持续累积品牌势能</p>
+          </div>
+        </div>
+
+        <!-- 弹窗底部操作 -->
+        <div class="flex items-center justify-between mt-6 pt-4" style="border-top: 1px solid rgba(140,150,165,0.10);">
+          <div class="flex items-center gap-2">
+            <button id="btn-edit-knowledge" class="px-3 py-1.5 text-[10px] font-medium rounded-sm transition-all" style="color: #8A94A6; background: rgba(140,150,165,0.06); border: 1px solid rgba(140,150,165,0.15);">
+              <span class="inline-flex items-center gap-1.5"><i data-lucide="pencil" class="w-3 h-3"></i>编辑</span>
+            </button>
+            <button id="btn-delete-knowledge" class="px-3 py-1.5 text-[10px] font-medium rounded-sm transition-all" style="color: #FF3B5C; background: rgba(255,59,92,0.06); border: 1px solid rgba(255,59,92,0.15);">
+              <span class="inline-flex items-center gap-1.5"><i data-lucide="trash-2" class="w-3 h-3"></i>删除</span>
+            </button>
+          </div>
+          <button id="btn-use-knowledge" class="hud-btn-primary hud-clip-tr px-4 py-2 text-xs font-medium inline-flex items-center gap-2 transition-all">
+            <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>用于生成
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 添加知识弹窗 -->
+  <div id="add-modal" class="add-overlay fixed inset-0 z-50 items-center justify-center p-6" style="background: rgba(0,0,0,0.7);">
+    <div class="metal-panel hud-clip max-w-lg w-full max-h-[85vh] overflow-y-auto p-6 rounded-sm relative hud-corner">
+      <div class="relative z-10">
+        <!-- 弹窗头部 -->
+        <div class="flex items-center justify-between mb-5">
+          <div>
+            <h2 class="text-sm font-display font-bold tracking-wider metal-text">ADD KNOWLEDGE</h2>
+            <p class="text-[10px] font-mono mt-1" style="color: #5A6273;">新增知识条目 // 请填写以下信息</p>
+          </div>
+          <button id="btn-close-add" class="shrink-0 w-7 h-7 flex items-center justify-center rounded-sm transition-colors" style="color: #5A6273; border: 1px solid rgba(140,150,165,0.15);" onmouseover="this.style.color='#E8EBF0';this.style.borderColor='rgba(140,150,165,0.3)'" onmouseout="this.style.color='#5A6273';this.style.borderColor='rgba(140,150,165,0.15)'">
+            <i data-lucide="x" class="w-3.5 h-3.5"></i>
+          </button>
+        </div>
+
+        <!-- 表单 -->
+        <div class="space-y-4">
+          <div>
+            <label class="text-[10px] font-mono uppercase tracking-wider block mb-1.5" style="color: #8A94A6;">标题</label>
+            <input id="add-title" type="text" placeholder="输入知识条目标题" class="w-full bg-surface-container border-none rounded-md px-3 py-2.5 text-sm text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:ring-2 focus:ring-primary/20 transition-colors" />
+          </div>
+          <div>
+            <label class="text-[10px] font-mono uppercase tracking-wider block mb-1.5" style="color: #8A94A6;">分类</label>
+            <div class="flex items-center gap-2 flex-wrap">
+              <label class="cat-tag-red text-[10px] font-medium px-2.5 py-1.5 rounded-sm cursor-pointer transition-all">
+                <input type="radio" name="add-category" value="industry" class="hidden" />行业洞察
+              </label>
+              <label class="cat-tag-cyan text-[10px] font-medium px-2.5 py-1.5 rounded-sm cursor-pointer transition-all">
+                <input type="radio" name="add-category" value="viral" class="hidden" />爆款拆解
+              </label>
+              <label class="cat-tag-magenta text-[10px] font-medium px-2.5 py-1.5 rounded-sm cursor-pointer transition-all">
+                <input type="radio" name="add-category" value="platform" class="hidden" />平台规则
+              </label>
+              <label class="cat-tag-purple text-[10px] font-medium px-2.5 py-1.5 rounded-sm cursor-pointer transition-all">
+                <input type="radio" name="add-category" value="script" class="hidden" />话术模板
+              </label>
+              <label class="cat-tag-yellow text-[10px] font-medium px-2.5 py-1.5 rounded-sm cursor-pointer transition-all">
+                <input type="radio" name="add-category" value="marketing" class="hidden" />营销方法论
+              </label>
+            </div>
+          </div>
+          <div>
+            <label class="text-[10px] font-mono uppercase tracking-wider block mb-1.5" style="color: #8A94A6;">内容摘要</label>
+            <textarea id="add-summary" rows="4" placeholder="输入知识条目内容摘要" class="w-full bg-surface-container border-none rounded-md px-3 py-2.5 text-sm text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:ring-2 focus:ring-primary/20 transition-colors resize-none"></textarea>
+          </div>
+          <div>
+            <label class="text-[10px] font-mono uppercase tracking-wider block mb-1.5" style="color: #8A94A6;">来源</label>
+            <input id="add-source" type="text" placeholder="数据来源（如：蝉妈妈、艾瑞咨询等）" class="w-full bg-surface-container border-none rounded-md px-3 py-2.5 text-sm text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:ring-2 focus:ring-primary/20 transition-colors" />
+          </div>
+          <div>
+            <label class="text-[10px] font-mono uppercase tracking-wider block mb-1.5" style="color: #8A94A6;">标签</label>
+            <input id="add-tags" type="text" placeholder="多个标签用逗号分隔" class="w-full bg-surface-container border-none rounded-md px-3 py-2.5 text-sm text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:ring-2 focus:ring-primary/20 transition-colors" />
+          </div>
+        </div>
+
+        <!-- 弹窗底部操作 -->
+        <div class="flex items-center justify-end gap-3 mt-6 pt-4" style="border-top: 1px solid rgba(140,150,165,0.10);">
+          <button id="btn-cancel-add" class="px-4 py-2 text-xs font-medium rounded-sm transition-all" style="color: #8A94A6; background: rgba(140,150,165,0.06); border: 1px solid rgba(140,150,165,0.15);">取消</button>
+          <button id="btn-submit-add" class="hud-btn-primary hud-clip-tr px-4 py-2 text-xs font-medium inline-flex items-center gap-2 transition-all">
+            <i data-lucide="check" class="w-3.5 h-3.5"></i>确认添加
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>lucide.createIcons();</script>
+
   <script>
-    $(function () {
+  $(function() {
 
-      // === 分类筛选 ===
-      var currentFilter = 'all';
-      var showFavoriteOnly = false;
+    // === 分类标签筛选 ===
+    $('.cat-filter-btn').on('click', function() {
+      const cat = $(this).data('cat');
 
-      $('#knowledge-list').on('click', '.knowledge-filter-btn', function () {
-        // This won't fire since filter buttons are siblings of the list, but keeping for delegation pattern
-      });
-
-      $('.knowledge-filter-btn').on('click', function () {
-        currentFilter = $(this).data('filter');
-        showFavoriteOnly = false;
-
-        // Reset favorite button style
-        $('#filter-favorite').removeClass('bg-warning/15 text-warning').addClass('bg-surface-container text-on-surface-variant');
-
-        // Update filter button styles
-        $('.knowledge-filter-btn').each(function () {
-          if ($(this).data('filter') === currentFilter) {
-            $(this).removeClass('bg-surface-container text-on-surface-variant').addClass('bg-primary/15 text-primary');
-          } else {
-            $(this).removeClass('bg-primary/15 text-primary').addClass('bg-surface-container text-on-surface-variant');
-          }
+      // 更新激活态
+      $('.cat-filter-btn').removeClass('active').each(function() {
+        $(this).css({
+          'background': '',
+          'border-color': '',
+          'color': ''
         });
-
-        applyFilters();
       });
 
-      // === 常用知识筛选 ===
-      $('#filter-favorite').on('click', function () {
-        showFavoriteOnly = !showFavoriteOnly;
+      $(this).addClass('active');
 
-        if (showFavoriteOnly) {
-          $(this).removeClass('bg-surface-container text-on-surface-variant').addClass('bg-warning/15 text-warning');
-          // Reset category filter
-          currentFilter = 'all';
-          $('.knowledge-filter-btn').removeClass('bg-primary/15 text-primary').addClass('bg-surface-container text-on-surface-variant');
-          $('#filter-all').removeClass('bg-surface-container text-on-surface-variant').addClass('bg-primary/15 text-primary');
-        } else {
-          $(this).removeClass('bg-warning/15 text-warning').addClass('bg-surface-container text-on-surface-variant');
-        }
-
-        applyFilters();
-      });
-
-      // === 搜索 ===
-      $('#input-search').on('input', function () {
-        applyFilters();
-      });
-
-      function applyFilters() {
-        var keyword = $('#input-search').val().toLowerCase().trim();
-
-        $('.knowledge-card').each(function () {
-          var $card = $(this);
-          var category = $card.data('category');
-          var title = $card.find('h3').text().toLowerCase();
-          var summary = $card.find('p').text().toLowerCase();
-          var isFavorited = $card.find('.btn-favorite').data('favorited');
-
-          var matchCategory = (currentFilter === 'all') || (category === currentFilter);
-          var matchFavorite = !showFavoriteOnly || isFavorited;
-          var matchKeyword = !keyword || title.indexOf(keyword) > -1 || summary.indexOf(keyword) > -1;
-
-          if (matchCategory && matchFavorite && matchKeyword) {
-            $card.show();
-          } else {
-            $card.hide();
-          }
+      if (cat === 'all') {
+        $(this).css({
+          'background': 'rgba(140,150,165,0.12)',
+          'border-color': 'rgba(140,150,165,0.25)',
+          'color': '#E8EBF0'
         });
       }
 
-      // === 收藏/取消收藏 ===
-      $('#knowledge-list').on('click', '.btn-favorite', function (e) {
-        e.stopPropagation();
-        var $btn = $(this);
-        var isFav = $btn.data('favorited');
-
-        if (isFav) {
-          $btn.data('favorited', false);
-          $btn.find('i').removeClass('text-warning').addClass('text-on-surface-variant/50');
-        } else {
-          $btn.data('favorited', true);
-          $btn.find('i').removeClass('text-on-surface-variant/50').addClass('text-warning');
-        }
-
-        // If showing favorites only, re-apply filter
-        if (showFavoriteOnly) {
-          applyFilters();
-        }
-      });
-
-      // === 点击卡片打开详情 ===
-      $('#knowledge-list').on('click', '.knowledge-card', function (e) {
-        // Don't open detail if clicking favorite button
-        if ($(e.target).closest('.btn-favorite').length) return;
-
-        var $card = $(this);
-        var id = $card.data('id');
-        var category = $card.data('category');
-        var title = $card.find('h3').text();
-        var date = $card.find('.text-on-surface-variant').first().text();
-        var refs = $card.find('.text-sm.font-semibold').text();
-
-        // Update detail modal with card data
-        var categoryMap = {
-          'industry': { label: '行业洞察', cls: 'bg-error/15 text-error' },
-          'hit': { label: '爆款拆解', cls: 'bg-cyber-cyan/15 text-cyber-cyan' },
-          'rule': { label: '平台规则', cls: 'bg-cyber-magenta/15 text-cyber-magenta' },
-          'script': { label: '话术模板', cls: 'bg-cyber-purple/15 text-cyber-purple' },
-          'method': { label: '营销方法论', cls: 'bg-warning/15 text-warning' }
-        };
-        var catInfo = categoryMap[category] || categoryMap['industry'];
-
-        $('#detail-category').attr('class', 'inline-flex items-center px-2 py-0.5 rounded-sm text-xs font-medium ' + catInfo.cls).text(catInfo.label);
-        $('#detail-title').text(title);
-        $('#detail-date').html('<i data-lucide="calendar" class="w-3 h-3"></i>' + date);
-        $('#detail-refs').html('<i data-lucide="repeat-2" class="w-3 h-3"></i>' + refs + ' 次引用');
-
-        $('#detail-modal').removeClass('hidden');
-        lucide.createIcons();
-      });
-
-      // === 关闭详情弹窗 ===
-      $('#btn-close-detail').on('click', function () {
-        $('#detail-modal').addClass('hidden');
-      });
-      $('#detail-modal').on('click', function (e) {
-        if ($(e.target).is('#detail-modal')) {
-          $('#detail-modal').addClass('hidden');
-        }
-      });
-
-      // === 编辑知识按钮 - 点击后应实现内联编辑：
-      // 1. 将详情弹窗中的标题替换为 input 输入框，自动聚焦并全选
-      // 2. 内容区域替换为 textarea 可编辑
-      // 3. 分类替换为 select 下拉框
-      // 4. 底部按钮切换为"保存"和"取消"
-      // 5. 保存后更新列表对应卡片的数据
-      $('#btn-edit-knowledge').on('click', function () {
-        console.log('编辑知识：需实现内联编辑功能');
-      });
-
-      // === 复制引用 ===
-      $('#btn-cite-knowledge').on('click', function () {
-        console.log('复制知识引用到剪贴板');
-      });
-
-      // === 详情弹窗内标记常用 ===
-      $('#btn-favorite-detail').on('click', function () {
-        console.log('在详情弹窗中标记/取消标记常用知识');
-      });
-
-      // === 打开添加知识弹窗 ===
-      $('#btn-add-knowledge').on('click', function () {
-        $('#add-modal').removeClass('hidden');
-        lucide.createIcons();
-      });
-
-      // === 关闭添加知识弹窗 ===
-      $('#btn-close-add').on('click', function () {
-        $('#add-modal').addClass('hidden');
-      });
-      $('#btn-cancel-add').on('click', function () {
-        $('#add-modal').addClass('hidden');
-      });
-      $('#add-modal').on('click', function (e) {
-        if ($(e.target).is('#add-modal')) {
-          $('#add-modal').addClass('hidden');
-        }
-      });
-
-      // === 保存知识 - 点击后应实现：
-      // 1. 校验标题和内容不能为空
-      // 2. 根据分类生成对应颜色的标签
-      // 3. 创建新的知识卡片并插入列表顶部
-      // 4. 清空表单，关闭弹窗
-      $('#btn-submit-knowledge').on('click', function () {
-        var title = $('#input-title').val().trim();
-        var category = $('#select-category').val();
-        var summary = $('#input-summary').val().trim();
-
-        if (!title) {
-          $('#input-title').focus();
-          return;
-        }
-
-        console.log('保存知识:', { title: title, category: category, summary: summary });
-        // 实际应创建新卡片DOM并插入列表顶部
-        $('#add-modal').addClass('hidden');
-        // 清空表单
-        $('#input-title').val('');
-        $('#input-summary').val('');
-        $('#input-content').val('');
-      });
-
-      // === AI提取沉淀按钮 - 点击后应实现：
-      // 1. 弹出对话框，提供粘贴内容或上传文件的输入区域
-      // 2. 调用AI接口分析内容，自动识别知识点和分类
-      // 3. 生成结构化的知识条目预览，用户确认后入库
-      $('#btn-ai-extract').on('click', function () {
-        console.log('AI提取沉淀：需调用AI接口分析内容并自动生成知识条目');
-      });
-
+      // 筛选卡片
+      if (cat === 'all') {
+        $('.kb-card').show();
+      } else {
+        $('.kb-card').hide();
+        $('.kb-card[data-cat="' + cat + '"]').show();
+      }
     });
+
+    // === 搜索过滤 ===
+    $('#input-search').on('input', function() {
+      const keyword = $(this).val().toLowerCase().trim();
+      if (!keyword) {
+        $('.kb-card').show();
+        return;
+      }
+      $('.kb-card').each(function() {
+        const text = $(this).text().toLowerCase();
+        if (text.indexOf(keyword) > -1) {
+          $(this).show();
+        } else {
+          $(this).hide();
+        }
+      });
+    });
+
+    // === 点击卡片打开详情弹窗 ===
+    $('#kb-card-list').on('click', '.kb-card', function() {
+      $('#detail-modal').addClass('active');
+    });
+
+    // === 关闭详情弹窗 ===
+    $('#btn-close-detail').on('click', function() {
+      $('#detail-modal').removeClass('active');
+    });
+
+    // 点击遮罩关闭详情弹窗
+    $('#detail-modal').on('click', function(e) {
+      if ($(e.target).is('#detail-modal')) {
+        $(this).removeClass('active');
+      }
+    });
+
+    // === 编辑知识条目 ===
+    // 编辑按钮 - 点击后应实现内联编辑：
+    // 1. 将详情弹窗中各段落文字替换为可编辑的 textarea/input
+    // 2. 自动聚焦到标题输入框并全选
+    // 3. 底部操作栏切换为"保存"和"取消"按钮
+    // 4. 保存后将修改后的内容写回对应知识卡片 DOM 节点
+    // 5. 取消则恢复原始内容
+    $('#btn-edit-knowledge').on('click', function() {
+      console.log('编辑知识条目: KB-0028');
+    });
+
+    // === 删除知识条目 ===
+    // 删除按钮 - 点击后应实现确认删除：
+    // 1. 弹出确认对话框，提示"确定删除该知识条目？删除后不可恢复"
+    // 2. 确认后从列表中移除对应卡片 DOM 节点
+    // 3. 关闭详情弹窗
+    // 4. 更新统计数字（总条目-1，对应分类数-1）
+    $('#btn-delete-knowledge').on('click', function() {
+      console.log('删除知识条目: KB-0028');
+    });
+
+    // === 用于生成 ===
+    $('#btn-use-knowledge').on('click', function() {
+      window.location.href = 'generate.html?ref=KB-0028';
+    });
+
+    // === 打开添加知识弹窗 ===
+    $('#btn-add-knowledge').on('click', function() {
+      $('#add-modal').addClass('active');
+    });
+
+    // === 关闭添加知识弹窗 ===
+    $('#btn-close-add').on('click', function() {
+      $('#add-modal').removeClass('active');
+    });
+
+    $('#btn-cancel-add').on('click', function() {
+      $('#add-modal').removeClass('active');
+    });
+
+    // 点击遮罩关闭添加弹窗
+    $('#add-modal').on('click', function(e) {
+      if ($(e.target).is('#add-modal')) {
+        $(this).removeClass('active');
+      }
+    });
+
+    // === 分类选择（添加弹窗中的 radio 标签）===
+    $('input[name="add-category"]').on('change', function() {
+      // 移除所有标签的选中态高亮
+      $('input[name="add-category"]').closest('label').css({
+        'box-shadow': '',
+        'transform': ''
+      });
+      // 给选中标签添加高亮
+      $(this).closest('label').css({
+        'box-shadow': '0 0 8px rgba(140,150,165,0.2)',
+        'transform': 'scale(1.02)'
+      });
+    });
+
+    // === 提交添加知识 ===
+    // 提交按钮 - 点击后应实现添加逻辑：
+    // 1. 校验标题和分类是否已填写
+    // 2. 在知识卡片列表顶部插入一个新的卡片 DOM 节点
+    // 3. 新卡片的分类色标、标签根据选择的分类渲染
+    // 4. 关闭弹窗，清空表单
+    // 5. 更新统计数字（总条目+1，对应分类数+1）
+    $('#btn-submit-add').on('click', function() {
+      const title = $('#add-title').val().trim();
+      const category = $('input[name="add-category"]:checked').val();
+      if (!title) {
+        $('#add-title').css('ring', '2px solid rgba(255,59,92,0.5)');
+        return;
+      }
+      console.log('添加知识条目:', title, '分类:', category);
+      // 关闭弹窗
+      $('#add-modal').removeClass('active');
+      // 清空表单
+      $('#add-title').val('');
+      $('#add-summary').val('');
+      $('#add-source').val('');
+      $('#add-tags').val('');
+      $('input[name="add-category"]').prop('checked', false);
+      $('input[name="add-category"]').closest('label').css({
+        'box-shadow': '',
+        'transform': ''
+      });
+    });
+
+    // === ESC 关闭弹窗 ===
+    $(document).on('keydown', function(e) {
+      if (e.key === 'Escape') {
+        $('#detail-modal').removeClass('active');
+        $('#add-modal').removeClass('active');
+      }
+    });
+
+    // === 翻页按钮 ===
+    // 翻页按钮 - 点击后应实现分页逻辑：
+    // 1. 记录当前页码
+    // 2. 根据当前分类筛选条件和搜索关键词请求对应页的数据
+    // 3. 替换卡片列表内容
+    // 4. 更新分页状态（当前页码高亮、禁用首/末页按钮）
+    // 5. 滚动到列表顶部
+    $('#btn-prev-page').on('click', function() {
+      console.log('翻到上一页');
+    });
+    $('#btn-next-page').on('click', function() {
+      console.log('翻到下一页');
+    });
+
+  });
   </script>
 
-  <script>lucide.createIcons();</script>
 </body>
 
 </html>

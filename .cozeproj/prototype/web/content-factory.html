@@ -7,7 +7,7 @@
 
   <!-- 赛博/科技感字体 -->
   <link href="https://lf-code-agent.coze.cn/obj/x-ai-cn/fonts/google/orbitron.css" rel="stylesheet"/>
-  <link href="https://lf-code-agent.coze.cn/obj/x-ai-cn/fonts/google/spacedock.css" rel="stylesheet"/>
+  <link href="https://lf-code-agent.coze.cn/obj/x-ai-cn/fonts/google/share-tech-mono.css" rel="stylesheet"/>
   <link href="https://lf-code-agent.coze.cn/obj/x-ai-cn/fonts/google/noto-sans-sc.css" rel="stylesheet"/>
 
   <script src="https://lf-code-agent.coze.cn/obj/x-ai-cn/cdn/jquery/jquery-3.7.1.min.js"></script>
@@ -16,64 +16,250 @@
 
   <style type="text/tailwindcss">
     @theme {
-      /* === 品牌色（红涨/正向） === */
+      /* === 品牌色（红涨/正向 — 仅用于数据、走势线、激活态边缘光、关键 CTA 描边） === */
       --color-primary:              #FF3B5C;
-      --color-primary-container:    #2A1520;
-      --color-on-primary:           #ffffff;
-      /* === 赛博霓虹点缀色 === */
+      --color-primary-container:    #1F1218;
+      --color-on-primary:           #E8EBF0;
+      /* === 赛博霓虹点缀色（仅用于细线点缀） === */
       --color-cyber-cyan:           #21E6C1;
       --color-cyber-magenta:        #FF2E97;
       --color-cyber-purple:         #8B5CFF;
-      /* === 涨跌语义色（中国股市红涨绿跌） === */
+      /* === 涨跌语义色（中国股市红涨绿跌 — 仅用于数据、走势线） === */
       --color-bull:                 #FF3B5C;
       --color-bear:                 #15E0A0;
-      /* === 背景 / 表面 === */
-      --color-background:                 #0A0E14;
-      --color-surface-container-lowest:   #0D1117;
-      --color-surface:                    #111820;
-      --color-surface-container:          #161D27;
-      --color-surface-container-high:     #1A2332;
-      --color-surface-container-highest:  #1F2937;
+      /* === 金属银色系 === */
+      --color-metal-light:          #D6DCE6;
+      --color-metal-mid:            #9AA3B2;
+      --color-metal-dark:           #6B7585;
+      /* === 背景 / 表面 — 金属枪灰 HUD === */
+      --color-background:                 #08090C;
+      --color-surface-container-lowest:   #0C0E12;
+      --color-surface:                    #12151B;
+      --color-surface-container:          #161A22;
+      --color-surface-container-high:     #1A1E26;
+      --color-surface-container-highest:  #1F2430;
       /* === 文字 === */
-      --color-on-surface:           #F2F5FA;
+      --color-on-surface:           #E8EBF0;
       --color-on-surface-variant:   #8A94A6;
+      --color-on-surface-weakest:   #5A6273;
       /* === 功能色 === */
       --color-success:  #15E0A0;
       --color-error:    #FF3B5C;
       --color-warning:  #F5A623;
-      /* === 边框 === */
-      --color-outline:          #2A3444;
-      --color-outline-variant:  #1E2838;
-      /* === 圆角 === */
-      --radius-sm:   0.375rem;
-      --radius-md:   0.5rem;
-      --radius-lg:   0.75rem;
-      --radius-xl:   1rem;
-      --radius-2xl:  1.5rem;
+      /* === 边框 — 金属 HUD 描边 === */
+      --color-outline:          rgba(140,150,165,0.18);
+      --color-outline-variant:  rgba(140,150,165,0.10);
+      --color-outline-highlight: rgba(210,216,226,0.35);
+      /* === 圆角 — 更锐利 === */
+      --radius-sm:   0.25rem;
+      --radius-md:   0.375rem;
+      --radius-lg:   0.5rem;
+      --radius-xl:   0.75rem;
+      --radius-2xl:  1rem;
       --radius-full: 9999px;
-      /* === 阴影 === */
-      --shadow-card:   0 2px 8px rgba(0,0,0,0.4);
-      --shadow-float:  0 10px 25px rgba(0,0,0,0.5);
-      --shadow-dialog: 0 25px 50px rgba(0,0,0,0.6);
-      --shadow-glow-red:     0 0 20px rgba(255,59,92,0.15);
-      --shadow-glow-cyan:    0 0 20px rgba(33,230,193,0.15);
-      --shadow-glow-magenta: 0 0 20px rgba(255,46,151,0.15);
+      /* === 阴影 — 金属面板质感 === */
+      --shadow-card:   0 1px 3px rgba(0,0,0,0.5), 0 0 1px rgba(200,206,216,0.08);
+      --shadow-float:  0 8px 24px rgba(0,0,0,0.6), 0 0 1px rgba(200,206,216,0.08);
+      --shadow-dialog: 0 20px 48px rgba(0,0,0,0.7), 0 0 1px rgba(200,206,216,0.08);
+      --shadow-glow-red:     0 0 12px rgba(255,59,92,0.10), 0 0 1px rgba(255,59,92,0.3);
+      --shadow-glow-cyan:    0 0 12px rgba(33,230,193,0.10), 0 0 1px rgba(33,230,193,0.3);
+      --shadow-glow-magenta: 0 0 12px rgba(255,46,151,0.10), 0 0 1px rgba(255,46,151,0.3);
       /* === 字体 === */
-      --font-display: "Orbitron", "SpaceDock", monospace;
-      --font-mono: "SpaceDock", "Orbitron", monospace;
+      --font-display: "Orbitron", monospace;
+      --font-mono: "Share Tech Mono", monospace;
       --font-sans: "Noto Sans SC", system-ui, sans-serif;
     }
 
-    /* 自定义滚动条 */
-    ::-webkit-scrollbar { width: 6px; }
-    ::-webkit-scrollbar-track { background: #0A0E14; }
-    ::-webkit-scrollbar-thumb { background: #2A3444; border-radius: 3px; }
-    ::-webkit-scrollbar-thumb:hover { background: #3A4454; }
+    /* 自定义滚动条 — 金属灰 */
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: #08090C; }
+    ::-webkit-scrollbar-thumb { background: rgba(140,150,165,0.25); border-radius: 2px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(140,150,165,0.4); }
 
-    /* 霓虹文字效果 */
-    .neon-text-red { text-shadow: 0 0 10px rgba(255,59,92,0.5), 0 0 20px rgba(255,59,92,0.2); }
-    .neon-text-cyan { text-shadow: 0 0 10px rgba(33,230,193,0.5), 0 0 20px rgba(33,230,193,0.2); }
-    .neon-text-magenta { text-shadow: 0 0 10px rgba(255,46,151,0.5), 0 0 20px rgba(255,46,151,0.2); }
+    /* 金属银渐变文字 */
+    .metal-text {
+      background: linear-gradient(135deg, #D6DCE6 0%, #9AA3B2 50%, #D6DCE6 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    /* 金属面板渐变背景 */
+    .metal-panel {
+      background: linear-gradient(180deg, #12151B 0%, #1A1E26 100%);
+      border: 1px solid rgba(140,150,165,0.18);
+      position: relative;
+    }
+    .metal-panel::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(
+        90deg,
+        transparent,
+        transparent 2px,
+        rgba(200,206,216,0.015) 2px,
+        rgba(200,206,216,0.015) 4px
+      );
+      pointer-events: none;
+      border-radius: inherit;
+    }
+    .metal-panel:hover {
+      border-color: rgba(210,216,226,0.35);
+    }
+
+    /* HUD 切角 — 右上 + 左下 */
+    .hud-clip {
+      clip-path: polygon(
+        0 0,
+        calc(100% - 8px) 0,
+        100% 8px,
+        100% 100%,
+        8px 100%,
+        0 calc(100% - 8px)
+      );
+    }
+
+    /* HUD 切角 — 仅右上 */
+    .hud-clip-tr {
+      clip-path: polygon(
+        0 0,
+        calc(100% - 6px) 0,
+        100% 6px,
+        100% 100%,
+        0 100%
+      );
+    }
+
+    /* 扫描线 overlay — 极淡 */
+    .scanline-overlay {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 9999;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(0,0,0,0.03) 2px,
+        rgba(0,0,0,0.03) 4px
+      );
+    }
+
+    /* 霓虹辉光效果 — 克制版 */
+    .glow-red { box-shadow: 0 0 8px rgba(255,59,92,0.12), inset 0 0 4px rgba(255,59,92,0.06); }
+    .glow-cyan { box-shadow: 0 0 8px rgba(33,230,193,0.12), inset 0 0 4px rgba(33,230,193,0.06); }
+    .glow-magenta { box-shadow: 0 0 8px rgba(255,46,151,0.12), inset 0 0 4px rgba(255,46,151,0.06); }
+
+    /* 霓虹文字效果 — 克制版 */
+    .neon-text-red { text-shadow: 0 0 6px rgba(255,59,92,0.4); }
+    .neon-text-cyan { text-shadow: 0 0 6px rgba(33,230,193,0.4); }
+    .neon-text-magenta { text-shadow: 0 0 6px rgba(255,46,151,0.4); }
+
+    /* HUD 网格背景 */
+    .hud-grid-bg {
+      background-image:
+        linear-gradient(rgba(140,150,165,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(140,150,165,0.04) 1px, transparent 1px);
+      background-size: 40px 40px;
+    }
+
+    /* HUD 角标装饰 */
+    .hud-corner::before,
+    .hud-corner::after {
+      content: '';
+      position: absolute;
+      width: 8px;
+      height: 8px;
+      border-color: rgba(140,150,165,0.3);
+    }
+    .hud-corner::before {
+      top: -1px;
+      left: -1px;
+      border-top: 1px solid;
+      border-left: 1px solid;
+    }
+    .hud-corner::after {
+      bottom: -1px;
+      right: -1px;
+      border-bottom: 1px solid;
+      border-right: 1px solid;
+    }
+
+    /* 呼吸脉冲动画 — 用于状态指示灯 */
+    @keyframes pulse-dot {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+    .pulse-dot { animation: pulse-dot 2s ease-in-out infinite; }
+
+    /* HUD 按钮基础样式 — 枪灰金属底 + 霓虹描边 */
+    .hud-btn-primary {
+      background: linear-gradient(180deg, #1A1E26 0%, #12151B 100%);
+      border: 1px solid rgba(255,59,92,0.5);
+      color: #E8EBF0;
+      position: relative;
+      box-shadow: 0 0 8px rgba(255,59,92,0.10), inset 0 0 6px rgba(255,59,92,0.05);
+      transition: all 0.2s ease;
+    }
+    .hud-btn-primary:hover {
+      border-color: rgba(255,59,92,0.8);
+      box-shadow: 0 0 16px rgba(255,59,92,0.18), inset 0 0 8px rgba(255,59,92,0.08);
+    }
+
+    /* 迷你走势线占位 */
+    .sparkline-placeholder {
+      opacity: 0.4;
+    }
+
+    /* 内容列表行样式 */
+    .content-row {
+      background: linear-gradient(180deg, #12151B 0%, #161A22 100%);
+      border: 1px solid rgba(140,150,165,0.10);
+      transition: all 0.15s ease;
+    }
+    .content-row:hover {
+      border-color: rgba(210,216,226,0.25);
+      background: linear-gradient(180deg, #161A22 0%, #1A1E26 100%);
+    }
+
+    /* 选中态模板卡片 — 红色霓虹描边 */
+    .template-selected {
+      border-color: rgba(255,59,92,0.7) !important;
+      box-shadow: 0 0 12px rgba(255,59,92,0.15), inset 0 0 8px rgba(255,59,92,0.06) !important;
+    }
+
+    /* 日历网格 */
+    .calendar-cell {
+      border: 1px solid rgba(140,150,165,0.08);
+      background: linear-gradient(180deg, #0E1014 0%, #12151B 100%);
+      transition: all 0.15s ease;
+    }
+    .calendar-cell:hover {
+      border-color: rgba(210,216,226,0.18);
+    }
+    .calendar-cell-today {
+      border-color: rgba(255,59,92,0.35);
+    }
+    .calendar-dot {
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+    }
+
+    /* 编辑器弹窗 HUD 切角 */
+    .editor-modal {
+      background: linear-gradient(180deg, #12151B 0%, #1A1E26 100%);
+      border: 1px solid rgba(140,150,165,0.18);
+      clip-path: polygon(
+        0 0,
+        calc(100% - 12px) 0,
+        100% 12px,
+        100% 100%,
+        12px 100%,
+        0 calc(100% - 12px)
+      );
+    }
   </style>
 
   <!-- 图片兜底 -->
@@ -89,599 +275,748 @@
       const icons = { '人物': '👤', '自然风景': '🏞', '动物': '🐾', '建筑城市': '🏙', '运动体育': '⚽', '交通工具': '🚗', '食物': '🍽', '服饰时尚': '👗', '商业科技': '💼', '游戏娱乐': '🎮', '艺术': '🎨', '其他': '🖼' };
       const icon = icons[cat] || '🖼';
       const w = img.width || 400, h = img.height || 300;
-      const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}"><rect width="100%" height="100%" fill="%23111820"/><text x="50%" y="45%" text-anchor="middle" font-size="${Math.min(w, h) * 0.18}" fill="%238A94A6" dominant-baseline="central">${icon}</text><text x="50%" y="68%" text-anchor="middle" font-size="${Math.min(w, h) * 0.07}" fill="%235A6476" font-family="system-ui,sans-serif" dominant-baseline="central">${label}</text></svg>`;
+      const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}"><rect width="100%" height="100%" fill="%2312151B"/><text x="50%" y="45%" text-anchor="middle" font-size="${Math.min(w, h) * 0.18}" fill="%238A94A6" dominant-baseline="central">${icon}</text><text x="50%" y="68%" text-anchor="middle" font-size="${Math.min(w, h) * 0.07}" fill="%235A6273" font-family="system-ui,sans-serif" dominant-baseline="central">${label}</text></svg>`;
       img.src = 'data:image/svg+xml,' + svg;
     }, true);
   </script>
 </head>
 
-<body class="bg-background text-on-surface font-sans">
+<body class="bg-background text-on-surface font-sans" style="letter-spacing: 0.02em;">
+
+  <!-- 扫描线 overlay -->
+  <div class="scanline-overlay"></div>
 
   <!-- @nav:start 导航组件 -->
-  <header class="bg-surface sticky top-0 z-40 h-14 flex items-center justify-between px-5 border-b border-outline-variant/30">
+  <header class="bg-surface sticky top-0 z-40 h-12 flex items-center justify-between px-5" style="border-bottom: 1px solid rgba(140,150,165,0.18); background: linear-gradient(180deg, #12151B 0%, #0E1016 100%);">
     <div class="flex items-center gap-3">
-      <div class="flex items-center gap-2">
-        <div class="w-8 h-8 rounded-md bg-primary/20 flex items-center justify-center">
-          <i data-lucide="zap" class="w-4 h-4 text-primary"></i>
+      <div class="flex items-center gap-2.5">
+        <div class="w-7 h-7 flex items-center justify-center hud-clip-tr" style="background: linear-gradient(180deg, #1A1E26 0%, #12151B 100%); border: 1px solid rgba(140,150,165,0.2);">
+          <i data-lucide="zap" class="w-3.5 h-3.5" style="color: #FF3B5C;"></i>
         </div>
-        <span class="font-display font-bold text-base tracking-wider neon-text-red">XIANLIAO</span>
-        <span class="text-xs text-on-surface-variant font-mono ml-1">AI</span>
+        <span class="font-display font-bold text-sm tracking-[0.2em] metal-text">XIANLIAO</span>
+        <span class="text-[10px] font-mono tracking-wider" style="color: #5A6273;">AI</span>
+        <span class="text-[9px] font-mono px-1.5 py-0.5 ml-1" style="color: #21E6C1; background: rgba(33,230,193,0.08); border: 1px solid rgba(33,230,193,0.15);">v2.0</span>
       </div>
     </div>
-    <div class="flex items-center gap-3">
-      <button class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-on-surface-variant hover:text-on-surface hover:bg-surface-container rounded-md transition-colors">
+    <div class="flex items-center gap-2">
+      <button class="flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium rounded-sm transition-colors" style="color: #8A94A6; border: 1px solid transparent;" onmouseover="this.style.borderColor='rgba(140,150,165,0.2)';this.style.color='#E8EBF0'" onmouseout="this.style.borderColor='transparent';this.style.color='#8A94A6'">
         <i data-lucide="bell" class="w-3.5 h-3.5"></i>
       </button>
-      <div class="w-7 h-7 rounded-full bg-primary/20 flex items-center justify-center text-xs font-medium text-primary">
+      <div class="w-6 h-6 flex items-center justify-center text-[10px] font-medium hud-clip-tr" style="color: #9AA3B2; background: linear-gradient(180deg, #1A1E26 0%, #12151B 100%); border: 1px solid rgba(140,150,165,0.2);">
         咸
       </div>
     </div>
   </header>
 
-  <div class="flex" style="height: calc(100vh - 3.5rem)">
-    <aside class="w-52 shrink-0 bg-surface-container-lowest border-r border-outline-variant/20 overflow-y-auto">
-      <div class="p-3 space-y-0.5">
-        <a href="home.html" class="flex items-center gap-3 px-3 py-2.5 rounded-md text-on-surface-variant hover:bg-surface-container hover:text-on-surface font-medium text-sm transition-colors">
-          <i data-lucide="home" class="w-4 h-4"></i>首页
+  <div class="flex" style="height: calc(100vh - 3rem)">
+    <aside class="w-48 shrink-0 overflow-y-auto" style="background: linear-gradient(180deg, #0C0E12 0%, #08090C 100%); border-right: 1px solid rgba(140,150,165,0.10);">
+      <div class="p-2.5 space-y-0.5">
+        <a href="home.html" class="flex items-center gap-2.5 px-2.5 py-2 rounded-sm text-xs font-medium transition-all" style="color: #8A94A6; border: 1px solid transparent;" onmouseover="this.style.background='rgba(140,150,165,0.06)';this.style.borderColor='rgba(140,150,165,0.12)';this.style.color='#E8EBF0'" onmouseout="this.style.background='';this.style.borderColor='transparent';this.style.color='#8A94A6'">
+          <i data-lucide="home" class="w-3.5 h-3.5"></i>首页
         </a>
-        <a href="generate.html" class="flex items-center gap-3 px-3 py-2.5 rounded-md text-on-surface-variant hover:bg-surface-container hover:text-on-surface font-medium text-sm transition-colors">
-          <i data-lucide="sparkles" class="w-4 h-4"></i>一键生成
+        <a href="generate.html" class="flex items-center gap-2.5 px-2.5 py-2 rounded-sm text-xs font-medium transition-all" style="color: #8A94A6; border: 1px solid transparent;" onmouseover="this.style.background='rgba(140,150,165,0.06)';this.style.borderColor='rgba(140,150,165,0.12)';this.style.color='#E8EBF0'" onmouseout="this.style.background='';this.style.borderColor='transparent';this.style.color='#8A94A6'">
+          <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>一键生成
         </a>
-        <a href="brand-assets.html" class="flex items-center gap-3 px-3 py-2.5 rounded-md text-on-surface-variant hover:bg-surface-container hover:text-on-surface font-medium text-sm transition-colors">
-          <i data-lucide="gem" class="w-4 h-4"></i>品牌资产
+        <a href="brand-assets.html" class="flex items-center gap-2.5 px-2.5 py-2 rounded-sm text-xs font-medium transition-all" style="color: #8A94A6; border: 1px solid transparent;" onmouseover="this.style.background='rgba(140,150,165,0.06)';this.style.borderColor='rgba(140,150,165,0.12)';this.style.color='#E8EBF0'" onmouseout="this.style.background='';this.style.borderColor='transparent';this.style.color='#8A94A6'">
+          <i data-lucide="gem" class="w-3.5 h-3.5"></i>品牌资产
         </a>
 
-        <div class="pt-4 pb-2 px-3">
-          <span class="text-[10px] font-mono uppercase tracking-widest text-on-surface-variant/50">进阶区</span>
+        <div class="pt-3 pb-1.5 px-2.5">
+          <span class="text-[9px] font-mono uppercase tracking-[0.2em]" style="color: #5A6273;">ADVANCED</span>
         </div>
-        <a href="topic-engine.html" class="flex items-center gap-3 px-3 py-2.5 rounded-md text-on-surface-variant hover:bg-surface-container hover:text-on-surface font-medium text-sm transition-colors">
-          <i data-lucide="trending-up" class="w-4 h-4"></i>选题引擎
+        <a href="topic-engine.html" class="flex items-center gap-2.5 px-2.5 py-2 rounded-sm text-xs font-medium transition-all" style="color: #8A94A6; border: 1px solid transparent;" onmouseover="this.style.background='rgba(140,150,165,0.06)';this.style.borderColor='rgba(140,150,165,0.12)';this.style.color='#E8EBF0'" onmouseout="this.style.background='';this.style.borderColor='transparent';this.style.color='#8A94A6'">
+          <i data-lucide="trending-up" class="w-3.5 h-3.5"></i>选题引擎
         </a>
-        <a href="content-factory.html" class="flex items-center gap-3 px-3 py-2.5 rounded-md bg-primary/10 text-primary font-medium text-sm" aria-current="page">
-          <i data-lucide="factory" class="w-4 h-4"></i>内容工厂
+        <a href="content-factory.html" class="flex items-center gap-2.5 px-2.5 py-2 rounded-sm text-xs font-medium transition-all hud-clip-tr" style="background: rgba(255,59,92,0.08); color: #FF3B5C; border: 1px solid rgba(255,59,92,0.2);" aria-current="page">
+          <i data-lucide="factory" class="w-3.5 h-3.5"></i>内容工厂
         </a>
-        <a href="publish.html" class="flex items-center gap-3 px-3 py-2.5 rounded-md text-on-surface-variant hover:bg-surface-container hover:text-on-surface font-medium text-sm transition-colors">
-          <i data-lucide="send" class="w-4 h-4"></i>发布管理
+        <a href="publish.html" class="flex items-center gap-2.5 px-2.5 py-2 rounded-sm text-xs font-medium transition-all" style="color: #8A94A6; border: 1px solid transparent;" onmouseover="this.style.background='rgba(140,150,165,0.06)';this.style.borderColor='rgba(140,150,165,0.12)';this.style.color='#E8EBF0'" onmouseout="this.style.background='';this.style.borderColor='transparent';this.style.color='#8A94A6'">
+          <i data-lucide="send" class="w-3.5 h-3.5"></i>发布管理
         </a>
-        <a href="data-review.html" class="flex items-center gap-3 px-3 py-2.5 rounded-md text-on-surface-variant hover:bg-surface-container hover:text-on-surface font-medium text-sm transition-colors">
-          <i data-lucide="chart-bar" class="w-4 h-4"></i>数据复盘
+        <a href="data-review.html" class="flex items-center gap-2.5 px-2.5 py-2 rounded-sm text-xs font-medium transition-all" style="color: #8A94A6; border: 1px solid transparent;" onmouseover="this.style.background='rgba(140,150,165,0.06)';this.style.borderColor='rgba(140,150,165,0.12)';this.style.color='#E8EBF0'" onmouseout="this.style.background='';this.style.borderColor='transparent';this.style.color='#8A94A6'">
+          <i data-lucide="chart-bar" class="w-3.5 h-3.5"></i>数据复盘
         </a>
-        <a href="knowledge-base.html" class="flex items-center gap-3 px-3 py-2.5 rounded-md text-on-surface-variant hover:bg-surface-container hover:text-on-surface font-medium text-sm transition-colors">
-          <i data-lucide="brain" class="w-4 h-4"></i>知识库
+        <a href="knowledge-base.html" class="flex items-center gap-2.5 px-2.5 py-2 rounded-sm text-xs font-medium transition-all" style="color: #8A94A6; border: 1px solid transparent;" onmouseover="this.style.background='rgba(140,150,165,0.06)';this.style.borderColor='rgba(140,150,165,0.12)';this.style.color='#E8EBF0'" onmouseout="this.style.background='';this.style.borderColor='transparent';this.style.color='#8A94A6'">
+          <i data-lucide="brain" class="w-3.5 h-3.5"></i>知识库
         </a>
-        <a href="settings.html" class="flex items-center gap-3 px-3 py-2.5 rounded-md text-on-surface-variant hover:bg-surface-container hover:text-on-surface font-medium text-sm transition-colors">
-          <i data-lucide="settings" class="w-4 h-4"></i>设置
+        <a href="settings.html" class="flex items-center gap-2.5 px-2.5 py-2 rounded-sm text-xs font-medium transition-all" style="color: #8A94A6; border: 1px solid transparent;" onmouseover="this.style.background='rgba(140,150,165,0.06)';this.style.borderColor='rgba(140,150,165,0.12)';this.style.color='#E8EBF0'" onmouseout="this.style.background='';this.style.borderColor='transparent';this.style.color='#8A94A6'">
+          <i data-lucide="settings" class="w-3.5 h-3.5"></i>设置
         </a>
+      </div>
+
+      <!-- 侧边栏底部状态 -->
+      <div class="absolute bottom-0 left-0 w-48 p-2.5" style="border-top: 1px solid rgba(140,150,165,0.10);">
+        <div class="flex items-center gap-1.5 text-[9px] font-mono" style="color: #5A6273;">
+          <span class="w-1.5 h-1.5 rounded-full pulse-dot" style="background: #21E6C1;"></span>
+          SYSTEM ONLINE
+        </div>
       </div>
     </aside>
 
     <!-- @main-content:start -->
-    <main class="flex-1 min-w-0 overflow-y-auto bg-background p-6">
+    <main class="flex-1 min-w-0 overflow-y-auto bg-background p-6 hud-grid-bg relative">
 
-      <!-- 页面头部 -->
-      <div class="flex items-center justify-between mb-8">
-        <div>
-          <h1 class="text-2xl font-bold text-on-surface flex items-center gap-3">
-            <i data-lucide="factory" class="w-6 h-6 text-primary"></i>
-            内容工厂
-          </h1>
-          <p class="text-sm text-on-surface-variant mt-1">批量高效生产内容，一键出稿多条</p>
+      <!-- ============ 页面头部 ============ -->
+      <div class="flex items-center justify-between mb-6">
+        <div class="flex items-center gap-4">
+          <div>
+            <h1 class="font-display font-bold text-xl tracking-wider metal-text" style="letter-spacing: 0.12em;">CONTENT FACTORY</h1>
+            <p class="text-xs font-mono mt-1" style="color: #5A6273;">内容工厂 — 批量生成 & 排期管理</p>
+          </div>
+          <!-- HUD 装饰状态码 -->
+          <div class="flex items-center gap-2 ml-3">
+            <span class="text-[9px] font-mono px-2 py-0.5" style="color: #21E6C1; background: rgba(33,230,193,0.06); border: 1px solid rgba(33,230,193,0.12);">SYS:ACTIVE</span>
+            <span class="text-[9px] font-mono px-2 py-0.5" style="color: #8A94A6; background: rgba(140,150,165,0.04); border: 1px solid rgba(140,150,165,0.08);">TEMPLATES:8</span>
+          </div>
         </div>
         <div class="flex items-center gap-3">
-          <button id="btn-audit" class="bg-surface-container text-on-surface border-none px-4 py-2 rounded-md text-sm font-medium hover:bg-surface-container-high active:scale-[0.98] transition-all inline-flex items-center gap-2">
-            <i data-lucide="shield-check" class="w-4 h-4"></i>AI审核
+          <button id="btn-batch-generate" class="hud-btn-primary hud-clip-tr px-4 py-2 text-xs font-medium font-mono inline-flex items-center gap-2">
+            <i data-lucide="zap" class="w-3.5 h-3.5" style="color: #FF3B5C;"></i>
+            批量生成
           </button>
-          <button id="btn-batch-generate" class="bg-primary text-on-primary px-4 py-2 rounded-md text-sm font-medium hover:opacity-90 active:scale-[0.98] transition-all inline-flex items-center gap-2 shadow-glow-red">
-            <i data-lucide="zap" class="w-4 h-4"></i>批量生成
+          <button id="btn-new-content" class="hud-btn-primary hud-clip-tr px-4 py-2 text-xs font-medium font-mono inline-flex items-center gap-2">
+            <i data-lucide="plus" class="w-3.5 h-3.5" style="color: #FF3B5C;"></i>
+            新建内容
           </button>
         </div>
       </div>
 
-      <!-- 内容模板库 -->
+      <!-- ============ 模板库区域 ============ -->
       <section class="mb-8">
         <div class="flex items-center justify-between mb-4">
-          <h2 class="text-base font-semibold text-on-surface flex items-center gap-2">
-            <i data-lucide="layout-template" class="w-4 h-4 text-cyber-cyan"></i>
-            内容模板库
-          </h2>
-          <button class="text-xs text-on-surface-variant hover:text-primary transition-colors">查看全部</button>
-        </div>
-        <div class="grid grid-cols-4 gap-4">
-          <!-- 模板-种草推荐 -->
-          <div id="template-seeding" class="content-template bg-surface rounded-lg shadow-card p-4 cursor-pointer hover:shadow-float transition-all border border-outline-variant/10 hover:border-cyber-cyan/30" data-template="seeding">
-            <div class="w-full h-28 rounded-md bg-surface-container mb-3 overflow-hidden flex items-center justify-center relative">
-              <img src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=300&h=160&fit=crop" alt="种草推荐模板预览" data-category="商业科技" class="w-full h-full object-cover opacity-60">
-              <div class="absolute inset-0 bg-gradient-to-t from-surface/80 to-transparent"></div>
-              <span class="absolute bottom-2 left-2 text-[10px] font-mono text-cyber-cyan uppercase tracking-wider">Seeding</span>
-            </div>
-            <h3 class="text-sm font-semibold text-on-surface mb-1">种草推荐</h3>
-            <p class="text-xs text-on-surface-variant">产品种草/好物安利，带购买引导</p>
-            <div class="mt-2 flex items-center gap-2">
-              <span class="text-[10px] px-1.5 py-0.5 rounded-sm bg-cyber-cyan/10 text-cyber-cyan font-medium">小红书</span>
-              <span class="text-[10px] px-1.5 py-0.5 rounded-sm bg-cyber-magenta/10 text-cyber-magenta font-medium">抖音</span>
-            </div>
-          </div>
-          <!-- 模板-深度测评 -->
-          <div id="template-review" class="content-template bg-surface rounded-lg shadow-card p-4 cursor-pointer hover:shadow-float transition-all border border-outline-variant/10 hover:border-cyber-cyan/30" data-template="review">
-            <div class="w-full h-28 rounded-md bg-surface-container mb-3 overflow-hidden flex items-center justify-center relative">
-              <img src="https://images.unsplash.com/photo-1585790050230-5dd28404ccb9?w=300&h=160&fit=crop" alt="深度测评模板预览" data-category="商业科技" class="w-full h-full object-cover opacity-60">
-              <div class="absolute inset-0 bg-gradient-to-t from-surface/80 to-transparent"></div>
-              <span class="absolute bottom-2 left-2 text-[10px] font-mono text-cyber-cyan uppercase tracking-wider">Review</span>
-            </div>
-            <h3 class="text-sm font-semibold text-on-surface mb-1">深度测评</h3>
-            <p class="text-xs text-on-surface-variant">产品对比评测，优劣势分析</p>
-            <div class="mt-2 flex items-center gap-2">
-              <span class="text-[10px] px-1.5 py-0.5 rounded-sm bg-warning/10 text-warning font-medium">知乎</span>
-              <span class="text-[10px] px-1.5 py-0.5 rounded-sm bg-cyber-purple/10 text-cyber-purple font-medium">B站</span>
-            </div>
-          </div>
-          <!-- 模板-教程攻略 -->
-          <div id="template-tutorial" class="content-template bg-surface rounded-lg shadow-card p-4 cursor-pointer hover:shadow-float transition-all border border-outline-variant/10 hover:border-cyber-cyan/30" data-template="tutorial">
-            <div class="w-full h-28 rounded-md bg-surface-container mb-3 overflow-hidden flex items-center justify-center relative">
-              <img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=300&h=160&fit=crop" alt="教程攻略模板预览" data-category="商业科技" class="w-full h-full object-cover opacity-60">
-              <div class="absolute inset-0 bg-gradient-to-t from-surface/80 to-transparent"></div>
-              <span class="absolute bottom-2 left-2 text-[10px] font-mono text-cyber-cyan uppercase tracking-wider">Tutorial</span>
-            </div>
-            <h3 class="text-sm font-semibold text-on-surface mb-1">教程攻略</h3>
-            <p class="text-xs text-on-surface-variant">步骤拆解教学，干货方法论</p>
-            <div class="mt-2 flex items-center gap-2">
-              <span class="text-[10px] px-1.5 py-0.5 rounded-sm bg-cyber-cyan/10 text-cyber-cyan font-medium">公众号</span>
-              <span class="text-[10px] px-1.5 py-0.5 rounded-sm bg-cyber-magenta/10 text-cyber-magenta font-medium">小红书</span>
-            </div>
-          </div>
-          <!-- 模板-活动促销 -->
-          <div id="template-promotion" class="content-template bg-surface rounded-lg shadow-card p-4 cursor-pointer hover:shadow-float transition-all border border-outline-variant/10 hover:border-cyber-cyan/30" data-template="promotion">
-            <div class="w-full h-28 rounded-md bg-surface-container mb-3 overflow-hidden flex items-center justify-center relative">
-              <img src="https://images.unsplash.com/photo-1542744173-8e7e53415bb0?w=300&h=160&fit=crop" alt="活动促销模板预览" data-category="商业科技" class="w-full h-full object-cover opacity-60">
-              <div class="absolute inset-0 bg-gradient-to-t from-surface/80 to-transparent"></div>
-              <span class="absolute bottom-2 left-2 text-[10px] font-mono text-cyber-cyan uppercase tracking-wider">Promo</span>
-            </div>
-            <h3 class="text-sm font-semibold text-on-surface mb-1">活动促销</h3>
-            <p class="text-xs text-on-surface-variant">限时优惠/节日活动，促转化</p>
-            <div class="mt-2 flex items-center gap-2">
-              <span class="text-[10px] px-1.5 py-0.5 rounded-sm bg-primary/10 text-primary font-medium">全平台</span>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- 批量生成面板 -->
-      <section id="batch-panel" class="mb-8">
-        <div class="bg-surface rounded-lg shadow-card p-5 border border-outline-variant/10">
-          <div class="flex items-center justify-between mb-4">
-            <h2 class="text-base font-semibold text-on-surface flex items-center gap-2">
-              <i data-lucide="settings-2" class="w-4 h-4 text-primary"></i>
-              批量生成参数
-            </h2>
-            <button id="btn-toggle-panel" class="text-xs text-on-surface-variant hover:text-primary transition-colors flex items-center gap-1">
-              <i data-lucide="chevron-up" class="w-3 h-3"></i>收起
-            </button>
-          </div>
-          <div id="batch-panel-body" class="grid grid-cols-5 gap-4">
-            <div>
-              <label class="block text-xs text-on-surface-variant mb-1.5">选择模板</label>
-              <select id="sel-template" class="w-full bg-surface-container border-none rounded-md px-3 py-2 text-sm text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/30 transition-colors">
-                <option value="seeding">种草推荐</option>
-                <option value="review">深度测评</option>
-                <option value="tutorial">教程攻略</option>
-                <option value="promotion">活动促销</option>
-                <option value="daily">日常分享</option>
-                <option value="recruit">招聘文案</option>
-              </select>
-            </div>
-            <div>
-              <label class="block text-xs text-on-surface-variant mb-1.5">角色人设</label>
-              <select id="sel-role" class="w-full bg-surface-container border-none rounded-md px-3 py-2 text-sm text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/30 transition-colors">
-                <option value="expert">行业专家</option>
-                <option value="kol">KOL达人</option>
-                <option value="friend">闺蜜好物</option>
-                <option value="professional">专业测评师</option>
-              </select>
-            </div>
-            <div>
-              <label class="block text-xs text-on-surface-variant mb-1.5">所属行业</label>
-              <select id="sel-industry" class="w-full bg-surface-container border-none rounded-md px-3 py-2 text-sm text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/30 transition-colors">
-                <option value="beauty">美妆护肤</option>
-                <option value="food">美食餐饮</option>
-                <option value="tech">数码科技</option>
-                <option value="fashion">服饰穿搭</option>
-                <option value="education">教育培训</option>
-              </select>
-            </div>
-            <div>
-              <label class="block text-xs text-on-surface-variant mb-1.5">目标平台</label>
-              <select id="sel-platform" class="w-full bg-surface-container border-none rounded-md px-3 py-2 text-sm text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/30 transition-colors">
-                <option value="xiaohongshu">小红书</option>
-                <option value="douyin">抖音</option>
-                <option value="wechat">微信公众号</option>
-                <option value="zhihu">知乎</option>
-                <option value="bilibili">B站</option>
-              </select>
-            </div>
-            <div>
-              <label class="block text-xs text-on-surface-variant mb-1.5">生成数量</label>
-              <select id="sel-count" class="w-full bg-surface-container border-none rounded-md px-3 py-2 text-sm text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/30 transition-colors">
-                <option value="3">3条</option>
-                <option value="4">4条</option>
-                <option value="5" selected>5条</option>
-              </select>
-            </div>
-          </div>
-          <div class="mt-4 flex items-center gap-3">
-            <button id="btn-start-generate" class="bg-primary text-on-primary px-5 py-2 rounded-md text-sm font-medium hover:opacity-90 active:scale-[0.98] transition-all inline-flex items-center gap-2 shadow-glow-red">
-              <i data-lucide="play" class="w-4 h-4"></i>开始生成
-            </button>
-            <span class="text-xs text-on-surface-variant">预计耗时 15-30s，生成后自动添加到内容列表</span>
-          </div>
-        </div>
-      </section>
-
-      <!-- 内容列表区 -->
-      <section>
-        <div class="flex items-center justify-between mb-4">
-          <h2 class="text-base font-semibold text-on-surface flex items-center gap-2">
-            <i data-lucide="list" class="w-4 h-4 text-cyber-magenta"></i>
-            内容列表
-          </h2>
-          <div class="flex items-center gap-3">
-            <!-- 搜索框 -->
-            <div class="relative">
-              <i data-lucide="search" class="w-3.5 h-3.5 text-on-surface-variant absolute left-3 top-1/2 -translate-y-1/2"></i>
-              <input id="input-search" type="text" placeholder="搜索内容标题..." class="bg-surface-container border-none rounded-md pl-9 pr-3 py-1.5 text-sm text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:ring-2 focus:ring-primary/30 transition-colors w-48">
-            </div>
-            <!-- 筛选：平台 -->
-            <select id="filter-platform" class="bg-surface-container border-none rounded-md px-3 py-1.5 text-sm text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/30 transition-colors">
-              <option value="all">全部平台</option>
-              <option value="xiaohongshu">小红书</option>
-              <option value="douyin">抖音</option>
-              <option value="wechat">公众号</option>
-              <option value="zhihu">知乎</option>
-            </select>
-            <!-- 筛选：状态 -->
-            <select id="filter-status" class="bg-surface-container border-none rounded-md px-3 py-1.5 text-sm text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/30 transition-colors">
-              <option value="all">全部状态</option>
-              <option value="draft">草稿</option>
-              <option value="generated">已生成</option>
-              <option value="pending">待发布</option>
-              <option value="published">已发布</option>
-            </select>
-            <!-- 批量操作按钮 -->
-            <button id="btn-batch-delete" class="bg-primary text-on-primary px-3 py-1.5 rounded-md text-xs font-medium hover:opacity-90 active:scale-[0.98] transition-all inline-flex items-center gap-1">
-              <i data-lucide="trash-2" class="w-3 h-3"></i>批量删除
-            </button>
-            <button id="btn-batch-publish" class="bg-primary text-on-primary px-3 py-1.5 rounded-md text-xs font-medium hover:opacity-90 active:scale-[0.98] transition-all inline-flex items-center gap-1">
-              <i data-lucide="send" class="w-3 h-3"></i>批量发布
-            </button>
-          </div>
-        </div>
-
-        <!-- 内容表格 -->
-        <div class="bg-surface rounded-lg shadow-card overflow-hidden">
-          <!-- 表头 -->
-          <div class="grid grid-cols-12 px-4 py-3 bg-surface-container text-xs font-semibold text-on-surface-variant uppercase tracking-wide items-center">
-            <div class="col-span-1 flex items-center justify-center">
-              <input id="select-all" type="checkbox" class="w-3.5 h-3.5 accent-primary">
-            </div>
-            <span class="col-span-4">标题</span>
-            <span class="col-span-1">平台</span>
-            <span class="col-span-1">状态</span>
-            <span class="col-span-1">评分</span>
-            <span class="col-span-2">创建时间</span>
-            <span class="col-span-2">操作</span>
-          </div>
-          <!-- 列表-内容1 -->
-          <div class="content-row grid grid-cols-12 px-4 py-3 hover:bg-surface-container/50 transition-colors items-center border-t border-outline-variant/10" data-id="1" data-platform="xiaohongshu" data-status="generated">
-            <div class="col-span-1 flex items-center justify-center">
-              <input type="checkbox" class="row-checkbox w-3.5 h-3.5 accent-primary">
-            </div>
-            <div class="col-span-4">
-              <span class="text-sm font-medium text-on-surface">熬夜党必看！这款精华液让我皮肤回春了</span>
-            </div>
-            <div class="col-span-1">
-              <span class="text-xs px-1.5 py-0.5 rounded-sm bg-cyber-magenta/10 text-cyber-magenta font-medium">小红书</span>
-            </div>
-            <div class="col-span-1">
-              <span class="inline-flex items-center px-2 py-0.5 rounded-sm text-xs font-medium bg-cyber-cyan/15 text-cyber-cyan">已生成</span>
-            </div>
-            <div class="col-span-1">
-              <span class="text-sm font-semibold text-warning">92</span>
-              <span class="text-xs text-on-surface-variant">分</span>
-            </div>
-            <div class="col-span-2">
-              <span class="text-xs text-on-surface-variant">2025-01-15 14:32</span>
-            </div>
-            <div class="col-span-2 flex items-center gap-2">
-              <button id="btn-edit-1" class="text-primary text-xs font-medium hover:underline">编辑</button>
-              <button id="btn-rewrite-1" class="text-on-surface-variant text-xs font-medium hover:text-primary hover:underline">改写</button>
-              <button id="btn-delete-1" class="text-on-surface-variant text-xs font-medium hover:text-error hover:underline">删除</button>
-            </div>
-          </div>
-          <!-- 列表-内容2 -->
-          <div class="content-row grid grid-cols-12 px-4 py-3 hover:bg-surface-container/50 transition-colors items-center border-t border-outline-variant/10" data-id="2" data-platform="douyin" data-status="pending">
-            <div class="col-span-1 flex items-center justify-center">
-              <input type="checkbox" class="row-checkbox w-3.5 h-3.5 accent-primary">
-            </div>
-            <div class="col-span-4">
-              <span class="text-sm font-medium text-on-surface">2025最值得买的5款降噪耳机横评</span>
-            </div>
-            <div class="col-span-1">
-              <span class="text-xs px-1.5 py-0.5 rounded-sm bg-cyber-cyan/10 text-cyber-cyan font-medium">抖音</span>
-            </div>
-            <div class="col-span-1">
-              <span class="inline-flex items-center px-2 py-0.5 rounded-sm text-xs font-medium bg-warning/15 text-warning">待发布</span>
-            </div>
-            <div class="col-span-1">
-              <span class="text-sm font-semibold text-warning">88</span>
-              <span class="text-xs text-on-surface-variant">分</span>
-            </div>
-            <div class="col-span-2">
-              <span class="text-xs text-on-surface-variant">2025-01-15 10:18</span>
-            </div>
-            <div class="col-span-2 flex items-center gap-2">
-              <button id="btn-edit-2" class="text-primary text-xs font-medium hover:underline">编辑</button>
-              <button id="btn-rewrite-2" class="text-on-surface-variant text-xs font-medium hover:text-primary hover:underline">改写</button>
-              <button id="btn-delete-2" class="text-on-surface-variant text-xs font-medium hover:text-error hover:underline">删除</button>
-            </div>
-          </div>
-          <!-- 列表-内容3 -->
-          <div class="content-row grid grid-cols-12 px-4 py-3 hover:bg-surface-container/50 transition-colors items-center border-t border-outline-variant/10" data-id="3" data-platform="wechat" data-status="published">
-            <div class="col-span-1 flex items-center justify-center">
-              <input type="checkbox" class="row-checkbox w-3.5 h-3.5 accent-primary">
-            </div>
-            <div class="col-span-4">
-              <span class="text-sm font-medium text-on-surface">新手博主从0到1起号全攻略</span>
-            </div>
-            <div class="col-span-1">
-              <span class="text-xs px-1.5 py-0.5 rounded-sm bg-success/10 text-success font-medium">公众号</span>
-            </div>
-            <div class="col-span-1">
-              <span class="inline-flex items-center px-2 py-0.5 rounded-sm text-xs font-medium bg-success/15 text-success">已发布</span>
-            </div>
-            <div class="col-span-1">
-              <span class="text-sm font-semibold text-warning">95</span>
-              <span class="text-xs text-on-surface-variant">分</span>
-            </div>
-            <div class="col-span-2">
-              <span class="text-xs text-on-surface-variant">2025-01-14 16:45</span>
-            </div>
-            <div class="col-span-2 flex items-center gap-2">
-              <button id="btn-edit-3" class="text-primary text-xs font-medium hover:underline">编辑</button>
-              <button id="btn-rewrite-3" class="text-on-surface-variant text-xs font-medium hover:text-primary hover:underline">改写</button>
-              <button id="btn-delete-3" class="text-on-surface-variant text-xs font-medium hover:text-error hover:underline">删除</button>
-            </div>
-          </div>
-          <!-- 列表-内容4 -->
-          <div class="content-row grid grid-cols-12 px-4 py-3 hover:bg-surface-container/50 transition-colors items-center border-t border-outline-variant/10" data-id="4" data-platform="zhihu" data-status="draft">
-            <div class="col-span-1 flex items-center justify-center">
-              <input type="checkbox" class="row-checkbox w-3.5 h-3.5 accent-primary">
-            </div>
-            <div class="col-span-4">
-              <span class="text-sm font-medium text-on-surface">双11美妆清单：这些才是真回购好物</span>
-            </div>
-            <div class="col-span-1">
-              <span class="text-xs px-1.5 py-0.5 rounded-sm bg-cyber-purple/10 text-cyber-purple font-medium">知乎</span>
-            </div>
-            <div class="col-span-1">
-              <span class="inline-flex items-center px-2 py-0.5 rounded-sm text-xs font-medium bg-on-surface-variant/15 text-on-surface-variant">草稿</span>
-            </div>
-            <div class="col-span-1">
-              <span class="text-sm font-semibold text-warning">76</span>
-              <span class="text-xs text-on-surface-variant">分</span>
-            </div>
-            <div class="col-span-2">
-              <span class="text-xs text-on-surface-variant">2025-01-14 09:20</span>
-            </div>
-            <div class="col-span-2 flex items-center gap-2">
-              <button id="btn-edit-4" class="text-primary text-xs font-medium hover:underline">编辑</button>
-              <button id="btn-rewrite-4" class="text-on-surface-variant text-xs font-medium hover:text-primary hover:underline">改写</button>
-              <button id="btn-delete-4" class="text-on-surface-variant text-xs font-medium hover:text-error hover:underline">删除</button>
-            </div>
-          </div>
-          <!-- 列表-内容5 -->
-          <div class="content-row grid grid-cols-12 px-4 py-3 hover:bg-surface-container/50 transition-colors items-center border-t border-outline-variant/10" data-id="5" data-platform="xiaohongshu" data-status="generated">
-            <div class="col-span-1 flex items-center justify-center">
-              <input type="checkbox" class="row-checkbox w-3.5 h-3.5 accent-primary">
-            </div>
-            <div class="col-span-4">
-              <span class="text-sm font-medium text-on-surface">办公室白领的一周OOTD穿搭分享</span>
-            </div>
-            <div class="col-span-1">
-              <span class="text-xs px-1.5 py-0.5 rounded-sm bg-cyber-magenta/10 text-cyber-magenta font-medium">小红书</span>
-            </div>
-            <div class="col-span-1">
-              <span class="inline-flex items-center px-2 py-0.5 rounded-sm text-xs font-medium bg-cyber-cyan/15 text-cyber-cyan">已生成</span>
-            </div>
-            <div class="col-span-1">
-              <span class="text-sm font-semibold text-warning">84</span>
-              <span class="text-xs text-on-surface-variant">分</span>
-            </div>
-            <div class="col-span-2">
-              <span class="text-xs text-on-surface-variant">2025-01-13 20:05</span>
-            </div>
-            <div class="col-span-2 flex items-center gap-2">
-              <button id="btn-edit-5" class="text-primary text-xs font-medium hover:underline">编辑</button>
-              <button id="btn-rewrite-5" class="text-on-surface-variant text-xs font-medium hover:text-primary hover:underline">改写</button>
-              <button id="btn-delete-5" class="text-on-surface-variant text-xs font-medium hover:text-error hover:underline">删除</button>
-            </div>
-          </div>
-          <!-- 列表-内容6 -->
-          <div class="content-row grid grid-cols-12 px-4 py-3 hover:bg-surface-container/50 transition-colors items-center border-t border-outline-variant/10" data-id="6" data-platform="douyin" data-status="pending">
-            <div class="col-span-1 flex items-center justify-center">
-              <input type="checkbox" class="row-checkbox w-3.5 h-3.5 accent-primary">
-            </div>
-            <div class="col-span-4">
-              <span class="text-sm font-medium text-on-surface">3分钟学会手机拍出电影感Vlog</span>
-            </div>
-            <div class="col-span-1">
-              <span class="text-xs px-1.5 py-0.5 rounded-sm bg-cyber-cyan/10 text-cyber-cyan font-medium">抖音</span>
-            </div>
-            <div class="col-span-1">
-              <span class="inline-flex items-center px-2 py-0.5 rounded-sm text-xs font-medium bg-warning/15 text-warning">待发布</span>
-            </div>
-            <div class="col-span-1">
-              <span class="text-sm font-semibold text-warning">91</span>
-              <span class="text-xs text-on-surface-variant">分</span>
-            </div>
-            <div class="col-span-2">
-              <span class="text-xs text-on-surface-variant">2025-01-13 15:50</span>
-            </div>
-            <div class="col-span-2 flex items-center gap-2">
-              <button id="btn-edit-6" class="text-primary text-xs font-medium hover:underline">编辑</button>
-              <button id="btn-rewrite-6" class="text-on-surface-variant text-xs font-medium hover:text-primary hover:underline">改写</button>
-              <button id="btn-delete-6" class="text-on-surface-variant text-xs font-medium hover:text-error hover:underline">删除</button>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- 内容日历/排期区 -->
-      <section class="mt-8">
-        <div class="flex items-center justify-between mb-4">
-          <h2 class="text-base font-semibold text-on-surface flex items-center gap-2">
-            <i data-lucide="calendar" class="w-4 h-4 text-cyber-purple"></i>
-            内容排期日历
-          </h2>
           <div class="flex items-center gap-2">
-            <button id="btn-prev-week" class="p-1 rounded hover:bg-surface-container transition-colors">
-              <i data-lucide="chevron-left" class="w-4 h-4 text-on-surface-variant"></i>
+            <div class="w-1 h-4" style="background: linear-gradient(180deg, #FF3B5C, #FF3B5C00);"></div>
+            <h2 class="text-sm font-bold" style="color: #E8EBF0;">模板库</h2>
+            <span class="text-[9px] font-mono ml-1" style="color: #5A6273;">// SELECT TEMPLATE</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <button id="btn-template-grid" class="px-2 py-1 text-[10px] font-mono rounded-sm" style="color: #FF3B5C; background: rgba(255,59,92,0.08); border: 1px solid rgba(255,59,92,0.2);">
+              <i data-lucide="grid-3x3" class="w-3 h-3"></i>
             </button>
-            <span id="calendar-week-label" class="text-sm font-medium text-on-surface">1月13日 - 1月19日</span>
-            <button id="btn-next-week" class="p-1 rounded hover:bg-surface-container transition-colors">
-              <i data-lucide="chevron-right" class="w-4 h-4 text-on-surface-variant"></i>
+            <button id="btn-template-list" class="px-2 py-1 text-[10px] font-mono rounded-sm" style="color: #5A6273; background: transparent; border: 1px solid rgba(140,150,165,0.10);">
+              <i data-lucide="list" class="w-3 h-3"></i>
             </button>
           </div>
         </div>
-        <div class="bg-surface rounded-lg shadow-card overflow-hidden border border-outline-variant/10">
-          <!-- 日历表头 -->
-          <div class="grid grid-cols-7 bg-surface-container">
-            <div class="px-3 py-2 text-center text-xs font-semibold text-on-surface-variant border-r border-outline-variant/10">周一<br><span class="text-[10px] text-on-surface-variant/60">1/13</span></div>
-            <div class="px-3 py-2 text-center text-xs font-semibold text-on-surface-variant border-r border-outline-variant/10">周二<br><span class="text-[10px] text-on-surface-variant/60">1/14</span></div>
-            <div class="px-3 py-2 text-center text-xs font-semibold text-on-surface-variant border-r border-outline-variant/10">周三<br><span class="text-[10px] text-on-surface-variant/60">1/15</span></div>
-            <div class="px-3 py-2 text-center text-xs font-semibold text-primary border-r border-outline-variant/10">周四<br><span class="text-[10px] text-primary/60">1/16</span></div>
-            <div class="px-3 py-2 text-center text-xs font-semibold text-on-surface-variant border-r border-outline-variant/10">周五<br><span class="text-[10px] text-on-surface-variant/60">1/17</span></div>
-            <div class="px-3 py-2 text-center text-xs font-semibold text-on-surface-variant border-r border-outline-variant/10">周六<br><span class="text-[10px] text-on-surface-variant/60">1/18</span></div>
-            <div class="px-3 py-2 text-center text-xs font-semibold text-on-surface-variant">周日<br><span class="text-[10px] text-on-surface-variant/60">1/19</span></div>
+
+        <div id="template-grid" class="grid grid-cols-4 gap-3">
+          <!-- 模板1-小红书种草笔记 -->
+          <div class="template-item metal-panel hud-clip-tr rounded-md p-3 cursor-pointer transition-all template-selected" data-template="redbook-seeding" id="tpl-redbook">
+            <div class="flex items-center gap-2 mb-2">
+              <div class="w-6 h-6 flex items-center justify-center rounded-sm" style="background: rgba(255,46,151,0.12); border: 1px solid rgba(255,46,151,0.2);">
+                <i data-lucide="book-open" class="w-3 h-3" style="color: #FF2E97;"></i>
+              </div>
+              <span class="text-xs font-medium" style="color: #E8EBF0;">小红书种草笔记</span>
+            </div>
+            <p class="text-[10px] font-mono leading-relaxed mb-3" style="color: #5A6273;">适合产品种草、好物分享类图文，含标题+正文+标签模板</p>
+            <div class="flex items-center justify-between">
+              <span class="text-[9px] font-mono" style="color: #21E6C1;">USED: 1,247</span>
+              <span class="text-[9px] font-mono px-1.5 py-0.5" style="color: #FF3B5C; background: rgba(255,59,92,0.08); border: 1px solid rgba(255,59,92,0.2);">SELECTED</span>
+            </div>
           </div>
-          <!-- 日历内容行 -->
-          <div class="grid grid-cols-7 min-h-[120px]">
-            <!-- 周一 -->
-            <div class="p-2 border-r border-outline-variant/10 border-t border-outline-variant/10">
-              <div class="text-[10px] px-1.5 py-1 rounded bg-success/15 text-success mb-1 cursor-pointer hover:bg-success/25 transition-colors">新手博主从0到1起号...</div>
+
+          <!-- 模板2-微信公众号深度长文 -->
+          <div class="template-item metal-panel hud-clip-tr rounded-md p-3 cursor-pointer transition-all" data-template="wechat-deep" id="tpl-wechat">
+            <div class="flex items-center gap-2 mb-2">
+              <div class="w-6 h-6 flex items-center justify-center rounded-sm" style="background: rgba(33,230,193,0.12); border: 1px solid rgba(33,230,193,0.2);">
+                <i data-lucide="message-square" class="w-3 h-3" style="color: #21E6C1;"></i>
+              </div>
+              <span class="text-xs font-medium" style="color: #E8EBF0;">微信公众号长文</span>
             </div>
-            <!-- 周二 -->
-            <div class="p-2 border-r border-outline-variant/10 border-t border-outline-variant/10">
-              <div class="text-[10px] px-1.5 py-1 rounded bg-on-surface-variant/15 text-on-surface-variant mb-1 cursor-pointer hover:bg-on-surface-variant/25 transition-colors">双11美妆清单草稿</div>
+            <p class="text-[10px] font-mono leading-relaxed mb-3" style="color: #5A6273;">深度分析/行业洞察类长文，含摘要+分段+金句模板</p>
+            <div class="flex items-center justify-between">
+              <span class="text-[9px] font-mono" style="color: #21E6C1;">USED: 986</span>
+              <span class="text-[9px] font-mono" style="color: #5A6273;">ID:TPL-002</span>
             </div>
-            <!-- 周三 -->
-            <div class="p-2 border-r border-outline-variant/10 border-t border-outline-variant/10">
-              <div class="text-[10px] px-1.5 py-1 rounded bg-cyber-cyan/15 text-cyber-cyan mb-1 cursor-pointer hover:bg-cyber-cyan/25 transition-colors">熬夜党必看精华液</div>
-              <div class="text-[10px] px-1.5 py-1 rounded bg-warning/15 text-warning mb-1 cursor-pointer hover:bg-warning/25 transition-colors">5款降噪耳机横评</div>
+          </div>
+
+          <!-- 模板3-抖音短视频脚本 -->
+          <div class="template-item metal-panel hud-clip-tr rounded-md p-3 cursor-pointer transition-all" data-template="douyin-script" id="tpl-douyin">
+            <div class="flex items-center gap-2 mb-2">
+              <div class="w-6 h-6 flex items-center justify-center rounded-sm" style="background: rgba(139,92,255,0.12); border: 1px solid rgba(139,92,255,0.2);">
+                <i data-lucide="video" class="w-3 h-3" style="color: #8B5CFF;"></i>
+              </div>
+              <span class="text-xs font-medium" style="color: #E8EBF0;">抖音短视频脚本</span>
             </div>
-            <!-- 周四（今天） -->
-            <div class="p-2 border-r border-outline-variant/10 border-t border-outline-variant/10 bg-primary/5">
-              <div class="text-[10px] px-1.5 py-1 rounded bg-cyber-cyan/15 text-cyber-cyan mb-1 cursor-pointer hover:bg-cyber-cyan/25 transition-colors">白领一周OOTD</div>
+            <p class="text-[10px] font-mono leading-relaxed mb-3" style="color: #5A6273;">短视频口播/剧情脚本，含开场钩子+正文+CTA模板</p>
+            <div class="flex items-center justify-between">
+              <span class="text-[9px] font-mono" style="color: #21E6C1;">USED: 752</span>
+              <span class="text-[9px] font-mono" style="color: #5A6273;">ID:TPL-003</span>
             </div>
-            <!-- 周五 -->
-            <div class="p-2 border-r border-outline-variant/10 border-t border-outline-variant/10">
-              <div class="text-[10px] px-1.5 py-1 rounded bg-warning/15 text-warning mb-1 cursor-pointer hover:bg-warning/25 transition-colors">3分钟手机拍Vlog</div>
+          </div>
+
+          <!-- 模板4-微博热点评论 -->
+          <div class="template-item metal-panel hud-clip-tr rounded-md p-3 cursor-pointer transition-all" data-template="weibo-hot" id="tpl-weibo">
+            <div class="flex items-center gap-2 mb-2">
+              <div class="w-6 h-6 flex items-center justify-center rounded-sm" style="background: rgba(245,166,35,0.12); border: 1px solid rgba(245,166,35,0.2);">
+                <i data-lucide="flame" class="w-3 h-3" style="color: #F5A623;"></i>
+              </div>
+              <span class="text-xs font-medium" style="color: #E8EBF0;">微博热点评论</span>
             </div>
-            <!-- 周六 -->
-            <div class="p-2 border-r border-outline-variant/10 border-t border-outline-variant/10">
-              <span class="text-[10px] text-on-surface-variant/30 italic">暂无排期</span>
+            <p class="text-[10px] font-mono leading-relaxed mb-3" style="color: #5A6273;">热点追踪/观点评论类短文，含话题标签+金句模板</p>
+            <div class="flex items-center justify-between">
+              <span class="text-[9px] font-mono" style="color: #21E6C1;">USED: 634</span>
+              <span class="text-[9px] font-mono" style="color: #5A6273;">ID:TPL-004</span>
             </div>
-            <!-- 周日 -->
-            <div class="p-2 border-t border-outline-variant/10">
-              <span class="text-[10px] text-on-surface-variant/30 italic">暂无排期</span>
+          </div>
+
+          <!-- 模板5-知乎专业回答 -->
+          <div class="template-item metal-panel hud-clip-tr rounded-md p-3 cursor-pointer transition-all" data-template="zhihu-answer" id="tpl-zhihu">
+            <div class="flex items-center gap-2 mb-2">
+              <div class="w-6 h-6 flex items-center justify-center rounded-sm" style="background: rgba(33,150,243,0.12); border: 1px solid rgba(33,150,243,0.2);">
+                <i data-lucide="graduation-cap" class="w-3 h-3" style="color: #2196F3;"></i>
+              </div>
+              <span class="text-xs font-medium" style="color: #E8EBF0;">知乎专业回答</span>
+            </div>
+            <p class="text-[10px] font-mono leading-relaxed mb-3" style="color: #5A6273;">专业问答/知识科普类，含论点+论据+结论模板</p>
+            <div class="flex items-center justify-between">
+              <span class="text-[9px] font-mono" style="color: #21E6C1;">USED: 518</span>
+              <span class="text-[9px] font-mono" style="color: #5A6273;">ID:TPL-005</span>
+            </div>
+          </div>
+
+          <!-- 模板6-B站视频文案 -->
+          <div class="template-item metal-panel hud-clip-tr rounded-md p-3 cursor-pointer transition-all" data-template="bilibili-copy" id="tpl-bilibili">
+            <div class="flex items-center gap-2 mb-2">
+              <div class="w-6 h-6 flex items-center justify-center rounded-sm" style="background: rgba(33,230,193,0.12); border: 1px solid rgba(33,230,193,0.2);">
+                <i data-lucide="play-circle" class="w-3 h-3" style="color: #21E6C1;"></i>
+              </div>
+              <span class="text-xs font-medium" style="color: #E8EBF0;">B站视频文案</span>
+            </div>
+            <p class="text-[10px] font-mono leading-relaxed mb-3" style="color: #5A6273;">中长视频解说文案，含分镜提示+旁白+字幕模板</p>
+            <div class="flex items-center justify-between">
+              <span class="text-[9px] font-mono" style="color: #21E6C1;">USED: 423</span>
+              <span class="text-[9px] font-mono" style="color: #5A6273;">ID:TPL-006</span>
+            </div>
+          </div>
+
+          <!-- 模板7-产品评测对比 -->
+          <div class="template-item metal-panel hud-clip-tr rounded-md p-3 cursor-pointer transition-all" data-template="product-review" id="tpl-review">
+            <div class="flex items-center gap-2 mb-2">
+              <div class="w-6 h-6 flex items-center justify-center rounded-sm" style="background: rgba(255,59,92,0.12); border: 1px solid rgba(255,59,92,0.2);">
+                <i data-lucide="scale" class="w-3 h-3" style="color: #FF3B5C;"></i>
+              </div>
+              <span class="text-xs font-medium" style="color: #E8EBF0;">产品评测对比</span>
+            </div>
+            <p class="text-[10px] font-mono leading-relaxed mb-3" style="color: #5A6273;">多维度产品对比评测，含参数表+体验+结论模板</p>
+            <div class="flex items-center justify-between">
+              <span class="text-[9px] font-mono" style="color: #21E6C1;">USED: 387</span>
+              <span class="text-[9px] font-mono" style="color: #5A6273;">ID:TPL-007</span>
+            </div>
+          </div>
+
+          <!-- 模板8-行业报告摘要 -->
+          <div class="template-item metal-panel hud-clip-tr rounded-md p-3 cursor-pointer transition-all" data-template="industry-report" id="tpl-report">
+            <div class="flex items-center gap-2 mb-2">
+              <div class="w-6 h-6 flex items-center justify-center rounded-sm" style="background: rgba(139,92,255,0.12); border: 1px solid rgba(139,92,255,0.2);">
+                <i data-lucide="file-bar-chart" class="w-3 h-3" style="color: #8B5CFF;"></i>
+              </div>
+              <span class="text-xs font-medium" style="color: #E8EBF0;">行业报告摘要</span>
+            </div>
+            <p class="text-[10px] font-mono leading-relaxed mb-3" style="color: #5A6273;">行业数据提炼+趋势解读，含数据卡片+洞察模板</p>
+            <div class="flex items-center justify-between">
+              <span class="text-[9px] font-mono" style="color: #21E6C1;">USED: 291</span>
+              <span class="text-[9px] font-mono" style="color: #5A6273;">ID:TPL-008</span>
             </div>
           </div>
         </div>
       </section>
 
-      <!-- 编辑器弹窗 -->
-      <div id="editor-modal" class="fixed inset-0 bg-black/60 flex items-center justify-center p-4 z-50 hidden">
-        <div class="bg-surface rounded-xl shadow-dialog max-w-2xl w-full max-h-[85vh] overflow-y-auto">
-          <!-- 编辑器头部 -->
-          <div class="flex items-center justify-between px-6 py-4 border-b border-outline-variant/20">
-            <h3 class="text-base font-semibold text-on-surface">内容编辑</h3>
-            <button id="btn-close-editor" class="p-1 rounded hover:bg-surface-container transition-colors">
-              <i data-lucide="x" class="w-4 h-4 text-on-surface-variant"></i>
+      <!-- ============ 批量操作区 ============ -->
+      <section class="mb-6">
+        <div class="metal-panel hud-clip rounded-md p-4">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-4">
+              <div class="flex items-center gap-2">
+                <div class="w-1 h-4" style="background: linear-gradient(180deg, #21E6C1, #21E6C100);"></div>
+                <h2 class="text-sm font-bold" style="color: #E8EBF0;">批量生成</h2>
+                <span class="text-[9px] font-mono ml-1" style="color: #5A6273;">// BATCH MODE</span>
+              </div>
+              <div class="flex items-center gap-2">
+                <span class="text-[10px] font-mono" style="color: #5A6273;">已选模板:</span>
+                <span id="selected-template-name" class="text-[10px] font-mono neon-text-red" style="color: #FF3B5C;">小红书种草笔记</span>
+              </div>
+            </div>
+            <div class="flex items-center gap-3">
+              <div class="flex items-center gap-2">
+                <label class="text-[10px] font-mono" style="color: #5A6273;">生成数量:</label>
+                <select id="batch-count" class="text-[10px] font-mono px-2 py-1 rounded-sm" style="background: #0E1014; color: #E8EBF0; border: 1px solid rgba(140,150,165,0.18);">
+                  <option value="3">3篇</option>
+                  <option value="5" selected>5篇</option>
+                  <option value="10">10篇</option>
+                  <option value="20">20篇</option>
+                </select>
+              </div>
+              <div class="flex items-center gap-2">
+                <label class="text-[10px] font-mono" style="color: #5A6273;">选题来源:</label>
+                <select id="batch-source" class="text-[10px] font-mono px-2 py-1 rounded-sm" style="background: #0E1014; color: #E8EBF0; border: 1px solid rgba(140,150,165,0.18);">
+                  <option value="topic-engine">选题引擎</option>
+                  <option value="manual">手动输入</option>
+                  <option value="trending">热点追踪</option>
+                </select>
+              </div>
+              <button id="btn-batch-start" class="hud-btn-primary hud-clip-tr px-4 py-1.5 text-[10px] font-mono inline-flex items-center gap-1.5">
+                <i data-lucide="play" class="w-3 h-3" style="color: #FF3B5C;"></i>
+                开始生成
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ 内容列表 + 评分 ============ -->
+      <section class="mb-8">
+        <div class="flex items-center justify-between mb-4">
+          <div class="flex items-center gap-2">
+            <div class="w-1 h-4" style="background: linear-gradient(180deg, #8B5CFF, #8B5CFF00);"></div>
+            <h2 class="text-sm font-bold" style="color: #E8EBF0;">内容列表</h2>
+            <span class="text-[9px] font-mono ml-1" style="color: #5A6273;">// CONTENT LIST</span>
+          </div>
+          <div class="flex items-center gap-3">
+            <!-- 筛选按钮组 -->
+            <div class="flex items-center gap-1">
+              <button id="filter-all" class="px-2 py-1 text-[10px] font-mono rounded-sm" style="color: #FF3B5C; background: rgba(255,59,92,0.08); border: 1px solid rgba(255,59,92,0.2);">全部</button>
+              <button id="filter-draft" class="filter-btn px-2 py-1 text-[10px] font-mono rounded-sm" style="color: #5A6273; background: transparent; border: 1px solid rgba(140,150,165,0.10);">草稿</button>
+              <button id="filter-generated" class="filter-btn px-2 py-1 text-[10px] font-mono rounded-sm" style="color: #5A6273; background: transparent; border: 1px solid rgba(140,150,165,0.10);">已生成</button>
+              <button id="filter-pending" class="filter-btn px-2 py-1 text-[10px] font-mono rounded-sm" style="color: #5A6273; background: transparent; border: 1px solid rgba(140,150,165,0.10);">待发布</button>
+              <button id="filter-published" class="filter-btn px-2 py-1 text-[10px] font-mono rounded-sm" style="color: #5A6273; background: transparent; border: 1px solid rgba(140,150,165,0.10);">已发布</button>
+            </div>
+            <div class="h-4" style="width: 1px; background: rgba(140,150,165,0.15);"></div>
+            <button id="btn-refresh" class="px-2 py-1 text-[10px] font-mono rounded-sm inline-flex items-center gap-1" style="color: #5A6273; background: transparent; border: 1px solid rgba(140,150,165,0.10);">
+              <i data-lucide="refresh-cw" class="w-3 h-3"></i>刷新
             </button>
           </div>
-          <!-- 编辑器内容 -->
-          <div class="p-6">
-            <div class="mb-4">
-              <label class="block text-xs text-on-surface-variant mb-1.5">内容标题</label>
-              <input id="editor-title" type="text" value="熬夜党必看！这款精华液让我皮肤回春了" class="w-full bg-surface-container border-none rounded-md px-3 py-2 text-sm text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/30 transition-colors">
-            </div>
-            <div class="mb-4">
-              <label class="block text-xs text-on-surface-variant mb-1.5">正文内容</label>
-              <textarea id="editor-content" rows="8" class="w-full bg-surface-container border-none rounded-md px-3 py-2 text-sm text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/30 transition-colors resize-none">姐妹们！作为一个资深熬夜选手，皮肤状态一度跌到谷底😭 但自从入手了这款XX精华液，真的绝了！
+        </div>
 
-✨核心成分：烟酰胺+视黄醇+玻尿酸
-💧质地：清爽不粘腻，吸收超快
-🕐使用感：连续用了一周，暗沉明显改善
+        <!-- 列表表头 -->
+        <div class="grid grid-cols-12 gap-2 px-4 py-2 mb-1" style="border-bottom: 1px solid rgba(140,150,165,0.08);">
+          <span class="col-span-1 text-[9px] font-mono uppercase tracking-wider" style="color: #5A6273;">ID</span>
+          <span class="col-span-3 text-[9px] font-mono uppercase tracking-wider" style="color: #5A6273;">标题</span>
+          <span class="col-span-2 text-[9px] font-mono uppercase tracking-wider" style="color: #5A6273;">模板</span>
+          <span class="col-span-1 text-[9px] font-mono uppercase tracking-wider" style="color: #5A6273;">状态</span>
+          <span class="col-span-1 text-[9px] font-mono uppercase tracking-wider" style="color: #5A6273;">评分</span>
+          <span class="col-span-2 text-[9px] font-mono uppercase tracking-wider" style="color: #5A6273;">生成时间</span>
+          <span class="col-span-2 text-[9px] font-mono uppercase tracking-wider" style="color: #5A6273;">操作</span>
+        </div>
 
-最让我惊喜的是它的保湿力，早上起来脸还是润润的，上妆也不卡粉了！
+        <!-- 列表内容 -->
+        <div id="content-list" class="space-y-1">
+          <!-- 列表-内容1 -->
+          <div class="content-item content-row grid grid-cols-12 gap-2 px-4 py-2.5 rounded-sm items-center" data-status="published" data-id="CF-001">
+            <span class="col-span-1 text-[10px] font-mono" style="color: #5A6273;">CF-001</span>
+            <span class="col-span-3 text-xs font-medium truncate" style="color: #E8EBF0;">2024年最值得买的5款降噪耳机横评</span>
+            <span class="col-span-2 text-[10px] font-mono" style="color: #8A94A6;">产品评测对比</span>
+            <span class="col-span-1">
+              <span class="inline-flex items-center px-1.5 py-0.5 text-[9px] font-mono rounded-sm" style="color: #15E0A0; background: rgba(21,224,160,0.08); border: 1px solid rgba(21,224,160,0.15);">已发布</span>
+            </span>
+            <span class="col-span-1 text-[10px] font-mono font-bold" style="color: #FF3B5C;">92</span>
+            <span class="col-span-2 text-[10px] font-mono" style="color: #5A6273;">2024-12-15 14:30</span>
+            <span class="col-span-2 flex items-center gap-2">
+              <button class="btn-edit text-[10px] font-mono" style="color: #21E6C1;" data-id="CF-001">编辑</button>
+              <button class="btn-preview text-[10px] font-mono" style="color: #8A94A6;" data-id="CF-001">预览</button>
+              <button class="btn-delete text-[10px] font-mono" style="color: #FF3B5C;" data-id="CF-001">删除</button>
+            </span>
+          </div>
 
-#熬夜护肤 #精华液推荐 #护肤好物</textarea>
-            </div>
-            <!-- AI工具栏 -->
-            <div class="flex items-center gap-2 mb-4">
-              <span class="text-xs text-on-surface-variant mr-1">AI工具：</span>
-              <button id="btn-ai-rewrite" class="bg-surface-container text-on-surface px-3 py-1.5 rounded-md text-xs font-medium hover:bg-surface-container-high active:scale-[0.98] transition-all inline-flex items-center gap-1">
-                <i data-lucide="refresh-cw" class="w-3 h-3"></i>改写
-              </button>
-              <button id="btn-ai-style" class="bg-surface-container text-on-surface px-3 py-1.5 rounded-md text-xs font-medium hover:bg-surface-container-high active:scale-[0.98] transition-all inline-flex items-center gap-1">
-                <i data-lucide="palette" class="w-3 h-3"></i>换风格
-              </button>
-              <button id="btn-ai-continue" class="bg-surface-container text-on-surface px-3 py-1.5 rounded-md text-xs font-medium hover:bg-surface-container-high active:scale-[0.98] transition-all inline-flex items-center gap-1">
-                <i data-lucide="arrow-right" class="w-3 h-3"></i>续写
-              </button>
-              <button id="btn-ai-regenerate" class="bg-surface-container text-on-surface px-3 py-1.5 rounded-md text-xs font-medium hover:bg-surface-container-high active:scale-[0.98] transition-all inline-flex items-center gap-1">
-                <i data-lucide="wand-2" class="w-3 h-3"></i>局部重生成
-              </button>
-            </div>
-            <!-- 审核结果区 -->
-            <div id="audit-result-area" class="hidden mb-4">
-              <label class="block text-xs text-on-surface-variant mb-1.5">AI审核结果</label>
-              <div class="bg-surface-container rounded-md p-3 text-sm">
-                <div class="flex items-center gap-2 mb-2">
-                  <span class="inline-flex items-center px-2 py-0.5 rounded-sm text-xs font-medium bg-error/15 text-error">违禁词 2 处</span>
-                  <span class="inline-flex items-center px-2 py-0.5 rounded-sm text-xs font-medium bg-success/15 text-success">安全词 28 处</span>
-                </div>
-                <p class="text-xs text-on-surface-variant leading-relaxed">
-                  检测到违禁词：<span class="text-error font-medium">"绝了"</span>（夸大效果）、<span class="text-error font-medium">"回春"</span>（医疗暗示），建议替换为更中性的表达。其余内容安全合规。
-                </p>
+          <!-- 列表-内容2 -->
+          <div class="content-item content-row grid grid-cols-12 gap-2 px-4 py-2.5 rounded-sm items-center" data-status="published" data-id="CF-002">
+            <span class="col-span-1 text-[10px] font-mono" style="color: #5A6273;">CF-002</span>
+            <span class="col-span-3 text-xs font-medium truncate" style="color: #E8EBF0;">冬至养生指南：3款暖身汤品推荐</span>
+            <span class="col-span-2 text-[10px] font-mono" style="color: #8A94A6;">小红书种草笔记</span>
+            <span class="col-span-1">
+              <span class="inline-flex items-center px-1.5 py-0.5 text-[9px] font-mono rounded-sm" style="color: #15E0A0; background: rgba(21,224,160,0.08); border: 1px solid rgba(21,224,160,0.15);">已发布</span>
+            </span>
+            <span class="col-span-1 text-[10px] font-mono font-bold" style="color: #15E0A0;">87</span>
+            <span class="col-span-2 text-[10px] font-mono" style="color: #5A6273;">2024-12-14 10:15</span>
+            <span class="col-span-2 flex items-center gap-2">
+              <button class="btn-edit text-[10px] font-mono" style="color: #21E6C1;" data-id="CF-002">编辑</button>
+              <button class="btn-preview text-[10px] font-mono" style="color: #8A94A6;" data-id="CF-002">预览</button>
+              <button class="btn-delete text-[10px] font-mono" style="color: #FF3B5C;" data-id="CF-002">删除</button>
+            </span>
+          </div>
+
+          <!-- 列表-内容3 -->
+          <div class="content-item content-row grid grid-cols-12 gap-2 px-4 py-2.5 rounded-sm items-center" data-status="pending" data-id="CF-003">
+            <span class="col-span-1 text-[10px] font-mono" style="color: #5A6273;">CF-003</span>
+            <span class="col-span-3 text-xs font-medium truncate" style="color: #E8EBF0;">AI时代职场生存指南：3个必备技能</span>
+            <span class="col-span-2 text-[10px] font-mono" style="color: #8A94A6;">微信公众号长文</span>
+            <span class="col-span-1">
+              <span class="inline-flex items-center px-1.5 py-0.5 text-[9px] font-mono rounded-sm" style="color: #F5A623; background: rgba(245,166,35,0.08); border: 1px solid rgba(245,166,35,0.15);">待发布</span>
+            </span>
+            <span class="col-span-1 text-[10px] font-mono font-bold" style="color: #15E0A0;">85</span>
+            <span class="col-span-2 text-[10px] font-mono" style="color: #5A6273;">2024-12-13 16:42</span>
+            <span class="col-span-2 flex items-center gap-2">
+              <button class="btn-edit text-[10px] font-mono" style="color: #21E6C1;" data-id="CF-003">编辑</button>
+              <button class="btn-preview text-[10px] font-mono" style="color: #8A94A6;" data-id="CF-003">预览</button>
+              <button class="btn-delete text-[10px] font-mono" style="color: #FF3B5C;" data-id="CF-003">删除</button>
+            </span>
+          </div>
+
+          <!-- 列表-内容4 -->
+          <div class="content-item content-row grid grid-cols-12 gap-2 px-4 py-2.5 rounded-sm items-center" data-status="generated" data-id="CF-004">
+            <span class="col-span-1 text-[10px] font-mono" style="color: #5A6273;">CF-004</span>
+            <span class="col-span-3 text-xs font-medium truncate" style="color: #E8EBF0;">年末理财攻略：如何做好资产配置</span>
+            <span class="col-span-2 text-[10px] font-mono" style="color: #8A94A6;">知乎专业回答</span>
+            <span class="col-span-1">
+              <span class="inline-flex items-center px-1.5 py-0.5 text-[9px] font-mono rounded-sm" style="color: #21E6C1; background: rgba(33,230,193,0.08); border: 1px solid rgba(33,230,193,0.15);">已生成</span>
+            </span>
+            <span class="col-span-1 text-[10px] font-mono font-bold" style="color: #FF3B5C;">78</span>
+            <span class="col-span-2 text-[10px] font-mono" style="color: #5A6273;">2024-12-12 09:18</span>
+            <span class="col-span-2 flex items-center gap-2">
+              <button class="btn-edit text-[10px] font-mono" style="color: #21E6C1;" data-id="CF-004">编辑</button>
+              <button class="btn-preview text-[10px] font-mono" style="color: #8A94A6;" data-id="CF-004">预览</button>
+              <button class="btn-delete text-[10px] font-mono" style="color: #FF3B5C;" data-id="CF-004">删除</button>
+            </span>
+          </div>
+
+          <!-- 列表-内容5 -->
+          <div class="content-item content-row grid grid-cols-12 gap-2 px-4 py-2.5 rounded-sm items-center" data-status="generated" data-id="CF-005">
+            <span class="col-span-1 text-[10px] font-mono" style="color: #5A6273;">CF-005</span>
+            <span class="col-span-3 text-xs font-medium truncate" style="color: #E8EBF0;">短视频脚本：90秒搞定量子计算</span>
+            <span class="col-span-2 text-[10px] font-mono" style="color: #8A94A6;">抖音短视频脚本</span>
+            <span class="col-span-1">
+              <span class="inline-flex items-center px-1.5 py-0.5 text-[9px] font-mono rounded-sm" style="color: #21E6C1; background: rgba(33,230,193,0.08); border: 1px solid rgba(33,230,193,0.15);">已生成</span>
+            </span>
+            <span class="col-span-1 text-[10px] font-mono font-bold" style="color: #15E0A0;">91</span>
+            <span class="col-span-2 text-[10px] font-mono" style="color: #5A6273;">2024-12-11 11:55</span>
+            <span class="col-span-2 flex items-center gap-2">
+              <button class="btn-edit text-[10px] font-mono" style="color: #21E6C1;" data-id="CF-005">编辑</button>
+              <button class="btn-preview text-[10px] font-mono" style="color: #8A94A6;" data-id="CF-005">预览</button>
+              <button class="btn-delete text-[10px] font-mono" style="color: #FF3B5C;" data-id="CF-005">删除</button>
+            </span>
+          </div>
+
+          <!-- 列表-内容6 -->
+          <div class="content-item content-row grid grid-cols-12 gap-2 px-4 py-2.5 rounded-sm items-center" data-status="draft" data-id="CF-006">
+            <span class="col-span-1 text-[10px] font-mono" style="color: #5A6273;">CF-006</span>
+            <span class="col-span-3 text-xs font-medium truncate" style="color: #E8EBF0;">新年穿搭趋势：5大风格抢先看</span>
+            <span class="col-span-2 text-[10px] font-mono" style="color: #8A94A6;">小红书种草笔记</span>
+            <span class="col-span-1">
+              <span class="inline-flex items-center px-1.5 py-0.5 text-[9px] font-mono rounded-sm" style="color: #5A6273; background: rgba(90,98,115,0.08); border: 1px solid rgba(90,98,115,0.15);">草稿</span>
+            </span>
+            <span class="col-span-1 text-[10px] font-mono" style="color: #5A6273;">--</span>
+            <span class="col-span-2 text-[10px] font-mono" style="color: #5A6273;">2024-12-10 15:20</span>
+            <span class="col-span-2 flex items-center gap-2">
+              <button class="btn-edit text-[10px] font-mono" style="color: #21E6C1;" data-id="CF-006">编辑</button>
+              <button class="btn-preview text-[10px] font-mono" style="color: #8A94A6;" data-id="CF-006">预览</button>
+              <button class="btn-delete text-[10px] font-mono" style="color: #FF3B5C;" data-id="CF-006">删除</button>
+            </span>
+          </div>
+
+          <!-- 列表-内容7 -->
+          <div class="content-item content-row grid grid-cols-12 gap-2 px-4 py-2.5 rounded-sm items-center" data-status="draft" data-id="CF-007">
+            <span class="col-span-1 text-[10px] font-mono" style="color: #5A6273;">CF-007</span>
+            <span class="col-span-3 text-xs font-medium truncate" style="color: #E8EBF0;">B站解说文案：赛博朋克美学解析</span>
+            <span class="col-span-2 text-[10px] font-mono" style="color: #8A94A6;">B站视频文案</span>
+            <span class="col-span-1">
+              <span class="inline-flex items-center px-1.5 py-0.5 text-[9px] font-mono rounded-sm" style="color: #5A6273; background: rgba(90,98,115,0.08); border: 1px solid rgba(90,98,115,0.15);">草稿</span>
+            </span>
+            <span class="col-span-1 text-[10px] font-mono" style="color: #5A6273;">--</span>
+            <span class="col-span-2 text-[10px] font-mono" style="color: #5A6273;">2024-12-09 20:30</span>
+            <span class="col-span-2 flex items-center gap-2">
+              <button class="btn-edit text-[10px] font-mono" style="color: #21E6C1;" data-id="CF-007">编辑</button>
+              <button class="btn-preview text-[10px] font-mono" style="color: #8A94A6;" data-id="CF-007">预览</button>
+              <button class="btn-delete text-[10px] font-mono" style="color: #FF3B5C;" data-id="CF-007">删除</button>
+            </span>
+          </div>
+
+          <!-- 列表-内容8 -->
+          <div class="content-item content-row grid grid-cols-12 gap-2 px-4 py-2.5 rounded-sm items-center" data-status="pending" data-id="CF-008">
+            <span class="col-span-1 text-[10px] font-mono" style="color: #5A6273;">CF-008</span>
+            <span class="col-span-3 text-xs font-medium truncate" style="color: #E8EBF0;">2025年科技行业十大趋势预测</span>
+            <span class="col-span-2 text-[10px] font-mono" style="color: #8A94A6;">行业报告摘要</span>
+            <span class="col-span-1">
+              <span class="inline-flex items-center px-1.5 py-0.5 text-[9px] font-mono rounded-sm" style="color: #F5A623; background: rgba(245,166,35,0.08); border: 1px solid rgba(245,166,35,0.15);">待发布</span>
+            </span>
+            <span class="col-span-1 text-[10px] font-mono font-bold" style="color: #FF3B5C;">94</span>
+            <span class="col-span-2 text-[10px] font-mono" style="color: #5A6273;">2024-12-08 13:05</span>
+            <span class="col-span-2 flex items-center gap-2">
+              <button class="btn-edit text-[10px] font-mono" style="color: #21E6C1;" data-id="CF-008">编辑</button>
+              <button class="btn-preview text-[10px] font-mono" style="color: #8A94A6;" data-id="CF-008">预览</button>
+              <button class="btn-delete text-[10px] font-mono" style="color: #FF3B5C;" data-id="CF-008">删除</button>
+            </span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ 排期日历 ============ -->
+      <section class="mb-6">
+        <div class="flex items-center justify-between mb-4">
+          <div class="flex items-center gap-2">
+            <div class="w-1 h-4" style="background: linear-gradient(180deg, #F5A623, #F5A62300);"></div>
+            <h2 class="text-sm font-bold" style="color: #E8EBF0;">排期日历</h2>
+            <span class="text-[9px] font-mono ml-1" style="color: #5A6273;">// SCHEDULE</span>
+          </div>
+          <div class="flex items-center gap-3">
+            <button id="btn-cal-prev" class="px-2 py-1 text-[10px] font-mono" style="color: #5A6273; border: 1px solid rgba(140,150,165,0.10);">
+              <i data-lucide="chevron-left" class="w-3 h-3"></i>
+            </button>
+            <span id="cal-month" class="text-xs font-mono font-medium" style="color: #E8EBF0;">2024年12月</span>
+            <button id="btn-cal-next" class="px-2 py-1 text-[10px] font-mono" style="color: #5A6273; border: 1px solid rgba(140,150,165,0.10);">
+              <i data-lucide="chevron-right" class="w-3 h-3"></i>
+            </button>
+            <div class="h-4" style="width: 1px; background: rgba(140,150,165,0.15);"></div>
+            <div class="flex items-center gap-3">
+              <div class="flex items-center gap-1">
+                <span class="calendar-dot" style="background: #21E6C1;"></span>
+                <span class="text-[9px] font-mono" style="color: #5A6273;">已生成</span>
+              </div>
+              <div class="flex items-center gap-1">
+                <span class="calendar-dot" style="background: #F5A623;"></span>
+                <span class="text-[9px] font-mono" style="color: #5A6273;">待发布</span>
+              </div>
+              <div class="flex items-center gap-1">
+                <span class="calendar-dot" style="background: #15E0A0;"></span>
+                <span class="text-[9px] font-mono" style="color: #5A6273;">已发布</span>
               </div>
             </div>
           </div>
-          <!-- 编辑器底部 -->
-          <div class="flex items-center justify-between px-6 py-4 border-t border-outline-variant/20">
-            <button id="btn-editor-audit" class="bg-surface-container text-on-surface px-4 py-2 rounded-md text-sm font-medium hover:bg-surface-container-high active:scale-[0.98] transition-all inline-flex items-center gap-2">
-              <i data-lucide="shield-check" class="w-4 h-4"></i>违禁词扫描
-            </button>
+        </div>
+
+        <!-- 日历网格 -->
+        <div class="metal-panel rounded-md p-3 overflow-hidden">
+          <!-- 星期头 -->
+          <div class="grid grid-cols-7 gap-0 mb-1">
+            <span class="text-center text-[9px] font-mono py-1.5" style="color: #5A6273;">MON</span>
+            <span class="text-center text-[9px] font-mono py-1.5" style="color: #5A6273;">TUE</span>
+            <span class="text-center text-[9px] font-mono py-1.5" style="color: #5A6273;">WED</span>
+            <span class="text-center text-[9px] font-mono py-1.5" style="color: #5A6273;">THU</span>
+            <span class="text-center text-[9px] font-mono py-1.5" style="color: #5A6273;">FRI</span>
+            <span class="text-center text-[9px] font-mono py-1.5" style="color: #FF3B5C;">SAT</span>
+            <span class="text-center text-[9px] font-mono py-1.5" style="color: #FF3B5C;">SUN</span>
+          </div>
+
+          <!-- 日历主体 -->
+          <div class="grid grid-cols-7 gap-0">
+            <!-- 第1行：12月第1周 (12/1-12/7, 周日开始，前面空6格但12月1日是周日) -->
+            <!-- 空白格5个 (周一到周五空) -->
+            <div class="calendar-cell min-h-[56px] p-1.5"></div>
+            <div class="calendar-cell min-h-[56px] p-1.5"></div>
+            <div class="calendar-cell min-h-[56px] p-1.5"></div>
+            <div class="calendar-cell min-h-[56px] p-1.5"></div>
+            <div class="calendar-cell min-h-[56px] p-1.5"></div>
+            <div class="calendar-cell min-h-[56px] p-1.5"></div>
+            <!-- 12月1日 周日 -->
+            <div class="calendar-cell min-h-[56px] p-1.5">
+              <span class="text-[10px] font-mono" style="color: #5A6273;">1</span>
+            </div>
+
+            <!-- 第2行：12/2-12/8 -->
+            <div class="calendar-cell min-h-[56px] p-1.5">
+              <span class="text-[10px] font-mono" style="color: #5A6273;">2</span>
+            </div>
+            <div class="calendar-cell min-h-[56px] p-1.5">
+              <span class="text-[10px] font-mono" style="color: #5A6273;">3</span>
+            </div>
+            <div class="calendar-cell min-h-[56px] p-1.5">
+              <span class="text-[10px] font-mono" style="color: #5A6273;">4</span>
+              <div class="mt-1"><span class="calendar-dot" style="background: #21E6C1;"></span></div>
+            </div>
+            <div class="calendar-cell min-h-[56px] p-1.5">
+              <span class="text-[10px] font-mono" style="color: #5A6273;">5</span>
+            </div>
+            <div class="calendar-cell min-h-[56px] p-1.5">
+              <span class="text-[10px] font-mono" style="color: #5A6273;">6</span>
+              <div class="mt-1"><span class="calendar-dot" style="background: #F5A623;"></span></div>
+            </div>
+            <div class="calendar-cell min-h-[56px] p-1.5">
+              <span class="text-[10px] font-mono" style="color: #5A6273;">7</span>
+            </div>
+            <div class="calendar-cell min-h-[56px] p-1.5">
+              <span class="text-[10px] font-mono" style="color: #5A6273;">8</span>
+              <div class="mt-1 flex gap-0.5"><span class="calendar-dot" style="background: #21E6C1;"></span><span class="calendar-dot" style="background: #15E0A0;"></span></div>
+            </div>
+
+            <!-- 第3行：12/9-12/15 -->
+            <div class="calendar-cell min-h-[56px] p-1.5">
+              <span class="text-[10px] font-mono" style="color: #5A6273;">9</span>
+              <div class="mt-1"><span class="calendar-dot" style="background: #5A6273;"></span></div>
+            </div>
+            <div class="calendar-cell min-h-[56px] p-1.5">
+              <span class="text-[10px] font-mono" style="color: #5A6273;">10</span>
+              <div class="mt-1"><span class="calendar-dot" style="background: #5A6273;"></span></div>
+            </div>
+            <div class="calendar-cell min-h-[56px] p-1.5">
+              <span class="text-[10px] font-mono" style="color: #5A6273;">11</span>
+              <div class="mt-1"><span class="calendar-dot" style="background: #21E6C1;"></span></div>
+            </div>
+            <div class="calendar-cell min-h-[56px] p-1.5">
+              <span class="text-[10px] font-mono" style="color: #5A6273;">12</span>
+              <div class="mt-1"><span class="calendar-dot" style="background: #21E6C1;"></span></div>
+            </div>
+            <div class="calendar-cell min-h-[56px] p-1.5">
+              <span class="text-[10px] font-mono" style="color: #5A6273;">13</span>
+              <div class="mt-1"><span class="calendar-dot" style="background: #F5A623;"></span></div>
+            </div>
+            <div class="calendar-cell min-h-[56px] p-1.5">
+              <span class="text-[10px] font-mono" style="color: #5A6273;">14</span>
+              <div class="mt-1"><span class="calendar-dot" style="background: #15E0A0;"></span></div>
+            </div>
+            <!-- 12月15日 今天 -->
+            <div class="calendar-cell calendar-cell-today min-h-[56px] p-1.5" style="background: linear-gradient(180deg, #14171E 0%, #181C24 100%);">
+              <span class="text-[10px] font-mono font-bold" style="color: #FF3B5C;">15</span>
+              <div class="mt-1 flex gap-0.5"><span class="calendar-dot" style="background: #15E0A0;"></span><span class="calendar-dot" style="background: #F5A623;"></span></div>
+            </div>
+
+            <!-- 第4行：12/16-12/22 -->
+            <div class="calendar-cell min-h-[56px] p-1.5">
+              <span class="text-[10px] font-mono" style="color: #5A6273;">16</span>
+              <div class="mt-1"><span class="calendar-dot" style="background: #F5A623;"></span></div>
+            </div>
+            <div class="calendar-cell min-h-[56px] p-1.5">
+              <span class="text-[10px] font-mono" style="color: #5A6273;">17</span>
+              <div class="mt-1"><span class="calendar-dot" style="background: #21E6C1;"></span></div>
+            </div>
+            <div class="calendar-cell min-h-[56px] p-1.5">
+              <span class="text-[10px] font-mono" style="color: #5A6273;">18</span>
+            </div>
+            <div class="calendar-cell min-h-[56px] p-1.5">
+              <span class="text-[10px] font-mono" style="color: #5A6273;">19</span>
+              <div class="mt-1"><span class="calendar-dot" style="background: #F5A623;"></span></div>
+            </div>
+            <div class="calendar-cell min-h-[56px] p-1.5">
+              <span class="text-[10px] font-mono" style="color: #5A6273;">20</span>
+              <div class="mt-1"><span class="calendar-dot" style="background: #21E6C1;"></span></div>
+            </div>
+            <div class="calendar-cell min-h-[56px] p-1.5">
+              <span class="text-[10px] font-mono" style="color: #5A6273;">21</span>
+            </div>
+            <div class="calendar-cell min-h-[56px] p-1.5">
+              <span class="text-[10px] font-mono" style="color: #5A6273;">22</span>
+            </div>
+
+            <!-- 第5行：12/23-12/29 -->
+            <div class="calendar-cell min-h-[56px] p-1.5">
+              <span class="text-[10px] font-mono" style="color: #5A6273;">23</span>
+              <div class="mt-1"><span class="calendar-dot" style="background: #F5A623;"></span></div>
+            </div>
+            <div class="calendar-cell min-h-[56px] p-1.5">
+              <span class="text-[10px] font-mono" style="color: #5A6273;">24</span>
+              <div class="mt-1"><span class="calendar-dot" style="background: #21E6C1;"></span></div>
+            </div>
+            <div class="calendar-cell min-h-[56px] p-1.5">
+              <span class="text-[10px] font-mono" style="color: #5A6273;">25</span>
+              <div class="mt-1 flex gap-0.5"><span class="calendar-dot" style="background: #15E0A0;"></span><span class="calendar-dot" style="background: #F5A623;"></span></div>
+            </div>
+            <div class="calendar-cell min-h-[56px] p-1.5">
+              <span class="text-[10px] font-mono" style="color: #5A6273;">26</span>
+            </div>
+            <div class="calendar-cell min-h-[56px] p-1.5">
+              <span class="text-[10px] font-mono" style="color: #5A6273;">27</span>
+              <div class="mt-1"><span class="calendar-dot" style="background: #21E6C1;"></span></div>
+            </div>
+            <div class="calendar-cell min-h-[56px] p-1.5">
+              <span class="text-[10px] font-mono" style="color: #5A6273;">28</span>
+            </div>
+            <div class="calendar-cell min-h-[56px] p-1.5">
+              <span class="text-[10px] font-mono" style="color: #5A6273;">29</span>
+              <div class="mt-1"><span class="calendar-dot" style="background: #F5A623;"></span></div>
+            </div>
+
+            <!-- 第6行：12/30-12/31 -->
+            <div class="calendar-cell min-h-[56px] p-1.5">
+              <span class="text-[10px] font-mono" style="color: #5A6273;">30</span>
+              <div class="mt-1"><span class="calendar-dot" style="background: #21E6C1;"></span></div>
+            </div>
+            <div class="calendar-cell min-h-[56px] p-1.5">
+              <span class="text-[10px] font-mono" style="color: #5A6273;">31</span>
+              <div class="mt-1"><span class="calendar-dot" style="background: #F5A623;"></span></div>
+            </div>
+            <!-- 空白格补齐 -->
+            <div class="calendar-cell min-h-[56px] p-1.5"></div>
+            <div class="calendar-cell min-h-[56px] p-1.5"></div>
+            <div class="calendar-cell min-h-[56px] p-1.5"></div>
+            <div class="calendar-cell min-h-[56px] p-1.5"></div>
+            <div class="calendar-cell min-h-[56px] p-1.5"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ 编辑器弹窗 ============ -->
+      <div id="editor-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4" style="background: rgba(0,0,0,0.7);">
+        <div class="editor-modal w-full max-w-3xl max-h-[85vh] overflow-y-auto p-6">
+          <!-- 弹窗头部 -->
+          <div class="flex items-center justify-between mb-5">
             <div class="flex items-center gap-3">
-              <button id="btn-editor-cancel" class="bg-surface-container text-on-surface px-4 py-2 rounded-md text-sm font-medium hover:bg-surface-container-high active:scale-[0.98] transition-all">取消</button>
-              <button id="btn-editor-save" class="bg-primary text-on-primary px-4 py-2 rounded-md text-sm font-medium hover:opacity-90 active:scale-[0.98] transition-all inline-flex items-center gap-2">
-                <i data-lucide="save" class="w-4 h-4"></i>保存
+              <div class="w-1 h-5" style="background: linear-gradient(180deg, #FF3B5C, #FF3B5C00);"></div>
+              <h3 class="font-display font-bold text-sm tracking-wider metal-text">CONTENT EDITOR</h3>
+              <span class="text-[9px] font-mono" style="color: #5A6273;">// 编辑内容</span>
+            </div>
+            <button id="btn-close-editor" class="w-7 h-7 flex items-center justify-center rounded-sm" style="color: #5A6273; border: 1px solid rgba(140,150,165,0.15);">
+              <i data-lucide="x" class="w-4 h-4"></i>
+            </button>
+          </div>
+
+          <!-- 编辑表单 -->
+          <div class="space-y-4">
+            <div>
+              <label class="text-[10px] font-mono mb-1.5 block" style="color: #5A6273;">TITLE // 标题</label>
+              <input id="editor-title" type="text" value="2024年最值得买的5款降噪耳机横评" class="w-full px-3 py-2 text-sm rounded-sm" style="background: #0E1014; color: #E8EBF0; border: 1px solid rgba(140,150,165,0.18);" />
+            </div>
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="text-[10px] font-mono mb-1.5 block" style="color: #5A6273;">TEMPLATE // 模板</label>
+                <select id="editor-template" class="w-full px-3 py-2 text-xs rounded-sm" style="background: #0E1014; color: #E8EBF0; border: 1px solid rgba(140,150,165,0.18);">
+                  <option>小红书种草笔记</option>
+                  <option>微信公众号长文</option>
+                  <option>抖音短视频脚本</option>
+                  <option>微博热点评论</option>
+                  <option>知乎专业回答</option>
+                  <option>B站视频文案</option>
+                  <option>产品评测对比</option>
+                  <option>行业报告摘要</option>
+                </select>
+              </div>
+              <div>
+                <label class="text-[10px] font-mono mb-1.5 block" style="color: #5A6273;">STATUS // 状态</label>
+                <select id="editor-status" class="w-full px-3 py-2 text-xs rounded-sm" style="background: #0E1014; color: #E8EBF0; border: 1px solid rgba(140,150,165,0.18);">
+                  <option>草稿</option>
+                  <option>已生成</option>
+                  <option>待发布</option>
+                  <option>已发布</option>
+                </select>
+              </div>
+            </div>
+            <div>
+              <label class="text-[10px] font-mono mb-1.5 block" style="color: #5A6273;">CONTENT // 正文</label>
+              <textarea id="editor-content" rows="10" class="w-full px-3 py-2 text-xs rounded-sm leading-relaxed" style="background: #0E1014; color: #E8EBF0; border: 1px solid rgba(140,150,165,0.18); resize: vertical;">降噪耳机市场在2024年迎来了爆发式增长，各大品牌纷纷推出新品。本文将从降噪深度、音质表现、佩戴舒适度、续航能力、性价比五个维度，对索尼WH-1000XM5、Bose QC Ultra、苹果AirPods Max、森海塞尔Momentum 4、B&W Px8五款旗舰产品进行全面横评。
+
+【降噪深度】索尼WH-1000XM5依然是降噪之王，低频消除能力无人能及...
+
+【音质表现】B&W Px8凭借其独特的声学调校，在音质维度拔得头筹...
+
+【佩戴舒适度】Bose QC Ultra的耳垫材质升级后，长时间佩戴无压感...
+
+【续航能力】森海塞尔Momentum 4以60小时续航傲视群雄...
+
+【性价比】综合所有维度，索尼XM5仍是大多数用户的最优选择...</textarea>
+            </div>
+            <div>
+              <label class="text-[10px] font-mono mb-1.5 block" style="color: #5A6273;">TAGS // 标签</label>
+              <div class="flex items-center gap-2 flex-wrap">
+                <span class="px-2 py-0.5 text-[10px] font-mono rounded-sm" style="color: #21E6C1; background: rgba(33,230,193,0.06); border: 1px solid rgba(33,230,193,0.15);">#降噪耳机</span>
+                <span class="px-2 py-0.5 text-[10px] font-mono rounded-sm" style="color: #21E6C1; background: rgba(33,230,193,0.06); border: 1px solid rgba(33,230,193,0.15);">#横评</span>
+                <span class="px-2 py-0.5 text-[10px] font-mono rounded-sm" style="color: #21E6C1; background: rgba(33,230,193,0.06); border: 1px solid rgba(33,230,193,0.15);">#数码评测</span>
+                <span class="px-2 py-0.5 text-[10px] font-mono rounded-sm" style="color: #21E6C1; background: rgba(33,230,193,0.06); border: 1px solid rgba(33,230,193,0.15);">#索尼</span>
+                <button id="btn-add-tag" class="px-2 py-0.5 text-[10px] font-mono rounded-sm" style="color: #5A6273; background: transparent; border: 1px dashed rgba(140,150,165,0.2);">+ 添加标签</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- 弹窗底部 -->
+          <div class="flex items-center justify-between mt-6 pt-4" style="border-top: 1px solid rgba(140,150,165,0.10);">
+            <div class="flex items-center gap-2">
+              <span class="text-[9px] font-mono" style="color: #5A6273;">SCORE:</span>
+              <span class="text-sm font-mono font-bold neon-text-red" style="color: #FF3B5C;">92</span>
+              <span class="text-[9px] font-mono" style="color: #5A6273;">/ 100</span>
+            </div>
+            <div class="flex items-center gap-3">
+              <button id="btn-editor-cancel" class="px-4 py-1.5 text-[10px] font-mono rounded-sm" style="color: #8A94A6; background: transparent; border: 1px solid rgba(140,150,165,0.18);">取消</button>
+              <button id="btn-editor-save" class="hud-btn-primary hud-clip-tr px-4 py-1.5 text-[10px] font-mono inline-flex items-center gap-1.5">
+                <i data-lucide="save" class="w-3 h-3" style="color: #FF3B5C;"></i>保存
               </button>
             </div>
           </div>
-        </div>
-      </div>
-
-      <!-- 生成进度弹窗 -->
-      <div id="generating-modal" class="fixed inset-0 bg-black/60 flex items-center justify-center p-4 z-50 hidden">
-        <div class="bg-surface rounded-xl shadow-dialog max-w-sm w-full p-6 text-center">
-          <div class="w-12 h-12 mx-auto mb-4 rounded-full bg-primary/20 flex items-center justify-center">
-            <i data-lucide="loader-2" class="w-6 h-6 text-primary animate-spin"></i>
-          </div>
-          <h3 class="text-base font-semibold text-on-surface mb-2">正在批量生成...</h3>
-          <p class="text-sm text-on-surface-variant mb-4">AI正在为你生成5条内容，请稍候</p>
-          <div class="w-full bg-surface-container rounded-full h-1.5 mb-2">
-            <div id="gen-progress-bar" class="bg-primary h-1.5 rounded-full transition-all duration-1000" style="width: 0%"></div>
-          </div>
-          <span id="gen-progress-text" class="text-xs text-on-surface-variant">0%</span>
         </div>
       </div>
 
@@ -689,289 +1024,217 @@
     <!-- @main-content:end -->
   </div>
 
+  <script>lucide.createIcons();</script>
+
   <script>
   $(function() {
 
-    // === 模板选中 ===
-    $('#sel-template').on('change', function() {
-      var tpl = $(this).val();
-      $('.content-template').removeClass('border-cyber-cyan/50 bg-surface-container/30');
-      var $target = $('.content-template[data-template="' + tpl + '"]');
-      $target.addClass('border-cyber-cyan/50 bg-surface-container/30');
+    // ===== 模板卡片选择 =====
+    $('#template-grid').on('click', '.template-item', function() {
+      // 移除所有选中态
+      $('.template-item').removeClass('template-selected');
+      $('.template-item').find('[style*="color: #FF3B5C"]').each(function() {
+        if ($(this).text() === 'SELECTED') {
+          $(this).replaceWith('<span class="text-[9px] font-mono" style="color: #5A6273;">ID:' + $(this).closest('.template-item').data('template').toUpperCase().replace(/-/g, '') + '</span>');
+        }
+      });
+      // 添加当前选中态
+      $(this).addClass('template-selected');
+      // 更新批量生成区模板名称
+      var tplName = $(this).find('.text-xs.font-medium').first().text();
+      $('#selected-template-name').text(tplName);
     });
 
-    // 模板卡片点击选用
-    $('.content-template').on('click', function() {
-      var tpl = $(this).data('template');
-      $('#sel-template').val(tpl);
-      $('.content-template').removeClass('border-cyber-cyan/50 bg-surface-container/30');
-      $(this).addClass('border-cyber-cyan/50 bg-surface-container/30');
+    // ===== 内容列表筛选 =====
+    $('#filter-all').on('click', function() {
+      // 重置所有筛选按钮样式
+      $('.filter-btn, #filter-all').css({
+        'color': '#5A6273',
+        'background': 'transparent',
+        'border-color': 'rgba(140,150,165,0.10)'
+      });
+      $(this).css({
+        'color': '#FF3B5C',
+        'background': 'rgba(255,59,92,0.08)',
+        'border-color': 'rgba(255,59,92,0.2)'
+      });
+      $('.content-item').show();
     });
 
-    // === 批量生成面板折叠 ===
-    $('#btn-toggle-panel').on('click', function() {
-      var $body = $('#batch-panel-body');
-      var $icon = $(this).find('[data-lucide]');
-      if ($body.is(':visible')) {
-        $body.slideUp(200);
-        $(this).contents().filter(function() { return this.nodeType === 3; }).remove();
-        $(this).prepend('展开 ');
-      } else {
-        $body.slideDown(200);
-        $(this).contents().filter(function() { return this.nodeType === 3; }).remove();
-        $(this).prepend('收起 ');
-      }
+    $('#filter-draft').on('click', function() {
+      $('.filter-btn, #filter-all').css({
+        'color': '#5A6273',
+        'background': 'transparent',
+        'border-color': 'rgba(140,150,165,0.10)'
+      });
+      $(this).css({
+        'color': '#5A6273',
+        'background': 'rgba(90,98,115,0.08)',
+        'border-color': 'rgba(90,98,115,0.2)'
+      });
+      $('.content-item').hide();
+      $('.content-item[data-status="draft"]').show();
     });
 
-    // === 全选/取消 ===
-    $('#select-all').on('change', function() {
-      $('.row-checkbox').prop('checked', $(this).prop('checked'));
+    $('#filter-generated').on('click', function() {
+      $('.filter-btn, #filter-all').css({
+        'color': '#5A6273',
+        'background': 'transparent',
+        'border-color': 'rgba(140,150,165,0.10)'
+      });
+      $(this).css({
+        'color': '#21E6C1',
+        'background': 'rgba(33,230,193,0.08)',
+        'border-color': 'rgba(33,230,193,0.2)'
+      });
+      $('.content-item').hide();
+      $('.content-item[data-status="generated"]').show();
     });
 
-    // === 批量删除 ===
-    // 批量删除 - 点击后应实现：
-    // 1. 检查是否有选中的checkbox
-    // 2. 弹出确认对话框
-    // 3. 确认后删除选中的行，从DOM中移除
-    // 4. 更新全选checkbox状态
-    $('#btn-batch-delete').on('click', function() {
-      var checked = $('.row-checkbox:checked');
-      if (checked.length === 0) {
-        console.log('请先选择要删除的内容');
-        return;
-      }
-      console.log('批量删除：选中' + checked.length + '条内容，应弹出确认弹窗后删除');
+    $('#filter-pending').on('click', function() {
+      $('.filter-btn, #filter-all').css({
+        'color': '#5A6273',
+        'background': 'transparent',
+        'border-color': 'rgba(140,150,165,0.10)'
+      });
+      $(this).css({
+        'color': '#F5A623',
+        'background': 'rgba(245,166,35,0.08)',
+        'border-color': 'rgba(245,166,35,0.2)'
+      });
+      $('.content-item').hide();
+      $('.content-item[data-status="pending"]').show();
     });
 
-    // === 批量发布 ===
-    // 批量发布 - 点击后应实现：
-    // 1. 检查是否有选中的checkbox
-    // 2. 仅允许状态为"已生成"或"待发布"的内容进行发布
-    // 3. 弹出确认对话框，展示将要发布的内容列表
-    // 4. 确认后跳转到发布管理页面，传递选中内容的id列表
-    $('#btn-batch-publish').on('click', function() {
-      var checked = $('.row-checkbox:checked');
-      if (checked.length === 0) {
-        console.log('请先选择要发布的内容');
-        return;
-      }
-      console.log('批量发布：选中' + checked.length + '条内容，应跳转至发布管理页面');
-      // window.location.href = 'publish.html?ids=1,2,3';
+    $('#filter-published').on('click', function() {
+      $('.filter-btn, #filter-all').css({
+        'color': '#5A6273',
+        'background': 'transparent',
+        'border-color': 'rgba(140,150,165,0.10)'
+      });
+      $(this).css({
+        'color': '#15E0A0',
+        'background': 'rgba(21,224,160,0.08)',
+        'border-color': 'rgba(21,224,160,0.2)'
+      });
+      $('.content-item').hide();
+      $('.content-item[data-status="published"]').show();
     });
 
-    // === 编辑按钮 ===
-    // 编辑按钮 - 点击后应实现：
-    // 1. 打开编辑器弹窗，加载对应内容的标题和正文
-    // 2. 支持改写/换风格/续写/局部重生成等AI工具
-    // 3. 支持违禁词扫描
-    // 4. 保存后更新列表中对应行的标题
-    $('#btn-edit-1, #btn-edit-2, #btn-edit-3, #btn-edit-4, #btn-edit-5, #btn-edit-6').on('click', function() {
-      var id = $(this).attr('id').replace('btn-edit-', '');
-      var title = $(this).closest('.content-row').find('.text-sm.font-medium.text-on-surface').first().text();
-      $('#editor-title').val(title);
-      $('#audit-result-area').addClass('hidden');
-      $('#editor-modal').removeClass('hidden');
-      console.log('打开编辑器，内容ID：' + id);
+    // ===== 编辑按钮 — 打开编辑器弹窗 =====
+    // 编辑按钮 - 点击后打开编辑器弹窗：
+    // 1. 弹窗中预填当前内容的标题、模板、状态、正文
+    // 2. 当前原型中打开弹窗即可，编辑保存为简化交互
+    $('#content-list').on('click', '.btn-edit', function() {
+      var itemId = $(this).data('id');
+      var itemTitle = $(this).closest('.content-item').find('.text-xs.font-medium').text();
+      $('#editor-title').val(itemTitle);
+      $('#editor-modal').removeClass('hidden').addClass('flex');
     });
 
-    // === 关闭编辑器 ===
+    // ===== 关闭编辑器弹窗 =====
     $('#btn-close-editor, #btn-editor-cancel').on('click', function() {
-      $('#editor-modal').addClass('hidden');
+      $('#editor-modal').removeClass('flex').addClass('hidden');
     });
 
-    // === 保存编辑 ===
-    // 保存编辑 - 点击后应实现：
-    // 1. 收集编辑器中的标题和正文内容
-    // 2. 调用后端接口保存
-    // 3. 更新列表中对应行的标题文字
-    // 4. 显示保存成功提示
+    // ===== 保存编辑 =====
+    // 保存按钮 - 点击后应实现：
+    // 1. 验证必填字段（标题不为空）
+    // 2. 将编辑表单中的数据更新到对应列表行
+    // 3. 显示保存成功提示
+    // 4. 关闭弹窗
     $('#btn-editor-save').on('click', function() {
-      console.log('保存内容：' + $('#editor-title').val());
-      $('#editor-modal').addClass('hidden');
+      var title = $('#editor-title').val();
+      if (!title.trim()) {
+        $('#editor-title').css('border-color', 'rgba(255,59,92,0.5)');
+        return;
+      }
+      $('#editor-title').css('border-color', 'rgba(140,150,165,0.18)');
+      $('#editor-modal').removeClass('flex').addClass('hidden');
     });
 
-    // === 改写按钮 ===
-    // 改写按钮 - 点击后应实现：
-    // 1. 获取编辑器中的正文内容
-    // 2. 调用AI改写接口，保持核心含义不变，调整表达方式
-    // 3. 显示loading状态
-    // 4. 返回后将改写结果替换编辑器正文内容
-    $('#btn-ai-rewrite').on('click', function() {
-      console.log('AI改写：调用接口对正文进行改写');
+    // ===== 预览按钮 =====
+    // 预览按钮 - 点击后应实现：
+    // 1. 打开新页面或弹窗展示内容的预览效果
+    // 2. 按照对应平台模板的样式渲染内容
+    $('#content-list').on('click', '.btn-preview', function() {
+      var itemId = $(this).data('id');
+      console.log('预览内容:', itemId);
     });
 
-    // === 换风格按钮 ===
-    // 换风格按钮 - 点击后应实现：
-    // 1. 弹出风格选择面板（幽默/专业/温馨/潮流等）
-    // 2. 根据选择的风格调用AI换风格接口
-    // 3. 返回后将结果替换编辑器正文内容
-    $('#btn-ai-style').on('click', function() {
-      console.log('AI换风格：应弹出风格选择面板后调用接口');
-    });
-
-    // === 续写按钮 ===
-    // 续写按钮 - 点击后应实现：
-    // 1. 获取编辑器中的正文内容
-    // 2. 调用AI续写接口，在现有内容后继续生成
-    // 3. 返回后将续写内容追加到编辑器正文末尾
-    $('#btn-ai-continue').on('click', function() {
-      console.log('AI续写：调用接口在正文后继续生成内容');
-    });
-
-    // === 局部重生成按钮 ===
-    // 局部重生成按钮 - 点击后应实现：
-    // 1. 用户选中正文中的一段文字
-    // 2. 弹出"局部重生成"确认
-    // 3. 调用AI接口对选中部分重新生成
-    // 4. 返回后替换选中的文字部分
-    $('#btn-ai-regenerate').on('click', function() {
-      console.log('AI局部重生成：应选中正文片段后调用接口重生成该部分');
-    });
-
-    // === 违禁词扫描 ===
-    // 违禁词扫描 - 点击后应实现：
-    // 1. 获取编辑器中的全文内容
-    // 2. 调用AI违禁词检测接口
-    // 3. 在审核结果区展示：违禁词数量（红色标注）、安全词数量（绿色标注）
-    // 4. 对违禁词在正文中高亮标注（红色下划线/红色背景）
-    // 5. 给出替换建议
-    $('#btn-editor-audit').on('click', function() {
-      console.log('AI违禁词扫描：调用接口检测正文违禁词');
-      $('#audit-result-area').removeClass('hidden');
-    });
-
-    // === 顶部AI审核按钮 ===
-    // 顶部AI审核 - 点击后应实现：
-    // 1. 对列表中所有选中或全部内容进行批量违禁词扫描
-    // 2. 在列表中标注有问题的行
-    // 3. 展示扫描结果摘要
-    $('#btn-audit').on('click', function() {
-      console.log('批量AI审核：对列表内容进行批量违禁词扫描');
-    });
-
-    // === 删除按钮 ===
+    // ===== 删除按钮 =====
     // 删除按钮 - 点击后应实现：
-    // 1. 弹出确认对话框
-    // 2. 确认后从DOM中移除该行
-    // 3. 更新全选checkbox状态
-    $('#btn-delete-1, #btn-delete-2, #btn-delete-3, #btn-delete-4, #btn-delete-5, #btn-delete-6').on('click', function() {
-      var id = $(this).attr('id').replace('btn-delete-', '');
-      console.log('删除内容ID：' + id + '，应弹出确认后删除');
-      $(this).closest('.content-row').fadeOut(300, function() { $(this).remove(); });
-    });
-
-    // === 改写按钮（列表行内） ===
-    // 改写按钮 - 点击后应实现：
-    // 1. 打开编辑器弹窗
-    // 2. 自动触发AI改写操作
-    // 3. 改写结果填充到编辑器中
-    $('#btn-rewrite-1, #btn-rewrite-2, #btn-rewrite-3, #btn-rewrite-4, #btn-rewrite-5, #btn-rewrite-6').on('click', function() {
-      var id = $(this).attr('id').replace('btn-rewrite-', '');
-      var title = $(this).closest('.content-row').find('.text-sm.font-medium.text-on-surface').first().text();
-      $('#editor-title').val(title);
-      $('#audit-result-area').addClass('hidden');
-      $('#editor-modal').removeClass('hidden');
-      console.log('改写内容ID：' + id + '，打开编辑器并自动触发AI改写');
-    });
-
-    // === 开始批量生成 ===
-    // 批量生成 - 点击后应实现：
-    // 1. 收集生成参数（模板、角色、行业、平台、数量）
-    // 2. 弹出生成进度弹窗
-    // 3. 调用后端AI批量生成接口
-    // 4. 进度条动态更新
-    // 5. 生成完成后关闭进度弹窗，将新内容添加到列表中
-    $('#btn-start-generate').on('click', function() {
-      var template = $('#sel-template').val();
-      var role = $('#sel-role').val();
-      var industry = $('#sel-industry').val();
-      var platform = $('#sel-platform').val();
-      var count = $('#sel-count').val();
-
-      console.log('开始批量生成：模板=' + template + ', 角色=' + role + ', 行业=' + industry + ', 平台=' + platform + ', 数量=' + count);
-
-      // 显示进度弹窗并模拟进度
-      $('#generating-modal').removeClass('hidden');
-      var progress = 0;
-      var interval = setInterval(function() {
-        progress += Math.floor(Math.random() * 15) + 5;
-        if (progress >= 100) {
-          progress = 100;
-          clearInterval(interval);
-          setTimeout(function() {
-            $('#generating-modal').addClass('hidden');
-            $('#gen-progress-bar').css('width', '0%');
-            $('#gen-progress-text').text('0%');
-            console.log('批量生成完成');
-          }, 500);
-        }
-        $('#gen-progress-bar').css('width', progress + '%');
-        $('#gen-progress-text').text(progress + '%');
-      }, 400);
-    });
-
-    // === 顶部批量生成按钮 ===
-    $('#btn-batch-generate').on('click', function() {
-      $('html, body').animate({ scrollTop: $('#batch-panel').offset().top - 20 }, 300);
-      // 滚动到生成面板后自动展开
-      if ($('#batch-panel-body').is(':hidden')) {
-        $('#batch-panel-body').slideDown(200);
+    // 1. 弹出确认提示（二次确认）
+    // 2. 确认后从列表中移除该行
+    // 3. 显示删除成功提示
+    $('#content-list').on('click', '.btn-delete', function() {
+      var itemId = $(this).data('id');
+      if (confirm('确认删除内容 ' + itemId + '？')) {
+        $(this).closest('.content-item').fadeOut(200, function() {
+          $(this).remove();
+        });
       }
     });
 
-    // === 日历拖拽排期 ===
-    // 日历拖拽排期 - 后续应实现：
-    // 1. 日历中的内容卡片支持拖拽
-    // 2. 拖拽到不同日期格子可调整发布排期
-    // 3. 从列表中拖拽内容到日历可创建排期
-    // 4. 排期变更后更新后端数据
-    console.log('日历拖拽排期功能待实现：支持拖拽内容卡片到不同日期调整排期');
-
-    // === 搜索功能 ===
-    // 搜索 - 输入后应实现：
-    // 1. 根据输入文字实时过滤列表
-    // 2. 隐藏标题不匹配的行
-    // 3. 清空搜索时恢复所有行
-    $('#input-search').on('input', function() {
-      var keyword = $(this).val().toLowerCase();
-      $('.content-row').each(function() {
-        var title = $(this).find('.text-sm.font-medium.text-on-surface').first().text().toLowerCase();
-        if (keyword === '' || title.indexOf(keyword) > -1) {
-          $(this).show();
-        } else {
-          $(this).hide();
-        }
-      });
+    // ===== 批量生成按钮 =====
+    // 批量生成 - 点击后应实现：
+    // 1. 验证是否已选择模板
+    // 2. 根据生成数量和选题来源调用后端接口
+    // 3. 显示生成进度条
+    // 4. 生成完成后刷新内容列表
+    $('#btn-batch-start, #btn-batch-generate').on('click', function() {
+      var count = $('#batch-count').val();
+      var tpl = $('#selected-template-name').text();
+      console.log('批量生成:', count + '篇', '模板:', tpl);
     });
 
-    // === 平台筛选 ===
-    $('#filter-platform').on('change', function() {
-      var val = $(this).val();
-      $('.content-row').each(function() {
-        if (val === 'all' || $(this).data('platform') === val) {
-          $(this).show();
-        } else {
-          $(this).hide();
-        }
-      });
+    // ===== 新建内容按钮 =====
+    // 新建内容 - 点击后应实现：
+    // 1. 打开编辑器弹窗（空内容）
+    // 2. 用户填写标题、选择模板、编辑正文
+    // 3. 保存后添加到内容列表顶部
+    $('#btn-new-content').on('click', function() {
+      $('#editor-title').val('');
+      $('#editor-content').val('');
+      $('#editor-modal').removeClass('hidden').addClass('flex');
     });
 
-    // === 状态筛选 ===
-    $('#filter-status').on('change', function() {
-      var val = $(this).val();
-      $('.content-row').each(function() {
-        if (val === 'all' || $(this).data('status') === val) {
-          $(this).show();
-        } else {
-          $(this).hide();
-        }
-      });
+    // ===== 日历翻月 =====
+    // 日历翻月 - 点击前后翻月按钮后应实现：
+    // 1. 重新渲染对应月份的日历网格
+    // 2. 从后端获取该月份的排期数据
+    // 3. 在对应日期显示内容状态标记点
+    $('#btn-cal-prev').on('click', function() {
+      console.log('切换到上一个月');
+    });
+    $('#btn-cal-next').on('click', function() {
+      console.log('切换到下一个月');
+    });
+
+    // ===== 刷新按钮 =====
+    $('#btn-refresh').on('click', function() {
+      console.log('刷新内容列表');
+    });
+
+    // ===== 添加标签 =====
+    // 添加标签 - 点击后应实现：
+    // 1. 在标签列表末尾显示一个内联输入框
+    // 2. 用户输入标签名称后按 Enter 确认
+    // 3. 将输入框替换为标签样式节点
+    // 4. 按 ESC 取消输入
+    $('#btn-add-tag').on('click', function() {
+      console.log('添加标签功能待实现');
+    });
+
+    // ===== 点击弹窗外部关闭 =====
+    $('#editor-modal').on('click', function(e) {
+      if ($(e.target).is('#editor-modal')) {
+        $('#editor-modal').removeClass('flex').addClass('hidden');
+      }
     });
 
   });
   </script>
-
-  <script>lucide.createIcons();</script>
 </body>
 
 </html>

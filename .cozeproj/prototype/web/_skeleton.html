@@ -7,7 +7,7 @@
 
   <!-- 赛博/科技感字体 -->
   <link href="https://lf-code-agent.coze.cn/obj/x-ai-cn/fonts/google/orbitron.css" rel="stylesheet"/>
-  <link href="https://lf-code-agent.coze.cn/obj/x-ai-cn/fonts/google/spacedock.css" rel="stylesheet"/>
+  <link href="https://lf-code-agent.coze.cn/obj/x-ai-cn/fonts/google/share-tech-mono.css" rel="stylesheet"/>
   <link href="https://lf-code-agent.coze.cn/obj/x-ai-cn/fonts/google/noto-sans-sc.css" rel="stylesheet"/>
 
   <script src="https://lf-code-agent.coze.cn/obj/x-ai-cn/cdn/jquery/jquery-3.7.1.min.js"></script>
@@ -16,64 +16,201 @@
 
   <style type="text/tailwindcss">
     @theme {
-      /* === 品牌色（红涨/正向） === */
+      /* === 品牌色（红涨/正向 — 仅用于数据、走势线、激活态边缘光、关键 CTA 描边） === */
       --color-primary:              #FF3B5C;
-      --color-primary-container:    #2A1520;
-      --color-on-primary:           #ffffff;
-      /* === 赛博霓虹点缀色 === */
+      --color-primary-container:    #1F1218;
+      --color-on-primary:           #E8EBF0;
+      /* === 赛博霓虹点缀色（仅用于细线点缀） === */
       --color-cyber-cyan:           #21E6C1;
       --color-cyber-magenta:        #FF2E97;
       --color-cyber-purple:         #8B5CFF;
-      /* === 涨跌语义色（中国股市红涨绿跌） === */
+      /* === 涨跌语义色（中国股市红涨绿跌 — 仅用于数据、走势线） === */
       --color-bull:                 #FF3B5C;
       --color-bear:                 #15E0A0;
-      /* === 背景 / 表面 === */
-      --color-background:                 #0A0E14;
-      --color-surface-container-lowest:   #0D1117;
-      --color-surface:                    #111820;
-      --color-surface-container:          #161D27;
-      --color-surface-container-high:     #1A2332;
-      --color-surface-container-highest:  #1F2937;
+      /* === 金属银色系 === */
+      --color-metal-light:          #D6DCE6;
+      --color-metal-mid:            #9AA3B2;
+      --color-metal-dark:           #6B7585;
+      /* === 背景 / 表面 — 金属枪灰 HUD === */
+      --color-background:                 #08090C;
+      --color-surface-container-lowest:   #0C0E12;
+      --color-surface:                    #12151B;
+      --color-surface-container:          #161A22;
+      --color-surface-container-high:     #1A1E26;
+      --color-surface-container-highest:  #1F2430;
       /* === 文字 === */
-      --color-on-surface:           #F2F5FA;
+      --color-on-surface:           #E8EBF0;
       --color-on-surface-variant:   #8A94A6;
+      --color-on-surface-weakest:   #5A6273;
       /* === 功能色 === */
       --color-success:  #15E0A0;
       --color-error:    #FF3B5C;
       --color-warning:  #F5A623;
-      /* === 边框 === */
-      --color-outline:          #2A3444;
-      --color-outline-variant:  #1E2838;
-      /* === 圆角 === */
-      --radius-sm:   0.375rem;
-      --radius-md:   0.5rem;
-      --radius-lg:   0.75rem;
-      --radius-xl:   1rem;
-      --radius-2xl:  1.5rem;
+      /* === 边框 — 金属 HUD 描边 === */
+      --color-outline:          rgba(140,150,165,0.18);
+      --color-outline-variant:  rgba(140,150,165,0.10);
+      --color-outline-highlight: rgba(210,216,226,0.35);
+      /* === 圆角 — 更锐利 === */
+      --radius-sm:   0.25rem;
+      --radius-md:   0.375rem;
+      --radius-lg:   0.5rem;
+      --radius-xl:   0.75rem;
+      --radius-2xl:  1rem;
       --radius-full: 9999px;
-      /* === 阴影 === */
-      --shadow-card:   0 2px 8px rgba(0,0,0,0.4);
-      --shadow-float:  0 10px 25px rgba(0,0,0,0.5);
-      --shadow-dialog: 0 25px 50px rgba(0,0,0,0.6);
-      --shadow-glow-red:     0 0 20px rgba(255,59,92,0.15);
-      --shadow-glow-cyan:    0 0 20px rgba(33,230,193,0.15);
-      --shadow-glow-magenta: 0 0 20px rgba(255,46,151,0.15);
+      /* === 阴影 — 金属面板质感 === */
+      --shadow-card:   0 1px 3px rgba(0,0,0,0.5), 0 0 1px rgba(200,206,216,0.08);
+      --shadow-float:  0 8px 24px rgba(0,0,0,0.6), 0 0 1px rgba(200,206,216,0.08);
+      --shadow-dialog: 0 20px 48px rgba(0,0,0,0.7), 0 0 1px rgba(200,206,216,0.08);
+      --shadow-glow-red:     0 0 12px rgba(255,59,92,0.10), 0 0 1px rgba(255,59,92,0.3);
+      --shadow-glow-cyan:    0 0 12px rgba(33,230,193,0.10), 0 0 1px rgba(33,230,193,0.3);
+      --shadow-glow-magenta: 0 0 12px rgba(255,46,151,0.10), 0 0 1px rgba(255,46,151,0.3);
       /* === 字体 === */
-      --font-display: "Orbitron", "SpaceDock", monospace;
-      --font-mono: "SpaceDock", "Orbitron", monospace;
+      --font-display: "Orbitron", monospace;
+      --font-mono: "Share Tech Mono", monospace;
       --font-sans: "Noto Sans SC", system-ui, sans-serif;
     }
 
-    /* 自定义滚动条 */
-    ::-webkit-scrollbar { width: 6px; }
-    ::-webkit-scrollbar-track { background: #0A0E14; }
-    ::-webkit-scrollbar-thumb { background: #2A3444; border-radius: 3px; }
-    ::-webkit-scrollbar-thumb:hover { background: #3A4454; }
+    /* 自定义滚动条 — 金属灰 */
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: #08090C; }
+    ::-webkit-scrollbar-thumb { background: rgba(140,150,165,0.25); border-radius: 2px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(140,150,165,0.4); }
 
-    /* 霓虹文字效果 */
-    .neon-text-red { text-shadow: 0 0 10px rgba(255,59,92,0.5), 0 0 20px rgba(255,59,92,0.2); }
-    .neon-text-cyan { text-shadow: 0 0 10px rgba(33,230,193,0.5), 0 0 20px rgba(33,230,193,0.2); }
-    .neon-text-magenta { text-shadow: 0 0 10px rgba(255,46,151,0.5), 0 0 20px rgba(255,46,151,0.2); }
+    /* 金属银渐变文字 */
+    .metal-text {
+      background: linear-gradient(135deg, #D6DCE6 0%, #9AA3B2 50%, #D6DCE6 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    /* 金属面板渐变背景 */
+    .metal-panel {
+      background: linear-gradient(180deg, #12151B 0%, #1A1E26 100%);
+      border: 1px solid rgba(140,150,165,0.18);
+      position: relative;
+    }
+    .metal-panel::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(
+        90deg,
+        transparent,
+        transparent 2px,
+        rgba(200,206,216,0.015) 2px,
+        rgba(200,206,216,0.015) 4px
+      );
+      pointer-events: none;
+      border-radius: inherit;
+    }
+    .metal-panel:hover {
+      border-color: rgba(210,216,226,0.35);
+    }
+
+    /* HUD 切角 — 右上 + 左下 */
+    .hud-clip {
+      clip-path: polygon(
+        0 0,
+        calc(100% - 8px) 0,
+        100% 8px,
+        100% 100%,
+        8px 100%,
+        0 calc(100% - 8px)
+      );
+    }
+
+    /* HUD 切角 — 仅右上 */
+    .hud-clip-tr {
+      clip-path: polygon(
+        0 0,
+        calc(100% - 6px) 0,
+        100% 6px,
+        100% 100%,
+        0 100%
+      );
+    }
+
+    /* 扫描线 overlay — 极淡 */
+    .scanline-overlay {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 9999;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(0,0,0,0.03) 2px,
+        rgba(0,0,0,0.03) 4px
+      );
+    }
+
+    /* 霓虹辉光效果 — 克制版 */
+    .glow-red { box-shadow: 0 0 8px rgba(255,59,92,0.12), inset 0 0 4px rgba(255,59,92,0.06); }
+    .glow-cyan { box-shadow: 0 0 8px rgba(33,230,193,0.12), inset 0 0 4px rgba(33,230,193,0.06); }
+    .glow-magenta { box-shadow: 0 0 8px rgba(255,46,151,0.12), inset 0 0 4px rgba(255,46,151,0.06); }
+
+    /* 霓虹文字效果 — 克制版 */
+    .neon-text-red { text-shadow: 0 0 6px rgba(255,59,92,0.4); }
+    .neon-text-cyan { text-shadow: 0 0 6px rgba(33,230,193,0.4); }
+    .neon-text-magenta { text-shadow: 0 0 6px rgba(255,46,151,0.4); }
+
+    /* HUD 网格背景 */
+    .hud-grid-bg {
+      background-image:
+        linear-gradient(rgba(140,150,165,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(140,150,165,0.04) 1px, transparent 1px);
+      background-size: 40px 40px;
+    }
+
+    /* HUD 角标装饰 */
+    .hud-corner::before,
+    .hud-corner::after {
+      content: '';
+      position: absolute;
+      width: 8px;
+      height: 8px;
+      border-color: rgba(140,150,165,0.3);
+    }
+    .hud-corner::before {
+      top: -1px;
+      left: -1px;
+      border-top: 1px solid;
+      border-left: 1px solid;
+    }
+    .hud-corner::after {
+      bottom: -1px;
+      right: -1px;
+      border-bottom: 1px solid;
+      border-right: 1px solid;
+    }
+
+    /* 呼吸脉冲动画 — 用于状态指示灯 */
+    @keyframes pulse-dot {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+    .pulse-dot { animation: pulse-dot 2s ease-in-out infinite; }
+
+    /* HUD 按钮基础样式 — 枪灰金属底 + 霓虹描边 */
+    .hud-btn-primary {
+      background: linear-gradient(180deg, #1A1E26 0%, #12151B 100%);
+      border: 1px solid rgba(255,59,92,0.5);
+      color: #E8EBF0;
+      position: relative;
+      box-shadow: 0 0 8px rgba(255,59,92,0.10), inset 0 0 6px rgba(255,59,92,0.05);
+      transition: all 0.2s ease;
+    }
+    .hud-btn-primary:hover {
+      border-color: rgba(255,59,92,0.8);
+      box-shadow: 0 0 16px rgba(255,59,92,0.18), inset 0 0 8px rgba(255,59,92,0.08);
+    }
+
+    /* 迷你走势线占位 */
+    .sparkline-placeholder {
+      opacity: 0.4;
+    }
   </style>
 
   <!-- 图片兜底 -->
@@ -89,7 +226,7 @@
       const icons = { '人物': '👤', '自然风景': '🏞', '动物': '🐾', '建筑城市': '🏙', '运动体育': '⚽', '交通工具': '🚗', '食物': '🍽', '服饰时尚': '👗', '商业科技': '💼', '游戏娱乐': '🎮', '艺术': '🎨', '其他': '🖼' };
       const icon = icons[cat] || '🖼';
       const w = img.width || 400, h = img.height || 300;
-      const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}"><rect width="100%" height="100%" fill="%23111820"/><text x="50%" y="45%" text-anchor="middle" font-size="${Math.min(w, h) * 0.18}" fill="%238A94A6" dominant-baseline="central">${icon}</text><text x="50%" y="68%" text-anchor="middle" font-size="${Math.min(w, h) * 0.07}" fill="%235A6476" font-family="system-ui,sans-serif" dominant-baseline="central">${label}</text></svg>`;
+      const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}"><rect width="100%" height="100%" fill="%2312151B"/><text x="50%" y="45%" text-anchor="middle" font-size="${Math.min(w, h) * 0.18}" fill="%238A94A6" dominant-baseline="central">${icon}</text><text x="50%" y="68%" text-anchor="middle" font-size="${Math.min(w, h) * 0.07}" fill="%235A6273" font-family="system-ui,sans-serif" dominant-baseline="central">${label}</text></svg>`;
       img.src = 'data:image/svg+xml,' + svg;
     }, true);
   </script>
@@ -97,66 +234,78 @@
 
 <body class="bg-background text-on-surface font-sans">
 
+  <!-- 扫描线 overlay -->
+  <div class="scanline-overlay"></div>
+
   <!-- @nav:start 导航组件 -->
-  <header class="bg-surface sticky top-0 z-40 h-14 flex items-center justify-between px-5 border-b border-outline-variant/30">
+  <header class="bg-surface sticky top-0 z-40 h-12 flex items-center justify-between px-5" style="border-bottom: 1px solid rgba(140,150,165,0.18); background: linear-gradient(180deg, #12151B 0%, #0E1016 100%);">
     <div class="flex items-center gap-3">
-      <div class="flex items-center gap-2">
-        <div class="w-8 h-8 rounded-md bg-primary/20 flex items-center justify-center">
-          <i data-lucide="zap" class="w-4 h-4 text-primary"></i>
+      <div class="flex items-center gap-2.5">
+        <div class="w-7 h-7 flex items-center justify-center hud-clip-tr" style="background: linear-gradient(180deg, #1A1E26 0%, #12151B 100%); border: 1px solid rgba(140,150,165,0.2);">
+          <i data-lucide="zap" class="w-3.5 h-3.5" style="color: #FF3B5C;"></i>
         </div>
-        <span class="font-display font-bold text-base tracking-wider neon-text-red">XIANLIAO</span>
-        <span class="text-xs text-on-surface-variant font-mono ml-1">AI</span>
+        <span class="font-display font-bold text-sm tracking-[0.2em] metal-text">XIANLIAO</span>
+        <span class="text-[10px] font-mono tracking-wider" style="color: #5A6273;">AI</span>
+        <span class="text-[9px] font-mono px-1.5 py-0.5 ml-1" style="color: #21E6C1; background: rgba(33,230,193,0.08); border: 1px solid rgba(33,230,193,0.15);">v2.0</span>
       </div>
     </div>
-    <div class="flex items-center gap-3">
-      <button class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-on-surface-variant hover:text-on-surface hover:bg-surface-container rounded-md transition-colors">
+    <div class="flex items-center gap-2">
+      <button class="flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium rounded-sm transition-colors" style="color: #8A94A6; border: 1px solid transparent;" onmouseover="this.style.borderColor='rgba(140,150,165,0.2)';this.style.color='#E8EBF0'" onmouseout="this.style.borderColor='transparent';this.style.color='#8A94A6'">
         <i data-lucide="bell" class="w-3.5 h-3.5"></i>
       </button>
-      <div class="w-7 h-7 rounded-full bg-primary/20 flex items-center justify-center text-xs font-medium text-primary">
+      <div class="w-6 h-6 flex items-center justify-center text-[10px] font-medium hud-clip-tr" style="color: #9AA3B2; background: linear-gradient(180deg, #1A1E26 0%, #12151B 100%); border: 1px solid rgba(140,150,165,0.2);">
         咸
       </div>
     </div>
   </header>
 
-  <div class="flex" style="height: calc(100vh - 3.5rem)">
-    <aside class="w-52 shrink-0 bg-surface-container-lowest border-r border-outline-variant/20 overflow-y-auto">
-      <div class="p-3 space-y-0.5">
-        <a href="home.html" class="flex items-center gap-3 px-3 py-2.5 rounded-md bg-primary/10 text-primary font-medium text-sm" aria-current="page">
-          <i data-lucide="home" class="w-4 h-4"></i>首页
+  <div class="flex" style="height: calc(100vh - 3rem)">
+    <aside class="w-48 shrink-0 overflow-y-auto" style="background: linear-gradient(180deg, #0C0E12 0%, #08090C 100%); border-right: 1px solid rgba(140,150,165,0.10);">
+      <div class="p-2.5 space-y-0.5">
+        <a href="home.html" class="flex items-center gap-2.5 px-2.5 py-2 rounded-sm text-xs font-medium transition-all hud-clip-tr" style="background: rgba(255,59,92,0.08); color: #FF3B5C; border: 1px solid rgba(255,59,92,0.2);" aria-current="page">
+          <i data-lucide="home" class="w-3.5 h-3.5"></i>首页
         </a>
-        <a href="generate.html" class="flex items-center gap-3 px-3 py-2.5 rounded-md text-on-surface-variant hover:bg-surface-container hover:text-on-surface font-medium text-sm transition-colors">
-          <i data-lucide="sparkles" class="w-4 h-4"></i>一键生成
+        <a href="generate.html" class="flex items-center gap-2.5 px-2.5 py-2 rounded-sm text-xs font-medium transition-all" style="color: #8A94A6; border: 1px solid transparent;" onmouseover="this.style.background='rgba(140,150,165,0.06)';this.style.borderColor='rgba(140,150,165,0.12)';this.style.color='#E8EBF0'" onmouseout="this.style.background='';this.style.borderColor='transparent';this.style.color='#8A94A6'">
+          <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>一键生成
         </a>
-        <a href="brand-assets.html" class="flex items-center gap-3 px-3 py-2.5 rounded-md text-on-surface-variant hover:bg-surface-container hover:text-on-surface font-medium text-sm transition-colors">
-          <i data-lucide="gem" class="w-4 h-4"></i>品牌资产
+        <a href="brand-assets.html" class="flex items-center gap-2.5 px-2.5 py-2 rounded-sm text-xs font-medium transition-all" style="color: #8A94A6; border: 1px solid transparent;" onmouseover="this.style.background='rgba(140,150,165,0.06)';this.style.borderColor='rgba(140,150,165,0.12)';this.style.color='#E8EBF0'" onmouseout="this.style.background='';this.style.borderColor='transparent';this.style.color='#8A94A6'">
+          <i data-lucide="gem" class="w-3.5 h-3.5"></i>品牌资产
         </a>
 
-        <div class="pt-4 pb-2 px-3">
-          <span class="text-[10px] font-mono uppercase tracking-widest text-on-surface-variant/50">进阶区</span>
+        <div class="pt-3 pb-1.5 px-2.5">
+          <span class="text-[9px] font-mono uppercase tracking-[0.2em]" style="color: #5A6273;">ADVANCED</span>
         </div>
-        <a href="topic-engine.html" class="flex items-center gap-3 px-3 py-2.5 rounded-md text-on-surface-variant hover:bg-surface-container hover:text-on-surface font-medium text-sm transition-colors">
-          <i data-lucide="trending-up" class="w-4 h-4"></i>选题引擎
+        <a href="topic-engine.html" class="flex items-center gap-2.5 px-2.5 py-2 rounded-sm text-xs font-medium transition-all" style="color: #8A94A6; border: 1px solid transparent;" onmouseover="this.style.background='rgba(140,150,165,0.06)';this.style.borderColor='rgba(140,150,165,0.12)';this.style.color='#E8EBF0'" onmouseout="this.style.background='';this.style.borderColor='transparent';this.style.color='#8A94A6'">
+          <i data-lucide="trending-up" class="w-3.5 h-3.5"></i>选题引擎
         </a>
-        <a href="content-factory.html" class="flex items-center gap-3 px-3 py-2.5 rounded-md text-on-surface-variant hover:bg-surface-container hover:text-on-surface font-medium text-sm transition-colors">
-          <i data-lucide="factory" class="w-4 h-4"></i>内容工厂
+        <a href="content-factory.html" class="flex items-center gap-2.5 px-2.5 py-2 rounded-sm text-xs font-medium transition-all" style="color: #8A94A6; border: 1px solid transparent;" onmouseover="this.style.background='rgba(140,150,165,0.06)';this.style.borderColor='rgba(140,150,165,0.12)';this.style.color='#E8EBF0'" onmouseout="this.style.background='';this.style.borderColor='transparent';this.style.color='#8A94A6'">
+          <i data-lucide="factory" class="w-3.5 h-3.5"></i>内容工厂
         </a>
-        <a href="publish.html" class="flex items-center gap-3 px-3 py-2.5 rounded-md text-on-surface-variant hover:bg-surface-container hover:text-on-surface font-medium text-sm transition-colors">
-          <i data-lucide="send" class="w-4 h-4"></i>发布管理
+        <a href="publish.html" class="flex items-center gap-2.5 px-2.5 py-2 rounded-sm text-xs font-medium transition-all" style="color: #8A94A6; border: 1px solid transparent;" onmouseover="this.style.background='rgba(140,150,165,0.06)';this.style.borderColor='rgba(140,150,165,0.12)';this.style.color='#E8EBF0'" onmouseout="this.style.background='';this.style.borderColor='transparent';this.style.color='#8A94A6'">
+          <i data-lucide="send" class="w-3.5 h-3.5"></i>发布管理
         </a>
-        <a href="data-review.html" class="flex items-center gap-3 px-3 py-2.5 rounded-md text-on-surface-variant hover:bg-surface-container hover:text-on-surface font-medium text-sm transition-colors">
-          <i data-lucide="chart-bar" class="w-4 h-4"></i>数据复盘
+        <a href="data-review.html" class="flex items-center gap-2.5 px-2.5 py-2 rounded-sm text-xs font-medium transition-all" style="color: #8A94A6; border: 1px solid transparent;" onmouseover="this.style.background='rgba(140,150,165,0.06)';this.style.borderColor='rgba(140,150,165,0.12)';this.style.color='#E8EBF0'" onmouseout="this.style.background='';this.style.borderColor='transparent';this.style.color='#8A94A6'">
+          <i data-lucide="chart-bar" class="w-3.5 h-3.5"></i>数据复盘
         </a>
-        <a href="knowledge-base.html" class="flex items-center gap-3 px-3 py-2.5 rounded-md text-on-surface-variant hover:bg-surface-container hover:text-on-surface font-medium text-sm transition-colors">
-          <i data-lucide="brain" class="w-4 h-4"></i>知识库
+        <a href="knowledge-base.html" class="flex items-center gap-2.5 px-2.5 py-2 rounded-sm text-xs font-medium transition-all" style="color: #8A94A6; border: 1px solid transparent;" onmouseover="this.style.background='rgba(140,150,165,0.06)';this.style.borderColor='rgba(140,150,165,0.12)';this.style.color='#E8EBF0'" onmouseout="this.style.background='';this.style.borderColor='transparent';this.style.color='#8A94A6'">
+          <i data-lucide="brain" class="w-3.5 h-3.5"></i>知识库
         </a>
-        <a href="settings.html" class="flex items-center gap-3 px-3 py-2.5 rounded-md text-on-surface-variant hover:bg-surface-container hover:text-on-surface font-medium text-sm transition-colors">
-          <i data-lucide="settings" class="w-4 h-4"></i>设置
+        <a href="settings.html" class="flex items-center gap-2.5 px-2.5 py-2 rounded-sm text-xs font-medium transition-all" style="color: #8A94A6; border: 1px solid transparent;" onmouseover="this.style.background='rgba(140,150,165,0.06)';this.style.borderColor='rgba(140,150,165,0.12)';this.style.color='#E8EBF0'" onmouseout="this.style.background='';this.style.borderColor='transparent';this.style.color='#8A94A6'">
+          <i data-lucide="settings" class="w-3.5 h-3.5"></i>设置
         </a>
+      </div>
+
+      <!-- 侧边栏底部状态 -->
+      <div class="absolute bottom-0 left-0 w-48 p-2.5" style="border-top: 1px solid rgba(140,150,165,0.10);">
+        <div class="flex items-center gap-1.5 text-[9px] font-mono" style="color: #5A6273;">
+          <span class="w-1.5 h-1.5 rounded-full pulse-dot" style="background: #21E6C1;"></span>
+          SYSTEM ONLINE
+        </div>
       </div>
     </aside>
 
     <!-- @main-content:start -->
-    <main class="flex-1 min-w-0 overflow-y-auto bg-background p-6">
+    <main class="flex-1 min-w-0 overflow-y-auto bg-background p-6 hud-grid-bg relative">
       <!-- 页面内容由子 Agent 填充 -->
     </main>
     <!-- @main-content:end -->
