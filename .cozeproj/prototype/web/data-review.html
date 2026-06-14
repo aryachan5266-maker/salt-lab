@@ -1,0 +1,917 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- 赛博/科技感字体 -->
+  <link href="https://lf-code-agent.coze.cn/obj/x-ai-cn/fonts/google/orbitron.css" rel="stylesheet"/>
+  <link href="https://lf-code-agent.coze.cn/obj/x-ai-cn/fonts/google/spacedock.css" rel="stylesheet"/>
+  <link href="https://lf-code-agent.coze.cn/obj/x-ai-cn/fonts/google/noto-sans-sc.css" rel="stylesheet"/>
+
+  <script src="https://lf-code-agent.coze.cn/obj/x-ai-cn/cdn/jquery/jquery-3.7.1.min.js"></script>
+  <script src="https://lf-code-agent.coze.cn/obj/x-ai-cn/cdn/lucide/lucide-1.11.0.min.js"></script>
+  <script src="https://lf-code-agent.coze.cn/obj/x-ai-cn/cdn/tailwindcss/tailwindcss-browser-4.2.4.min.js"></script>
+
+  <style type="text/tailwindcss">
+    @theme {
+      /* === 品牌色（红涨/正向） === */
+      --color-primary:              #FF3B5C;
+      --color-primary-container:    #2A1520;
+      --color-on-primary:           #ffffff;
+      /* === 赛博霓虹点缀色 === */
+      --color-cyber-cyan:           #21E6C1;
+      --color-cyber-magenta:        #FF2E97;
+      --color-cyber-purple:         #8B5CFF;
+      /* === 涨跌语义色（中国股市红涨绿跌） === */
+      --color-bull:                 #FF3B5C;
+      --color-bear:                 #15E0A0;
+      /* === 背景 / 表面 === */
+      --color-background:                 #0A0E14;
+      --color-surface-container-lowest:   #0D1117;
+      --color-surface:                    #111820;
+      --color-surface-container:          #161D27;
+      --color-surface-container-high:     #1A2332;
+      --color-surface-container-highest:  #1F2937;
+      /* === 文字 === */
+      --color-on-surface:           #F2F5FA;
+      --color-on-surface-variant:   #8A94A6;
+      /* === 功能色 === */
+      --color-success:  #15E0A0;
+      --color-error:    #FF3B5C;
+      --color-warning:  #F5A623;
+      /* === 边框 === */
+      --color-outline:          #2A3444;
+      --color-outline-variant:  #1E2838;
+      /* === 圆角 === */
+      --radius-sm:   0.375rem;
+      --radius-md:   0.5rem;
+      --radius-lg:   0.75rem;
+      --radius-xl:   1rem;
+      --radius-2xl:  1.5rem;
+      --radius-full: 9999px;
+      /* === 阴影 === */
+      --shadow-card:   0 2px 8px rgba(0,0,0,0.4);
+      --shadow-float:  0 10px 25px rgba(0,0,0,0.5);
+      --shadow-dialog: 0 25px 50px rgba(0,0,0,0.6);
+      --shadow-glow-red:     0 0 20px rgba(255,59,92,0.15);
+      --shadow-glow-cyan:    0 0 20px rgba(33,230,193,0.15);
+      --shadow-glow-magenta: 0 0 20px rgba(255,46,151,0.15);
+      /* === 字体 === */
+      --font-display: "Orbitron", "SpaceDock", monospace;
+      --font-mono: "SpaceDock", "Orbitron", monospace;
+      --font-sans: "Noto Sans SC", system-ui, sans-serif;
+    }
+
+    /* 自定义滚动条 */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: #0A0E14; }
+    ::-webkit-scrollbar-thumb { background: #2A3444; border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: #3A4454; }
+
+    /* 霓虹文字效果 */
+    .neon-text-red { text-shadow: 0 0 10px rgba(255,59,92,0.5), 0 0 20px rgba(255,59,92,0.2); }
+    .neon-text-cyan { text-shadow: 0 0 10px rgba(33,230,193,0.5), 0 0 20px rgba(33,230,193,0.2); }
+    .neon-text-magenta { text-shadow: 0 0 10px rgba(255,46,151,0.5), 0 0 20px rgba(255,46,151,0.2); }
+
+    /* 指标卡片悬停发光 */
+    .metric-card { transition: box-shadow 0.3s ease, transform 0.15s ease; }
+    .metric-card:hover { transform: translateY(-2px); }
+    .metric-card.glow-red:hover { box-shadow: var(--shadow-card), var(--shadow-glow-red); }
+    .metric-card.glow-cyan:hover { box-shadow: var(--shadow-card), var(--shadow-glow-cyan); }
+    .metric-card.glow-green:hover { box-shadow: var(--shadow-card), 0 0 20px rgba(21,224,160,0.15); }
+    .metric-card.glow-magenta:hover { box-shadow: var(--shadow-card), var(--shadow-glow-magenta); }
+
+    /* 排行行悬停 */
+    .rank-row { transition: background-color 0.15s ease; }
+    .rank-row:hover { background-color: rgba(22,29,39,0.8); }
+
+    /* 迷你趋势线动画 */
+    @keyframes sparkline-draw {
+      from { stroke-dashoffset: 200; }
+      to { stroke-dashoffset: 0; }
+    }
+    .sparkline-path {
+      stroke-dasharray: 200;
+      animation: sparkline-draw 1.5s ease-out forwards;
+    }
+
+    /* 进度条动画 */
+    @keyframes bar-fill {
+      from { width: 0; }
+    }
+    .progress-fill {
+      animation: bar-fill 0.8s ease-out forwards;
+    }
+
+    /* 脉冲指示灯 */
+    @keyframes pulse-dot {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+    .pulse-dot { animation: pulse-dot 2s ease-in-out infinite; }
+
+    /* AI洞察卡片渐变边框 */
+    .ai-insight-card {
+      position: relative;
+      background: #111820;
+      border-radius: 0.75rem;
+    }
+    .ai-insight-card::before {
+      content: '';
+      position: absolute;
+      inset: -1px;
+      border-radius: 0.75rem;
+      padding: 1px;
+      background: linear-gradient(135deg, #8B5CFF, #FF2E97, #21E6C1);
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      pointer-events: none;
+    }
+  </style>
+
+  <!-- 图片兜底 -->
+  <script>
+    document.addEventListener('error', function (e) {
+      const img = e.target;
+      if (img.tagName !== 'IMG' || img.dataset.fallback) return;
+      img.dataset.fallback = '1';
+      const esc = s => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+      const cat = img.getAttribute('data-category') || '其他';
+      const alt = img.getAttribute('alt') || '';
+      const label = esc(alt.length > 8 ? alt.slice(0, 8) + '…' : alt);
+      const icons = { '人物': '👤', '自然风景': '🏞', '动物': '🐾', '建筑城市': '🏙', '运动体育': '⚽', '交通工具': '🚗', '食物': '🍽', '服饰时尚': '👗', '商业科技': '💼', '游戏娱乐': '🎮', '艺术': '🎨', '其他': '🖼' };
+      const icon = icons[cat] || '🖼';
+      const w = img.width || 400, h = img.height || 300;
+      const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}"><rect width="100%" height="100%" fill="%23111820"/><text x="50%" y="45%" text-anchor="middle" font-size="${Math.min(w, h) * 0.18}" fill="%238A94A6" dominant-baseline="central">${icon}</text><text x="50%" y="68%" text-anchor="middle" font-size="${Math.min(w, h) * 0.07}" fill="%235A6476" font-family="system-ui,sans-serif" dominant-baseline="central">${label}</text></svg>`;
+      img.src = 'data:image/svg+xml,' + svg;
+    }, true);
+  </script>
+</head>
+
+<body class="bg-background text-on-surface font-sans">
+
+  <!-- @nav:start 导航组件 -->
+  <header class="bg-surface sticky top-0 z-40 h-14 flex items-center justify-between px-5 border-b border-outline-variant/30">
+    <div class="flex items-center gap-3">
+      <div class="flex items-center gap-2">
+        <div class="w-8 h-8 rounded-md bg-primary/20 flex items-center justify-center">
+          <i data-lucide="zap" class="w-4 h-4 text-primary"></i>
+        </div>
+        <span class="font-display font-bold text-base tracking-wider neon-text-red">XIANLIAO</span>
+        <span class="text-xs text-on-surface-variant font-mono ml-1">AI</span>
+      </div>
+    </div>
+    <div class="flex items-center gap-3">
+      <button class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-on-surface-variant hover:text-on-surface hover:bg-surface-container rounded-md transition-colors">
+        <i data-lucide="bell" class="w-3.5 h-3.5"></i>
+      </button>
+      <div class="w-7 h-7 rounded-full bg-primary/20 flex items-center justify-center text-xs font-medium text-primary">
+        咸
+      </div>
+    </div>
+  </header>
+
+  <div class="flex" style="height: calc(100vh - 3.5rem)">
+    <aside class="w-52 shrink-0 bg-surface-container-lowest border-r border-outline-variant/20 overflow-y-auto">
+      <div class="p-3 space-y-0.5">
+        <a href="home.html" class="flex items-center gap-3 px-3 py-2.5 rounded-md text-on-surface-variant hover:bg-surface-container hover:text-on-surface font-medium text-sm transition-colors">
+          <i data-lucide="home" class="w-4 h-4"></i>首页
+        </a>
+        <a href="generate.html" class="flex items-center gap-3 px-3 py-2.5 rounded-md text-on-surface-variant hover:bg-surface-container hover:text-on-surface font-medium text-sm transition-colors">
+          <i data-lucide="sparkles" class="w-4 h-4"></i>一键生成
+        </a>
+        <a href="brand-assets.html" class="flex items-center gap-3 px-3 py-2.5 rounded-md text-on-surface-variant hover:bg-surface-container hover:text-on-surface font-medium text-sm transition-colors">
+          <i data-lucide="gem" class="w-4 h-4"></i>品牌资产
+        </a>
+
+        <div class="pt-4 pb-2 px-3">
+          <span class="text-[10px] font-mono uppercase tracking-widest text-on-surface-variant/50">进阶区</span>
+        </div>
+        <a href="topic-engine.html" class="flex items-center gap-3 px-3 py-2.5 rounded-md text-on-surface-variant hover:bg-surface-container hover:text-on-surface font-medium text-sm transition-colors">
+          <i data-lucide="trending-up" class="w-4 h-4"></i>选题引擎
+        </a>
+        <a href="content-factory.html" class="flex items-center gap-3 px-3 py-2.5 rounded-md text-on-surface-variant hover:bg-surface-container hover:text-on-surface font-medium text-sm transition-colors">
+          <i data-lucide="factory" class="w-4 h-4"></i>内容工厂
+        </a>
+        <a href="publish.html" class="flex items-center gap-3 px-3 py-2.5 rounded-md text-on-surface-variant hover:bg-surface-container hover:text-on-surface font-medium text-sm transition-colors">
+          <i data-lucide="send" class="w-4 h-4"></i>发布管理
+        </a>
+        <a href="data-review.html" class="flex items-center gap-3 px-3 py-2.5 rounded-md bg-primary/10 text-primary font-medium text-sm" aria-current="page">
+          <i data-lucide="chart-bar" class="w-4 h-4"></i>数据复盘
+        </a>
+        <a href="knowledge-base.html" class="flex items-center gap-3 px-3 py-2.5 rounded-md text-on-surface-variant hover:bg-surface-container hover:text-on-surface font-medium text-sm transition-colors">
+          <i data-lucide="brain" class="w-4 h-4"></i>知识库
+        </a>
+        <a href="settings.html" class="flex items-center gap-3 px-3 py-2.5 rounded-md text-on-surface-variant hover:bg-surface-container hover:text-on-surface font-medium text-sm transition-colors">
+          <i data-lucide="settings" class="w-4 h-4"></i>设置
+        </a>
+      </div>
+    </aside>
+
+    <!-- @main-content:start -->
+    <main class="flex-1 min-w-0 overflow-y-auto bg-background p-6">
+
+      <!-- 页面标题区域 -->
+      <div class="flex items-center justify-between mb-6">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-lg bg-primary/15 flex items-center justify-center">
+            <i data-lucide="chart-bar" class="w-5 h-5 text-primary"></i>
+          </div>
+          <div>
+            <h1 class="text-2xl font-bold text-on-surface flex items-center gap-2">
+              数据复盘
+              <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-mono bg-success/15 text-success">
+                <span class="w-1.5 h-1.5 rounded-full bg-success pulse-dot"></span>LIVE
+              </span>
+            </h1>
+            <p class="text-xs text-on-surface-variant mt-0.5">像盯盘一样查看营销效果</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-2">
+          <!-- 时间范围选择 -->
+          <div class="flex items-center bg-surface-container rounded-md p-0.5">
+            <button id="range-7d" class="px-3 py-1.5 text-xs font-medium rounded bg-primary/15 text-primary transition-colors">7天</button>
+            <button id="range-30d" class="px-3 py-1.5 text-xs font-medium rounded text-on-surface-variant hover:text-on-surface transition-colors">30天</button>
+            <button id="range-90d" class="px-3 py-1.5 text-xs font-medium rounded text-on-surface-variant hover:text-on-surface transition-colors">90天</button>
+          </div>
+          <button id="btn-refresh" class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-on-surface-variant hover:text-on-surface bg-surface-container rounded-md transition-colors">
+            <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>刷新
+          </button>
+        </div>
+      </div>
+
+      <!-- ===== 1. 数据总览 - 关键指标卡片 ===== -->
+      <div class="grid grid-cols-4 gap-4 mb-6">
+
+        <!-- 指标卡片1 - 总阅读 -->
+        <div class="metric-card glow-red bg-surface rounded-lg shadow-card p-4 border border-outline-variant/15">
+          <div class="flex items-center justify-between mb-3">
+            <div class="flex items-center gap-2">
+              <div class="w-8 h-8 rounded-md bg-bull/15 flex items-center justify-center">
+                <i data-lucide="eye" class="w-4 h-4 text-bull"></i>
+              </div>
+              <span class="text-xs text-on-surface-variant font-medium">总阅读</span>
+            </div>
+            <span class="inline-flex items-center gap-0.5 text-xs font-mono font-semibold text-bull">
+              <i data-lucide="trending-up" class="w-3 h-3"></i>+12.5%
+            </span>
+          </div>
+          <div class="flex items-end justify-between">
+            <div>
+              <span class="text-3xl font-display font-bold text-bull neon-text-red">128.6K</span>
+              <p class="text-[10px] text-on-surface-variant mt-1 font-mono">较上期 +14.3K</p>
+            </div>
+            <!-- 迷你趋势图 - 红色上涨 -->
+            <svg width="80" height="36" viewBox="0 0 80 36" fill="none">
+              <defs>
+                <linearGradient id="spark-red" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="#FF3B5C" stop-opacity="0.3"/>
+                  <stop offset="100%" stop-color="#FF3B5C" stop-opacity="0"/>
+                </linearGradient>
+              </defs>
+              <path d="M0 30 L13 26 L26 22 L39 24 L52 18 L65 12 L80 4" stroke="#FF3B5C" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" class="sparkline-path"/>
+              <path d="M0 30 L13 26 L26 22 L39 24 L52 18 L65 12 L80 4 L80 36 L0 36Z" fill="url(#spark-red)"/>
+            </svg>
+          </div>
+        </div>
+
+        <!-- 指标卡片2 - 总互动 -->
+        <div class="metric-card glow-cyan bg-surface rounded-lg shadow-card p-4 border border-outline-variant/15">
+          <div class="flex items-center justify-between mb-3">
+            <div class="flex items-center gap-2">
+              <div class="w-8 h-8 rounded-md bg-cyber-cyan/15 flex items-center justify-center">
+                <i data-lucide="message-circle" class="w-4 h-4 text-cyber-cyan"></i>
+              </div>
+              <span class="text-xs text-on-surface-variant font-medium">总互动</span>
+            </div>
+            <span class="inline-flex items-center gap-0.5 text-xs font-mono font-semibold text-bull">
+              <i data-lucide="trending-up" class="w-3 h-3"></i>+8.3%
+            </span>
+          </div>
+          <div class="flex items-end justify-between">
+            <div>
+              <span class="text-3xl font-display font-bold text-cyber-cyan neon-text-cyan">24.8K</span>
+              <p class="text-[10px] text-on-surface-variant mt-1 font-mono">较上期 +1.9K</p>
+            </div>
+            <!-- 迷你趋势图 - 青色上涨 -->
+            <svg width="80" height="36" viewBox="0 0 80 36" fill="none">
+              <defs>
+                <linearGradient id="spark-cyan" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="#21E6C1" stop-opacity="0.3"/>
+                  <stop offset="100%" stop-color="#21E6C1" stop-opacity="0"/>
+                </linearGradient>
+              </defs>
+              <path d="M0 28 L13 24 L26 20 L39 22 L52 16 L65 14 L80 8" stroke="#21E6C1" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" class="sparkline-path"/>
+              <path d="M0 28 L13 24 L26 20 L39 22 L52 16 L65 14 L80 8 L80 36 L0 36Z" fill="url(#spark-cyan)"/>
+            </svg>
+          </div>
+        </div>
+
+        <!-- 指标卡片3 - 转化率 -->
+        <div class="metric-card glow-green bg-surface rounded-lg shadow-card p-4 border border-outline-variant/15">
+          <div class="flex items-center justify-between mb-3">
+            <div class="flex items-center gap-2">
+              <div class="w-8 h-8 rounded-md bg-success/15 flex items-center justify-center">
+                <i data-lucide="target" class="w-4 h-4 text-success"></i>
+              </div>
+              <span class="text-xs text-on-surface-variant font-medium">转化率</span>
+            </div>
+            <span class="inline-flex items-center gap-0.5 text-xs font-mono font-semibold text-bull">
+              <i data-lucide="trending-up" class="w-3 h-3"></i>+2.1%
+            </span>
+          </div>
+          <div class="flex items-end justify-between">
+            <div>
+              <span class="text-3xl font-display font-bold text-success">6.8%</span>
+              <p class="text-[10px] text-on-surface-variant mt-1 font-mono">较上期 +0.14%</p>
+            </div>
+            <!-- 迷你趋势图 - 绿色上涨 -->
+            <svg width="80" height="36" viewBox="0 0 80 36" fill="none">
+              <defs>
+                <linearGradient id="spark-green" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="#15E0A0" stop-opacity="0.3"/>
+                  <stop offset="100%" stop-color="#15E0A0" stop-opacity="0"/>
+                </linearGradient>
+              </defs>
+              <path d="M0 26 L13 28 L26 24 L39 20 L52 22 L65 16 L80 10" stroke="#15E0A0" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" class="sparkline-path"/>
+              <path d="M0 26 L13 28 L26 24 L39 20 L52 22 L65 16 L80 10 L80 36 L0 36Z" fill="url(#spark-green)"/>
+            </svg>
+          </div>
+        </div>
+
+        <!-- 指标卡片4 - 粉丝增长 -->
+        <div class="metric-card glow-magenta bg-surface rounded-lg shadow-card p-4 border border-outline-variant/15">
+          <div class="flex items-center justify-between mb-3">
+            <div class="flex items-center gap-2">
+              <div class="w-8 h-8 rounded-md bg-cyber-magenta/15 flex items-center justify-center">
+                <i data-lucide="users" class="w-4 h-4 text-cyber-magenta"></i>
+              </div>
+              <span class="text-xs text-on-surface-variant font-medium">粉丝增长</span>
+            </div>
+            <span class="inline-flex items-center gap-0.5 text-xs font-mono font-semibold text-bear">
+              <i data-lucide="trending-down" class="w-3 h-3"></i>-3.2%
+            </span>
+          </div>
+          <div class="flex items-end justify-between">
+            <div>
+              <span class="text-3xl font-display font-bold text-bear">3,246</span>
+              <p class="text-[10px] text-on-surface-variant mt-1 font-mono">较上期 -108</p>
+            </div>
+            <!-- 迷你趋势图 - 绿色下跌 -->
+            <svg width="80" height="36" viewBox="0 0 80 36" fill="none">
+              <defs>
+                <linearGradient id="spark-bear" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="#15E0A0" stop-opacity="0.3"/>
+                  <stop offset="100%" stop-color="#15E0A0" stop-opacity="0"/>
+                </linearGradient>
+              </defs>
+              <path d="M0 10 L13 12 L26 14 L39 18 L52 16 L65 22 L80 28" stroke="#15E0A0" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" class="sparkline-path"/>
+              <path d="M0 10 L13 12 L26 14 L39 18 L52 16 L65 22 L80 28 L80 36 L0 36Z" fill="url(#spark-bear)"/>
+            </svg>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ===== 中间区域：趋势分析 + 内容排行 ===== -->
+      <div class="grid grid-cols-3 gap-4 mb-6">
+
+        <!-- ===== 3. 趋势分析（占2列） ===== -->
+        <div class="col-span-2 bg-surface rounded-lg shadow-card border border-outline-variant/15">
+          <div class="flex items-center justify-between px-5 py-4 border-b border-outline-variant/15">
+            <div class="flex items-center gap-2">
+              <i data-lucide="activity" class="w-4 h-4 text-primary"></i>
+              <h2 class="text-base font-semibold text-on-surface">趋势分析</h2>
+            </div>
+            <div class="flex items-center gap-4">
+              <!-- 图例 -->
+              <div class="flex items-center gap-1.5">
+                <span class="w-3 h-0.5 bg-bull rounded-full"></span>
+                <span class="text-[10px] text-on-surface-variant font-mono">阅读</span>
+              </div>
+              <div class="flex items-center gap-1.5">
+                <span class="w-3 h-0.5 bg-cyber-cyan rounded-full"></span>
+                <span class="text-[10px] text-on-surface-variant font-mono">互动</span>
+              </div>
+              <div class="flex items-center gap-1.5">
+                <span class="w-3 h-0.5 bg-success rounded-full"></span>
+                <span class="text-[10px] text-on-surface-variant font-mono">转化</span>
+              </div>
+            </div>
+          </div>
+          <div class="p-5">
+            <!-- 7天折线图 SVG -->
+            <svg id="trend-chart" width="100%" height="220" viewBox="0 0 700 220" fill="none" preserveAspectRatio="xMidYMid meet">
+              <!-- Y轴网格线 -->
+              <line x1="50" y1="20" x2="680" y2="20" stroke="#1E2838" stroke-width="0.5" stroke-dasharray="4,4"/>
+              <line x1="50" y1="65" x2="680" y2="65" stroke="#1E2838" stroke-width="0.5" stroke-dasharray="4,4"/>
+              <line x1="50" y1="110" x2="680" y2="110" stroke="#1E2838" stroke-width="0.5" stroke-dasharray="4,4"/>
+              <line x1="50" y1="155" x2="680" y2="155" stroke="#1E2838" stroke-width="0.5" stroke-dasharray="4,4"/>
+              <line x1="50" y1="200" x2="680" y2="200" stroke="#1E2838" stroke-width="0.5"/>
+
+              <!-- Y轴标签 -->
+              <text x="45" y="24" fill="#8A94A6" font-size="9" font-family="SpaceDock, monospace" text-anchor="end">20K</text>
+              <text x="45" y="69" fill="#8A94A6" font-size="9" font-family="SpaceDock, monospace" text-anchor="end">15K</text>
+              <text x="45" y="114" fill="#8A94A6" font-size="9" font-family="SpaceDock, monospace" text-anchor="end">10K</text>
+              <text x="45" y="159" fill="#8A94A6" font-size="9" font-family="SpaceDock, monospace" text-anchor="end">5K</text>
+              <text x="45" y="204" fill="#8A94A6" font-size="9" font-family="SpaceDock, monospace" text-anchor="end">0</text>
+
+              <!-- X轴标签 -->
+              <text x="140" y="216" fill="#8A94A6" font-size="9" font-family="SpaceDock, monospace" text-anchor="middle">06/09</text>
+              <text x="245" y="216" fill="#8A94A6" font-size="9" font-family="SpaceDock, monospace" text-anchor="middle">06/10</text>
+              <text x="350" y="216" fill="#8A94A6" font-size="9" font-family="SpaceDock, monospace" text-anchor="middle">06/11</text>
+              <text x="455" y="216" fill="#8A94A6" font-size="9" font-family="SpaceDock, monospace" text-anchor="middle">06/12</text>
+              <text x="560" y="216" fill="#8A94A6" font-size="9" font-family="SpaceDock, monospace" text-anchor="middle">06/13</text>
+              <text x="665" y="216" fill="#8A94A6" font-size="9" font-family="SpaceDock, monospace" text-anchor="middle">06/14</text>
+
+              <!-- 阅读趋势线 - 红色 (数据: 16K, 17K, 15K, 19K, 22K, 21K, 24K) -->
+              <defs>
+                <linearGradient id="area-red" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="#FF3B5C" stop-opacity="0.15"/>
+                  <stop offset="100%" stop-color="#FF3B5C" stop-opacity="0"/>
+                </linearGradient>
+                <linearGradient id="area-cyan" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="#21E6C1" stop-opacity="0.1"/>
+                  <stop offset="100%" stop-color="#21E6C1" stop-opacity="0"/>
+                </linearGradient>
+                <linearGradient id="area-green" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="#15E0A0" stop-opacity="0.08"/>
+                  <stop offset="100%" stop-color="#15E0A0" stop-opacity="0"/>
+                </linearGradient>
+              </defs>
+              <!-- 阅读面积 -->
+              <path d="M87 56 L140 47 L245 65 L350 29 L455 2 L560 11 L665 0 L665 200 L87 200Z" fill="url(#area-red)"/>
+              <!-- 阅读线 -->
+              <polyline points="87,56 140,47 245,65 350,29 455,2 560,11 665,0" stroke="#FF3B5C" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+              <!-- 阅读数据点 -->
+              <circle cx="87" cy="56" r="3" fill="#FF3B5C" stroke="#0A0E14" stroke-width="2"/>
+              <circle cx="140" cy="47" r="3" fill="#FF3B5C" stroke="#0A0E14" stroke-width="2"/>
+              <circle cx="245" cy="65" r="3" fill="#FF3B5C" stroke="#0A0E14" stroke-width="2"/>
+              <circle cx="350" cy="29" r="3" fill="#FF3B5C" stroke="#0A0E14" stroke-width="2"/>
+              <circle cx="455" cy="2" r="3" fill="#FF3B5C" stroke="#0A0E14" stroke-width="2"/>
+              <circle cx="560" cy="11" r="3" fill="#FF3B5C" stroke="#0A0E14" stroke-width="2"/>
+              <circle cx="665" cy="0" r="4" fill="#FF3B5C" stroke="#0A0E14" stroke-width="2"/>
+
+              <!-- 互动面积 -->
+              <path d="M87 165 L140 158 L245 148 L350 142 L455 135 L560 128 L665 120 L665 200 L87 200Z" fill="url(#area-cyan)"/>
+              <!-- 互动线 -->
+              <polyline points="87,165 140,158 245,148 350,142 455,135 560,128 665,120" stroke="#21E6C1" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+              <!-- 互动数据点 -->
+              <circle cx="87" cy="165" r="3" fill="#21E6C1" stroke="#0A0E14" stroke-width="2"/>
+              <circle cx="140" cy="158" r="3" fill="#21E6C1" stroke="#0A0E14" stroke-width="2"/>
+              <circle cx="245" cy="148" r="3" fill="#21E6C1" stroke="#0A0E14" stroke-width="2"/>
+              <circle cx="350" cy="142" r="3" fill="#21E6C1" stroke="#0A0E14" stroke-width="2"/>
+              <circle cx="455" cy="135" r="3" fill="#21E6C1" stroke="#0A0E14" stroke-width="2"/>
+              <circle cx="560" cy="128" r="3" fill="#21E6C1" stroke="#0A0E14" stroke-width="2"/>
+              <circle cx="665" cy="120" r="4" fill="#21E6C1" stroke="#0A0E14" stroke-width="2"/>
+
+              <!-- 转化面积 -->
+              <path d="M87 186 L140 182 L245 184 L350 178 L455 175 L560 168 L665 164 L665 200 L87 200Z" fill="url(#area-green)"/>
+              <!-- 转化线 -->
+              <polyline points="87,186 140,182 245,184 350,178 455,175 560,168 665,164" stroke="#15E0A0" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="6,3"/>
+              <!-- 转化数据点 -->
+              <circle cx="87" cy="186" r="2.5" fill="#15E0A0" stroke="#0A0E14" stroke-width="1.5"/>
+              <circle cx="140" cy="182" r="2.5" fill="#15E0A0" stroke="#0A0E14" stroke-width="1.5"/>
+              <circle cx="245" cy="184" r="2.5" fill="#15E0A0" stroke="#0A0E14" stroke-width="1.5"/>
+              <circle cx="350" cy="178" r="2.5" fill="#15E0A0" stroke="#0A0E14" stroke-width="1.5"/>
+              <circle cx="455" cy="175" r="2.5" fill="#15E0A0" stroke="#0A0E14" stroke-width="1.5"/>
+              <circle cx="560" cy="168" r="2.5" fill="#15E0A0" stroke="#0A0E14" stroke-width="1.5"/>
+              <circle cx="665" cy="164" r="3" fill="#15E0A0" stroke="#0A0E14" stroke-width="2"/>
+            </svg>
+          </div>
+        </div>
+
+        <!-- ===== 2. 内容效果排行（占1列） ===== -->
+        <div class="bg-surface rounded-lg shadow-card border border-outline-variant/15 flex flex-col">
+          <div class="flex items-center justify-between px-5 py-4 border-b border-outline-variant/15">
+            <div class="flex items-center gap-2">
+              <i data-lucide="trophy" class="w-4 h-4 text-warning"></i>
+              <h2 class="text-base font-semibold text-on-surface">内容排行</h2>
+            </div>
+            <!-- 排序切换 -->
+            <div class="flex items-center gap-1">
+              <button id="sort-views" class="px-2 py-0.5 text-[10px] font-mono rounded bg-primary/15 text-primary transition-colors">阅读</button>
+              <button id="sort-interact" class="px-2 py-0.5 text-[10px] font-mono rounded text-on-surface-variant hover:text-on-surface transition-colors">互动</button>
+              <button id="sort-convert" class="px-2 py-0.5 text-[10px] font-mono rounded text-on-surface-variant hover:text-on-surface transition-colors">转化</button>
+            </div>
+          </div>
+          <div class="flex-1 overflow-y-auto p-3 space-y-2">
+
+            <!-- 排行-内容1 -->
+            <div class="rank-row rounded-md p-3 border border-outline-variant/10">
+              <div class="flex items-center justify-between mb-2">
+                <div class="flex items-center gap-2 min-w-0">
+                  <span class="w-5 h-5 rounded bg-warning/20 flex items-center justify-center text-[10px] font-display font-bold text-warning shrink-0">1</span>
+                  <span class="text-xs font-medium text-on-surface truncate">夏日冰饮5步搞定，在家秒变咖啡师</span>
+                </div>
+                <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-mono bg-cyber-magenta/15 text-cyber-magenta shrink-0 ml-2">小红书</span>
+              </div>
+              <div class="flex items-center gap-3 mb-1.5">
+                <span class="text-xs font-mono font-semibold text-bull">32.4K</span>
+                <span class="text-[10px] text-on-surface-variant">阅读</span>
+                <span class="text-[10px] font-mono text-bull">+18.2%</span>
+              </div>
+              <div class="w-full h-1.5 bg-surface-container rounded-full overflow-hidden">
+                <div class="progress-fill h-full bg-gradient-to-r from-bull to-cyber-magenta rounded-full" style="width:100%"></div>
+              </div>
+            </div>
+
+            <!-- 排行-内容2 -->
+            <div class="rank-row rounded-md p-3 border border-outline-variant/10">
+              <div class="flex items-center justify-between mb-2">
+                <div class="flex items-center gap-2 min-w-0">
+                  <span class="w-5 h-5 rounded bg-on-surface-variant/20 flex items-center justify-center text-[10px] font-display font-bold text-on-surface-variant shrink-0">2</span>
+                  <span class="text-xs font-medium text-on-surface truncate">办公室养生茶配方公开！亲测有效</span>
+                </div>
+                <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-mono bg-cyber-cyan/15 text-cyber-cyan shrink-0 ml-2">抖音</span>
+              </div>
+              <div class="flex items-center gap-3 mb-1.5">
+                <span class="text-xs font-mono font-semibold text-bull">28.7K</span>
+                <span class="text-[10px] text-on-surface-variant">阅读</span>
+                <span class="text-[10px] font-mono text-bull">+9.6%</span>
+              </div>
+              <div class="w-full h-1.5 bg-surface-container rounded-full overflow-hidden">
+                <div class="progress-fill h-full bg-gradient-to-r from-bull to-cyber-cyan rounded-full" style="width:88%"></div>
+              </div>
+            </div>
+
+            <!-- 排行-内容3 -->
+            <div class="rank-row rounded-md p-3 border border-outline-variant/10">
+              <div class="flex items-center justify-between mb-2">
+                <div class="flex items-center gap-2 min-w-0">
+                  <span class="w-5 h-5 rounded bg-on-surface-variant/20 flex items-center justify-center text-[10px] font-display font-bold text-on-surface-variant shrink-0">3</span>
+                  <span class="text-xs font-medium text-on-surface truncate">减脂期外卖怎么点？这份攻略收好</span>
+                </div>
+                <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-mono bg-cyber-magenta/15 text-cyber-magenta shrink-0 ml-2">小红书</span>
+              </div>
+              <div class="flex items-center gap-3 mb-1.5">
+                <span class="text-xs font-mono font-semibold text-bull">22.1K</span>
+                <span class="text-[10px] text-on-surface-variant">阅读</span>
+                <span class="text-[10px] font-mono text-bull">+5.4%</span>
+              </div>
+              <div class="w-full h-1.5 bg-surface-container rounded-full overflow-hidden">
+                <div class="progress-fill h-full bg-gradient-to-r from-bull/80 to-warning rounded-full" style="width:68%"></div>
+              </div>
+            </div>
+
+            <!-- 排行-内容4 -->
+            <div class="rank-row rounded-md p-3 border border-outline-variant/10">
+              <div class="flex items-center justify-between mb-2">
+                <div class="flex items-center gap-2 min-w-0">
+                  <span class="w-5 h-5 rounded bg-on-surface-variant/20 flex items-center justify-center text-[10px] font-display font-bold text-on-surface-variant shrink-0">4</span>
+                  <span class="text-xs font-medium text-on-surface truncate">独居好物清单｜幸福感直接拉满</span>
+                </div>
+                <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-mono bg-cyber-cyan/15 text-cyber-cyan shrink-0 ml-2">抖音</span>
+              </div>
+              <div class="flex items-center gap-3 mb-1.5">
+                <span class="text-xs font-mono font-semibold text-bear">18.5K</span>
+                <span class="text-[10px] text-on-surface-variant">阅读</span>
+                <span class="text-[10px] font-mono text-bear">-2.1%</span>
+              </div>
+              <div class="w-full h-1.5 bg-surface-container rounded-full overflow-hidden">
+                <div class="progress-fill h-full bg-gradient-to-r from-warning to-success rounded-full" style="width:57%"></div>
+              </div>
+            </div>
+
+            <!-- 排行-内容5 -->
+            <div class="rank-row rounded-md p-3 border border-outline-variant/10">
+              <div class="flex items-center justify-between mb-2">
+                <div class="flex items-center gap-2 min-w-0">
+                  <span class="w-5 h-5 rounded bg-on-surface-variant/20 flex items-center justify-center text-[10px] font-display font-bold text-on-surface-variant shrink-0">5</span>
+                  <span class="text-xs font-medium text-on-surface truncate">运动后拉伸指南，告别肌肉腿</span>
+                </div>
+                <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-mono bg-cyber-magenta/15 text-cyber-magenta shrink-0 ml-2">小红书</span>
+              </div>
+              <div class="flex items-center gap-3 mb-1.5">
+                <span class="text-xs font-mono font-semibold text-bear">15.3K</span>
+                <span class="text-[10px] text-on-surface-variant">阅读</span>
+                <span class="text-[10px] font-mono text-bear">-4.8%</span>
+              </div>
+              <div class="w-full h-1.5 bg-surface-container rounded-full overflow-hidden">
+                <div class="progress-fill h-full bg-gradient-to-r from-success/60 to-bear rounded-full" style="width:47%"></div>
+              </div>
+            </div>
+
+            <!-- 排行-内容6 -->
+            <div class="rank-row rounded-md p-3 border border-outline-variant/10">
+              <div class="flex items-center justify-between mb-2">
+                <div class="flex items-center gap-2 min-w-0">
+                  <span class="w-5 h-5 rounded bg-on-surface-variant/20 flex items-center justify-center text-[10px] font-display font-bold text-on-surface-variant shrink-0">6</span>
+                  <span class="text-xs font-medium text-on-surface truncate">新手化妆步骤详解，5分钟出门</span>
+                </div>
+                <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-mono bg-cyber-cyan/15 text-cyber-cyan shrink-0 ml-2">抖音</span>
+              </div>
+              <div class="flex items-center gap-3 mb-1.5">
+                <span class="text-xs font-mono font-semibold text-bear">11.6K</span>
+                <span class="text-[10px] text-on-surface-variant">阅读</span>
+                <span class="text-[10px] font-mono text-bear">-7.3%</span>
+              </div>
+              <div class="w-full h-1.5 bg-surface-container rounded-full overflow-hidden">
+                <div class="progress-fill h-full bg-gradient-to-r from-bear/60 to-bear rounded-full" style="width:36%"></div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ===== 下方区域：平台对比 + ROI + AI洞察 ===== -->
+      <div class="grid grid-cols-3 gap-4">
+
+        <!-- ===== 4. 平台对比 ===== -->
+        <div class="bg-surface rounded-lg shadow-card border border-outline-variant/15">
+          <div class="flex items-center justify-between px-5 py-4 border-b border-outline-variant/15">
+            <div class="flex items-center gap-2">
+              <i data-lucide="git-compare" class="w-4 h-4 text-cyber-purple"></i>
+              <h2 class="text-base font-semibold text-on-surface">平台对比</h2>
+            </div>
+            <span class="text-[10px] text-on-surface-variant font-mono">小红书 vs 抖音</span>
+          </div>
+          <div class="p-5">
+            <!-- SVG 柱状图 -->
+            <svg width="100%" height="180" viewBox="0 0 280 180" fill="none" preserveAspectRatio="xMidYMid meet">
+              <!-- 指标标签 -->
+              <text x="55" y="12" fill="#8A94A6" font-size="9" font-family="Noto Sans SC, sans-serif" text-anchor="middle">阅读量</text>
+              <text x="140" y="12" fill="#8A94A6" font-size="9" font-family="Noto Sans SC, sans-serif" text-anchor="middle">互动量</text>
+              <text x="225" y="12" fill="#8A94A6" font-size="9" font-family="Noto Sans SC, sans-serif" text-anchor="middle">转化率</text>
+
+              <!-- 基线 -->
+              <line x1="20" y1="160" x2="270" y2="160" stroke="#1E2838" stroke-width="0.5"/>
+
+              <!-- 阅读量柱 -->
+              <rect x="30" y="50" width="22" height="110" rx="3" fill="#FF2E97" opacity="0.85"/>
+              <rect x="58" y="65" width="22" height="95" rx="3" fill="#21E6C1" opacity="0.85"/>
+              <text x="41" y="45" fill="#FF2E97" font-size="9" font-family="SpaceDock, monospace" text-anchor="middle" font-weight="bold">76K</text>
+              <text x="69" y="60" fill="#21E6C1" font-size="9" font-family="SpaceDock, monospace" text-anchor="middle" font-weight="bold">52K</text>
+
+              <!-- 互动量柱 -->
+              <rect x="115" y="80" width="22" height="80" rx="3" fill="#FF2E97" opacity="0.85"/>
+              <rect x="143" y="95" width="22" height="65" rx="3" fill="#21E6C1" opacity="0.85"/>
+              <text x="126" y="75" fill="#FF2E97" font-size="9" font-family="SpaceDock, monospace" text-anchor="middle" font-weight="bold">16K</text>
+              <text x="154" y="90" fill="#21E6C1" font-size="9" font-family="SpaceDock, monospace" text-anchor="middle" font-weight="bold">8.8K</text>
+
+              <!-- 转化率柱 -->
+              <rect x="200" y="100" width="22" height="60" rx="3" fill="#FF2E97" opacity="0.85"/>
+              <rect x="228" y="88" width="22" height="72" rx="3" fill="#21E6C1" opacity="0.85"/>
+              <text x="211" y="95" fill="#FF2E97" font-size="9" font-family="SpaceDock, monospace" text-anchor="middle" font-weight="bold">5.2%</text>
+              <text x="239" y="83" fill="#21E6C1" font-size="9" font-family="SpaceDock, monospace" text-anchor="middle" font-weight="bold">8.4%</text>
+            </svg>
+
+            <!-- 图例 -->
+            <div class="flex items-center justify-center gap-6 mt-3">
+              <div class="flex items-center gap-1.5">
+                <span class="w-2.5 h-2.5 rounded-sm bg-cyber-magenta"></span>
+                <span class="text-[10px] text-on-surface-variant">小红书</span>
+              </div>
+              <div class="flex items-center gap-1.5">
+                <span class="w-2.5 h-2.5 rounded-sm bg-cyber-cyan"></span>
+                <span class="text-[10px] text-on-surface-variant">抖音</span>
+              </div>
+            </div>
+
+            <!-- 对比摘要 -->
+            <div class="mt-4 pt-3 border-t border-outline-variant/15 space-y-2">
+              <div class="flex items-center justify-between">
+                <span class="text-[10px] text-on-surface-variant">小红书强项</span>
+                <span class="text-[10px] font-mono text-cyber-magenta font-medium">阅读 · 互动</span>
+              </div>
+              <div class="flex items-center justify-between">
+                <span class="text-[10px] text-on-surface-variant">抖音强项</span>
+                <span class="text-[10px] font-mono text-cyber-cyan font-medium">转化率</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ===== 5. ROI 计算 ===== -->
+        <div class="bg-surface rounded-lg shadow-card border border-outline-variant/15">
+          <div class="flex items-center justify-between px-5 py-4 border-b border-outline-variant/15">
+            <div class="flex items-center gap-2">
+              <i data-lucide="calculator" class="w-4 h-4 text-warning"></i>
+              <h2 class="text-base font-semibold text-on-surface">ROI 看板</h2>
+            </div>
+            <span class="text-[10px] text-on-surface-variant font-mono">投入 vs 产出</span>
+          </div>
+          <div class="p-5">
+            <!-- ROI 主指标 -->
+            <div class="text-center mb-5">
+              <div class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-success/10 border border-success/20">
+                <i data-lucide="trending-up" class="w-5 h-5 text-success"></i>
+                <span class="text-2xl font-display font-bold text-success">3.6x</span>
+              </div>
+              <p class="text-[10px] text-on-surface-variant mt-2">综合 ROI 倍率</p>
+            </div>
+
+            <!-- 投入产出对比条 -->
+            <div class="space-y-4">
+              <!-- 内容制作投入 -->
+              <div>
+                <div class="flex items-center justify-between mb-1.5">
+                  <span class="text-xs text-on-surface-variant">内容制作投入</span>
+                  <span class="text-xs font-mono font-semibold text-bear">¥8,200</span>
+                </div>
+                <div class="w-full h-2.5 bg-surface-container rounded-full overflow-hidden">
+                  <div class="progress-fill h-full rounded-full" style="width:40%; background: linear-gradient(90deg, #FF3B5C, #FF2E97);"></div>
+                </div>
+              </div>
+
+              <!-- 广告投放投入 -->
+              <div>
+                <div class="flex items-center justify-between mb-1.5">
+                  <span class="text-xs text-on-surface-variant">广告投放投入</span>
+                  <span class="text-xs font-mono font-semibold text-bear">¥12,500</span>
+                </div>
+                <div class="w-full h-2.5 bg-surface-container rounded-full overflow-hidden">
+                  <div class="progress-fill h-full rounded-full" style="width:62%; background: linear-gradient(90deg, #FF2E97, #8B5CFF);"></div>
+                </div>
+              </div>
+
+              <!-- 产出价值 -->
+              <div>
+                <div class="flex items-center justify-between mb-1.5">
+                  <span class="text-xs text-on-surface-variant">产出价值</span>
+                  <span class="text-xs font-mono font-semibold text-bull">¥74,520</span>
+                </div>
+                <div class="w-full h-2.5 bg-surface-container rounded-full overflow-hidden">
+                  <div class="progress-fill h-full rounded-full" style="width:100%; background: linear-gradient(90deg, #15E0A0, #21E6C1);"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- ROI 分项 -->
+            <div class="mt-5 pt-4 border-t border-outline-variant/15 grid grid-cols-2 gap-3">
+              <div class="text-center p-2 rounded-md bg-surface-container/50">
+                <span class="text-lg font-display font-bold text-cyber-magenta">4.2x</span>
+                <p class="text-[10px] text-on-surface-variant mt-0.5">小红书 ROI</p>
+              </div>
+              <div class="text-center p-2 rounded-md bg-surface-container/50">
+                <span class="text-lg font-display font-bold text-cyber-cyan">3.1x</span>
+                <p class="text-[10px] text-on-surface-variant mt-0.5">抖音 ROI</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ===== 6. AI 洞察 ===== -->
+        <div class="ai-insight-card">
+          <div class="flex items-center justify-between px-5 py-4 border-b border-outline-variant/15">
+            <div class="flex items-center gap-2">
+              <i data-lucide="brain" class="w-4 h-4 text-cyber-purple"></i>
+              <h2 class="text-base font-semibold text-on-surface">AI 洞察</h2>
+            </div>
+            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-mono bg-cyber-purple/15 text-cyber-purple">
+              <i data-lucide="sparkles" class="w-3 h-3"></i>智能分析
+            </span>
+          </div>
+          <div class="p-5 space-y-3">
+
+            <!-- 洞察1 -->
+            <div id="insight-1" class="rounded-md p-3 bg-surface-container/50 border border-outline-variant/10">
+              <div class="flex items-start gap-2.5">
+                <div class="w-6 h-6 rounded-md bg-bull/15 flex items-center justify-center shrink-0 mt-0.5">
+                  <i data-lucide="trending-up" class="w-3 h-3 text-bull"></i>
+                </div>
+                <div>
+                  <p class="text-xs font-medium text-on-surface leading-relaxed">阅读量连续3天上涨，小红书美食类内容表现突出</p>
+                  <p class="text-[10px] text-on-surface-variant mt-1">建议增加美食类选题产出频率</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- 洞察2 -->
+            <div id="insight-2" class="rounded-md p-3 bg-surface-container/50 border border-outline-variant/10">
+              <div class="flex items-start gap-2.5">
+                <div class="w-6 h-6 rounded-md bg-warning/15 flex items-center justify-center shrink-0 mt-0.5">
+                  <i data-lucide="alert-triangle" class="w-3 h-3 text-warning"></i>
+                </div>
+                <div>
+                  <p class="text-xs font-medium text-on-surface leading-relaxed">抖音互动率下降12%，视频完播率偏低</p>
+                  <p class="text-[10px] text-on-surface-variant mt-1">建议优化前3秒Hook，增加悬念引导</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- 洞察3 -->
+            <div id="insight-3" class="rounded-md p-3 bg-surface-container/50 border border-outline-variant/10">
+              <div class="flex items-start gap-2.5">
+                <div class="w-6 h-6 rounded-md bg-success/15 flex items-center justify-center shrink-0 mt-0.5">
+                  <i data-lucide="zap" class="w-3 h-3 text-success"></i>
+                </div>
+                <div>
+                  <p class="text-xs font-medium text-on-surface leading-relaxed">转化率峰值出现在周三和周五晚8-10点</p>
+                  <p class="text-[10px] text-on-surface-variant mt-1">建议优先在这两个时段发布转化导向内容</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- 洞察4 -->
+            <div id="insight-4" class="rounded-md p-3 bg-surface-container/50 border border-outline-variant/10">
+              <div class="flex items-start gap-2.5">
+                <div class="w-6 h-6 rounded-md bg-cyber-purple/15 flex items-center justify-center shrink-0 mt-0.5">
+                  <i data-lucide="lightbulb" class="w-3 h-3 text-cyber-purple"></i>
+                </div>
+                <div>
+                  <p class="text-xs font-medium text-on-surface leading-relaxed">粉丝增长放缓，但留存率提升至78%</p>
+                  <p class="text-[10px] text-on-surface-variant mt-1">质量优于数量，继续深耕高粘性内容方向</p>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- AI洞察底部操作 -->
+          <div class="px-5 pb-4">
+            <button id="btn-deep-analysis" class="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-md text-sm font-medium bg-cyber-purple/15 text-cyber-purple border border-cyber-purple/20 hover:bg-cyber-purple/25 active:scale-[0.98] transition-all">
+              <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>生成深度分析报告
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+    </main>
+    <!-- @main-content:end -->
+  </div>
+
+  <script>lucide.createIcons();</script>
+
+  <script>
+  $(function() {
+
+    // ===== 时间范围切换 =====
+    var $rangeButtons = $('#range-7d, #range-30d, #range-90d');
+
+    $rangeButtons.on('click', function() {
+      $rangeButtons.removeClass('bg-primary/15 text-primary').addClass('text-on-surface-variant');
+      $(this).removeClass('text-on-surface-variant').addClass('bg-primary/15 text-primary');
+      // 切换时间范围 - 后续应实现：
+      // 1. 根据选择的时间范围重新计算趋势图数据
+      // 2. 更新SVG折线图的路径和数据点
+      // 3. 更新关键指标卡片的数值和涨跌幅
+      // 4. 更新内容排行列表的排序
+      console.log('切换时间范围:', $(this).text().trim());
+    });
+
+    // ===== 排序切换 =====
+    var $sortButtons = $('#sort-views, #sort-interact, #sort-convert');
+
+    $sortButtons.on('click', function() {
+      $sortButtons.removeClass('bg-primary/15 text-primary').addClass('text-on-surface-variant');
+      $(this).removeClass('text-on-surface-variant').addClass('bg-primary/15 text-primary');
+      // 切换排序维度 - 后续应实现：
+      // 1. 重新排列排行列表中的DOM节点顺序
+      // 2. 更新每条的进度条宽度和数据
+      // 3. 更新序号标识
+      console.log('切换排序维度:', $(this).text().trim());
+    });
+
+    // ===== 刷新按钮 =====
+    $('#btn-refresh').on('click', function() {
+      var $icon = $(this).find('[data-lucide="refresh-cw"]');
+      $icon.css('animation', 'spin 0.6s ease');
+      // 刷新数据 - 后续应实现：
+      // 1. 调用后端API获取最新数据
+      // 2. 更新所有指标卡片数值
+      // 3. 更新趋势图
+      // 4. 更新排行榜
+      // 5. 更新AI洞察内容
+      console.log('刷新数据');
+      setTimeout(function() {
+        $icon.css('animation', '');
+      }, 600);
+    });
+
+    // ===== 深度分析报告 =====
+    $('#btn-deep-analysis').on('click', function() {
+      // 生成深度分析报告 - 后续应实现：
+      // 1. 收集当前页面的所有指标数据
+      // 2. 调用AI接口生成长文分析报告
+      // 3. 弹出模态框展示完整报告内容
+      // 4. 支持导出PDF或复制到剪贴板
+      console.log('生成深度分析报告');
+    });
+
+    // ===== 排行条目点击跳转 =====
+    $('.rank-row').on('click', function() {
+      // 点击排行内容 - 后续应实现：
+      // 1. 跳转到该内容的详细数据页面
+      // 2. 通过URL参数传递内容ID
+      var title = $(this).find('.truncate').text();
+      console.log('查看内容详情:', title);
+    });
+
+  });
+
+  // 旋转动画（刷新按钮用）
+  var styleSheet = document.createElement('style');
+  styleSheet.textContent = '@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }';
+  document.head.appendChild(styleSheet);
+  </script>
+
+</body>
+
+</html>

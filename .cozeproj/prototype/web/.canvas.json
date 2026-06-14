@@ -5,6 +5,30 @@
       "options": {
         "path": ".cozeproj/prototype/web/home.html"
       },
+      "title": "首页入口",
+      "size": "web"
+    },
+    {
+      "type": "html",
+      "options": {
+        "path": ".cozeproj/prototype/web/generate.html"
+      },
+      "title": "一键生成",
+      "size": "web"
+    },
+    {
+      "type": "html",
+      "options": {
+        "path": ".cozeproj/prototype/web/brand-assets.html"
+      },
+      "title": "品牌资产",
+      "size": "web"
+    },
+    {
+      "type": "html",
+      "options": {
+        "path": ".cozeproj/prototype/web/topic-engine.html"
+      },
       "title": "选题引擎",
       "size": "web"
     },
@@ -27,7 +51,7 @@
     {
       "type": "html",
       "options": {
-        "path": ".cozeproj/prototype/web/analytics.html"
+        "path": ".cozeproj/prototype/web/data-review.html"
       },
       "title": "数据复盘",
       "size": "web"
@@ -35,7 +59,7 @@
     {
       "type": "html",
       "options": {
-        "path": ".cozeproj/prototype/web/knowledge.html"
+        "path": ".cozeproj/prototype/web/knowledge-base.html"
       },
       "title": "知识库",
       "size": "web"

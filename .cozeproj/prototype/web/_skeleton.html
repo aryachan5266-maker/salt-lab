@@ -5,7 +5,10 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <link href="https://lf-code-agent.coze.cn/obj/x-ai-cn/fonts/google/google-all-fonts.css" rel="stylesheet" />
+  <!-- 赛博/科技感字体 -->
+  <link href="https://lf-code-agent.coze.cn/obj/x-ai-cn/fonts/google/orbitron.css" rel="stylesheet"/>
+  <link href="https://lf-code-agent.coze.cn/obj/x-ai-cn/fonts/google/spacedock.css" rel="stylesheet"/>
+  <link href="https://lf-code-agent.coze.cn/obj/x-ai-cn/fonts/google/noto-sans-sc.css" rel="stylesheet"/>
 
   <script src="https://lf-code-agent.coze.cn/obj/x-ai-cn/cdn/jquery/jquery-3.7.1.min.js"></script>
   <script src="https://lf-code-agent.coze.cn/obj/x-ai-cn/cdn/lucide/lucide-1.11.0.min.js"></script>
@@ -13,307 +16,67 @@
 
   <style type="text/tailwindcss">
     @theme {
-      /* === 品牌色：唯一亮色 = 翡翠绿 === */
-      --color-primary:              #00d992;
-      --color-primary-container:    rgba(0, 217, 146, 0.12);
-      --color-on-primary:           #050507;
-      --color-accent:               #00d992;
-      --color-accent-container:     rgba(0, 217, 146, 0.08);
-      /* === 背景 / 表面（极黑 + 碳黑） === */
-      --color-background:                 #050507;
-      --color-surface-container-lowest:   #020203;
-      --color-surface:                    #0d0d10;
-      --color-surface-container:          #15151a;
-      --color-surface-container-high:     #1c1c22;
-      --color-surface-container-highest:  #25252b;
+      /* === 品牌色（红涨/正向） === */
+      --color-primary:              #FF3B5C;
+      --color-primary-container:    #2A1520;
+      --color-on-primary:           #ffffff;
+      /* === 赛博霓虹点缀色 === */
+      --color-cyber-cyan:           #21E6C1;
+      --color-cyber-magenta:        #FF2E97;
+      --color-cyber-purple:         #8B5CFF;
+      /* === 涨跌语义色（中国股市红涨绿跌） === */
+      --color-bull:                 #FF3B5C;
+      --color-bear:                 #15E0A0;
+      /* === 背景 / 表面 === */
+      --color-background:                 #0A0E14;
+      --color-surface-container-lowest:   #0D1117;
+      --color-surface:                    #111820;
+      --color-surface-container:          #161D27;
+      --color-surface-container-high:     #1A2332;
+      --color-surface-container-highest:  #1F2937;
       /* === 文字 === */
-      --color-on-surface:           #f5f5f7;
-      --color-on-surface-variant:   #8a8a8f;
-      /* === 功能色（涨绿跌红） === */
-      --color-success:  #00d992;   /* 涨 = 翡翠绿 */
-      --color-error:    #ff3b5c;   /* 跌 = 警报红 */
-      --color-warning:  #ffb800;
-      /* === 边框（暖灰 + Ghost） === */
-      --color-outline:          #3d3a39;
-      --color-outline-variant:  rgba(255, 255, 255, 0.06);
+      --color-on-surface:           #F2F5FA;
+      --color-on-surface-variant:   #8A94A6;
+      /* === 功能色 === */
+      --color-success:  #15E0A0;
+      --color-error:    #FF3B5C;
+      --color-warning:  #F5A623;
+      /* === 边框 === */
+      --color-outline:          #2A3444;
+      --color-outline-variant:  #1E2838;
       /* === 圆角 === */
-      --radius-sm:   0.25rem;
+      --radius-sm:   0.375rem;
       --radius-md:   0.5rem;
-      --radius-lg:   0.625rem;
-      --radius-xl:   0.875rem;
-      --radius-2xl:  1.125rem;
+      --radius-lg:   0.75rem;
+      --radius-xl:   1rem;
+      --radius-2xl:  1.5rem;
       --radius-full: 9999px;
-      /* === 阴影（暗底+翡翠绿光晕） === */
-      --shadow-card:   0 1px 0 rgba(255,255,255,0.04) inset, 0 4px 14px rgba(0,0,0,0.55);
-      --shadow-float:  0 1px 0 rgba(255,255,255,0.06) inset, 0 10px 30px rgba(0,0,0,0.65);
-      --shadow-dialog: 0 1px 0 rgba(255,255,255,0.06) inset, 0 25px 60px rgba(0,0,0,0.75);
-      --shadow-glow:   0 0 20px rgba(0, 217, 146, 0.35), 0 0 40px rgba(0, 217, 146, 0.15);
-      /* === 渐变金属质感 === */
-      --gradient-metal: linear-gradient(135deg, #00d992 0%, #b8ffe2 35%, #ffffff 55%, #00d992 80%, #008f63 100%);
-      --gradient-pink-purple: linear-gradient(135deg, #ff77c8 0%, #b86bff 50%, #7c3aed 100%);
-      /* === 字体（赛博：等宽+无衬线） === */
-      --font-sans: "Inter", "Noto Sans SC", "PingFang SC", system-ui, sans-serif;
-      --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+      /* === 阴影 === */
+      --shadow-card:   0 2px 8px rgba(0,0,0,0.4);
+      --shadow-float:  0 10px 25px rgba(0,0,0,0.5);
+      --shadow-dialog: 0 25px 50px rgba(0,0,0,0.6);
+      --shadow-glow-red:     0 0 20px rgba(255,59,92,0.15);
+      --shadow-glow-cyan:    0 0 20px rgba(33,230,193,0.15);
+      --shadow-glow-magenta: 0 0 20px rgba(255,46,151,0.15);
+      /* === 字体 === */
+      --font-display: "Orbitron", "SpaceDock", monospace;
+      --font-mono: "SpaceDock", "Orbitron", monospace;
+      --font-sans: "Noto Sans SC", system-ui, sans-serif;
     }
+
+    /* 自定义滚动条 */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: #0A0E14; }
+    ::-webkit-scrollbar-thumb { background: #2A3444; border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: #3A4454; }
+
+    /* 霓虹文字效果 */
+    .neon-text-red { text-shadow: 0 0 10px rgba(255,59,92,0.5), 0 0 20px rgba(255,59,92,0.2); }
+    .neon-text-cyan { text-shadow: 0 0 10px rgba(33,230,193,0.5), 0 0 20px rgba(33,230,193,0.2); }
+    .neon-text-magenta { text-shadow: 0 0 10px rgba(255,46,151,0.5), 0 0 20px rgba(255,46,151,0.2); }
   </style>
 
-  <style>
-    /* ===== 全局背景：极黑 + 顶部一抹翡翠绿微光 ===== */
-    body {
-      background:
-        radial-gradient(ellipse 1400px 320px at 50% -120px, rgba(0, 217, 146, 0.06), transparent 60%),
-        radial-gradient(ellipse 900px 280px at 100% 8%, rgba(0, 217, 146, 0.03), transparent 60%),
-        #050507;
-      background-attachment: fixed;
-      font-feature-settings: "tnum" 1, "ss01" 1;
-    }
-    /* 滚动条 */
-    ::-webkit-scrollbar { width: 8px; height: 8px; }
-    ::-webkit-scrollbar-track { background: #050507; }
-    ::-webkit-scrollbar-thumb { background: #25252b; border-radius: 9999px; }
-    ::-webkit-scrollbar-thumb:hover { background: #00d992; }
-
-    /* ===== 数字：等宽 + 金属渐变 + 发光 ===== */
-    .font-num, .font-mono, .tabular {
-      font-family: var(--font-mono);
-      font-variant-numeric: tabular-nums;
-      letter-spacing: -0.01em;
-    }
-    .num-metal {
-      background: var(--gradient-metal);
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-      font-family: var(--font-mono);
-      font-variant-numeric: tabular-nums;
-      font-weight: 700;
-      letter-spacing: -0.02em;
-      text-shadow: 0 0 18px rgba(0, 217, 146, 0.25);
-    }
-    .num-glow {
-      color: #00d992;
-      font-family: var(--font-mono);
-      font-variant-numeric: tabular-nums;
-      font-weight: 600;
-      text-shadow: 0 0 10px rgba(0, 217, 146, 0.55), 0 0 24px rgba(0, 217, 146, 0.25);
-    }
-    .num-up   { color: #00d992; text-shadow: 0 0 8px rgba(0, 217, 146, 0.35); }
-    .num-down { color: #ff3b5c; text-shadow: 0 0 8px rgba(255, 59, 92, 0.35); }
-
-    /* ===== 顶部跑马灯条 ===== */
-    .ticker-bar {
-      background: linear-gradient(90deg, rgba(0, 217, 146, 0.05) 0%, rgba(13,13,16,0.0) 50%, rgba(0, 217, 146, 0.05) 100%);
-      border-bottom: 1px solid #3d3a39;
-      height: 28px;
-      overflow: hidden;
-      position: relative;
-      display: flex;
-      align-items: center;
-    }
-    .ticker-bar::before, .ticker-bar::after {
-      content: ""; position: absolute; top: 0; bottom: 0; width: 60px; z-index: 2; pointer-events: none;
-    }
-    .ticker-bar::before { left: 0; background: linear-gradient(90deg, #050507 0%, transparent 100%); }
-    .ticker-bar::after  { right: 0; background: linear-gradient(-90deg, #050507 0%, transparent 100%); }
-    .ticker-track {
-      display: inline-flex; align-items: center; gap: 36px;
-      white-space: nowrap;
-      animation: ticker-scroll 40s linear infinite;
-      padding-left: 100%;
-      font-family: var(--font-mono);
-      font-size: 11px;
-    }
-    .ticker-track:hover { animation-play-state: paused; }
-    @keyframes ticker-scroll {
-      0%   { transform: translateX(0); }
-      100% { transform: translateX(-100%); }
-    }
-    .ticker-item { display: inline-flex; align-items: center; gap: 6px; color: #f5f5f7; }
-    .ticker-item .k { color: #8a8a8f; }
-    .ticker-item .v.up   { color: #00d992; }
-    .ticker-item .v.down { color: #ff3b5c; }
-    .ticker-item .v.flat { color: #ffb800; }
-
-    /* ===== 呼吸灯（状态指示） ===== */
-    .status-dot {
-      display: inline-block;
-      width: 8px; height: 8px;
-      border-radius: 9999px;
-      position: relative;
-    }
-    .status-dot::after {
-      content: ""; position: absolute; inset: -3px; border-radius: 9999px;
-    }
-    .status-online {
-      background: #00d992;
-      box-shadow: 0 0 8px rgba(0, 217, 146, 0.7);
-      animation: pulse-green 1.6s ease-in-out infinite;
-    }
-    .status-online::after {
-      box-shadow: 0 0 0 0 rgba(0, 217, 146, 0.6);
-      animation: pulse-ring 1.6s ease-out infinite;
-    }
-    .status-pending {
-      background: #ff3b5c;
-      box-shadow: 0 0 8px rgba(255, 59, 92, 0.7);
-      animation: pulse-red 1.2s ease-in-out infinite;
-    }
-    .status-pending::after {
-      box-shadow: 0 0 0 0 rgba(255, 59, 92, 0.6);
-      animation: pulse-ring-red 1.2s ease-out infinite;
-    }
-    .status-queue {
-      background: #5a5a5e;
-      box-shadow: none;
-      animation: none;
-    }
-    @keyframes pulse-green {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.55; }
-    }
-    @keyframes pulse-red {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.5; }
-    }
-    @keyframes pulse-ring {
-      0%   { box-shadow: 0 0 0 0 rgba(0, 217, 146, 0.6); }
-      100% { box-shadow: 0 0 0 8px rgba(0, 217, 146, 0); }
-    }
-    @keyframes pulse-ring-red {
-      0%   { box-shadow: 0 0 0 0 rgba(255, 59, 92, 0.6); }
-      100% { box-shadow: 0 0 0 8px rgba(255, 59, 92, 0); }
-    }
-
-    /* ===== 导航激活态（左侧翡翠绿边） ===== */
-    .nav-active {
-      background: linear-gradient(90deg, rgba(0, 217, 146, 0.14), rgba(0, 217, 146, 0.02));
-      border-left: 3px solid #00d992;
-      color: #00d992 !important;
-      box-shadow: inset 0 0 18px rgba(0, 217, 146, 0.06);
-    }
-    .nav-active i { color: #00d992; }
-
-    /* ===== 按钮：hover 亮绿边框 ===== */
-    .btn-press { transition: transform 0.08s ease, opacity 0.15s ease, background-color 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease; }
-    .btn-press:active { transform: translateY(1px) scale(0.98); }
-
-    .btn-glow {
-      position: relative;
-      transition: all 0.2s ease;
-    }
-    .btn-glow:hover {
-      border-color: #00d992 !important;
-      box-shadow: 0 0 0 1px rgba(0, 217, 146, 0.5), 0 0 18px rgba(0, 217, 146, 0.25);
-      color: #00d992;
-    }
-
-    .btn-primary {
-      background: linear-gradient(135deg, #00d992 0%, #00b87a 100%);
-      color: #050507;
-      font-weight: 600;
-      transition: all 0.2s ease;
-      box-shadow: 0 0 0 1px rgba(0, 217, 146, 0.5), 0 4px 18px rgba(0, 217, 146, 0.25);
-    }
-    .btn-primary:hover {
-      box-shadow: 0 0 0 1px rgba(0, 217, 146, 0.7), 0 6px 24px rgba(0, 217, 146, 0.4);
-      transform: translateY(-1px);
-    }
-    .btn-primary:active { transform: translateY(0) scale(0.98); }
-
-    /* ===== 卡片：hover 亮绿边框 + 微光晕 ===== */
-    .card-base {
-      background: #0d0d10;
-      border: 1px solid #3d3a39;
-      border-radius: var(--radius-lg);
-      box-shadow: var(--shadow-card);
-      transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
-      position: relative;
-      overflow: hidden;
-    }
-    .card-base:hover {
-      border-color: rgba(0, 217, 146, 0.6);
-      box-shadow: var(--shadow-card), 0 0 0 1px rgba(0, 217, 146, 0.25), 0 0 22px rgba(0, 217, 146, 0.12);
-    }
-    /* 统计卡片点击闪绿光 */
-    .card-click-flash {
-      cursor: pointer;
-    }
-    .card-click-flash::after {
-      content: ""; position: absolute; inset: -2px; border-radius: inherit;
-      box-shadow: 0 0 0 2px rgba(0, 217, 146, 0);
-      pointer-events: none;
-      transition: box-shadow 0.2s ease;
-    }
-    .card-click-flash.is-flash::after {
-      animation: click-flash 0.6s ease-out;
-    }
-    @keyframes click-flash {
-      0%   { box-shadow: 0 0 0 0 rgba(0, 217, 146, 0.7), 0 0 30px rgba(0, 217, 146, 0.45); }
-      100% { box-shadow: 0 0 0 14px rgba(0, 217, 146, 0), 0 0 60px rgba(0, 217, 146, 0); }
-    }
-
-    /* ===== 装饰：大 emoji / AI 小形象 半透明背景 ===== */
-    .deco-emoji {
-      position: absolute;
-      bottom: -8px; right: -6px;
-      font-size: 88px;
-      line-height: 1;
-      opacity: 0.10;
-      pointer-events: none;
-      filter: grayscale(20%);
-      user-select: none;
-    }
-    .deco-ai {
-      position: absolute;
-      bottom: -12px; right: -10px;
-      width: 110px; height: 110px;
-      opacity: 0.18;
-      pointer-events: none;
-      user-select: none;
-    }
-
-    /* ===== 侧边栏 AI 头像（粉紫渐变光晕） ===== */
-    .ai-avatar {
-      position: relative;
-      width: 40px; height: 40px;
-      border-radius: 9999px;
-      display: flex; align-items: center; justify-content: center;
-      background: var(--gradient-pink-purple);
-      box-shadow: 0 0 0 1px rgba(255,255,255,0.08), 0 0 18px rgba(184, 107, 255, 0.45), 0 0 32px rgba(255, 119, 200, 0.25);
-      font-weight: 700; color: #fff;
-      font-family: var(--font-mono);
-    }
-    .ai-avatar::after {
-      content: ""; position: absolute; inset: -3px;
-      border-radius: 9999px;
-      background: var(--gradient-pink-purple);
-      filter: blur(10px); opacity: 0.35; z-index: -1;
-    }
-
-    /* ===== 状态徽章 ===== */
-    .badge { display: inline-flex; align-items: center; gap: 5px; padding: 2px 8px; border-radius: 9999px; font-size: 11px; font-weight: 500; font-family: var(--font-mono); }
-    .badge-up    { background: rgba(0, 217, 146, 0.12); color: #00d992; border: 1px solid rgba(0, 217, 146, 0.25); }
-    .badge-down  { background: rgba(255, 59, 92, 0.12); color: #ff3b5c; border: 1px solid rgba(255, 59, 92, 0.25); }
-    .badge-flat  { background: rgba(138, 138, 143, 0.10); color: #8a8a8f; border: 1px solid rgba(138, 138, 143, 0.22); }
-    .badge-warn  { background: rgba(255, 184, 0, 0.12); color: #ffb800; border: 1px solid rgba(255, 184, 0, 0.28); }
-
-    /* ===== Toast ===== */
-    .toast {
-      position: fixed; bottom: 24px; right: 24px; z-index: 9999;
-      background: linear-gradient(135deg, #15151a, #1c1c22);
-      color: #f5f5f7; padding: 12px 20px; border-radius: 10px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.7), 0 0 0 1px rgba(0, 217, 146, 0.25);
-      border: 1px solid rgba(0, 217, 146, 0.35);
-      font-size: 13px; display: flex; align-items: center; gap: 10px;
-      animation: toast-in 0.3s ease, toast-out 0.3s ease 2.7s forwards;
-    }
-    .toast.success { border-color: rgba(0, 217, 146, 0.5); }
-    .toast.error   { border-color: rgba(255, 59, 92, 0.5); box-shadow: 0 10px 30px rgba(0,0,0,0.7), 0 0 0 1px rgba(255, 59, 92, 0.3); }
-    .toast.info    { border-color: rgba(138, 138, 143, 0.4); }
-    @keyframes toast-in { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-    @keyframes toast-out { to { transform: translateY(20px); opacity: 0; } }
-  </style>
-
+  <!-- 图片兜底 -->
   <script>
     document.addEventListener('error', function (e) {
       const img = e.target;
@@ -326,279 +89,80 @@
       const icons = { '人物': '👤', '自然风景': '🏞', '动物': '🐾', '建筑城市': '🏙', '运动体育': '⚽', '交通工具': '🚗', '食物': '🍽', '服饰时尚': '👗', '商业科技': '💼', '游戏娱乐': '🎮', '艺术': '🎨', '其他': '🖼' };
       const icon = icons[cat] || '🖼';
       const w = img.width || 400, h = img.height || 300;
-      const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}"><rect width="100%" height="100%" fill="%230d0d10"/><text x="50%" y="45%" text-anchor="middle" font-size="${Math.min(w, h) * 0.18}" fill="%2300d992" dominant-baseline="central">${icon}</text><text x="50%" y="68%" text-anchor="middle" font-size="${Math.min(w, h) * 0.07}" fill="%238a8a8f" font-family="system-ui,sans-serif" dominant-baseline="central">${label}</text></svg>`;
+      const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}"><rect width="100%" height="100%" fill="%23111820"/><text x="50%" y="45%" text-anchor="middle" font-size="${Math.min(w, h) * 0.18}" fill="%238A94A6" dominant-baseline="central">${icon}</text><text x="50%" y="68%" text-anchor="middle" font-size="${Math.min(w, h) * 0.07}" fill="%235A6476" font-family="system-ui,sans-serif" dominant-baseline="central">${label}</text></svg>`;
       img.src = 'data:image/svg+xml,' + svg;
     }, true);
   </script>
 </head>
 
-<body class="bg-background text-on-surface font-sans min-h-screen">
+<body class="bg-background text-on-surface font-sans">
 
   <!-- @nav:start 导航组件 -->
-  <div class="flex min-h-screen" style="height: 100vh;">
-
-    <!-- Sidebar -->
-    <aside class="w-60 shrink-0 bg-surface border-r flex flex-col" style="border-color: #3d3a39;">
-      <!-- Logo 区 -->
-      <div class="h-16 px-5 flex items-center gap-3 border-b" style="border-color: #3d3a39;">
-        <div class="relative w-9 h-9 rounded-lg flex items-center justify-center text-on-primary font-bold text-base" style="background: linear-gradient(135deg, #00d992 0%, #008f63 100%); box-shadow: 0 0 0 1px rgba(0,217,146,0.4), 0 0 18px rgba(0,217,146,0.4);">
-          咸
-          <span class="status-dot status-online absolute -top-0.5 -right-0.5" style="border: 2px solid #0d0d10;"></span>
+  <header class="bg-surface sticky top-0 z-40 h-14 flex items-center justify-between px-5 border-b border-outline-variant/30">
+    <div class="flex items-center gap-3">
+      <div class="flex items-center gap-2">
+        <div class="w-8 h-8 rounded-md bg-primary/20 flex items-center justify-center">
+          <i data-lucide="zap" class="w-4 h-4 text-primary"></i>
         </div>
-        <div class="flex-1 min-w-0">
-          <div class="font-semibold text-[15px] text-on-surface tracking-tight">咸聊 AI</div>
-          <div class="text-[11px] text-on-surface-variant font-num">XHSDX · 终端 v2.0</div>
-        </div>
+        <span class="font-display font-bold text-base tracking-wider neon-text-red">XIANLIAO</span>
+        <span class="text-xs text-on-surface-variant font-mono ml-1">AI</span>
       </div>
-
-      <!-- AI 助手条 -->
-      <div class="px-4 py-3 border-b" style="border-color: #3d3a39;">
-        <button id="btn-ai-assistant" class="w-full bg-surface-container hover:bg-surface-container-high border border-outline rounded-lg px-3 py-2.5 flex items-center gap-2.5 transition-all btn-glow">
-          <div class="ai-avatar !w-7 !h-7 text-xs" style="box-shadow: 0 0 0 1px rgba(255,255,255,0.1), 0 0 12px rgba(184, 107, 255, 0.5);">咸</div>
-          <div class="flex-1 text-left min-w-0">
-            <div class="text-xs font-medium text-on-surface">问问小咸</div>
-            <div class="text-[10px] text-on-surface-variant truncate">"今天适合发什么选题？"</div>
-          </div>
-          <i data-lucide="sparkles" class="w-3.5 h-3.5 text-primary"></i>
-        </button>
+    </div>
+    <div class="flex items-center gap-3">
+      <button class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-on-surface-variant hover:text-on-surface hover:bg-surface-container rounded-md transition-colors">
+        <i data-lucide="bell" class="w-3.5 h-3.5"></i>
+      </button>
+      <div class="w-7 h-7 rounded-full bg-primary/20 flex items-center justify-center text-xs font-medium text-primary">
+        咸
       </div>
+    </div>
+  </header>
 
-      <!-- 导航菜单 -->
-      <nav class="flex-1 overflow-y-auto py-3">
-        <div class="px-5 mb-2 text-[11px] font-medium text-on-surface-variant tracking-widest uppercase">主功能</div>
-        <a href="home.html" data-nav="radar" class="nav-item flex items-center gap-3 px-5 py-2.5 text-sm font-medium text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors">
-          <i data-lucide="radar" class="w-4 h-4"></i><span>选题引擎</span>
-          <span class="ml-auto badge badge-up" data-nav-count="radar">28</span>
+  <div class="flex" style="height: calc(100vh - 3.5rem)">
+    <aside class="w-52 shrink-0 bg-surface-container-lowest border-r border-outline-variant/20 overflow-y-auto">
+      <div class="p-3 space-y-0.5">
+        <a href="home.html" class="flex items-center gap-3 px-3 py-2.5 rounded-md bg-primary/10 text-primary font-medium text-sm" aria-current="page">
+          <i data-lucide="home" class="w-4 h-4"></i>首页
         </a>
-        <a href="content-factory.html" data-nav="factory" class="nav-item flex items-center gap-3 px-5 py-2.5 text-sm font-medium text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors">
-          <i data-lucide="factory" class="w-4 h-4"></i><span>内容工厂</span>
+        <a href="generate.html" class="flex items-center gap-3 px-3 py-2.5 rounded-md text-on-surface-variant hover:bg-surface-container hover:text-on-surface font-medium text-sm transition-colors">
+          <i data-lucide="sparkles" class="w-4 h-4"></i>一键生成
         </a>
-        <a href="publish.html" data-nav="publish" class="nav-item flex items-center gap-3 px-5 py-2.5 text-sm font-medium text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors">
-          <i data-lucide="send" class="w-4 h-4"></i><span>发布管理</span>
-          <span class="ml-auto badge badge-warn" data-nav-count="publish">3</span>
-        </a>
-        <a href="analytics.html" data-nav="analytics" class="nav-item flex items-center gap-3 px-5 py-2.5 text-sm font-medium text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors">
-          <i data-lucide="bar-chart-horizontal" class="w-4 h-4"></i><span>数据复盘</span>
-        </a>
-        <a href="knowledge.html" data-nav="knowledge" class="nav-item flex items-center gap-3 px-5 py-2.5 text-sm font-medium text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors">
-          <i data-lucide="database" class="w-4 h-4"></i><span>知识库</span>
+        <a href="brand-assets.html" class="flex items-center gap-3 px-3 py-2.5 rounded-md text-on-surface-variant hover:bg-surface-container hover:text-on-surface font-medium text-sm transition-colors">
+          <i data-lucide="gem" class="w-4 h-4"></i>品牌资产
         </a>
 
-        <div class="px-5 mt-4 mb-2 text-[11px] font-medium text-on-surface-variant tracking-widest uppercase">配置</div>
-        <a href="settings.html" data-nav="settings" class="nav-item flex items-center gap-3 px-5 py-2.5 text-sm font-medium text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors">
-          <i data-lucide="settings" class="w-4 h-4"></i><span>系统设置</span>
-        </a>
-      </nav>
-
-      <!-- 底部：当前账号（粉紫光晕 AI 头像） -->
-      <div class="border-t p-3" style="border-color: #3d3a39;">
-        <div class="bg-surface-container rounded-lg p-2.5 flex items-center gap-2.5 border" style="border-color: #3d3a39;">
-          <div class="ai-avatar !w-9 !h-9 text-sm">咸</div>
-          <div class="flex-1 min-w-0">
-            <div class="text-xs font-medium text-on-surface truncate flex items-center gap-1.5">
-              小咸·主理人
-              <span class="status-dot status-online"></span>
-            </div>
-            <div class="text-[10px] text-on-surface-variant font-num">@xianliao_ai</div>
-          </div>
-          <button id="btn-switch-account" class="text-on-surface-variant hover:text-primary transition-colors" title="切换账号">
-            <i data-lucide="chevrons-up-down" class="w-3.5 h-3.5"></i>
-          </button>
+        <div class="pt-4 pb-2 px-3">
+          <span class="text-[10px] font-mono uppercase tracking-widest text-on-surface-variant/50">进阶区</span>
         </div>
+        <a href="topic-engine.html" class="flex items-center gap-3 px-3 py-2.5 rounded-md text-on-surface-variant hover:bg-surface-container hover:text-on-surface font-medium text-sm transition-colors">
+          <i data-lucide="trending-up" class="w-4 h-4"></i>选题引擎
+        </a>
+        <a href="content-factory.html" class="flex items-center gap-3 px-3 py-2.5 rounded-md text-on-surface-variant hover:bg-surface-container hover:text-on-surface font-medium text-sm transition-colors">
+          <i data-lucide="factory" class="w-4 h-4"></i>内容工厂
+        </a>
+        <a href="publish.html" class="flex items-center gap-3 px-3 py-2.5 rounded-md text-on-surface-variant hover:bg-surface-container hover:text-on-surface font-medium text-sm transition-colors">
+          <i data-lucide="send" class="w-4 h-4"></i>发布管理
+        </a>
+        <a href="data-review.html" class="flex items-center gap-3 px-3 py-2.5 rounded-md text-on-surface-variant hover:bg-surface-container hover:text-on-surface font-medium text-sm transition-colors">
+          <i data-lucide="chart-bar" class="w-4 h-4"></i>数据复盘
+        </a>
+        <a href="knowledge-base.html" class="flex items-center gap-3 px-3 py-2.5 rounded-md text-on-surface-variant hover:bg-surface-container hover:text-on-surface font-medium text-sm transition-colors">
+          <i data-lucide="brain" class="w-4 h-4"></i>知识库
+        </a>
+        <a href="settings.html" class="flex items-center gap-3 px-3 py-2.5 rounded-md text-on-surface-variant hover:bg-surface-container hover:text-on-surface font-medium text-sm transition-colors">
+          <i data-lucide="settings" class="w-4 h-4"></i>设置
+        </a>
       </div>
     </aside>
 
-    <!-- Main area -->
-    <div class="flex-1 min-w-0 flex flex-col">
-      <!-- 顶部跑马灯条：实时行情 -->
-      <div class="ticker-bar">
-        <div class="ticker-track" id="ticker-track">
-          <span class="ticker-item"><span class="k">XHSIDX</span> <span class="v up">12,847.62</span> <span class="num-up">▲ +2.34%</span></span>
-          <span class="ticker-item"><span class="k">选题命中</span> <span class="v up">94.6%</span> <span class="num-up">▲ +1.2%</span></span>
-          <span class="ticker-item"><span class="k">流水线</span> <span class="v">2/3</span> <span class="num-up">▲ 工作中</span></span>
-          <span class="ticker-item"><span class="k">今日发布</span> <span class="v">8</span> <span class="num-up">▲ 7 已排</span></span>
-          <span class="ticker-item"><span class="k">总曝光</span> <span class="v up">1,284,930</span> <span class="num-up">▲ +18.7%</span></span>
-          <span class="ticker-item"><span class="k">互动率</span> <span class="v up">6.82%</span> <span class="num-up">▲ +0.4%</span></span>
-          <span class="ticker-item"><span class="k">掉粉</span> <span class="v down">-23</span> <span class="num-down">▼ -0.05%</span></span>
-          <span class="ticker-item"><span class="k">小咸在线</span> <span class="v up">3 节点</span> <span class="num-up">▲ 健康</span></span>
-          <!-- 重复一遍以保证无缝循环 -->
-          <span class="ticker-item"><span class="k">XHSIDX</span> <span class="v up">12,847.62</span> <span class="num-up">▲ +2.34%</span></span>
-          <span class="ticker-item"><span class="k">选题命中</span> <span class="v up">94.6%</span> <span class="num-up">▲ +1.2%</span></span>
-          <span class="ticker-item"><span class="k">流水线</span> <span class="v">2/3</span> <span class="num-up">▲ 工作中</span></span>
-          <span class="ticker-item"><span class="k">今日发布</span> <span class="v">8</span> <span class="num-up">▲ 7 已排</span></span>
-          <span class="ticker-item"><span class="k">总曝光</span> <span class="v up">1,284,930</span> <span class="num-up">▲ +18.7%</span></span>
-          <span class="ticker-item"><span class="k">互动率</span> <span class="v up">6.82%</span> <span class="num-up">▲ +0.4%</span></span>
-          <span class="ticker-item"><span class="k">掉粉</span> <span class="v down">-23</span> <span class="num-down">▼ -0.05%</span></span>
-          <span class="ticker-item"><span class="k">小咸在线</span> <span class="v up">3 节点</span> <span class="num-up">▲ 健康</span></span>
-        </div>
-      </div>
-
-      <!-- 顶栏 -->
-      <header class="h-16 bg-surface/80 backdrop-blur border-b flex items-center px-6 gap-4 shrink-0" style="border-color: #3d3a39;">
-        <div class="flex items-center gap-2 text-sm">
-          <span class="text-on-surface-variant">咸聊 AI</span>
-          <i data-lucide="chevron-right" class="w-3.5 h-3.5 text-on-surface-variant/50"></i>
-          <span id="page-crumb" class="text-on-surface font-medium">选题引擎</span>
-        </div>
-        <div class="flex-1 max-w-xl mx-auto">
-          <div class="relative">
-            <i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-on-surface-variant"></i>
-            <input id="global-search" type="text" placeholder="搜选题、关键词、账号..." class="w-full bg-surface-container border rounded-lg pl-10 pr-12 py-2 text-sm text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none transition-colors font-num" style="border-color: #3d3a39;" onfocus="this.style.borderColor='#00d992'; this.style.boxShadow='0 0 0 2px rgba(0,217,146,0.25)'" onblur="this.style.borderColor='#3d3a39'; this.style.boxShadow='none'" />
-            <kbd class="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] text-on-surface-variant border rounded px-1.5 py-0.5 font-mono" style="border-color: #3d3a39;">⌘K</kbd>
-          </div>
-        </div>
-        <div class="flex items-center gap-2">
-          <button id="btn-bell" class="relative w-9 h-9 rounded-lg flex items-center justify-center text-on-surface-variant hover:text-primary hover:bg-surface-container transition-colors" style="border: 1px solid transparent;" title="消息">
-            <i data-lucide="bell" class="w-4 h-4"></i>
-            <span class="absolute top-1.5 right-1.5 w-1.5 h-1.5 bg-primary rounded-full" style="box-shadow: 0 0 6px rgba(0,217,146,0.8);"></span>
-          </button>
-          <button id="btn-refresh" class="w-9 h-9 rounded-lg flex items-center justify-center text-on-surface-variant hover:text-primary hover:bg-surface-container transition-colors btn-press" style="border: 1px solid #3d3a39;" title="刷新数据">
-            <i data-lucide="refresh-cw" class="w-4 h-4"></i>
-          </button>
-          <button id="btn-pipeline" class="btn-primary font-medium text-sm px-4 h-9 rounded-lg flex items-center gap-2 btn-press">
-            <i data-lucide="zap" class="w-4 h-4"></i>立即生成内容
-          </button>
-        </div>
-      </header>
-
-      <main class="flex-1 min-w-0 overflow-y-auto bg-background">
-        <!-- @main-content:start -->
-        <!-- @main-content:end -->
-      </main>
-    </div>
+    <!-- @main-content:start -->
+    <main class="flex-1 min-w-0 overflow-y-auto bg-background p-6">
+      <!-- 页面内容由子 Agent 填充 -->
+    </main>
+    <!-- @main-content:end -->
   </div>
-  <!-- @nav:end 导航组件 -->
 
-  <div id="toast-container"></div>
-
-  <script>
-    /* ============================================================
-       全局共享：Store / Toast / 高亮导航
-       ============================================================ */
-
-    // 本地存储的"选题库"、"流水线"、"已采纳"
-    const Store = {
-      topicPool: [],      // 加入选题库的项
-      pipeline: [],       // 流水线
-      adopted: [],        // 已采纳
-      benchmarks: [],     // 对标账号
-      calendar: [],       // 排期
-      KEY: 'xhs_core_v1',
-      load() {
-        try {
-          const raw = localStorage.getItem(this.KEY);
-          if (raw) return Object.assign(this, JSON.parse(raw));
-        } catch(e){}
-        this._seed();
-        this.save();
-        return this;
-      },
-      save() {
-        const snapshot = { topicPool: this.topicPool, pipeline: this.pipeline, adopted: this.adopted, benchmarks: this.benchmarks, calendar: this.calendar };
-        localStorage.setItem(this.KEY, JSON.stringify(snapshot));
-        window.dispatchEvent(new CustomEvent('store:update', { detail: snapshot }));
-      },
-      _seed() {
-        this.topicPool = [
-          { id: 'T-1001', title: '30岁前我亲手关掉公司，才看懂这3件事', score: 94, source: '热门雷达', addedAt: Date.now() - 3600e3 },
-          { id: 'T-1002', title: '普通女生做小红书的第3年，月入6位数', score: 91, source: '对标拆解', addedAt: Date.now() - 7200e3 },
-          { id: 'T-1003', title: '我从大厂裸辞后才明白的5件事', score: 89, source: '长尾潜力', addedAt: Date.now() - 1800e3 }
-        ];
-        this.pipeline = [
-          { id: 'P-2001', topic: '30岁前我亲手关掉公司，才看懂这3件事', step: 3, stepName: '文案生成', status: 'in_progress' },
-          { id: 'P-2002', topic: '普通女生做小红书的第3年，月入6位数', step: 2, stepName: '封面生成', status: 'in_progress' }
-        ];
-        this.adopted = [];
-        this.benchmarks = ['女力研究所', '创业她说', '清醒Girl的商业课', '33岁姐姐说', '盐系女性成长'];
-        this.calendar = [];
-      },
-      addTopic(item) {
-        if (this.topicPool.find(t => t.id === item.id)) return false;
-        this.topicPool.unshift(Object.assign({ addedAt: Date.now() }, item));
-        this.save();
-        return true;
-      },
-      adoptTopic(item) {
-        if (this.adopted.find(t => t.id === item.id)) return false;
-        this.adopted.unshift(Object.assign({ adoptedAt: Date.now() }, item));
-        this.addTopic(item);
-        this.save();
-        return true;
-      },
-      pushPipeline(item) {
-        if (this.pipeline.find(p => p.id === item.id)) return false;
-        this.pipeline.unshift(item);
-        this.save();
-        return true;
-      }
-    };
-    Store.load();
-
-    // Toast 提示
-    window.toast = function(message, type) {
-      const id = 'toast-' + Date.now();
-      const iconName = type === 'success' ? 'check-circle' : (type === 'error' ? 'x-circle' : 'info');
-      const colorCls = type === 'success' ? 'text-primary' : (type === 'error' ? 'text-error' : 'text-on-surface-variant');
-      const $t = $('<div class="toast ' + (type || '') + '"></div>').attr('id', id);
-      const $i = $('<i></i>').addClass('w-4 h-4 ' + colorCls);
-      $i.attr('data-lucide', iconName);
-      $t.append($i).append('<span>' + message + '</span>');
-      $('#toast-container').append($t);
-      lucide.createIcons();
-      setTimeout(() => $('#' + id).remove(), 3000);
-    };
-
-    // 导航激活
-    window.__highlightNav = function (key) {
-      const crumbMap = {
-        radar: '选题引擎',
-        factory: '内容工厂',
-        publish: '发布管理',
-        analytics: '数据复盘',
-        knowledge: '知识库',
-        settings: '系统设置'
-      };
-      document.querySelectorAll('.nav-item').forEach(el => {
-        el.classList.remove('nav-active');
-        if (el.getAttribute('data-nav') === key) el.classList.add('nav-active');
-      });
-      const crumb = document.getElementById('page-crumb');
-      if (crumb) crumb.textContent = crumbMap[key] || '';
-      lucide.createIcons();
-    };
-
-    // 全局：顶栏按钮 + AI 助手
-    $(function() {
-      $('#btn-bell').on('click', function() {
-        toast('暂无新消息，去选题引擎看看新热点吧～', 'info');
-      });
-      $('#btn-refresh').on('click', function() {
-        const $i = $(this).find('i');
-        $i.css('transition', 'transform 0.6s ease').css('transform', 'rotate(360deg)');
-        setTimeout(() => $i.css('transform', ''), 700);
-        toast('已刷新最新数据', 'success');
-        window.dispatchEvent(new CustomEvent('page:refresh'));
-      });
-      $('#btn-pipeline').on('click', function() {
-        if (Store.pipeline.length === 0) {
-          toast('流水线还是空的，先去选题引擎添加选题吧', 'info');
-          setTimeout(() => location.href = 'home.html', 800);
-          return;
-        }
-        location.href = 'content-factory.html';
-      });
-      $('#btn-ai-assistant').on('click', function() {
-        toast('小咸正在赶来…（开发中，敬请期待）', 'info');
-      });
-      $('#global-search').on('keydown', function(e) {
-        if (e.key === 'Enter' && this.value.trim()) {
-          toast(`正在搜索 "${this.value}" …`, 'info');
-        }
-      });
-    });
-
-    lucide.createIcons();
-  </script>
+  <script>lucide.createIcons();</script>
 </body>
 
 </html>

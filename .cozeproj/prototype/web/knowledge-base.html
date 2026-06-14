@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- 赛博/科技感字体 -->
+  <link href="https://lf-code-agent.coze.cn/obj/x-ai-cn/fonts/google/orbitron.css" rel="stylesheet"/>
+  <link href="https://lf-code-agent.coze.cn/obj/x-ai-cn/fonts/google/spacedock.css" rel="stylesheet"/>
+  <link href="https://lf-code-agent.coze.cn/obj/x-ai-cn/fonts/google/noto-sans-sc.css" rel="stylesheet"/>
+
+  <script src="https://lf-code-agent.coze.cn/obj/x-ai-cn/cdn/jquery/jquery-3.7.1.min.js"></script>
+  <script src="https://lf-code-agent.coze.cn/obj/x-ai-cn/cdn/lucide/lucide-1.11.0.min.js"></script>
+  <script src="https://lf-code-agent.coze.cn/obj/x-ai-cn/cdn/tailwindcss/tailwindcss-browser-4.2.4.min.js"></script>
+
+  <style type="text/tailwindcss">
+    @theme {
+      /* === 品牌色（红涨/正向） === */
+      --color-primary:              #FF3B5C;
+      --color-primary-container:    #2A1520;
+      --color-on-primary:           #ffffff;
+      /* === 赛博霓虹点缀色 === */
+      --color-cyber-cyan:           #21E6C1;
+      --color-cyber-magenta:        #FF2E97;
+      --color-cyber-purple:         #8B5CFF;
+      /* === 涨跌语义色（中国股市红涨绿跌） === */
+      --color-bull:                 #FF3B5C;
+      --color-bear:                 #15E0A0;
+      /* === 背景 / 表面 === */
+      --color-background:                 #0A0E14;
+      --color-surface-container-lowest:   #0D1117;
+      --color-surface:                    #111820;
+      --color-surface-container:          #161D27;
+      --color-surface-container-high:     #1A2332;
+      --color-surface-container-highest:  #1F2937;
+      /* === 文字 === */
+      --color-on-surface:           #F2F5FA;
+      --color-on-surface-variant:   #8A94A6;
+      /* === 功能色 === */
+      --color-success:  #15E0A0;
+      --color-error:    #FF3B5C;
+      --color-warning:  #F5A623;
+      /* === 边框 === */
+      --color-outline:          #2A3444;
+      --color-outline-variant:  #1E2838;
+      /* === 圆角 === */
+      --radius-sm:   0.375rem;
+      --radius-md:   0.5rem;
+      --radius-lg:   0.75rem;
+      --radius-xl:   1rem;
+      --radius-2xl:  1.5rem;
+      --radius-full: 9999px;
+      /* === 阴影 === */
+      --shadow-card:   0 2px 8px rgba(0,0,0,0.4);
+      --shadow-float:  0 10px 25px rgba(0,0,0,0.5);
+      --shadow-dialog: 0 25px 50px rgba(0,0,0,0.6);
+      --shadow-glow-red:     0 0 20px rgba(255,59,92,0.15);
+      --shadow-glow-cyan:    0 0 20px rgba(33,230,193,0.15);
+      --shadow-glow-magenta: 0 0 20px rgba(255,46,151,0.15);
+      /* === 字体 === */
+      --font-display: "Orbitron", "SpaceDock", monospace;
+      --font-mono: "SpaceDock", "Orbitron", monospace;
+      --font-sans: "Noto Sans SC", system-ui, sans-serif;
+    }
+
+    /* 自定义滚动条 */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: #0A0E14; }
+    ::-webkit-scrollbar-thumb { background: #2A3444; border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: #3A4454; }
+
+    /* 霓虹文字效果 */
+    .neon-text-red { text-shadow: 0 0 10px rgba(255,59,92,0.5), 0 0 20px rgba(255,59,92,0.2); }
+    .neon-text-cyan { text-shadow: 0 0 10px rgba(33,230,193,0.5), 0 0 20px rgba(33,230,193,0.2); }
+    .neon-text-magenta { text-shadow: 0 0 10px rgba(255,46,151,0.5), 0 0 20px rgba(255,46,151,0.2); }
+  </style>
+
+  <!-- 图片兜底 -->
+  <script>
+    document.addEventListener('error', function (e) {
+      const img = e.target;
+      if (img.tagName !== 'IMG' || img.dataset.fallback) return;
+      img.dataset.fallback = '1';
+      const esc = s => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+      const cat = img.getAttribute('data-category') || '其他';
+      const alt = img.getAttribute('alt') || '';
+      const label = esc(alt.length > 8 ? alt.slice(0, 8) + '…' : alt);
+      const icons = { '人物': '👤', '自然风景': '🏞', '动物': '🐾', '建筑城市': '🏙', '运动体育': '⚽', '交通工具': '🚗', '食物': '🍽', '服饰时尚': '👗', '商业科技': '💼', '游戏娱乐': '🎮', '艺术': '🎨', '其他': '🖼' };
+      const icon = icons[cat] || '🖼';
+      const w = img.width || 400, h = img.height || 300;
+      const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}"><rect width="100%" height="100%" fill="%23111820"/><text x="50%" y="45%" text-anchor="middle" font-size="${Math.min(w, h) * 0.18}" fill="%238A94A6" dominant-baseline="central">${icon}</text><text x="50%" y="68%" text-anchor="middle" font-size="${Math.min(w, h) * 0.07}" fill="%235A6476" font-family="system-ui,sans-serif" dominant-baseline="central">${label}</text></svg>`;
+      img.src = 'data:image/svg+xml,' + svg;
+    }, true);
+  </script>
+</head>
+
+<body class="bg-background text-on-surface font-sans">
+
+  <!-- @nav:start 导航组件 -->
+  <header class="bg-surface sticky top-0 z-40 h-14 flex items-center justify-between px-5 border-b border-outline-variant/30">
+    <div class="flex items-center gap-3">
+      <div class="flex items-center gap-2">
+        <div class="w-8 h-8 rounded-md bg-primary/20 flex items-center justify-center">
+          <i data-lucide="zap" class="w-4 h-4 text-primary"></i>
+        </div>
+        <span class="font-display font-bold text-base tracking-wider neon-text-red">XIANLIAO</span>
+        <span class="text-xs text-on-surface-variant font-mono ml-1">AI</span>
+      </div>
+    </div>
+    <div class="flex items-center gap-3">
+      <button class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-on-surface-variant hover:text-on-surface hover:bg-surface-container rounded-md transition-colors">
+        <i data-lucide="bell" class="w-3.5 h-3.5"></i>
+      </button>
+      <div class="w-7 h-7 rounded-full bg-primary/20 flex items-center justify-center text-xs font-medium text-primary">
+        咸
+      </div>
+    </div>
+  </header>
+
+  <div class="flex" style="height: calc(100vh - 3.5rem)">
+    <aside class="w-52 shrink-0 bg-surface-container-lowest border-r border-outline-variant/20 overflow-y-auto">
+      <div class="p-3 space-y-0.5">
+        <a href="home.html" class="flex items-center gap-3 px-3 py-2.5 rounded-md text-on-surface-variant hover:bg-surface-container hover:text-on-surface font-medium text-sm transition-colors">
+          <i data-lucide="home" class="w-4 h-4"></i>首页
+        </a>
+        <a href="generate.html" class="flex items-center gap-3 px-3 py-2.5 rounded-md text-on-surface-variant hover:bg-surface-container hover:text-on-surface font-medium text-sm transition-colors">
+          <i data-lucide="sparkles" class="w-4 h-4"></i>一键生成
+        </a>
+        <a href="brand-assets.html" class="flex items-center gap-3 px-3 py-2.5 rounded-md text-on-surface-variant hover:bg-surface-container hover:text-on-surface font-medium text-sm transition-colors">
+          <i data-lucide="gem" class="w-4 h-4"></i>品牌资产
+        </a>
+
+        <div class="pt-4 pb-2 px-3">
+          <span class="text-[10px] font-mono uppercase tracking-widest text-on-surface-variant/50">进阶区</span>
+        </div>
+        <a href="topic-engine.html" class="flex items-center gap-3 px-3 py-2.5 rounded-md text-on-surface-variant hover:bg-surface-container hover:text-on-surface font-medium text-sm transition-colors">
+          <i data-lucide="trending-up" class="w-4 h-4"></i>选题引擎
+        </a>
+        <a href="content-factory.html" class="flex items-center gap-3 px-3 py-2.5 rounded-md text-on-surface-variant hover:bg-surface-container hover:text-on-surface font-medium text-sm transition-colors">
+          <i data-lucide="factory" class="w-4 h-4"></i>内容工厂
+        </a>
+        <a href="publish.html" class="flex items-center gap-3 px-3 py-2.5 rounded-md text-on-surface-variant hover:bg-surface-container hover:text-on-surface font-medium text-sm transition-colors">
+          <i data-lucide="send" class="w-4 h-4"></i>发布管理
+        </a>
+        <a href="data-review.html" class="flex items-center gap-3 px-3 py-2.5 rounded-md text-on-surface-variant hover:bg-surface-container hover:text-on-surface font-medium text-sm transition-colors">
+          <i data-lucide="chart-bar" class="w-4 h-4"></i>数据复盘
+        </a>
+        <a href="knowledge-base.html" class="flex items-center gap-3 px-3 py-2.5 rounded-md bg-primary/10 text-primary font-medium text-sm" aria-current="page">
+          <i data-lucide="brain" class="w-4 h-4"></i>知识库
+        </a>
+        <a href="settings.html" class="flex items-center gap-3 px-3 py-2.5 rounded-md text-on-surface-variant hover:bg-surface-container hover:text-on-surface font-medium text-sm transition-colors">
+          <i data-lucide="settings" class="w-4 h-4"></i>设置
+        </a>
+      </div>
+    </aside>
+
+    <!-- @main-content:start -->
+    <main class="flex-1 min-w-0 overflow-y-auto bg-background p-6">
+
+      <!-- 页面标题区 -->
+      <div class="flex items-center justify-between mb-6">
+        <div>
+          <h1 class="text-2xl font-bold text-on-surface">知识库</h1>
+          <p class="text-sm text-on-surface-variant mt-1">沉淀和复用营销知识，让每一次创作都有据可依</p>
+        </div>
+        <div class="flex items-center gap-3">
+          <button id="btn-ai-extract" class="bg-cyber-cyan/15 text-cyber-cyan px-4 py-2 rounded-md text-sm font-medium hover:bg-cyber-cyan/25 active:scale-[0.98] transition-all inline-flex items-center gap-2">
+            <i data-lucide="wand-2" class="w-3.5 h-3.5"></i>AI 提取沉淀
+          </button>
+          <button id="btn-add-knowledge" class="bg-primary text-on-primary px-4 py-2 rounded-md text-sm font-medium hover:opacity-90 active:scale-[0.98] transition-all inline-flex items-center gap-2">
+            <i data-lucide="plus" class="w-3.5 h-3.5"></i>添加知识
+          </button>
+        </div>
+      </div>
+
+      <!-- 搜索框 -->
+      <div class="relative mb-5">
+        <i data-lucide="search" class="w-5 h-5 text-on-surface-variant/50 absolute left-4 top-1/2 -translate-y-1/2"></i>
+        <input id="input-search" type="text" placeholder="搜索知识标题、关键词..." class="w-full bg-surface-container border-none rounded-lg pl-12 pr-4 py-3 text-sm text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:ring-2 focus:ring-primary/30 transition-colors" />
+      </div>
+
+      <!-- 分类筛选标签 -->
+      <div class="flex items-center gap-2 mb-6 flex-wrap">
+        <button id="filter-all" class="knowledge-filter-btn px-3 py-1.5 rounded-md text-xs font-medium bg-primary/15 text-primary transition-colors" data-filter="all">全部</button>
+        <button id="filter-industry" class="knowledge-filter-btn px-3 py-1.5 rounded-md text-xs font-medium bg-surface-container text-on-surface-variant hover:bg-surface-container-high transition-colors" data-filter="industry">
+          <span class="inline-block w-2 h-2 rounded-full bg-error mr-1.5"></span>行业洞察
+        </button>
+        <button id="filter-hit" class="knowledge-filter-btn px-3 py-1.5 rounded-md text-xs font-medium bg-surface-container text-on-surface-variant hover:bg-surface-container-high transition-colors" data-filter="hit">
+          <span class="inline-block w-2 h-2 rounded-full bg-cyber-cyan mr-1.5"></span>爆款拆解
+        </button>
+        <button id="filter-rule" class="knowledge-filter-btn px-3 py-1.5 rounded-md text-xs font-medium bg-surface-container text-on-surface-variant hover:bg-surface-container-high transition-colors" data-filter="rule">
+          <span class="inline-block w-2 h-2 rounded-full bg-cyber-magenta mr-1.5"></span>平台规则
+        </button>
+        <button id="filter-script" class="knowledge-filter-btn px-3 py-1.5 rounded-md text-xs font-medium bg-surface-container text-on-surface-variant hover:bg-surface-container-high transition-colors" data-filter="script">
+          <span class="inline-block w-2 h-2 rounded-full bg-cyber-purple mr-1.5"></span>话术模板
+        </button>
+        <button id="filter-method" class="knowledge-filter-btn px-3 py-1.5 rounded-md text-xs font-medium bg-surface-container text-on-surface-variant hover:bg-surface-container-high transition-colors" data-filter="method">
+          <span class="inline-block w-2 h-2 rounded-full bg-warning mr-1.5"></span>营销方法论
+        </button>
+
+        <div class="ml-auto">
+          <button id="filter-favorite" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium bg-surface-container text-on-surface-variant hover:bg-surface-container-high transition-colors">
+            <i data-lucide="star" class="w-3 h-3"></i>常用知识
+          </button>
+        </div>
+      </div>
+
+      <!-- 知识卡片列表 -->
+      <div id="knowledge-list" class="grid grid-cols-1 gap-4">
+
+        <!-- 列表-知识1：行业洞察 -->
+        <div class="knowledge-card bg-surface rounded-lg shadow-card p-5 hover:shadow-float transition-all cursor-pointer group" data-category="industry" data-id="k001">
+          <div class="flex items-start justify-between gap-4">
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center gap-2 mb-2">
+                <span class="inline-flex items-center px-2 py-0.5 rounded-sm text-xs font-medium bg-error/15 text-error">行业洞察</span>
+                <span class="text-xs text-on-surface-variant">2024-12-18</span>
+              </div>
+              <h3 class="text-base font-semibold text-on-surface group-hover:text-primary transition-colors mb-2">2024年美妆行业年末营销趋势：情绪价值成为核心驱动力</h3>
+              <p class="text-sm text-on-surface-variant line-clamp-2">深入分析2024年Q4美妆行业营销数据，发现"情绪价值"关键词搜索量同比增长217%，品牌需从功能性诉求转向情感共鸣策略。报告涵盖小红书、抖音、淘宝三大平台数据...</p>
+            </div>
+            <div class="flex flex-col items-end gap-2 shrink-0">
+              <div class="flex items-center gap-1.5">
+                <i data-lucide="repeat-2" class="w-3.5 h-3.5 text-success"></i>
+                <span class="text-sm font-semibold text-success">32</span>
+                <span class="text-xs text-on-surface-variant">次引用</span>
+              </div>
+              <button class="btn-favorite w-8 h-8 rounded-md flex items-center justify-center hover:bg-surface-container-high transition-colors" data-id="k001" data-favorited="false">
+                <i data-lucide="star" class="w-4 h-4 text-on-surface-variant/50"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 列表-知识2：爆款拆解 -->
+        <div class="knowledge-card bg-surface rounded-lg shadow-card p-5 hover:shadow-float transition-all cursor-pointer group" data-category="hit" data-id="k002">
+          <div class="flex items-start justify-between gap-4">
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center gap-2 mb-2">
+                <span class="inline-flex items-center px-2 py-0.5 rounded-sm text-xs font-medium bg-cyber-cyan/15 text-cyber-cyan">爆款拆解</span>
+                <span class="text-xs text-on-surface-variant">2024-12-15</span>
+              </div>
+              <h3 class="text-base font-semibold text-on-surface group-hover:text-primary transition-colors mb-2">某品牌"早安打卡"挑战赛7天破亿播放量拆解</h3>
+              <p class="text-sm text-on-surface-variant line-clamp-2">详细拆解某国货护肤品牌发起的#早安打卡挑战赛，从选题策划、内容模板设计、达人矩阵布局到流量投放策略，还原从0到1亿的完整链路，核心在于"低门槛参与+社交货币"设计...</p>
+            </div>
+            <div class="flex flex-col items-end gap-2 shrink-0">
+              <div class="flex items-center gap-1.5">
+                <i data-lucide="repeat-2" class="w-3.5 h-3.5 text-success"></i>
+                <span class="text-sm font-semibold text-success">56</span>
+                <span class="text-xs text-on-surface-variant">次引用</span>
+              </div>
+              <button class="btn-favorite w-8 h-8 rounded-md flex items-center justify-center hover:bg-surface-container-high transition-colors" data-id="k002" data-favorited="true">
+                <i data-lucide="star" class="w-4 h-4 text-warning"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 列表-知识3：平台规则 -->
+        <div class="knowledge-card bg-surface rounded-lg shadow-card p-5 hover:shadow-float transition-all cursor-pointer group" data-category="rule" data-id="k003">
+          <div class="flex items-start justify-between gap-4">
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center gap-2 mb-2">
+                <span class="inline-flex items-center px-2 py-0.5 rounded-sm text-xs font-medium bg-cyber-magenta/15 text-cyber-magenta">平台规则</span>
+                <span class="text-xs text-on-surface-variant">2024-12-12</span>
+              </div>
+              <h3 class="text-base font-semibold text-on-surface group-hover:text-primary transition-colors mb-2">小红书2024年12月社区规范更新：广告笔记标注要求与限流避坑指南</h3>
+              <p class="text-sm text-on-surface-variant line-clamp-2">解读小红书最新社区规范，重点关注广告笔记标注新规、品牌合作报备流程变更、隐性限流触发条件（高频修改、集中发布、互赞互粉检测），提供合规发文checklist...</p>
+            </div>
+            <div class="flex flex-col items-end gap-2 shrink-0">
+              <div class="flex items-center gap-1.5">
+                <i data-lucide="repeat-2" class="w-3.5 h-3.5 text-error"></i>
+                <span class="text-sm font-semibold text-error">8</span>
+                <span class="text-xs text-on-surface-variant">次引用</span>
+              </div>
+              <button class="btn-favorite w-8 h-8 rounded-md flex items-center justify-center hover:bg-surface-container-high transition-colors" data-id="k003" data-favorited="false">
+                <i data-lucide="star" class="w-4 h-4 text-on-surface-variant/50"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 列表-知识4：话术模板 -->
+        <div class="knowledge-card bg-surface rounded-lg shadow-card p-5 hover:shadow-float transition-all cursor-pointer group" data-category="script" data-id="k004">
+          <div class="flex items-start justify-between gap-4">
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center gap-2 mb-2">
+                <span class="inline-flex items-center px-2 py-0.5 rounded-sm text-xs font-medium bg-cyber-purple/15 text-cyber-purple">话术模板</span>
+                <span class="text-xs text-on-surface-variant">2024-12-10</span>
+              </div>
+              <h3 class="text-base font-semibold text-on-surface group-hover:text-primary transition-colors mb-2">高转化直播话术框架：3分钟停留 + 5分钟转化模型</h3>
+              <p class="text-sm text-on-surface-variant line-clamp-2">总结经过50+场直播验证的高转化话术框架，包含"痛点钩子-场景共鸣-产品方案-限时激励"四段式结构，适配美妆、食品、服饰三大品类，附完整逐字稿模板...</p>
+            </div>
+            <div class="flex flex-col items-end gap-2 shrink-0">
+              <div class="flex items-center gap-1.5">
+                <i data-lucide="repeat-2" class="w-3.5 h-3.5 text-success"></i>
+                <span class="text-sm font-semibold text-success">47</span>
+                <span class="text-xs text-on-surface-variant">次引用</span>
+              </div>
+              <button class="btn-favorite w-8 h-8 rounded-md flex items-center justify-center hover:bg-surface-container-high transition-colors" data-id="k004" data-favorited="true">
+                <i data-lucide="star" class="w-4 h-4 text-warning"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 列表-知识5：营销方法论 -->
+        <div class="knowledge-card bg-surface rounded-lg shadow-card p-5 hover:shadow-float transition-all cursor-pointer group" data-category="method" data-id="k005">
+          <div class="flex items-start justify-between gap-4">
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center gap-2 mb-2">
+                <span class="inline-flex items-center px-2 py-0.5 rounded-sm text-xs font-medium bg-warning/15 text-warning">营销方法论</span>
+                <span class="text-xs text-on-surface-variant">2024-12-08</span>
+              </div>
+              <h3 class="text-base font-semibold text-on-surface group-hover:text-primary transition-colors mb-2">AARRR漏斗在内容营销中的落地：从曝光到复购的5层策略</h3>
+              <p class="text-sm text-on-surface-variant line-clamp-2">将传统AARRR模型适配到内容营销场景，定义每层的关键指标与内容策略：获客层靠爆款选题+投放，激活层靠种草笔记+评论区运营，留存层靠私域+社群，变现层靠直播+橱窗...</p>
+            </div>
+            <div class="flex flex-col items-end gap-2 shrink-0">
+              <div class="flex items-center gap-1.5">
+                <i data-lucide="repeat-2" class="w-3.5 h-3.5 text-success"></i>
+                <span class="text-sm font-semibold text-success">23</span>
+                <span class="text-xs text-on-surface-variant">次引用</span>
+              </div>
+              <button class="btn-favorite w-8 h-8 rounded-md flex items-center justify-center hover:bg-surface-container-high transition-colors" data-id="k005" data-favorited="false">
+                <i data-lucide="star" class="w-4 h-4 text-on-surface-variant/50"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 列表-知识6：行业洞察 -->
+        <div class="knowledge-card bg-surface rounded-lg shadow-card p-5 hover:shadow-float transition-all cursor-pointer group" data-category="industry" data-id="k006">
+          <div class="flex items-start justify-between gap-4">
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center gap-2 mb-2">
+                <span class="inline-flex items-center px-2 py-0.5 rounded-sm text-xs font-medium bg-error/15 text-error">行业洞察</span>
+                <span class="text-xs text-on-surface-variant">2024-12-05</span>
+              </div>
+              <h3 class="text-base font-semibold text-on-surface group-hover:text-primary transition-colors mb-2">食品饮料赛道Q4复盘：健康化与社交化双主线并行</h3>
+              <p class="text-sm text-on-surface-variant line-clamp-2">食品饮料行业Q4数据复盘，"0添加""低糖"关键词互动量上涨185%，"办公室零食分享""闺蜜下午茶"场景内容产出增长120%。建议品牌同时布局健康成分背书和社交场景种草两条线...</p>
+            </div>
+            <div class="flex flex-col items-end gap-2 shrink-0">
+              <div class="flex items-center gap-1.5">
+                <i data-lucide="repeat-2" class="w-3.5 h-3.5 text-error"></i>
+                <span class="text-sm font-semibold text-error">5</span>
+                <span class="text-xs text-on-surface-variant">次引用</span>
+              </div>
+              <button class="btn-favorite w-8 h-8 rounded-md flex items-center justify-center hover:bg-surface-container-high transition-colors" data-id="k006" data-favorited="false">
+                <i data-lucide="star" class="w-4 h-4 text-on-surface-variant/50"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- 知识详情弹窗 -->
+      <div id="detail-modal" class="fixed inset-0 bg-black/60 flex items-center justify-center p-4 z-50 hidden">
+        <div class="bg-surface rounded-xl shadow-dialog max-w-2xl w-full max-h-[85vh] overflow-y-auto">
+          <div class="p-6">
+            <div class="flex items-center justify-between mb-4">
+              <span id="detail-category" class="inline-flex items-center px-2 py-0.5 rounded-sm text-xs font-medium bg-error/15 text-error">行业洞察</span>
+              <button id="btn-close-detail" class="w-8 h-8 rounded-md flex items-center justify-center hover:bg-surface-container-high transition-colors">
+                <i data-lucide="x" class="w-4 h-4 text-on-surface-variant"></i>
+              </button>
+            </div>
+            <h2 id="detail-title" class="text-xl font-bold text-on-surface mb-3">2024年美妆行业年末营销趋势：情绪价值成为核心驱动力</h2>
+            <div class="flex items-center gap-4 mb-5 text-xs text-on-surface-variant">
+              <span id="detail-date" class="inline-flex items-center gap-1"><i data-lucide="calendar" class="w-3 h-3"></i>2024-12-18</span>
+              <span id="detail-refs" class="inline-flex items-center gap-1"><i data-lucide="repeat-2" class="w-3 h-3"></i>32 次引用</span>
+            </div>
+            <div id="detail-content" class="text-sm text-on-surface-variant leading-relaxed space-y-4">
+              <p>深入分析2024年Q4美妆行业营销数据，发现"情绪价值"关键词搜索量同比增长217%，品牌需从功能性诉求转向情感共鸣策略。</p>
+              <p><strong class="text-on-surface">核心发现：</strong></p>
+              <ul class="list-disc pl-5 space-y-1.5">
+                <li>情绪价值相关内容互动率是纯功能内容的3.2倍</li>
+                <li>"治愈""松弛感""自我对话"成为Top3情感关键词</li>
+                <li>短视频中情绪叙事开头的完播率提升45%</li>
+                <li>小红书"情绪种草"笔记的收藏率比普通笔记高68%</li>
+              </ul>
+              <p><strong class="text-on-surface">策略建议：</strong></p>
+              <ul class="list-disc pl-5 space-y-1.5">
+                <li>产品文案从"解决痛点"转向"理解感受"</li>
+                <li>视频内容增加情绪叙事前3秒钩子</li>
+                <li>结合节日/季节情绪节点做内容规划</li>
+                <li>评论区运营引导情绪共鸣互动</li>
+              </ul>
+              <p><strong class="text-on-surface">数据来源：</strong>小红书、抖音、淘宝三大平台2024年Q4公开数据与第三方监测数据交叉验证。</p>
+            </div>
+            <div class="flex items-center gap-3 mt-6 pt-4 border-t border-outline-variant/20">
+              <button id="btn-edit-knowledge" class="bg-primary text-on-primary px-4 py-2 rounded-md text-sm font-medium hover:opacity-90 active:scale-[0.98] transition-all inline-flex items-center gap-2">
+                <i data-lucide="pencil" class="w-3.5 h-3.5"></i>编辑知识
+              </button>
+              <button id="btn-cite-knowledge" class="bg-surface-container text-on-surface px-4 py-2 rounded-md text-sm font-medium hover:bg-surface-container-high active:scale-[0.98] transition-all inline-flex items-center gap-2">
+                <i data-lucide="copy" class="w-3.5 h-3.5"></i>复制引用
+              </button>
+              <button id="btn-favorite-detail" class="bg-surface-container text-on-surface px-4 py-2 rounded-md text-sm font-medium hover:bg-surface-container-high active:scale-[0.98] transition-all inline-flex items-center gap-2">
+                <i data-lucide="star" class="w-3.5 h-3.5"></i>标记常用
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 添加知识弹窗 -->
+      <div id="add-modal" class="fixed inset-0 bg-black/60 flex items-center justify-center p-4 z-50 hidden">
+        <div class="bg-surface rounded-xl shadow-dialog max-w-lg w-full max-h-[85vh] overflow-y-auto">
+          <div class="p-6">
+            <div class="flex items-center justify-between mb-5">
+              <h2 class="text-lg font-bold text-on-surface">添加知识</h2>
+              <button id="btn-close-add" class="w-8 h-8 rounded-md flex items-center justify-center hover:bg-surface-container-high transition-colors">
+                <i data-lucide="x" class="w-4 h-4 text-on-surface-variant"></i>
+              </button>
+            </div>
+            <div class="space-y-4">
+              <div>
+                <label class="block text-sm font-medium text-on-surface mb-1.5">知识标题</label>
+                <input id="input-title" type="text" placeholder="输入知识标题" class="w-full bg-surface-container border-none rounded-md px-3 py-2 text-sm text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:ring-2 focus:ring-primary/30 transition-colors" />
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-on-surface mb-1.5">分类</label>
+                <select id="select-category" class="w-full bg-surface-container border-none rounded-md px-3 py-2 text-sm text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/30 transition-colors">
+                  <option value="industry">行业洞察</option>
+                  <option value="hit">爆款拆解</option>
+                  <option value="rule">平台规则</option>
+                  <option value="script">话术模板</option>
+                  <option value="method">营销方法论</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-on-surface mb-1.5">内容摘要</label>
+                <textarea id="input-summary" rows="4" placeholder="输入知识内容摘要..." class="w-full bg-surface-container border-none rounded-md px-3 py-2 text-sm text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:ring-2 focus:ring-primary/30 transition-colors resize-none"></textarea>
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-on-surface mb-1.5">详细内容</label>
+                <textarea id="input-content" rows="6" placeholder="输入知识详细内容..." class="w-full bg-surface-container border-none rounded-md px-3 py-2 text-sm text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:ring-2 focus:ring-primary/30 transition-colors resize-none"></textarea>
+              </div>
+            </div>
+            <div class="flex items-center gap-3 mt-6 pt-4 border-t border-outline-variant/20">
+              <button id="btn-submit-knowledge" class="bg-primary text-on-primary px-4 py-2 rounded-md text-sm font-medium hover:opacity-90 active:scale-[0.98] transition-all">保存知识</button>
+              <button id="btn-cancel-add" class="bg-surface-container text-on-surface px-4 py-2 rounded-md text-sm font-medium hover:bg-surface-container-high active:scale-[0.98] transition-all">取消</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </main>
+    <!-- @main-content:end -->
+  </div>
+
+  <script>
+    $(function () {
+
+      // === 分类筛选 ===
+      var currentFilter = 'all';
+      var showFavoriteOnly = false;
+
+      $('#knowledge-list').on('click', '.knowledge-filter-btn', function () {
+        // This won't fire since filter buttons are siblings of the list, but keeping for delegation pattern
+      });
+
+      $('.knowledge-filter-btn').on('click', function () {
+        currentFilter = $(this).data('filter');
+        showFavoriteOnly = false;
+
+        // Reset favorite button style
+        $('#filter-favorite').removeClass('bg-warning/15 text-warning').addClass('bg-surface-container text-on-surface-variant');
+
+        // Update filter button styles
+        $('.knowledge-filter-btn').each(function () {
+          if ($(this).data('filter') === currentFilter) {
+            $(this).removeClass('bg-surface-container text-on-surface-variant').addClass('bg-primary/15 text-primary');
+          } else {
+            $(this).removeClass('bg-primary/15 text-primary').addClass('bg-surface-container text-on-surface-variant');
+          }
+        });
+
+        applyFilters();
+      });
+
+      // === 常用知识筛选 ===
+      $('#filter-favorite').on('click', function () {
+        showFavoriteOnly = !showFavoriteOnly;
+
+        if (showFavoriteOnly) {
+          $(this).removeClass('bg-surface-container text-on-surface-variant').addClass('bg-warning/15 text-warning');
+          // Reset category filter
+          currentFilter = 'all';
+          $('.knowledge-filter-btn').removeClass('bg-primary/15 text-primary').addClass('bg-surface-container text-on-surface-variant');
+          $('#filter-all').removeClass('bg-surface-container text-on-surface-variant').addClass('bg-primary/15 text-primary');
+        } else {
+          $(this).removeClass('bg-warning/15 text-warning').addClass('bg-surface-container text-on-surface-variant');
+        }
+
+        applyFilters();
+      });
+
+      // === 搜索 ===
+      $('#input-search').on('input', function () {
+        applyFilters();
+      });
+
+      function applyFilters() {
+        var keyword = $('#input-search').val().toLowerCase().trim();
+
+        $('.knowledge-card').each(function () {
+          var $card = $(this);
+          var category = $card.data('category');
+          var title = $card.find('h3').text().toLowerCase();
+          var summary = $card.find('p').text().toLowerCase();
+          var isFavorited = $card.find('.btn-favorite').data('favorited');
+
+          var matchCategory = (currentFilter === 'all') || (category === currentFilter);
+          var matchFavorite = !showFavoriteOnly || isFavorited;
+          var matchKeyword = !keyword || title.indexOf(keyword) > -1 || summary.indexOf(keyword) > -1;
+
+          if (matchCategory && matchFavorite && matchKeyword) {
+            $card.show();
+          } else {
+            $card.hide();
+          }
+        });
+      }
+
+      // === 收藏/取消收藏 ===
+      $('#knowledge-list').on('click', '.btn-favorite', function (e) {
+        e.stopPropagation();
+        var $btn = $(this);
+        var isFav = $btn.data('favorited');
+
+        if (isFav) {
+          $btn.data('favorited', false);
+          $btn.find('i').removeClass('text-warning').addClass('text-on-surface-variant/50');
+        } else {
+          $btn.data('favorited', true);
+          $btn.find('i').removeClass('text-on-surface-variant/50').addClass('text-warning');
+        }
+
+        // If showing favorites only, re-apply filter
+        if (showFavoriteOnly) {
+          applyFilters();
+        }
+      });
+
+      // === 点击卡片打开详情 ===
+      $('#knowledge-list').on('click', '.knowledge-card', function (e) {
+        // Don't open detail if clicking favorite button
+        if ($(e.target).closest('.btn-favorite').length) return;
+
+        var $card = $(this);
+        var id = $card.data('id');
+        var category = $card.data('category');
+        var title = $card.find('h3').text();
+        var date = $card.find('.text-on-surface-variant').first().text();
+        var refs = $card.find('.text-sm.font-semibold').text();
+
+        // Update detail modal with card data
+        var categoryMap = {
+          'industry': { label: '行业洞察', cls: 'bg-error/15 text-error' },
+          'hit': { label: '爆款拆解', cls: 'bg-cyber-cyan/15 text-cyber-cyan' },
+          'rule': { label: '平台规则', cls: 'bg-cyber-magenta/15 text-cyber-magenta' },
+          'script': { label: '话术模板', cls: 'bg-cyber-purple/15 text-cyber-purple' },
+          'method': { label: '营销方法论', cls: 'bg-warning/15 text-warning' }
+        };
+        var catInfo = categoryMap[category] || categoryMap['industry'];
+
+        $('#detail-category').attr('class', 'inline-flex items-center px-2 py-0.5 rounded-sm text-xs font-medium ' + catInfo.cls).text(catInfo.label);
+        $('#detail-title').text(title);
+        $('#detail-date').html('<i data-lucide="calendar" class="w-3 h-3"></i>' + date);
+        $('#detail-refs').html('<i data-lucide="repeat-2" class="w-3 h-3"></i>' + refs + ' 次引用');
+
+        $('#detail-modal').removeClass('hidden');
+        lucide.createIcons();
+      });
+
+      // === 关闭详情弹窗 ===
+      $('#btn-close-detail').on('click', function () {
+        $('#detail-modal').addClass('hidden');
+      });
+      $('#detail-modal').on('click', function (e) {
+        if ($(e.target).is('#detail-modal')) {
+          $('#detail-modal').addClass('hidden');
+        }
+      });
+
+      // === 编辑知识按钮 - 点击后应实现内联编辑：
+      // 1. 将详情弹窗中的标题替换为 input 输入框，自动聚焦并全选
+      // 2. 内容区域替换为 textarea 可编辑
+      // 3. 分类替换为 select 下拉框
+      // 4. 底部按钮切换为"保存"和"取消"
+      // 5. 保存后更新列表对应卡片的数据
+      $('#btn-edit-knowledge').on('click', function () {
+        console.log('编辑知识：需实现内联编辑功能');
+      });
+
+      // === 复制引用 ===
+      $('#btn-cite-knowledge').on('click', function () {
+        console.log('复制知识引用到剪贴板');
+      });
+
+      // === 详情弹窗内标记常用 ===
+      $('#btn-favorite-detail').on('click', function () {
+        console.log('在详情弹窗中标记/取消标记常用知识');
+      });
+
+      // === 打开添加知识弹窗 ===
+      $('#btn-add-knowledge').on('click', function () {
+        $('#add-modal').removeClass('hidden');
+        lucide.createIcons();
+      });
+
+      // === 关闭添加知识弹窗 ===
+      $('#btn-close-add').on('click', function () {
+        $('#add-modal').addClass('hidden');
+      });
+      $('#btn-cancel-add').on('click', function () {
+        $('#add-modal').addClass('hidden');
+      });
+      $('#add-modal').on('click', function (e) {
+        if ($(e.target).is('#add-modal')) {
+          $('#add-modal').addClass('hidden');
+        }
+      });
+
+      // === 保存知识 - 点击后应实现：
+      // 1. 校验标题和内容不能为空
+      // 2. 根据分类生成对应颜色的标签
+      // 3. 创建新的知识卡片并插入列表顶部
+      // 4. 清空表单，关闭弹窗
+      $('#btn-submit-knowledge').on('click', function () {
+        var title = $('#input-title').val().trim();
+        var category = $('#select-category').val();
+        var summary = $('#input-summary').val().trim();
+
+        if (!title) {
+          $('#input-title').focus();
+          return;
+        }
+
+        console.log('保存知识:', { title: title, category: category, summary: summary });
+        // 实际应创建新卡片DOM并插入列表顶部
+        $('#add-modal').addClass('hidden');
+        // 清空表单
+        $('#input-title').val('');
+        $('#input-summary').val('');
+        $('#input-content').val('');
+      });
+
+      // === AI提取沉淀按钮 - 点击后应实现：
+      // 1. 弹出对话框，提供粘贴内容或上传文件的输入区域
+      // 2. 调用AI接口分析内容，自动识别知识点和分类
+      // 3. 生成结构化的知识条目预览，用户确认后入库
+      $('#btn-ai-extract').on('click', function () {
+        console.log('AI提取沉淀：需调用AI接口分析内容并自动生成知识条目');
+      });
+
+    });
+  </script>
+
+  <script>lucide.createIcons();</script>
+</body>
+
+</html>

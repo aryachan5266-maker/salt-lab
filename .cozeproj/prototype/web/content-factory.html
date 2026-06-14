@@ -4,9 +4,11 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>内容工厂 · 咸聊AI</title>
 
-  <link href="https://lf-code-agent.coze.cn/obj/x-ai-cn/fonts/google/google-all-fonts.css" rel="stylesheet" />
+  <!-- 赛博/科技感字体 -->
+  <link href="https://lf-code-agent.coze.cn/obj/x-ai-cn/fonts/google/orbitron.css" rel="stylesheet"/>
+  <link href="https://lf-code-agent.coze.cn/obj/x-ai-cn/fonts/google/spacedock.css" rel="stylesheet"/>
+  <link href="https://lf-code-agent.coze.cn/obj/x-ai-cn/fonts/google/noto-sans-sc.css" rel="stylesheet"/>
 
   <script src="https://lf-code-agent.coze.cn/obj/x-ai-cn/cdn/jquery/jquery-3.7.1.min.js"></script>
   <script src="https://lf-code-agent.coze.cn/obj/x-ai-cn/cdn/lucide/lucide-1.11.0.min.js"></script>
@@ -14,495 +16,67 @@
 
   <style type="text/tailwindcss">
     @theme {
-      /* === 品牌色：唯一亮色 = 翡翠绿 === */
-      --color-primary:              #00d992;
-      --color-primary-container:    rgba(0, 217, 146, 0.12);
-      --color-on-primary:           #050507;
-      --color-accent:               #00d992;
-      --color-accent-container:     rgba(0, 217, 146, 0.08);
-      /* === 背景 / 表面（极黑 + 碳黑） === */
-      --color-background:                 #050507;
-      --color-surface-container-lowest:   #020203;
-      --color-surface:                    #0d0d10;
-      --color-surface-container:          #15151a;
-      --color-surface-container-high:     #1c1c22;
-      --color-surface-container-highest:  #25252b;
+      /* === 品牌色（红涨/正向） === */
+      --color-primary:              #FF3B5C;
+      --color-primary-container:    #2A1520;
+      --color-on-primary:           #ffffff;
+      /* === 赛博霓虹点缀色 === */
+      --color-cyber-cyan:           #21E6C1;
+      --color-cyber-magenta:        #FF2E97;
+      --color-cyber-purple:         #8B5CFF;
+      /* === 涨跌语义色（中国股市红涨绿跌） === */
+      --color-bull:                 #FF3B5C;
+      --color-bear:                 #15E0A0;
+      /* === 背景 / 表面 === */
+      --color-background:                 #0A0E14;
+      --color-surface-container-lowest:   #0D1117;
+      --color-surface:                    #111820;
+      --color-surface-container:          #161D27;
+      --color-surface-container-high:     #1A2332;
+      --color-surface-container-highest:  #1F2937;
       /* === 文字 === */
-      --color-on-surface:           #f5f5f7;
-      --color-on-surface-variant:   #8a8a8f;
-      /* === 功能色（涨绿跌红） === */
-      --color-success:  #00d992;
-      --color-error:    #ff3b5c;
-      --color-warning:  #ffb800;
-      /* === 边框（暖灰 + Ghost） === */
-      --color-outline:          #3d3a39;
-      --color-outline-variant:  rgba(255, 255, 255, 0.06);
+      --color-on-surface:           #F2F5FA;
+      --color-on-surface-variant:   #8A94A6;
+      /* === 功能色 === */
+      --color-success:  #15E0A0;
+      --color-error:    #FF3B5C;
+      --color-warning:  #F5A623;
+      /* === 边框 === */
+      --color-outline:          #2A3444;
+      --color-outline-variant:  #1E2838;
       /* === 圆角 === */
-      --radius-sm:   0.25rem;
+      --radius-sm:   0.375rem;
       --radius-md:   0.5rem;
-      --radius-lg:   0.625rem;
-      --radius-xl:   0.875rem;
-      --radius-2xl:  1.125rem;
+      --radius-lg:   0.75rem;
+      --radius-xl:   1rem;
+      --radius-2xl:  1.5rem;
       --radius-full: 9999px;
       /* === 阴影 === */
-      --shadow-card:   0 1px 0 rgba(255,255,255,0.04) inset, 0 4px 14px rgba(0,0,0,0.55);
-      --shadow-float:  0 1px 0 rgba(255,255,255,0.06) inset, 0 10px 30px rgba(0,0,0,0.65);
-      --shadow-dialog: 0 1px 0 rgba(255,255,255,0.06) inset, 0 25px 60px rgba(0,0,0,0.75);
-      --shadow-glow:   0 0 20px rgba(0, 217, 146, 0.35), 0 0 40px rgba(0, 217, 146, 0.15);
-      /* === 渐变 === */
-      --gradient-metal: linear-gradient(135deg, #00d992 0%, #b8ffe2 35%, #ffffff 55%, #00d992 80%, #008f63 100%);
-      --gradient-pink-purple: linear-gradient(135deg, #ff77c8 0%, #b86bff 50%, #7c3aed 100%);
+      --shadow-card:   0 2px 8px rgba(0,0,0,0.4);
+      --shadow-float:  0 10px 25px rgba(0,0,0,0.5);
+      --shadow-dialog: 0 25px 50px rgba(0,0,0,0.6);
+      --shadow-glow-red:     0 0 20px rgba(255,59,92,0.15);
+      --shadow-glow-cyan:    0 0 20px rgba(33,230,193,0.15);
+      --shadow-glow-magenta: 0 0 20px rgba(255,46,151,0.15);
       /* === 字体 === */
-      --font-sans: "Inter", "Noto Sans SC", "PingFang SC", system-ui, sans-serif;
-      --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+      --font-display: "Orbitron", "SpaceDock", monospace;
+      --font-mono: "SpaceDock", "Orbitron", monospace;
+      --font-sans: "Noto Sans SC", system-ui, sans-serif;
     }
+
+    /* 自定义滚动条 */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: #0A0E14; }
+    ::-webkit-scrollbar-thumb { background: #2A3444; border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: #3A4454; }
+
+    /* 霓虹文字效果 */
+    .neon-text-red { text-shadow: 0 0 10px rgba(255,59,92,0.5), 0 0 20px rgba(255,59,92,0.2); }
+    .neon-text-cyan { text-shadow: 0 0 10px rgba(33,230,193,0.5), 0 0 20px rgba(33,230,193,0.2); }
+    .neon-text-magenta { text-shadow: 0 0 10px rgba(255,46,151,0.5), 0 0 20px rgba(255,46,151,0.2); }
   </style>
 
-  <style>
-    /* ===== 全局背景：极黑 + 顶部一抹翡翠绿微光 ===== */
-    body {
-      background:
-        radial-gradient(ellipse 1400px 320px at 50% -120px, rgba(0, 217, 146, 0.06), transparent 60%),
-        radial-gradient(ellipse 900px 280px at 100% 8%, rgba(0, 217, 146, 0.03), transparent 60%),
-        #050507;
-      background-attachment: fixed;
-      font-feature-settings: "tnum" 1, "ss01" 1;
-    }
-    ::-webkit-scrollbar { width: 8px; height: 8px; }
-    ::-webkit-scrollbar-track { background: #050507; }
-    ::-webkit-scrollbar-thumb { background: #25252b; border-radius: 9999px; }
-    ::-webkit-scrollbar-thumb:hover { background: #00d992; }
-
-    /* ===== 数字：等宽 + 金属渐变 + 发光 ===== */
-    .font-num, .font-mono, .tabular {
-      font-family: var(--font-mono);
-      font-variant-numeric: tabular-nums;
-      letter-spacing: -0.01em;
-    }
-    .num-metal {
-      background: var(--gradient-metal);
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-      font-family: var(--font-mono);
-      font-variant-numeric: tabular-nums;
-      font-weight: 700;
-      letter-spacing: -0.02em;
-      text-shadow: 0 0 18px rgba(0, 217, 146, 0.25);
-    }
-    .num-glow {
-      color: #00d992;
-      font-family: var(--font-mono);
-      font-variant-numeric: tabular-nums;
-      font-weight: 600;
-      text-shadow: 0 0 10px rgba(0, 217, 146, 0.55), 0 0 24px rgba(0, 217, 146, 0.25);
-    }
-    .num-up   { color: #00d992; text-shadow: 0 0 8px rgba(0, 217, 146, 0.35); }
-    .num-down { color: #ff3b5c; text-shadow: 0 0 8px rgba(255, 59, 92, 0.35); }
-
-    /* ===== 顶部跑马灯条 ===== */
-    .ticker-bar {
-      background: linear-gradient(90deg, rgba(0, 217, 146, 0.05) 0%, rgba(13,13,16,0.0) 50%, rgba(0, 217, 146, 0.05) 100%);
-      border-bottom: 1px solid #3d3a39;
-      height: 28px;
-      overflow: hidden;
-      position: relative;
-      display: flex;
-      align-items: center;
-    }
-    .ticker-bar::before, .ticker-bar::after {
-      content: ""; position: absolute; top: 0; bottom: 0; width: 60px; z-index: 2; pointer-events: none;
-    }
-    .ticker-bar::before { left: 0; background: linear-gradient(90deg, #050507 0%, transparent 100%); }
-    .ticker-bar::after  { right: 0; background: linear-gradient(-90deg, #050507 0%, transparent 100%); }
-    .ticker-track {
-      display: inline-flex; align-items: center; gap: 36px;
-      white-space: nowrap;
-      animation: ticker-scroll 40s linear infinite;
-      padding-left: 100%;
-      font-family: var(--font-mono);
-      font-size: 11px;
-    }
-    .ticker-track:hover { animation-play-state: paused; }
-    @keyframes ticker-scroll {
-      0%   { transform: translateX(0); }
-      100% { transform: translateX(-100%); }
-    }
-    .ticker-item { display: inline-flex; align-items: center; gap: 6px; color: #f5f5f7; }
-    .ticker-item .k { color: #8a8a8f; }
-    .ticker-item .v.up   { color: #00d992; }
-    .ticker-item .v.down { color: #ff3b5c; }
-    .ticker-item .v.flat { color: #ffb800; }
-
-    /* ===== 呼吸灯 ===== */
-    .status-dot {
-      display: inline-block;
-      width: 8px; height: 8px;
-      border-radius: 9999px;
-      position: relative;
-    }
-    .status-dot::after {
-      content: ""; position: absolute; inset: -3px; border-radius: 9999px;
-    }
-    .status-online {
-      background: #00d992;
-      box-shadow: 0 0 8px rgba(0, 217, 146, 0.7);
-      animation: pulse-green 1.6s ease-in-out infinite;
-    }
-    .status-online::after {
-      box-shadow: 0 0 0 0 rgba(0, 217, 146, 0.6);
-      animation: pulse-ring 1.6s ease-out infinite;
-    }
-    .status-pending {
-      background: #ff3b5c;
-      box-shadow: 0 0 8px rgba(255, 59, 92, 0.7);
-      animation: pulse-red 1.2s ease-in-out infinite;
-    }
-    .status-pending::after {
-      box-shadow: 0 0 0 0 rgba(255, 59, 92, 0.6);
-      animation: pulse-ring-red 1.2s ease-out infinite;
-    }
-    .status-queue {
-      background: #5a5a5e;
-      box-shadow: none;
-      animation: none;
-    }
-    @keyframes pulse-green {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.55; }
-    }
-    @keyframes pulse-red {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.5; }
-    }
-    @keyframes pulse-ring {
-      0%   { box-shadow: 0 0 0 0 rgba(0, 217, 146, 0.6); }
-      100% { box-shadow: 0 0 0 8px rgba(0, 217, 146, 0); }
-    }
-    @keyframes pulse-ring-red {
-      0%   { box-shadow: 0 0 0 0 rgba(255, 59, 92, 0.6); }
-      100% { box-shadow: 0 0 0 8px rgba(255, 59, 92, 0); }
-    }
-
-    /* ===== 导航激活态 ===== */
-    .nav-active {
-      background: linear-gradient(90deg, rgba(0, 217, 146, 0.14), rgba(0, 217, 146, 0.02));
-      border-left: 3px solid #00d992;
-      color: #00d992 !important;
-      box-shadow: inset 0 0 18px rgba(0, 217, 146, 0.06);
-    }
-    .nav-active i { color: #00d992; }
-
-    /* ===== 按钮 ===== */
-    .btn-press { transition: transform 0.08s ease, opacity 0.15s ease, background-color 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease; }
-    .btn-press:active { transform: translateY(1px) scale(0.98); }
-
-    .btn-glow {
-      position: relative;
-      transition: all 0.2s ease;
-    }
-    .btn-glow:hover {
-      border-color: #00d992 !important;
-      box-shadow: 0 0 0 1px rgba(0, 217, 146, 0.5), 0 0 18px rgba(0, 217, 146, 0.25);
-      color: #00d992;
-    }
-
-    .btn-primary {
-      background: linear-gradient(135deg, #00d992 0%, #00b87a 100%);
-      color: #050507;
-      font-weight: 600;
-      transition: all 0.2s ease;
-      box-shadow: 0 0 0 1px rgba(0, 217, 146, 0.5), 0 4px 18px rgba(0, 217, 146, 0.25);
-    }
-    .btn-primary:hover {
-      box-shadow: 0 0 0 1px rgba(0, 217, 146, 0.7), 0 6px 24px rgba(0, 217, 146, 0.4);
-      transform: translateY(-1px);
-    }
-    .btn-primary:active { transform: translateY(0) scale(0.98); }
-
-    /* ===== 卡片：hover 亮绿边框 + 微光晕 ===== */
-    .card-base {
-      background: #0d0d10;
-      border: 1px solid #3d3a39;
-      border-radius: var(--radius-lg);
-      box-shadow: var(--shadow-card);
-      transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
-      position: relative;
-      overflow: hidden;
-    }
-    .card-base:hover {
-      border-color: rgba(0, 217, 146, 0.6);
-      box-shadow: var(--shadow-card), 0 0 0 1px rgba(0, 217, 146, 0.25), 0 0 22px rgba(0, 217, 146, 0.12);
-    }
-    .card-active {
-      border-color: #00d992 !important;
-      box-shadow: var(--shadow-card), 0 0 0 1px rgba(0, 217, 146, 0.45), 0 0 30px rgba(0, 217, 146, 0.18);
-    }
-    .card-click-flash { cursor: pointer; }
-    .card-click-flash::after {
-      content: ""; position: absolute; inset: -2px; border-radius: inherit;
-      box-shadow: 0 0 0 2px rgba(0, 217, 146, 0);
-      pointer-events: none;
-      transition: box-shadow 0.2s ease;
-    }
-    .card-click-flash.is-flash::after {
-      animation: click-flash 0.6s ease-out;
-    }
-    @keyframes click-flash {
-      0%   { box-shadow: 0 0 0 0 rgba(0, 217, 146, 0.7), 0 0 30px rgba(0, 217, 146, 0.45); }
-      100% { box-shadow: 0 0 0 14px rgba(0, 217, 146, 0), 0 0 60px rgba(0, 217, 146, 0); }
-    }
-
-    /* ===== 装饰：emoji / AI 形象 ===== */
-    .deco-emoji {
-      position: absolute;
-      bottom: -8px; right: -6px;
-      font-size: 88px;
-      line-height: 1;
-      opacity: 0.10;
-      pointer-events: none;
-      filter: grayscale(20%);
-      user-select: none;
-    }
-    .deco-ai {
-      position: absolute;
-      bottom: -12px; right: -10px;
-      width: 110px; height: 110px;
-      opacity: 0.18;
-      pointer-events: none;
-      user-select: none;
-    }
-
-    /* ===== AI 头像 ===== */
-    .ai-avatar {
-      position: relative;
-      width: 40px; height: 40px;
-      border-radius: 9999px;
-      display: flex; align-items: center; justify-content: center;
-      background: var(--gradient-pink-purple);
-      box-shadow: 0 0 0 1px rgba(255,255,255,0.08), 0 0 18px rgba(184, 107, 255, 0.45), 0 0 32px rgba(255, 119, 200, 0.25);
-      font-weight: 700; color: #fff;
-      font-family: var(--font-mono);
-    }
-    .ai-avatar::after {
-      content: ""; position: absolute; inset: -3px;
-      border-radius: 9999px;
-      background: var(--gradient-pink-purple);
-      filter: blur(10px); opacity: 0.35; z-index: -1;
-    }
-
-    /* ===== 状态徽章 ===== */
-    .badge { display: inline-flex; align-items: center; gap: 5px; padding: 2px 8px; border-radius: 9999px; font-size: 11px; font-weight: 500; font-family: var(--font-mono); }
-    .badge-up    { background: rgba(0, 217, 146, 0.12); color: #00d992; border: 1px solid rgba(0, 217, 146, 0.25); }
-    .badge-down  { background: rgba(255, 59, 92, 0.12); color: #ff3b5c; border: 1px solid rgba(255, 59, 92, 0.25); }
-    .badge-flat  { background: rgba(138, 138, 143, 0.10); color: #8a8a8f; border: 1px solid rgba(138, 138, 143, 0.22); }
-    .badge-warn  { background: rgba(255, 184, 0, 0.12); color: #ffb800; border: 1px solid rgba(255, 184, 0, 0.28); }
-
-    /* ===== Toast ===== */
-    .toast {
-      position: fixed; bottom: 24px; right: 24px; z-index: 9999;
-      background: linear-gradient(135deg, #15151a, #1c1c22);
-      color: #f5f5f7; padding: 12px 20px; border-radius: 10px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.7), 0 0 0 1px rgba(0, 217, 146, 0.25);
-      border: 1px solid rgba(0, 217, 146, 0.35);
-      font-size: 13px; display: flex; align-items: center; gap: 10px;
-      animation: toast-in 0.3s ease, toast-out 0.3s ease 2.7s forwards;
-    }
-    .toast.success { border-color: rgba(0, 217, 146, 0.5); }
-    .toast.error   { border-color: rgba(255, 59, 92, 0.5); box-shadow: 0 10px 30px rgba(0,0,0,0.7), 0 0 0 1px rgba(255, 59, 92, 0.3); }
-    .toast.info    { border-color: rgba(138, 138, 143, 0.4); }
-    @keyframes toast-in { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-    @keyframes toast-out { to { transform: translateY(20px); opacity: 0; } }
-
-    /* ===== 页面专属：流水线步骤标记 ===== */
-    .step-marker {
-      width: 44px; height: 44px; border-radius: 8px;
-      display: flex; align-items: center; justify-content: center;
-      font-weight: 700; font-size: 15px; color: #050507;
-      background: #00d992;
-      font-family: var(--font-mono);
-      box-shadow: 0 0 0 1px rgba(0, 217, 146, 0.4), 0 4px 14px rgba(0, 217, 146, 0.30);
-      position: relative;
-      transition: all 0.2s ease;
-    }
-    .step-marker.mini { width: 28px; height: 28px; font-size: 12px; border-radius: 6px; }
-    .step-marker.current {
-      background: #00d992;
-      box-shadow: 0 0 0 4px rgba(0, 217, 146, 0.20), 0 0 24px rgba(0, 217, 146, 0.55);
-      animation: step-pulse 1.6s ease-in-out infinite;
-    }
-    .step-marker.pending {
-      background: #1c1c22; color: #8a8a8f; border: 1px solid #3d3a39;
-      box-shadow: none;
-    }
-    .step-marker.queue {
-      background: #15151a; color: #5a5a5e; border: 1px dashed #3d3a39;
-      box-shadow: none;
-    }
-    @keyframes step-pulse {
-      0%, 100% { box-shadow: 0 0 0 4px rgba(0, 217, 146, 0.20), 0 0 24px rgba(0, 217, 146, 0.55); }
-      50% { box-shadow: 0 0 0 10px rgba(0, 217, 146, 0.05), 0 0 32px rgba(0, 217, 146, 0.75); }
-    }
-    .step-clickable { cursor: pointer; }
-    .step-clickable:hover .step-marker { transform: scale(1.08); }
-
-    /* ===== 进度条（流水线） ===== */
-    .progress-track {
-      background: #15151a; height: 3px; border-radius: 9999px; overflow: hidden;
-      border: 1px solid #3d3a39;
-    }
-    .progress-fill {
-      background: linear-gradient(90deg, #008f63 0%, #00d992 50%, #b8ffe2 100%);
-      height: 100%; border-radius: 9999px;
-      box-shadow: 0 0 10px rgba(0, 217, 146, 0.65);
-      transition: width 0.6s ease;
-    }
-
-    /* ===== 滑块 ===== */
-    .slider-wrap { padding: 8px 0 4px; }
-    .slider-track {
-      position: relative; height: 6px; background: #15151a;
-      border: 1px solid #3d3a39; border-radius: 9999px; cursor: pointer;
-    }
-    .slider-fill {
-      position: absolute; left: 0; top: 0; bottom: 0;
-      background: linear-gradient(90deg, #008f63 0%, #00d992 100%);
-      border-radius: 9999px; pointer-events: none;
-      box-shadow: 0 0 8px rgba(0, 217, 146, 0.5);
-      transition: width 0.05s linear;
-    }
-    .slider-thumb {
-      position: absolute; top: 50%; transform: translate(-50%, -50%);
-      width: 16px; height: 16px; background: #00d992;
-      border: 2px solid #050507; border-radius: 9999px;
-      box-shadow: 0 0 0 1px #00d992, 0 0 10px rgba(0, 217, 146, 0.7); cursor: grab;
-    }
-    .slider-thumb:active { cursor: grabbing; }
-
-    /* ===== 风格模板按钮 ===== */
-    .style-btn {
-      position: relative; padding: 10px 12px;
-      background: #15151a; color: #8a8a8f;
-      border: 1px solid #3d3a39;
-      border-radius: 8px; text-align: left;
-      transition: all 0.2s ease; cursor: pointer;
-      display: flex; flex-direction: column; gap: 4px;
-    }
-    .style-btn:hover { color: #f5f5f7; border-color: rgba(0, 217, 146, 0.5); background: rgba(0, 217, 146, 0.04); }
-    .style-btn.active {
-      background: rgba(0, 217, 146, 0.10);
-      color: #00d992; border-color: #00d992;
-      box-shadow: 0 0 0 1px rgba(0, 217, 146, 0.35), 0 0 18px rgba(0, 217, 146, 0.18);
-    }
-    .style-btn .style-check { display: none; }
-    .style-btn.active .style-check { display: inline-flex; }
-
-    /* ===== 受众标签 ===== */
-    .audience-tag {
-      display: inline-flex; align-items: center; gap: 4px;
-      padding: 3px 8px; border-radius: 6px;
-      background: rgba(0, 217, 146, 0.08); color: #00d992;
-      border: 1px solid rgba(0, 217, 146, 0.25);
-      font-size: 11px; font-weight: 500;
-      font-family: var(--font-mono);
-    }
-
-    /* ===== Tabs（结果区切换） ===== */
-    .result-tab {
-      padding: 6px 12px; font-size: 12px; font-weight: 600;
-      border-radius: 6px; border: 1px solid transparent;
-      transition: all 0.2s ease; display: inline-flex; align-items: center; gap: 6px;
-      color: #8a8a8f; background: transparent; cursor: pointer;
-      font-family: var(--font-mono);
-    }
-    .result-tab:hover { color: #f5f5f7; background: rgba(0, 217, 146, 0.04); border-color: #3d3a39; }
-    .result-tab.active {
-      background: rgba(0, 217, 146, 0.12); color: #00d992; border-color: rgba(0, 217, 146, 0.35);
-    }
-
-    /* ===== 封面卡片 ===== */
-    .cover-card { transition: all 0.2s ease; }
-    .cover-card:hover { transform: translateY(-2px); }
-    .cover-card.adopted {
-      border-color: #00d992 !important;
-      box-shadow: 0 0 0 2px rgba(0, 217, 146, 0.30), 0 8px 22px rgba(0,0,0,0.5), 0 0 30px rgba(0, 217, 146, 0.18);
-    }
-    .cover-card .cover-status-recommend {
-      background: rgba(255, 184, 0, 0.18); color: #ffb800; border: 1px solid rgba(255, 184, 0, 0.30);
-    }
-
-    /* ===== 方案卡片（文案 A/B） ===== */
-    .copy-card { transition: all 0.2s ease; }
-    .copy-card:hover { transform: translateY(-1px); }
-    .copy-card.selected {
-      border-color: #00d992 !important;
-      box-shadow: 0 0 0 2px rgba(0, 217, 146, 0.30), 0 8px 22px rgba(0,0,0,0.5), 0 0 30px rgba(0, 217, 146, 0.18);
-    }
-    .copy-card .pick-badge { display: none; }
-    .copy-card.selected .pick-badge { display: inline-flex; }
-
-    /* ===== 区域小标头 ===== */
-    .section-label {
-      display: inline-flex; align-items: center; gap: 6px;
-      font-size: 11px; color: #00d992; font-weight: 500;
-      font-family: var(--font-mono);
-      letter-spacing: 0.05em;
-      text-transform: uppercase;
-    }
-    .section-label .dot { width: 5px; height: 5px; background: #00d992; border-radius: 9999px; box-shadow: 0 0 6px rgba(0, 217, 146, 0.7); }
-    .section-label.flat { color: #8a8a8f; }
-    .section-label.flat .dot { background: #5a5a5e; box-shadow: none; }
-
-    /* ===== 违禁词项状态 ===== */
-    .violation-item { transition: all 0.2s ease; }
-    .violation-item.fixed {
-      background: rgba(0, 217, 146, 0.05) !important;
-      border-color: rgba(0, 217, 146, 0.30) !important;
-    }
-    .violation-item.fixed .violation-icon-bg { background: #00d992 !important; }
-    .violation-item.ignored { opacity: 0.55; }
-    .violation-item.ignored > div { text-decoration: line-through; }
-    .violation-item.ignored .violation-icon-bg { background: #5a5a5e !important; }
-
-    /* ===== 加载中旋转 ===== */
-    @keyframes spin360 { from { transform: rotate(0); } to { transform: rotate(360deg); } }
-    .spinning { display: inline-block; animation: spin360 0.8s linear infinite; }
-
-    /* ===== 模态框 ===== */
-    .modal-backdrop {
-      position: fixed; inset: 0; background: rgba(0,0,0,0.7);
-      display: flex; align-items: center; justify-content: center;
-      z-index: 9000; backdrop-filter: blur(4px);
-      animation: toast-in 0.2s ease;
-    }
-    .modal-panel {
-      background: #0d0d10; border: 1px solid #3d3a39;
-      border-radius: 12px; padding: 24px; max-width: 480px; width: 90%;
-      box-shadow: 0 25px 60px rgba(0,0,0,0.8), 0 0 0 1px rgba(0, 217, 146, 0.20);
-    }
-
-    /* ===== 任务详情：步骤时间线 ===== */
-    .timeline-item {
-      position: relative; padding-left: 28px; padding-bottom: 14px;
-    }
-    .timeline-item::before {
-      content: ""; position: absolute; left: 9px; top: 18px; bottom: 0;
-      width: 1px; background: #3d3a39;
-    }
-    .timeline-item:last-child::before { display: none; }
-    .timeline-item .t-dot {
-      position: absolute; left: 4px; top: 4px;
-      width: 12px; height: 12px; border-radius: 9999px;
-      background: #00d992; box-shadow: 0 0 8px rgba(0, 217, 146, 0.6);
-    }
-    .timeline-item.pending .t-dot { background: #5a5a5e; box-shadow: none; }
-    .timeline-item.queue .t-dot { background: #3d3a39; box-shadow: none; border: 1px dashed #5a5a5e; }
-    .timeline-item.current .t-dot {
-      background: #00d992; box-shadow: 0 0 0 3px rgba(0, 217, 146, 0.20), 0 0 12px rgba(0, 217, 146, 0.6);
-      animation: pulse-green 1.6s ease-in-out infinite;
-    }
-  </style>
-
+  <!-- 图片兜底 -->
   <script>
     document.addEventListener('error', function (e) {
       const img = e.target;
@@ -515,1658 +89,886 @@
       const icons = { '人物': '👤', '自然风景': '🏞', '动物': '🐾', '建筑城市': '🏙', '运动体育': '⚽', '交通工具': '🚗', '食物': '🍽', '服饰时尚': '👗', '商业科技': '💼', '游戏娱乐': '🎮', '艺术': '🎨', '其他': '🖼' };
       const icon = icons[cat] || '🖼';
       const w = img.width || 400, h = img.height || 300;
-      const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}"><rect width="100%" height="100%" fill="%230d0d10"/><text x="50%" y="45%" text-anchor="middle" font-size="${Math.min(w, h) * 0.18}" fill="%2300d992" dominant-baseline="central">${icon}</text><text x="50%" y="68%" text-anchor="middle" font-size="${Math.min(w, h) * 0.07}" fill="%238a8a8f" font-family="system-ui,sans-serif" dominant-baseline="central">${label}</text></svg>`;
+      const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}"><rect width="100%" height="100%" fill="%23111820"/><text x="50%" y="45%" text-anchor="middle" font-size="${Math.min(w, h) * 0.18}" fill="%238A94A6" dominant-baseline="central">${icon}</text><text x="50%" y="68%" text-anchor="middle" font-size="${Math.min(w, h) * 0.07}" fill="%235A6476" font-family="system-ui,sans-serif" dominant-baseline="central">${label}</text></svg>`;
       img.src = 'data:image/svg+xml,' + svg;
     }, true);
   </script>
 </head>
 
-<body class="bg-background text-on-surface font-sans min-h-screen">
+<body class="bg-background text-on-surface font-sans">
 
   <!-- @nav:start 导航组件 -->
-  <div class="flex min-h-screen" style="height: 100vh;">
-
-    <!-- Sidebar -->
-    <aside class="w-60 shrink-0 bg-surface border-r flex flex-col" style="border-color: #3d3a39;">
-      <!-- Logo 区 -->
-      <div class="h-16 px-5 flex items-center gap-3 border-b" style="border-color: #3d3a39;">
-        <div class="relative w-9 h-9 rounded-lg flex items-center justify-center text-on-primary font-bold text-base" style="background: linear-gradient(135deg, #00d992 0%, #008f63 100%); box-shadow: 0 0 0 1px rgba(0,217,146,0.4), 0 0 18px rgba(0,217,146,0.4);">
-          咸
-          <span class="status-dot status-online absolute -top-0.5 -right-0.5" style="border: 2px solid #0d0d10;"></span>
+  <header class="bg-surface sticky top-0 z-40 h-14 flex items-center justify-between px-5 border-b border-outline-variant/30">
+    <div class="flex items-center gap-3">
+      <div class="flex items-center gap-2">
+        <div class="w-8 h-8 rounded-md bg-primary/20 flex items-center justify-center">
+          <i data-lucide="zap" class="w-4 h-4 text-primary"></i>
         </div>
-        <div class="flex-1 min-w-0">
-          <div class="font-semibold text-[15px] text-on-surface tracking-tight">咸聊 AI</div>
-          <div class="text-[11px] text-on-surface-variant font-num">XHSDX · 终端 v2.0</div>
-        </div>
+        <span class="font-display font-bold text-base tracking-wider neon-text-red">XIANLIAO</span>
+        <span class="text-xs text-on-surface-variant font-mono ml-1">AI</span>
       </div>
-
-      <!-- AI 助手条 -->
-      <div class="px-4 py-3 border-b" style="border-color: #3d3a39;">
-        <button id="btn-ai-assistant" class="w-full bg-surface-container hover:bg-surface-container-high border border-outline rounded-lg px-3 py-2.5 flex items-center gap-2.5 transition-all btn-glow">
-          <div class="ai-avatar !w-7 !h-7 text-xs" style="box-shadow: 0 0 0 1px rgba(255,255,255,0.1), 0 0 12px rgba(184, 107, 255, 0.5);">咸</div>
-          <div class="flex-1 text-left min-w-0">
-            <div class="text-xs font-medium text-on-surface">问问小咸</div>
-            <div class="text-[10px] text-on-surface-variant truncate">"今天适合发什么选题？"</div>
-          </div>
-          <i data-lucide="sparkles" class="w-3.5 h-3.5 text-primary"></i>
-        </button>
+    </div>
+    <div class="flex items-center gap-3">
+      <button class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-on-surface-variant hover:text-on-surface hover:bg-surface-container rounded-md transition-colors">
+        <i data-lucide="bell" class="w-3.5 h-3.5"></i>
+      </button>
+      <div class="w-7 h-7 rounded-full bg-primary/20 flex items-center justify-center text-xs font-medium text-primary">
+        咸
       </div>
+    </div>
+  </header>
 
-      <!-- 导航菜单 -->
-      <nav class="flex-1 overflow-y-auto py-3">
-        <div class="px-5 mb-2 text-[11px] font-medium text-on-surface-variant tracking-widest uppercase">主功能</div>
-        <a href="home.html" data-nav="radar" class="nav-item flex items-center gap-3 px-5 py-2.5 text-sm font-medium text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors">
-          <i data-lucide="radar" class="w-4 h-4"></i><span>选题引擎</span>
-          <span class="ml-auto badge badge-up" data-nav-count="radar">28</span>
+  <div class="flex" style="height: calc(100vh - 3.5rem)">
+    <aside class="w-52 shrink-0 bg-surface-container-lowest border-r border-outline-variant/20 overflow-y-auto">
+      <div class="p-3 space-y-0.5">
+        <a href="home.html" class="flex items-center gap-3 px-3 py-2.5 rounded-md text-on-surface-variant hover:bg-surface-container hover:text-on-surface font-medium text-sm transition-colors">
+          <i data-lucide="home" class="w-4 h-4"></i>首页
         </a>
-        <a href="content-factory.html" data-nav="factory" class="nav-item flex items-center gap-3 px-5 py-2.5 text-sm font-medium text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors" aria-current="page">
-          <i data-lucide="factory" class="w-4 h-4"></i><span>内容工厂</span>
+        <a href="generate.html" class="flex items-center gap-3 px-3 py-2.5 rounded-md text-on-surface-variant hover:bg-surface-container hover:text-on-surface font-medium text-sm transition-colors">
+          <i data-lucide="sparkles" class="w-4 h-4"></i>一键生成
         </a>
-        <a href="publish.html" data-nav="publish" class="nav-item flex items-center gap-3 px-5 py-2.5 text-sm font-medium text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors">
-          <i data-lucide="send" class="w-4 h-4"></i><span>发布管理</span>
-          <span class="ml-auto badge badge-warn" data-nav-count="publish">3</span>
-        </a>
-        <a href="analytics.html" data-nav="analytics" class="nav-item flex items-center gap-3 px-5 py-2.5 text-sm font-medium text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors">
-          <i data-lucide="bar-chart-horizontal" class="w-4 h-4"></i><span>数据复盘</span>
-        </a>
-        <a href="knowledge.html" data-nav="knowledge" class="nav-item flex items-center gap-3 px-5 py-2.5 text-sm font-medium text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors">
-          <i data-lucide="database" class="w-4 h-4"></i><span>知识库</span>
+        <a href="brand-assets.html" class="flex items-center gap-3 px-3 py-2.5 rounded-md text-on-surface-variant hover:bg-surface-container hover:text-on-surface font-medium text-sm transition-colors">
+          <i data-lucide="gem" class="w-4 h-4"></i>品牌资产
         </a>
 
-        <div class="px-5 mt-4 mb-2 text-[11px] font-medium text-on-surface-variant tracking-widest uppercase">配置</div>
-        <a href="settings.html" data-nav="settings" class="nav-item flex items-center gap-3 px-5 py-2.5 text-sm font-medium text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors">
-          <i data-lucide="settings" class="w-4 h-4"></i><span>系统设置</span>
-        </a>
-      </nav>
-
-      <!-- 底部：当前账号 -->
-      <div class="border-t p-3" style="border-color: #3d3a39;">
-        <div class="bg-surface-container rounded-lg p-2.5 flex items-center gap-2.5 border" style="border-color: #3d3a39;">
-          <div class="ai-avatar !w-9 !h-9 text-sm">咸</div>
-          <div class="flex-1 min-w-0">
-            <div class="text-xs font-medium text-on-surface truncate flex items-center gap-1.5">
-              小咸·主理人
-              <span class="status-dot status-online"></span>
-            </div>
-            <div class="text-[10px] text-on-surface-variant font-num">@xianliao_ai</div>
-          </div>
-          <button id="btn-switch-account" class="text-on-surface-variant hover:text-primary transition-colors" title="切换账号">
-            <i data-lucide="chevrons-up-down" class="w-3.5 h-3.5"></i>
-          </button>
+        <div class="pt-4 pb-2 px-3">
+          <span class="text-[10px] font-mono uppercase tracking-widest text-on-surface-variant/50">进阶区</span>
         </div>
+        <a href="topic-engine.html" class="flex items-center gap-3 px-3 py-2.5 rounded-md text-on-surface-variant hover:bg-surface-container hover:text-on-surface font-medium text-sm transition-colors">
+          <i data-lucide="trending-up" class="w-4 h-4"></i>选题引擎
+        </a>
+        <a href="content-factory.html" class="flex items-center gap-3 px-3 py-2.5 rounded-md bg-primary/10 text-primary font-medium text-sm" aria-current="page">
+          <i data-lucide="factory" class="w-4 h-4"></i>内容工厂
+        </a>
+        <a href="publish.html" class="flex items-center gap-3 px-3 py-2.5 rounded-md text-on-surface-variant hover:bg-surface-container hover:text-on-surface font-medium text-sm transition-colors">
+          <i data-lucide="send" class="w-4 h-4"></i>发布管理
+        </a>
+        <a href="data-review.html" class="flex items-center gap-3 px-3 py-2.5 rounded-md text-on-surface-variant hover:bg-surface-container hover:text-on-surface font-medium text-sm transition-colors">
+          <i data-lucide="chart-bar" class="w-4 h-4"></i>数据复盘
+        </a>
+        <a href="knowledge-base.html" class="flex items-center gap-3 px-3 py-2.5 rounded-md text-on-surface-variant hover:bg-surface-container hover:text-on-surface font-medium text-sm transition-colors">
+          <i data-lucide="brain" class="w-4 h-4"></i>知识库
+        </a>
+        <a href="settings.html" class="flex items-center gap-3 px-3 py-2.5 rounded-md text-on-surface-variant hover:bg-surface-container hover:text-on-surface font-medium text-sm transition-colors">
+          <i data-lucide="settings" class="w-4 h-4"></i>设置
+        </a>
       </div>
     </aside>
 
-    <!-- Main area -->
-    <div class="flex-1 min-w-0 flex flex-col">
-      <!-- 顶部跑马灯条 -->
-      <div class="ticker-bar">
-        <div class="ticker-track" id="ticker-track">
-          <span class="ticker-item"><span class="k">XHSIDX</span> <span class="v up">12,847.62</span> <span class="num-up">▲ +2.34%</span></span>
-          <span class="ticker-item"><span class="k">选题命中</span> <span class="v up">94.6%</span> <span class="num-up">▲ +1.2%</span></span>
-          <span class="ticker-item"><span class="k">流水线</span> <span class="v">2/3</span> <span class="num-up">▲ 工作中</span></span>
-          <span class="ticker-item"><span class="k">今日发布</span> <span class="v">8</span> <span class="num-up">▲ 7 已排</span></span>
-          <span class="ticker-item"><span class="k">总曝光</span> <span class="v up">1,284,930</span> <span class="num-up">▲ +18.7%</span></span>
-          <span class="ticker-item"><span class="k">互动率</span> <span class="v up">6.82%</span> <span class="num-up">▲ +0.4%</span></span>
-          <span class="ticker-item"><span class="k">掉粉</span> <span class="v down">-23</span> <span class="num-down">▼ -0.05%</span></span>
-          <span class="ticker-item"><span class="k">小咸在线</span> <span class="v up">3 节点</span> <span class="num-up">▲ 健康</span></span>
-          <span class="ticker-item"><span class="k">XHSIDX</span> <span class="v up">12,847.62</span> <span class="num-up">▲ +2.34%</span></span>
-          <span class="ticker-item"><span class="k">选题命中</span> <span class="v up">94.6%</span> <span class="num-up">▲ +1.2%</span></span>
-          <span class="ticker-item"><span class="k">流水线</span> <span class="v">2/3</span> <span class="num-up">▲ 工作中</span></span>
-          <span class="ticker-item"><span class="k">今日发布</span> <span class="v">8</span> <span class="num-up">▲ 7 已排</span></span>
-          <span class="ticker-item"><span class="k">总曝光</span> <span class="v up">1,284,930</span> <span class="num-up">▲ +18.7%</span></span>
-          <span class="ticker-item"><span class="k">互动率</span> <span class="v up">6.82%</span> <span class="num-up">▲ +0.4%</span></span>
-          <span class="ticker-item"><span class="k">掉粉</span> <span class="v down">-23</span> <span class="num-down">▼ -0.05%</span></span>
-          <span class="ticker-item"><span class="k">小咸在线</span> <span class="v up">3 节点</span> <span class="num-up">▲ 健康</span></span>
+    <!-- @main-content:start -->
+    <main class="flex-1 min-w-0 overflow-y-auto bg-background p-6">
+
+      <!-- 页面头部 -->
+      <div class="flex items-center justify-between mb-8">
+        <div>
+          <h1 class="text-2xl font-bold text-on-surface flex items-center gap-3">
+            <i data-lucide="factory" class="w-6 h-6 text-primary"></i>
+            内容工厂
+          </h1>
+          <p class="text-sm text-on-surface-variant mt-1">批量高效生产内容，一键出稿多条</p>
+        </div>
+        <div class="flex items-center gap-3">
+          <button id="btn-audit" class="bg-surface-container text-on-surface border-none px-4 py-2 rounded-md text-sm font-medium hover:bg-surface-container-high active:scale-[0.98] transition-all inline-flex items-center gap-2">
+            <i data-lucide="shield-check" class="w-4 h-4"></i>AI审核
+          </button>
+          <button id="btn-batch-generate" class="bg-primary text-on-primary px-4 py-2 rounded-md text-sm font-medium hover:opacity-90 active:scale-[0.98] transition-all inline-flex items-center gap-2 shadow-glow-red">
+            <i data-lucide="zap" class="w-4 h-4"></i>批量生成
+          </button>
         </div>
       </div>
 
-      <!-- 顶栏 -->
-      <header class="h-16 bg-surface/80 backdrop-blur border-b flex items-center px-6 gap-4 shrink-0" style="border-color: #3d3a39;">
-        <div class="flex items-center gap-2 text-sm">
-          <span class="text-on-surface-variant">咸聊 AI</span>
-          <i data-lucide="chevron-right" class="w-3.5 h-3.5 text-on-surface-variant/50"></i>
-          <span id="page-crumb" class="text-on-surface font-medium">内容工厂</span>
+      <!-- 内容模板库 -->
+      <section class="mb-8">
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="text-base font-semibold text-on-surface flex items-center gap-2">
+            <i data-lucide="layout-template" class="w-4 h-4 text-cyber-cyan"></i>
+            内容模板库
+          </h2>
+          <button class="text-xs text-on-surface-variant hover:text-primary transition-colors">查看全部</button>
         </div>
-        <div class="flex-1 max-w-xl mx-auto">
-          <div class="relative">
-            <i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-on-surface-variant"></i>
-            <input id="global-search" type="text" placeholder="搜选题、关键词、账号..." class="w-full bg-surface-container border rounded-lg pl-10 pr-12 py-2 text-sm text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none transition-colors font-num" style="border-color: #3d3a39;" onfocus="this.style.borderColor='#00d992'; this.style.boxShadow='0 0 0 2px rgba(0,217,146,0.25)'" onblur="this.style.borderColor='#3d3a39'; this.style.boxShadow='none'" />
-            <kbd class="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] text-on-surface-variant border rounded px-1.5 py-0.5 font-mono" style="border-color: #3d3a39;">⌘K</kbd>
+        <div class="grid grid-cols-4 gap-4">
+          <!-- 模板-种草推荐 -->
+          <div id="template-seeding" class="content-template bg-surface rounded-lg shadow-card p-4 cursor-pointer hover:shadow-float transition-all border border-outline-variant/10 hover:border-cyber-cyan/30" data-template="seeding">
+            <div class="w-full h-28 rounded-md bg-surface-container mb-3 overflow-hidden flex items-center justify-center relative">
+              <img src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=300&h=160&fit=crop" alt="种草推荐模板预览" data-category="商业科技" class="w-full h-full object-cover opacity-60">
+              <div class="absolute inset-0 bg-gradient-to-t from-surface/80 to-transparent"></div>
+              <span class="absolute bottom-2 left-2 text-[10px] font-mono text-cyber-cyan uppercase tracking-wider">Seeding</span>
+            </div>
+            <h3 class="text-sm font-semibold text-on-surface mb-1">种草推荐</h3>
+            <p class="text-xs text-on-surface-variant">产品种草/好物安利，带购买引导</p>
+            <div class="mt-2 flex items-center gap-2">
+              <span class="text-[10px] px-1.5 py-0.5 rounded-sm bg-cyber-cyan/10 text-cyber-cyan font-medium">小红书</span>
+              <span class="text-[10px] px-1.5 py-0.5 rounded-sm bg-cyber-magenta/10 text-cyber-magenta font-medium">抖音</span>
+            </div>
+          </div>
+          <!-- 模板-深度测评 -->
+          <div id="template-review" class="content-template bg-surface rounded-lg shadow-card p-4 cursor-pointer hover:shadow-float transition-all border border-outline-variant/10 hover:border-cyber-cyan/30" data-template="review">
+            <div class="w-full h-28 rounded-md bg-surface-container mb-3 overflow-hidden flex items-center justify-center relative">
+              <img src="https://images.unsplash.com/photo-1585790050230-5dd28404ccb9?w=300&h=160&fit=crop" alt="深度测评模板预览" data-category="商业科技" class="w-full h-full object-cover opacity-60">
+              <div class="absolute inset-0 bg-gradient-to-t from-surface/80 to-transparent"></div>
+              <span class="absolute bottom-2 left-2 text-[10px] font-mono text-cyber-cyan uppercase tracking-wider">Review</span>
+            </div>
+            <h3 class="text-sm font-semibold text-on-surface mb-1">深度测评</h3>
+            <p class="text-xs text-on-surface-variant">产品对比评测，优劣势分析</p>
+            <div class="mt-2 flex items-center gap-2">
+              <span class="text-[10px] px-1.5 py-0.5 rounded-sm bg-warning/10 text-warning font-medium">知乎</span>
+              <span class="text-[10px] px-1.5 py-0.5 rounded-sm bg-cyber-purple/10 text-cyber-purple font-medium">B站</span>
+            </div>
+          </div>
+          <!-- 模板-教程攻略 -->
+          <div id="template-tutorial" class="content-template bg-surface rounded-lg shadow-card p-4 cursor-pointer hover:shadow-float transition-all border border-outline-variant/10 hover:border-cyber-cyan/30" data-template="tutorial">
+            <div class="w-full h-28 rounded-md bg-surface-container mb-3 overflow-hidden flex items-center justify-center relative">
+              <img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=300&h=160&fit=crop" alt="教程攻略模板预览" data-category="商业科技" class="w-full h-full object-cover opacity-60">
+              <div class="absolute inset-0 bg-gradient-to-t from-surface/80 to-transparent"></div>
+              <span class="absolute bottom-2 left-2 text-[10px] font-mono text-cyber-cyan uppercase tracking-wider">Tutorial</span>
+            </div>
+            <h3 class="text-sm font-semibold text-on-surface mb-1">教程攻略</h3>
+            <p class="text-xs text-on-surface-variant">步骤拆解教学，干货方法论</p>
+            <div class="mt-2 flex items-center gap-2">
+              <span class="text-[10px] px-1.5 py-0.5 rounded-sm bg-cyber-cyan/10 text-cyber-cyan font-medium">公众号</span>
+              <span class="text-[10px] px-1.5 py-0.5 rounded-sm bg-cyber-magenta/10 text-cyber-magenta font-medium">小红书</span>
+            </div>
+          </div>
+          <!-- 模板-活动促销 -->
+          <div id="template-promotion" class="content-template bg-surface rounded-lg shadow-card p-4 cursor-pointer hover:shadow-float transition-all border border-outline-variant/10 hover:border-cyber-cyan/30" data-template="promotion">
+            <div class="w-full h-28 rounded-md bg-surface-container mb-3 overflow-hidden flex items-center justify-center relative">
+              <img src="https://images.unsplash.com/photo-1542744173-8e7e53415bb0?w=300&h=160&fit=crop" alt="活动促销模板预览" data-category="商业科技" class="w-full h-full object-cover opacity-60">
+              <div class="absolute inset-0 bg-gradient-to-t from-surface/80 to-transparent"></div>
+              <span class="absolute bottom-2 left-2 text-[10px] font-mono text-cyber-cyan uppercase tracking-wider">Promo</span>
+            </div>
+            <h3 class="text-sm font-semibold text-on-surface mb-1">活动促销</h3>
+            <p class="text-xs text-on-surface-variant">限时优惠/节日活动，促转化</p>
+            <div class="mt-2 flex items-center gap-2">
+              <span class="text-[10px] px-1.5 py-0.5 rounded-sm bg-primary/10 text-primary font-medium">全平台</span>
+            </div>
           </div>
         </div>
-        <div class="flex items-center gap-2">
-          <button id="btn-bell" class="relative w-9 h-9 rounded-lg flex items-center justify-center text-on-surface-variant hover:text-primary hover:bg-surface-container transition-colors" style="border: 1px solid transparent;" title="消息">
-            <i data-lucide="bell" class="w-4 h-4"></i>
-            <span class="absolute top-1.5 right-1.5 w-1.5 h-1.5 bg-primary rounded-full" style="box-shadow: 0 0 6px rgba(0,217,146,0.8);"></span>
-          </button>
-          <button id="btn-refresh" class="w-9 h-9 rounded-lg flex items-center justify-center text-on-surface-variant hover:text-primary hover:bg-surface-container transition-colors btn-press" style="border: 1px solid #3d3a39;" title="刷新数据">
-            <i data-lucide="refresh-cw" class="w-4 h-4"></i>
-          </button>
-          <button id="btn-pipeline" class="btn-primary font-medium text-sm px-4 h-9 rounded-lg flex items-center gap-2 btn-press">
-            <i data-lucide="zap" class="w-4 h-4"></i>立即生成内容
-          </button>
-        </div>
-      </header>
+      </section>
 
-      <main class="flex-1 min-w-0 overflow-y-auto bg-background">
-        <!-- @main-content:start -->
-
-        <!-- ============== Section 1: 顶部 5 步工作流进度（选题→封面→文案→配图→排期） ============== -->
-        <section class="px-6 pt-6">
-          <div class="card-base p-5" id="workflow-bar">
-            <!-- Header -->
-            <div class="flex items-start justify-between mb-6 gap-4 flex-wrap">
-              <div>
-                <div class="section-label mb-2">
-                  <span class="dot"></span><span>流水线 · PIPELINE v2.0</span>
-                </div>
-                <h1 class="text-xl font-bold text-on-surface flex items-baseline gap-2">
-                  内容生产工作流
-                  <span class="text-sm font-normal text-on-surface-variant">5 步全自动化 · 实时进度追踪</span>
-                </h1>
-              </div>
-              <div class="flex items-center gap-5">
-                <div class="text-right">
-                  <div class="text-[10px] text-on-surface-variant uppercase tracking-wider">总进度 / PROGRESS</div>
-                  <div id="wf-progress-pct" class="num-glow text-2xl leading-none mt-1">
-                    <span class="font-bold">60</span><span class="text-sm">%</span>
-                  </div>
-                </div>
-                <div class="h-10 w-px" style="background: #3d3a39;"></div>
-                <div class="text-right">
-                  <div class="text-[10px] text-on-surface-variant uppercase tracking-wider">当前步骤 / STEP</div>
-                  <div class="text-2xl font-bold text-on-surface leading-none mt-1 font-num">
-                    03<span class="text-sm text-on-surface-variant">/05</span>
-                  </div>
-                </div>
-                <div class="h-10 w-px" style="background: #3d3a39;"></div>
-                <div class="text-right">
-                  <div class="text-[10px] text-on-surface-variant uppercase tracking-wider">预计剩余 / ETA</div>
-                  <div id="wf-eta" class="text-2xl font-bold text-on-surface leading-none mt-1 font-num">
-                    00<span class="text-sm text-on-surface-variant">:38s</span>
-                  </div>
-                </div>
-                <div class="h-10 w-px" style="background: #3d3a39;"></div>
-                <div class="text-right">
-                  <div class="text-[10px] text-on-surface-variant uppercase tracking-wider">Token 消耗</div>
-                  <div class="num-metal text-2xl leading-none mt-1">
-                    <span id="wf-tokens">3,247</span>
-                  </div>
-                </div>
-              </div>
+      <!-- 批量生成面板 -->
+      <section id="batch-panel" class="mb-8">
+        <div class="bg-surface rounded-lg shadow-card p-5 border border-outline-variant/10">
+          <div class="flex items-center justify-between mb-4">
+            <h2 class="text-base font-semibold text-on-surface flex items-center gap-2">
+              <i data-lucide="settings-2" class="w-4 h-4 text-primary"></i>
+              批量生成参数
+            </h2>
+            <button id="btn-toggle-panel" class="text-xs text-on-surface-variant hover:text-primary transition-colors flex items-center gap-1">
+              <i data-lucide="chevron-up" class="w-3 h-3"></i>收起
+            </button>
+          </div>
+          <div id="batch-panel-body" class="grid grid-cols-5 gap-4">
+            <div>
+              <label class="block text-xs text-on-surface-variant mb-1.5">选择模板</label>
+              <select id="sel-template" class="w-full bg-surface-container border-none rounded-md px-3 py-2 text-sm text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/30 transition-colors">
+                <option value="seeding">种草推荐</option>
+                <option value="review">深度测评</option>
+                <option value="tutorial">教程攻略</option>
+                <option value="promotion">活动促销</option>
+                <option value="daily">日常分享</option>
+                <option value="recruit">招聘文案</option>
+              </select>
             </div>
+            <div>
+              <label class="block text-xs text-on-surface-variant mb-1.5">角色人设</label>
+              <select id="sel-role" class="w-full bg-surface-container border-none rounded-md px-3 py-2 text-sm text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/30 transition-colors">
+                <option value="expert">行业专家</option>
+                <option value="kol">KOL达人</option>
+                <option value="friend">闺蜜好物</option>
+                <option value="professional">专业测评师</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs text-on-surface-variant mb-1.5">所属行业</label>
+              <select id="sel-industry" class="w-full bg-surface-container border-none rounded-md px-3 py-2 text-sm text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/30 transition-colors">
+                <option value="beauty">美妆护肤</option>
+                <option value="food">美食餐饮</option>
+                <option value="tech">数码科技</option>
+                <option value="fashion">服饰穿搭</option>
+                <option value="education">教育培训</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs text-on-surface-variant mb-1.5">目标平台</label>
+              <select id="sel-platform" class="w-full bg-surface-container border-none rounded-md px-3 py-2 text-sm text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/30 transition-colors">
+                <option value="xiaohongshu">小红书</option>
+                <option value="douyin">抖音</option>
+                <option value="wechat">微信公众号</option>
+                <option value="zhihu">知乎</option>
+                <option value="bilibili">B站</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs text-on-surface-variant mb-1.5">生成数量</label>
+              <select id="sel-count" class="w-full bg-surface-container border-none rounded-md px-3 py-2 text-sm text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/30 transition-colors">
+                <option value="3">3条</option>
+                <option value="4">4条</option>
+                <option value="5" selected>5条</option>
+              </select>
+            </div>
+          </div>
+          <div class="mt-4 flex items-center gap-3">
+            <button id="btn-start-generate" class="bg-primary text-on-primary px-5 py-2 rounded-md text-sm font-medium hover:opacity-90 active:scale-[0.98] transition-all inline-flex items-center gap-2 shadow-glow-red">
+              <i data-lucide="play" class="w-4 h-4"></i>开始生成
+            </button>
+            <span class="text-xs text-on-surface-variant">预计耗时 15-30s，生成后自动添加到内容列表</span>
+          </div>
+        </div>
+      </section>
 
-            <!-- 5-Step Progress Bar -->
+      <!-- 内容列表区 -->
+      <section>
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="text-base font-semibold text-on-surface flex items-center gap-2">
+            <i data-lucide="list" class="w-4 h-4 text-cyber-magenta"></i>
+            内容列表
+          </h2>
+          <div class="flex items-center gap-3">
+            <!-- 搜索框 -->
             <div class="relative">
-              <!-- Track background -->
-              <div class="absolute left-[8%] right-[8%] top-[20px] progress-track">
-                <div class="progress-fill" style="width: 60%;"></div>
-              </div>
+              <i data-lucide="search" class="w-3.5 h-3.5 text-on-surface-variant absolute left-3 top-1/2 -translate-y-1/2"></i>
+              <input id="input-search" type="text" placeholder="搜索内容标题..." class="bg-surface-container border-none rounded-md pl-9 pr-3 py-1.5 text-sm text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:ring-2 focus:ring-primary/30 transition-colors w-48">
+            </div>
+            <!-- 筛选：平台 -->
+            <select id="filter-platform" class="bg-surface-container border-none rounded-md px-3 py-1.5 text-sm text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/30 transition-colors">
+              <option value="all">全部平台</option>
+              <option value="xiaohongshu">小红书</option>
+              <option value="douyin">抖音</option>
+              <option value="wechat">公众号</option>
+              <option value="zhihu">知乎</option>
+            </select>
+            <!-- 筛选：状态 -->
+            <select id="filter-status" class="bg-surface-container border-none rounded-md px-3 py-1.5 text-sm text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/30 transition-colors">
+              <option value="all">全部状态</option>
+              <option value="draft">草稿</option>
+              <option value="generated">已生成</option>
+              <option value="pending">待发布</option>
+              <option value="published">已发布</option>
+            </select>
+            <!-- 批量操作按钮 -->
+            <button id="btn-batch-delete" class="bg-primary text-on-primary px-3 py-1.5 rounded-md text-xs font-medium hover:opacity-90 active:scale-[0.98] transition-all inline-flex items-center gap-1">
+              <i data-lucide="trash-2" class="w-3 h-3"></i>批量删除
+            </button>
+            <button id="btn-batch-publish" class="bg-primary text-on-primary px-3 py-1.5 rounded-md text-xs font-medium hover:opacity-90 active:scale-[0.98] transition-all inline-flex items-center gap-1">
+              <i data-lucide="send" class="w-3 h-3"></i>批量发布
+            </button>
+          </div>
+        </div>
 
-              <div class="grid grid-cols-5 gap-2">
-
-                <!-- 列表-步骤1：选题 - 已完成（status-online + 可点击回看） -->
-                <div class="flex flex-col items-center step-clickable" id="step-01" data-step="1">
-                  <div class="step-marker" data-step-marker="1">01</div>
-                  <div class="mt-3 text-center">
-                    <div class="text-sm font-semibold text-on-surface">选题</div>
-                    <div class="text-[10px] mt-0.5 flex items-center justify-center gap-1.5">
-                      <span class="status-dot status-online"></span><span class="text-primary">已完成</span>
-                    </div>
-                    <div class="text-[10px] text-on-surface-variant font-num mt-0.5">02.8s</div>
-                  </div>
-                </div>
-
-                <!-- 列表-步骤2：封面 - 已完成（status-online + 可点击回看） -->
-                <div class="flex flex-col items-center step-clickable" id="step-02" data-step="2">
-                  <div class="step-marker" data-step-marker="2">02</div>
-                  <div class="mt-3 text-center">
-                    <div class="text-sm font-semibold text-on-surface">封面</div>
-                    <div class="text-[10px] mt-0.5 flex items-center justify-center gap-1.5">
-                      <span class="status-dot status-online"></span><span class="text-primary">已完成</span>
-                    </div>
-                    <div class="text-[10px] text-on-surface-variant font-num mt-0.5">11.4s</div>
-                  </div>
-                </div>
-
-                <!-- 列表-步骤3：文案 - 进行中（status-online + current pulse） -->
-                <div class="flex flex-col items-center" id="step-03" data-step="3">
-                  <div class="step-marker current" data-step-marker="3">03</div>
-                  <div class="mt-3 text-center">
-                    <div class="text-sm font-semibold text-on-surface">文案</div>
-                    <div class="text-[10px] mt-0.5 flex items-center justify-center gap-1.5">
-                      <span class="status-dot status-online"></span><span class="text-primary">进行中</span>
-                    </div>
-                    <div class="text-[10px] num-glow font-num mt-0.5" id="wf-step3-time">08.2s</div>
-                  </div>
-                </div>
-
-                <!-- 列表-步骤4：配图 - 待处理（status-pending 红色呼吸） -->
-                <div class="flex flex-col items-center" id="step-04" data-step="4">
-                  <div class="step-marker pending" data-step-marker="4">04</div>
-                  <div class="mt-3 text-center">
-                    <div class="text-sm font-medium text-on-surface-variant">配图</div>
-                    <div class="text-[10px] mt-0.5 flex items-center justify-center gap-1.5">
-                      <span class="status-dot status-pending"></span><span style="color: #ff3b5c;">待处理</span>
-                    </div>
-                    <div class="text-[10px] text-on-surface-variant/60 font-num mt-0.5">--</div>
-                  </div>
-                </div>
-
-                <!-- 列表-步骤5：排期 - 排队中（status-queue 灰色静态） -->
-                <div class="flex flex-col items-center" id="step-05" data-step="5">
-                  <div class="step-marker queue" data-step-marker="5">05</div>
-                  <div class="mt-3 text-center">
-                    <div class="text-sm font-medium text-on-surface-variant">排期</div>
-                    <div class="text-[10px] mt-0.5 flex items-center justify-center gap-1.5">
-                      <span class="status-dot status-queue"></span><span class="text-on-surface-variant">排队中</span>
-                    </div>
-                    <div class="text-[10px] text-on-surface-variant/60 font-num mt-0.5">--</div>
-                  </div>
-                </div>
-              </div>
+        <!-- 内容表格 -->
+        <div class="bg-surface rounded-lg shadow-card overflow-hidden">
+          <!-- 表头 -->
+          <div class="grid grid-cols-12 px-4 py-3 bg-surface-container text-xs font-semibold text-on-surface-variant uppercase tracking-wide items-center">
+            <div class="col-span-1 flex items-center justify-center">
+              <input id="select-all" type="checkbox" class="w-3.5 h-3.5 accent-primary">
+            </div>
+            <span class="col-span-4">标题</span>
+            <span class="col-span-1">平台</span>
+            <span class="col-span-1">状态</span>
+            <span class="col-span-1">评分</span>
+            <span class="col-span-2">创建时间</span>
+            <span class="col-span-2">操作</span>
+          </div>
+          <!-- 列表-内容1 -->
+          <div class="content-row grid grid-cols-12 px-4 py-3 hover:bg-surface-container/50 transition-colors items-center border-t border-outline-variant/10" data-id="1" data-platform="xiaohongshu" data-status="generated">
+            <div class="col-span-1 flex items-center justify-center">
+              <input type="checkbox" class="row-checkbox w-3.5 h-3.5 accent-primary">
+            </div>
+            <div class="col-span-4">
+              <span class="text-sm font-medium text-on-surface">熬夜党必看！这款精华液让我皮肤回春了</span>
+            </div>
+            <div class="col-span-1">
+              <span class="text-xs px-1.5 py-0.5 rounded-sm bg-cyber-magenta/10 text-cyber-magenta font-medium">小红书</span>
+            </div>
+            <div class="col-span-1">
+              <span class="inline-flex items-center px-2 py-0.5 rounded-sm text-xs font-medium bg-cyber-cyan/15 text-cyber-cyan">已生成</span>
+            </div>
+            <div class="col-span-1">
+              <span class="text-sm font-semibold text-warning">92</span>
+              <span class="text-xs text-on-surface-variant">分</span>
+            </div>
+            <div class="col-span-2">
+              <span class="text-xs text-on-surface-variant">2025-01-15 14:32</span>
+            </div>
+            <div class="col-span-2 flex items-center gap-2">
+              <button id="btn-edit-1" class="text-primary text-xs font-medium hover:underline">编辑</button>
+              <button id="btn-rewrite-1" class="text-on-surface-variant text-xs font-medium hover:text-primary hover:underline">改写</button>
+              <button id="btn-delete-1" class="text-on-surface-variant text-xs font-medium hover:text-error hover:underline">删除</button>
             </div>
           </div>
-        </section>
-
-        <!-- ============== Section 2: 主体两栏 ============== -->
-        <section class="px-6 py-5">
-          <div class="grid grid-cols-5 gap-5">
-
-            <!-- ========== LEFT: 当前任务卡 + 任务历史列表 ========== -->
-            <div class="col-span-2 space-y-4">
-
-              <!-- ① 当前正在处理的任务卡（card-base + 绿色高亮边框 + 光晕） -->
-              <div class="card-base card-active p-5 relative" id="current-task-card">
-                <div class="deco-emoji" aria-hidden="true">✍️</div>
-
-                <div class="flex items-start justify-between mb-3 relative z-10">
-                  <div>
-                    <div class="section-label mb-2">
-                      <span class="dot"></span><span>当前任务 / LIVE</span>
-                    </div>
-                    <div class="flex items-center gap-2 mb-1">
-                      <span class="badge badge-up"><span class="status-dot status-online"></span>运行中</span>
-                      <span class="text-[10px] text-on-surface-variant font-num">P-2001</span>
-                    </div>
-                  </div>
-                  <button id="btn-pause-task" class="w-8 h-8 rounded-md bg-surface-container hover:bg-primary/15 border border-outline flex items-center justify-center text-on-surface-variant hover:text-primary transition-colors" title="暂停" style="border-color: #3d3a39;">
-                    <i data-lucide="pause" class="w-3.5 h-3.5"></i>
-                  </button>
-                </div>
-
-                <h2 class="text-base font-bold text-on-surface leading-snug mb-3 relative z-10">
-                  30岁创业第3年，我终于学会不解释
-                </h2>
-
-                <!-- 进度 -->
-                <div class="mb-3 relative z-10">
-                  <div class="flex items-center justify-between mb-1.5">
-                    <span class="text-[10px] text-on-surface-variant uppercase tracking-wider">文案生成 · 第 3 步</span>
-                    <span class="text-[10px] num-glow font-num">68%</span>
-                  </div>
-                  <div class="progress-track">
-                    <div class="progress-fill" style="width: 68%;"></div>
-                  </div>
-                </div>
-
-                <!-- 三列指标 -->
-                <div class="grid grid-cols-3 gap-2 pt-3 border-t relative z-10" style="border-color: #3d3a39;">
-                  <div>
-                    <div class="text-[10px] text-on-surface-variant">已耗时</div>
-                    <div class="text-lg font-bold num-glow font-num leading-none mt-1">08.2<span class="text-xs">s</span></div>
-                  </div>
-                  <div>
-                    <div class="text-[10px] text-on-surface-variant">剩余时间</div>
-                    <div class="text-lg font-bold text-on-surface font-num leading-none mt-1">00<span class="text-sm">:12s</span></div>
-                  </div>
-                  <div>
-                    <div class="text-[10px] text-on-surface-variant">本步 Token</div>
-                    <div class="text-lg font-bold text-on-surface font-num leading-none mt-1">847</div>
-                  </div>
-                </div>
-
-                <!-- 实时日志预览 -->
-                <div class="mt-3 pt-3 border-t relative z-10" style="border-color: #3d3a39;">
-                  <div class="text-[10px] text-on-surface-variant mb-1.5 flex items-center gap-1.5">
-                    <i data-lucide="terminal" class="w-3 h-3 text-primary"></i>
-                    <span class="font-num">LIVE LOG</span>
-                    <span class="ml-auto text-[10px] text-on-surface-variant/60 font-num">12:48:36</span>
-                  </div>
-                  <div class="text-[10px] text-on-surface-variant font-mono leading-relaxed space-y-0.5 bg-surface-container/40 rounded-md p-2 border" style="border-color: #3d3a39;">
-                    <div><span class="text-primary">▸</span> 调用意图分析模型</div>
-                    <div><span class="text-primary">▸</span> 生成 3 个备选标题 ✓</div>
-                    <div><span class="text-primary">▸</span> 生成 A/B 方案正文 68%</div>
-                    <div class="text-primary"><span class="text-primary">▸</span> 优化情感曲线 <span class="spinning inline-block">◜</span></div>
-                  </div>
-                </div>
-              </div>
-
-              <!-- ② 任务历史列表 -->
-              <div class="card-base p-4" id="task-history">
-                <div class="flex items-center justify-between mb-3">
-                  <div class="section-label flat">
-                    <span class="dot"></span><span>任务列表 / QUEUE</span>
-                  </div>
-                  <span class="text-[10px] text-on-surface-variant font-num">3 进行中 · 8 已完成 · 2 排队</span>
-                </div>
-
-                <div class="space-y-2" id="task-list">
-
-                  <!-- 列表-任务1：当前处理（高亮） -->
-                  <div class="task-item card-base card-click-flash card-active p-3 cursor-pointer relative" data-task-id="P-2001" data-topic="30岁创业第3年，我终于学会不解释">
-                    <div class="flex items-start gap-2.5">
-                      <div class="step-marker mini" style="background: #00d992; box-shadow: 0 0 8px rgba(0, 217, 146, 0.5);">P</div>
-                      <div class="flex-1 min-w-0">
-                        <div class="flex items-center gap-1.5 mb-0.5">
-                          <span class="text-[10px] num-glow font-num">P-2001</span>
-                          <span class="badge badge-up text-[10px]"><span class="status-dot status-online"></span>运行中</span>
-                        </div>
-                        <div class="text-xs text-on-surface font-medium truncate">30岁创业第3年，我终于学会不解释</div>
-                        <div class="flex items-center gap-2 mt-1.5 text-[10px] text-on-surface-variant">
-                          <span class="font-num">第 3/5 步 · 文案</span>
-                          <span style="color: #3d3a39;">|</span>
-                          <span class="num-glow font-num">68%</span>
-                          <span style="color: #3d3a39;">|</span>
-                          <span class="font-num">剩 12s</span>
-                        </div>
-                        <div class="progress-track mt-1.5" style="height: 2px;">
-                          <div class="progress-fill" style="width: 68%;"></div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <!-- 列表-任务2：排队中 -->
-                  <div class="task-item card-base card-click-flash p-3 cursor-pointer relative" data-task-id="P-2002" data-topic="普通女生做小红书的第3年，月入6位数">
-                    <div class="flex items-start gap-2.5">
-                      <div class="step-marker mini queue" style="background: #15151a; color: #5a5a5e; border: 1px dashed #3d3a39; box-shadow: none;">P</div>
-                      <div class="flex-1 min-w-0">
-                        <div class="flex items-center gap-1.5 mb-0.5">
-                          <span class="text-[10px] text-on-surface-variant font-num">P-2002</span>
-                          <span class="badge badge-flat text-[10px]"><span class="status-dot status-queue"></span>排队中</span>
-                        </div>
-                        <div class="text-xs text-on-surface font-medium truncate">普通女生做小红书的第3年，月入6位数</div>
-                        <div class="flex items-center gap-2 mt-1.5 text-[10px] text-on-surface-variant">
-                          <span class="font-num">第 1/5 步 · 选题</span>
-                          <span style="color: #3d3a39;">|</span>
-                          <span class="font-num">0%</span>
-                          <span style="color: #3d3a39;">|</span>
-                          <span class="font-num">排队位 1</span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <!-- 列表-任务3：排队中 -->
-                  <div class="task-item card-base card-click-flash p-3 cursor-pointer relative" data-task-id="P-2003" data-topic="我从大厂裸辞后才明白的5件事">
-                    <div class="flex items-start gap-2.5">
-                      <div class="step-marker mini queue" style="background: #15151a; color: #5a5a5e; border: 1px dashed #3d3a39; box-shadow: none;">P</div>
-                      <div class="flex-1 min-w-0">
-                        <div class="flex items-center gap-1.5 mb-0.5">
-                          <span class="text-[10px] text-on-surface-variant font-num">P-2003</span>
-                          <span class="badge badge-flat text-[10px]"><span class="status-dot status-queue"></span>排队中</span>
-                        </div>
-                        <div class="text-xs text-on-surface font-medium truncate">我从大厂裸辞后才明白的5件事</div>
-                        <div class="flex items-center gap-2 mt-1.5 text-[10px] text-on-surface-variant">
-                          <span class="font-num">第 1/5 步 · 选题</span>
-                          <span style="color: #3d3a39;">|</span>
-                          <span class="font-num">0%</span>
-                          <span style="color: #3d3a39;">|</span>
-                          <span class="font-num">排队位 2</span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <!-- 列表-任务4：已完成（最近 1 小时） -->
-                  <div class="task-item card-base card-click-flash p-3 cursor-pointer relative" data-task-id="P-1998" data-topic="30岁前我亲手关掉公司，才看懂这3件事">
-                    <div class="flex items-start gap-2.5">
-                      <div class="step-marker mini" style="background: #1c1c22; color: #8a8a8f; box-shadow: none; border: 1px solid #3d3a39;">✓</div>
-                      <div class="flex-1 min-w-0">
-                        <div class="flex items-center gap-1.5 mb-0.5">
-                          <span class="text-[10px] text-on-surface-variant font-num">P-1998</span>
-                          <span class="badge badge-up text-[10px] opacity-70"><i data-lucide="check" class="w-2.5 h-2.5"></i>已完成</span>
-                        </div>
-                        <div class="text-xs text-on-surface font-medium truncate">30岁前我亲手关掉公司，才看懂这3件事</div>
-                        <div class="flex items-center gap-2 mt-1.5 text-[10px] text-on-surface-variant">
-                          <span class="font-num">5/5 步 · 耗时 38s</span>
-                          <span style="color: #3d3a39;">|</span>
-                          <span class="font-num num-up">曝光 1.2w</span>
-                          <span style="color: #3d3a39;">|</span>
-                          <span class="font-num">28 分钟前</span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <!-- 列表-任务5：已完成 -->
-                  <div class="task-item card-base card-click-flash p-3 cursor-pointer relative" data-task-id="P-1995" data-topic="普通女生做副业的第1年">
-                    <div class="flex items-start gap-2.5">
-                      <div class="step-marker mini" style="background: #1c1c22; color: #8a8a8f; box-shadow: none; border: 1px solid #3d3a39;">✓</div>
-                      <div class="flex-1 min-w-0">
-                        <div class="flex items-center gap-1.5 mb-0.5">
-                          <span class="text-[10px] text-on-surface-variant font-num">P-1995</span>
-                          <span class="badge badge-up text-[10px] opacity-70"><i data-lucide="check" class="w-2.5 h-2.5"></i>已完成</span>
-                        </div>
-                        <div class="text-xs text-on-surface font-medium truncate">普通女生做副业的第1年，月入 2w+</div>
-                        <div class="flex items-center gap-2 mt-1.5 text-[10px] text-on-surface-variant">
-                          <span class="font-num">5/5 步 · 耗时 42s</span>
-                          <span style="color: #3d3a39;">|</span>
-                          <span class="font-num num-up">曝光 8.7k</span>
-                          <span style="color: #3d3a39;">|</span>
-                          <span class="font-num">2 小时前</span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                </div>
-
-                <!-- 查看全部 -->
-                <div class="mt-3 pt-3 border-t flex items-center justify-between" style="border-color: #3d3a39;">
-                  <span class="text-[10px] text-on-surface-variant">共 <span class="num-glow font-num">13</span> 条任务</span>
-                  <button id="btn-view-all-tasks" class="text-[11px] text-primary hover:underline flex items-center gap-1">
-                    查看全部
-                    <i data-lucide="arrow-right" class="w-3 h-3"></i>
-                  </button>
-                </div>
-              </div>
-
+          <!-- 列表-内容2 -->
+          <div class="content-row grid grid-cols-12 px-4 py-3 hover:bg-surface-container/50 transition-colors items-center border-t border-outline-variant/10" data-id="2" data-platform="douyin" data-status="pending">
+            <div class="col-span-1 flex items-center justify-center">
+              <input type="checkbox" class="row-checkbox w-3.5 h-3.5 accent-primary">
             </div>
-
-            <!-- ========== RIGHT: 任务详情面板 ========== -->
-            <div class="col-span-3 space-y-4">
-
-              <!-- 任务详情头部 + Tabs -->
-              <div class="card-base overflow-hidden" id="result-panel">
-                <!-- 详情头部 -->
-                <div class="px-4 py-3 border-b flex items-center justify-between" style="border-color: #3d3a39;">
-                  <div>
-                    <div class="section-label mb-1">
-                      <span class="dot"></span><span>任务详情 / DETAIL</span>
-                    </div>
-                    <h2 id="detail-topic-title" class="text-base font-bold text-on-surface leading-tight">30岁创业第3年，我终于学会不解释</h2>
-                    <div class="flex items-center gap-2 mt-1 text-[10px] text-on-surface-variant">
-                      <span>任务 ID</span>
-                      <span id="detail-task-id" class="num-glow font-num">P-2001</span>
-                      <span style="color: #3d3a39;">|</span>
-                      <span>30岁·女性创始人·成长感悟</span>
-                      <span style="color: #3d3a39;">|</span>
-                      <span>热度 <span class="num-glow font-num" id="metric-heat">92</span></span>
-                      <span style="color: #3d3a39;">|</span>
-                      <span>匹配 <span class="num-glow font-num" id="metric-match">95%</span></span>
-                    </div>
-                  </div>
-                  <div class="flex items-center gap-1" id="result-tabs" role="tablist">
-                    <button id="tab-cover" data-tab="cover" role="tab" aria-selected="true" class="result-tab active">
-                      <i data-lucide="image" class="w-3.5 h-3.5"></i>生成结果
-                    </button>
-                    <button id="tab-steps" data-tab="steps" role="tab" aria-selected="false" class="result-tab">
-                      <i data-lucide="list-ordered" class="w-3.5 h-3.5"></i>步骤详情
-                    </button>
-                    <button id="tab-params" data-tab="params" role="tab" aria-selected="false" class="result-tab">
-                      <i data-lucide="sliders-horizontal" class="w-3.5 h-3.5"></i>参数调节
-                    </button>
-                  </div>
-                </div>
-
-                <!-- Tab: 生成结果（默认显示） -->
-                <div id="panel-cover" class="p-4" role="tabpanel">
-                  <!-- 内部子 Tab：封面 / 文案 -->
-                  <div class="flex items-center gap-1 mb-3">
-                    <button id="subtab-cover" data-subtab="cover" class="result-tab active">
-                      <i data-lucide="image" class="w-3.5 h-3.5"></i>封面候选 <span class="text-[10px] opacity-80">×3</span>
-                    </button>
-                    <button id="subtab-copy" data-subtab="copy" class="result-tab">
-                      <i data-lucide="file-text" class="w-3.5 h-3.5"></i>文案 A vs B
-                    </button>
-                    <div class="ml-auto flex items-center gap-2 text-[10px] text-on-surface-variant">
-                      <span class="flex items-center gap-1"><span class="status-dot status-online"></span>实时同步</span>
-                    </div>
-                  </div>
-
-                  <!-- 封面候选视图 -->
-                  <div id="subpanel-cover">
-                    <div class="grid grid-cols-3 gap-3" id="cover-grid">
-                      <!-- 列表-封面C.01 -->
-                      <div class="cover-card relative bg-surface-container border rounded-lg overflow-hidden" data-cover-id="01" style="border-color: #3d3a39;">
-                        <div class="relative aspect-[3/4] overflow-hidden bg-black">
-                          <img src="https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=400&q=80" alt="深夜办公桌冷光" data-category="商业科技" class="w-full h-full object-cover opacity-70" />
-                          <div class="absolute inset-0 bg-gradient-to-t from-primary/40 via-transparent to-transparent"></div>
-                          <div class="absolute top-2 left-2 bg-primary px-2 py-0.5 rounded-md">
-                            <span class="text-[10px] font-bold text-on-primary font-num">C.01</span>
-                          </div>
-                          <div class="absolute top-2 right-2 text-[9px] num-glow bg-black/60 border border-primary/40 px-1.5 py-0.5 rounded-md font-num">
-                            92% 匹配
-                          </div>
-                          <div class="absolute bottom-0 left-0 right-0 p-3">
-                            <div class="text-on-primary text-lg font-bold leading-tight" style="text-shadow: 0 2px 8px rgba(0,0,0,0.8);" data-cover-text="30岁，我才<br/>学会闭嘴">30岁，我才<br/>学会闭嘴</div>
-                          </div>
-                        </div>
-                        <div class="p-2.5 space-y-1.5">
-                          <button class="btn-use-cover w-full bg-primary hover:bg-primary/90 text-on-primary text-xs font-semibold py-1.5 rounded-md flex items-center justify-center gap-1 transition-colors">
-                            <i data-lucide="check" class="w-3 h-3"></i><span class="btn-use-cover-text">采用此封面</span>
-                          </button>
-                          <div class="grid grid-cols-2 gap-1.5">
-                            <button class="btn-adjust-text bg-surface text-on-surface-variant hover:text-primary border border-outline/30 text-[11px] py-1 rounded-md flex items-center justify-center gap-0.5 transition-colors" style="border-color: #3d3a39;">
-                              <i data-lucide="type" class="w-3 h-3"></i>调整文案
-                            </button>
-                            <button class="btn-adjust-pos bg-surface text-on-surface-variant hover:text-primary border border-outline/30 text-[11px] py-1 rounded-md flex items-center justify-center gap-0.5 transition-colors" style="border-color: #3d3a39;">
-                              <i data-lucide="move" class="w-3 h-3"></i>调整位置
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-
-                      <!-- 列表-封面C.02（推荐） -->
-                      <div class="cover-card relative bg-surface-container border border-primary/40 rounded-lg overflow-hidden" data-cover-id="02">
-                        <div class="relative aspect-[3/4] overflow-hidden bg-black">
-                          <img src="https://images.unsplash.com/photo-1551836022-deb4988cc6c0?w=400&q=80" alt="女性剪影轮廓" data-category="人物" class="w-full h-full object-cover opacity-70" />
-                          <div class="absolute inset-0 bg-gradient-to-t from-primary/40 via-transparent to-transparent"></div>
-                          <div class="absolute top-2 left-2 bg-primary px-2 py-0.5 rounded-md">
-                            <span class="text-[10px] font-bold text-on-primary font-num">C.02</span>
-                          </div>
-                          <div class="absolute top-2 right-2 text-[9px] cover-status-recommend bg-black/60 px-1.5 py-0.5 rounded-md font-num">
-                            ★ 推荐
-                          </div>
-                          <div class="absolute bottom-0 left-0 right-0 p-3">
-                            <div class="text-on-primary text-lg font-bold leading-tight" style="text-shadow: 0 2px 8px rgba(0,0,0,0.8);" data-cover-text="创业第3年<br/>我不再解释">创业第3年<br/>我不再解释</div>
-                          </div>
-                        </div>
-                        <div class="p-2.5 space-y-1.5">
-                          <button class="btn-use-cover w-full bg-primary hover:bg-primary/90 text-on-primary text-xs font-semibold py-1.5 rounded-md flex items-center justify-center gap-1 transition-colors">
-                            <i data-lucide="check" class="w-3 h-3"></i><span class="btn-use-cover-text">采用此封面</span>
-                          </button>
-                          <div class="grid grid-cols-2 gap-1.5">
-                            <button class="btn-adjust-text bg-surface text-on-surface-variant hover:text-primary border border-outline/30 text-[11px] py-1 rounded-md flex items-center justify-center gap-0.5 transition-colors" style="border-color: #3d3a39;">
-                              <i data-lucide="type" class="w-3 h-3"></i>调整文案
-                            </button>
-                            <button class="btn-adjust-pos bg-surface text-on-surface-variant hover:text-primary border border-outline/30 text-[11px] py-1 rounded-md flex items-center justify-center gap-0.5 transition-colors" style="border-color: #3d3a39;">
-                              <i data-lucide="move" class="w-3 h-3"></i>调整位置
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-
-                      <!-- 列表-封面C.03 -->
-                      <div class="cover-card relative bg-surface-container border rounded-lg overflow-hidden" data-cover-id="03" style="border-color: #3d3a39;">
-                        <div class="relative aspect-[3/4] overflow-hidden bg-black">
-                          <img src="https://images.unsplash.com/photo-1493612276216-ee3925520721?w=400&q=80" alt="暗色金属质感" data-category="艺术" class="w-full h-full object-cover opacity-70" />
-                          <div class="absolute inset-0 bg-gradient-to-t from-primary/40 via-transparent to-transparent"></div>
-                          <div class="absolute top-2 left-2 bg-primary px-2 py-0.5 rounded-md">
-                            <span class="text-[10px] font-bold text-on-primary font-num">C.03</span>
-                          </div>
-                          <div class="absolute top-2 right-2 text-[9px] text-on-surface-variant bg-black/60 border border-outline/40 px-1.5 py-0.5 rounded-md font-num">
-                            87% 匹配
-                          </div>
-                          <div class="absolute bottom-0 left-0 right-0 p-3">
-                            <div class="text-on-primary text-lg font-bold leading-tight" style="text-shadow: 0 2px 8px rgba(0,0,0,0.8);" data-cover-text="30岁 不解释<br/>是最好的回答">30岁 不解释<br/>是最好的回答</div>
-                          </div>
-                        </div>
-                        <div class="p-2.5 space-y-1.5">
-                          <button class="btn-use-cover w-full bg-primary hover:bg-primary/90 text-on-primary text-xs font-semibold py-1.5 rounded-md flex items-center justify-center gap-1 transition-colors">
-                            <i data-lucide="check" class="w-3 h-3"></i><span class="btn-use-cover-text">采用此封面</span>
-                          </button>
-                          <div class="grid grid-cols-2 gap-1.5">
-                            <button class="btn-adjust-text bg-surface text-on-surface-variant hover:text-primary border border-outline/30 text-[11px] py-1 rounded-md flex items-center justify-center gap-0.5 transition-colors" style="border-color: #3d3a39;">
-                              <i data-lucide="type" class="w-3 h-3"></i>调整文案
-                            </button>
-                            <button class="btn-adjust-pos bg-surface text-on-surface-variant hover:text-primary border border-outline/30 text-[11px] py-1 rounded-md flex items-center justify-center gap-0.5 transition-colors" style="border-color: #3d3a39;">
-                              <i data-lucide="move" class="w-3 h-3"></i>调整位置
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="mt-3 pt-3 border-t flex items-center justify-between" style="border-color: #3d3a39;">
-                      <div class="flex items-center gap-3 text-[10px] text-on-surface-variant">
-                        <span><span class="num-glow font-num">3</span> 张候选</span>
-                        <span style="color: #3d3a39;">|</span>
-                        <span>分辨率 <span class="text-on-surface font-num">1080×1440</span></span>
-                        <span style="color: #3d3a39;">|</span>
-                        <span>画幅 <span class="text-on-surface font-num">3:4</span></span>
-                      </div>
-                      <button id="btn-regenerate-covers" class="text-xs text-primary hover:underline flex items-center gap-1">
-                        <i data-lucide="refresh-cw" class="w-3 h-3"></i>重生成 3 张
-                      </button>
-                    </div>
-                  </div>
-
-                  <!-- 文案 A vs B 视图（默认隐藏） -->
-                  <div id="subpanel-copy" class="hidden">
-                    <div class="grid grid-cols-2 gap-3" id="copy-compare">
-                      <!-- 列表-方案A -->
-                      <div class="copy-card relative bg-surface-container border rounded-lg overflow-hidden" data-version="A" style="border-color: #3d3a39;">
-                        <div class="px-3 py-2 border-b flex items-center justify-between" style="border-color: #3d3a39; background: rgba(0, 217, 146, 0.06);">
-                          <div class="flex items-center gap-2">
-                            <div class="step-marker mini" data-step-marker="A">A</div>
-                            <div>
-                              <div class="text-sm font-semibold text-on-surface">方案 A · 锐利直给</div>
-                              <div class="text-[10px] text-on-surface-variant">直给·反共识</div>
-                            </div>
-                          </div>
-                          <div class="flex items-center gap-1.5">
-                            <span class="badge badge-up text-[10px] pick-badge"><i data-lucide="check" class="w-3 h-3"></i>已选</span>
-                            <span class="text-[10px] num-glow font-num">94 分</span>
-                          </div>
-                        </div>
-                        <div class="p-3 space-y-3">
-                          <div>
-                            <div class="flex items-center gap-1.5 mb-1.5">
-                              <i data-lucide="type" class="w-3 h-3 text-primary"></i>
-                              <span class="text-[10px] text-primary">3 个备选标题</span>
-                            </div>
-                            <ol class="space-y-1 text-xs text-on-surface" id="copy-a-titles">
-                              <li class="flex items-start gap-1.5 bg-primary/5 border border-primary/20 px-2 py-1 rounded-md">
-                                <span class="text-primary text-[10px] mt-0.5 font-bold font-num">01.</span>
-                                <span>30岁创业第3年，我终于学会了不解释</span>
-                              </li>
-                              <li class="flex items-start gap-1.5 bg-surface px-2 py-1 rounded-md">
-                                <span class="text-on-surface-variant text-[10px] mt-0.5 font-bold font-num">02.</span>
-                                <span>你越解释，越没人愿意听</span>
-                              </li>
-                              <li class="flex items-start gap-1.5 bg-surface px-2 py-1 rounded-md">
-                                <span class="text-on-surface-variant text-[10px] mt-0.5 font-bold font-num">03.</span>
-                                <span>成年人的沉默，是最有力的回应</span>
-                              </li>
-                            </ol>
-                          </div>
-                          <div>
-                            <div class="flex items-center gap-1.5 mb-1.5">
-                              <i data-lucide="file-text" class="w-3 h-3 text-primary"></i>
-                              <span class="text-[10px] text-primary">正文预览</span>
-                              <span class="text-[10px] text-on-surface-variant ml-auto font-num">624 字 · 3 段</span>
-                            </div>
-                            <div class="text-xs text-on-surface leading-relaxed bg-surface p-2.5 rounded-md space-y-1.5">
-                              <p>🚨 <b>30岁创业第3年，我终于学会不解释。</b></p>
-                              <p>以前别人问我"为什么不做 X 而是做 Y"，我会列 10 条理由。后来发现，<b>解释是最无效的社交货币</b>。</p>
-                              <p>懂你的人不需要解释，不懂你的人——解释了也白搭。</p>
-                              <p>这一年我最大的成长：<b>关掉评论区，锁上朋友圈</b>，把时间还给自己。</p>
-                            </div>
-                          </div>
-                          <div>
-                            <div class="flex items-center gap-1.5 mb-1.5">
-                              <i data-lucide="hash" class="w-3 h-3 text-primary"></i>
-                              <span class="text-[10px] text-primary">话题标签</span>
-                            </div>
-                            <div class="flex flex-wrap gap-1">
-                              <span class="text-[10px] text-primary">#30岁创业</span>
-                              <span class="text-[10px] text-primary">#女性创始人</span>
-                              <span class="text-[10px] text-primary">#不解释的勇气</span>
-                              <span class="text-[10px] text-primary">#创业心得</span>
-                              <span class="text-[10px] text-primary">#认知觉醒</span>
-                              <span class="text-[10px] text-primary">#自我成长</span>
-                            </div>
-                          </div>
-                        </div>
-                        <div class="p-2.5 border-t" style="border-color: #3d3a39;">
-                          <button class="btn-pick-version w-full bg-primary hover:bg-primary/90 text-on-primary text-xs font-bold py-2 rounded-md flex items-center justify-center gap-1 transition-colors" data-version="A">
-                            <i data-lucide="check" class="w-3.5 h-3.5"></i>选A方案
-                          </button>
-                        </div>
-                      </div>
-
-                      <!-- 列表-方案B -->
-                      <div class="copy-card relative bg-surface-container border rounded-lg overflow-hidden" data-version="B" style="border-color: #3d3a39;">
-                        <div class="px-3 py-2 border-b flex items-center justify-between" style="border-color: #3d3a39;">
-                          <div class="flex items-center gap-2">
-                            <div class="step-marker mini pending" data-step-marker="B" style="background: #1c1c22; color: #8a8a8f; box-shadow: none; border: 1px solid #3d3a39;">B</div>
-                            <div>
-                              <div class="text-sm font-semibold text-on-surface">方案 B · 故事叙事</div>
-                              <div class="text-[10px] text-on-surface-variant">真实·有温度</div>
-                            </div>
-                          </div>
-                          <div class="flex items-center gap-1.5">
-                            <span class="badge badge-up text-[10px] pick-badge"><i data-lucide="check" class="w-3 h-3"></i>已选</span>
-                            <span class="text-[10px] text-on-surface-variant font-num">87 分</span>
-                          </div>
-                        </div>
-                        <div class="p-3 space-y-3">
-                          <div>
-                            <div class="flex items-center gap-1.5 mb-1.5">
-                              <i data-lucide="type" class="w-3 h-3 text-primary"></i>
-                              <span class="text-[10px] text-primary">3 个备选标题</span>
-                            </div>
-                            <ol class="space-y-1 text-xs text-on-surface" id="copy-b-titles">
-                              <li class="flex items-start gap-1.5 bg-surface px-2 py-1 rounded-md">
-                                <span class="text-on-surface-variant text-[10px] mt-0.5 font-bold font-num">01.</span>
-                                <span>创业第3年，我给十年前的自己写了一封信</span>
-                              </li>
-                              <li class="flex items-start gap-1.5 bg-surface px-2 py-1 rounded-md">
-                                <span class="text-on-surface-variant text-[10px] mt-0.5 font-bold font-num">02.</span>
-                                <span>那些解释过的人，最后都沉默了</span>
-                              </li>
-                              <li class="flex items-start gap-1.5 bg-surface px-2 py-1 rounded-md">
-                                <span class="text-on-surface-variant text-[10px] mt-0.5 font-bold font-num">03.</span>
-                                <span>从话多到闭嘴，一个创业者的1085天</span>
-                              </li>
-                            </ol>
-                          </div>
-                          <div>
-                            <div class="flex items-center gap-1.5 mb-1.5">
-                              <i data-lucide="file-text" class="w-3 h-3 text-primary"></i>
-                              <span class="text-[10px] text-primary">正文预览</span>
-                              <span class="text-[10px] text-on-surface-variant ml-auto font-num">658 字 · 4 段</span>
-                            </div>
-                            <div class="text-xs text-on-surface leading-relaxed bg-surface p-2.5 rounded-md space-y-1.5">
-                              <p>📖 <b>凌晨两点，写字楼只剩我一个人。</b></p>
-                              <p>手机弹出前同事的消息："你创业后悔吗？" 我盯着这行字看了很久，没回。</p>
-                              <p>三年前的我会解释——解释赛道、解释融资、解释为什么辞掉大厂。但现在，我只是把对话框关掉。</p>
-                              <p>后来我才明白，<b>沉默是给所有解释画上句号</b>。🌙</p>
-                            </div>
-                          </div>
-                          <div>
-                            <div class="flex items-center gap-1.5 mb-1.5">
-                              <i data-lucide="hash" class="w-3 h-3 text-primary"></i>
-                              <span class="text-[10px] text-primary">话题标签</span>
-                            </div>
-                            <div class="flex flex-wrap gap-1">
-                              <span class="text-[10px] text-primary">#创业故事</span>
-                              <span class="text-[10px] text-primary">#深夜独白</span>
-                              <span class="text-[10px] text-primary">#女性力量</span>
-                              <span class="text-[10px] text-primary">#个人成长</span>
-                              <span class="text-[10px] text-primary">#治愈系</span>
-                              <span class="text-[10px] text-primary">#清醒女孩</span>
-                            </div>
-                          </div>
-                        </div>
-                        <div class="p-2.5 border-t" style="border-color: #3d3a39;">
-                          <button class="btn-pick-version w-full bg-surface-container-high hover:bg-primary hover:text-on-primary text-on-surface text-xs font-bold py-2 rounded-md flex items-center justify-center gap-1 transition-colors border" data-version="B" style="border-color: #3d3a39;">
-                            <i data-lucide="check" class="w-3.5 h-3.5"></i>选B方案
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="mt-3 pt-3 border-t flex items-center justify-between" style="border-color: #3d3a39;">
-                      <div class="flex items-center gap-3 text-[10px] text-on-surface-variant">
-                        <span><span class="num-glow font-num">2</span> 个方案</span>
-                        <span style="color: #3d3a39;">|</span>
-                        <span>Token <span class="text-on-surface font-num">2,108</span></span>
-                        <span style="color: #3d3a39;">|</span>
-                        <span>分差 <span class="text-warning font-num">+7</span></span>
-                      </div>
-                      <button id="btn-regenerate-copies" class="text-xs text-primary hover:underline flex items-center gap-1">
-                        <i data-lucide="refresh-cw" class="w-3 h-3"></i>重生成 A/B
-                      </button>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- Tab: 步骤详情（默认隐藏） -->
-                <div id="panel-steps" class="p-4 hidden" role="tabpanel">
-                  <div class="grid grid-cols-2 gap-4">
-                    <!-- 左侧：步骤时间线 -->
-                    <div>
-                      <div class="section-label mb-3">
-                        <span class="dot"></span><span>执行时间线 / TIMELINE</span>
-                      </div>
-                      <div class="space-y-0">
-                        <!-- 步骤 1 -->
-                        <div class="timeline-item">
-                          <div class="t-dot"></div>
-                          <div class="flex items-center justify-between mb-0.5">
-                            <span class="text-xs font-semibold text-on-surface">01 选题构思</span>
-                            <span class="text-[10px] num-glow font-num">2.8s</span>
-                          </div>
-                          <div class="text-[10px] text-on-surface-variant mb-1">12:48:23 · 已完成</div>
-                          <div class="text-[11px] text-on-surface bg-surface-container rounded-md px-2 py-1.5 border" style="border-color: #3d3a39;">
-                            从 28 个候选中筛选出 <span class="num-glow font-num">3</span> 个高匹配选题
-                          </div>
-                        </div>
-                        <!-- 步骤 2 -->
-                        <div class="timeline-item">
-                          <div class="t-dot"></div>
-                          <div class="flex items-center justify-between mb-0.5">
-                            <span class="text-xs font-semibold text-on-surface">02 封面生成</span>
-                            <span class="text-[10px] num-glow font-num">11.4s</span>
-                          </div>
-                          <div class="text-[10px] text-on-surface-variant mb-1">12:48:26 · 已完成</div>
-                          <div class="text-[11px] text-on-surface bg-surface-container rounded-md px-2 py-1.5 border" style="border-color: #3d3a39;">
-                            生成 <span class="num-glow font-num">3</span> 张 3:4 封面候选 · 平均匹配度 <span class="num-glow font-num">90%</span>
-                          </div>
-                        </div>
-                        <!-- 步骤 3 - 进行中 -->
-                        <div class="timeline-item current">
-                          <div class="t-dot"></div>
-                          <div class="flex items-center justify-between mb-0.5">
-                            <span class="text-xs font-semibold text-primary">03 文案生成</span>
-                            <span class="text-[10px] num-glow font-num">8.2s · 68%</span>
-                          </div>
-                          <div class="text-[10px] text-on-surface-variant mb-1">12:48:38 · 进行中</div>
-                          <div class="text-[11px] text-on-surface bg-primary/5 border border-primary/30 rounded-md px-2 py-1.5">
-                            <span class="spinning inline-block text-primary">◜</span>
-                            <span class="text-primary">正在优化情感曲线…</span>
-                          </div>
-                          <div class="progress-track mt-1.5" style="height: 2px;">
-                            <div class="progress-fill" style="width: 68%;"></div>
-                          </div>
-                        </div>
-                        <!-- 步骤 4 -->
-                        <div class="timeline-item pending">
-                          <div class="t-dot"></div>
-                          <div class="flex items-center justify-between mb-0.5">
-                            <span class="text-xs font-medium text-on-surface-variant">04 配图生成</span>
-                            <span class="text-[10px] text-on-surface-variant font-num">--</span>
-                          </div>
-                          <div class="text-[10px]" style="color: #ff3b5c;">待开始 · 预计 15s</div>
-                        </div>
-                        <!-- 步骤 5 -->
-                        <div class="timeline-item queue">
-                          <div class="t-dot"></div>
-                          <div class="flex items-center justify-between mb-0.5">
-                            <span class="text-xs font-medium text-on-surface-variant">05 排期</span>
-                            <span class="text-[10px] text-on-surface-variant font-num">--</span>
-                          </div>
-                          <div class="text-[10px] text-on-surface-variant">排队中 · 预计 3s</div>
-                        </div>
-                      </div>
-                    </div>
-
-                    <!-- 右侧：步骤统计 -->
-                    <div class="space-y-3">
-                      <div class="section-label">
-                        <span class="dot"></span><span>本次任务统计</span>
-                      </div>
-                      <div class="grid grid-cols-2 gap-2">
-                        <div class="card-base p-3">
-                          <div class="text-[10px] text-on-surface-variant">累计耗时</div>
-                          <div class="num-metal text-xl leading-none mt-1 font-num">22.4s</div>
-                          <div class="text-[10px] text-on-surface-variant mt-1">预计总 <span class="text-on-surface font-num">~40s</span></div>
-                        </div>
-                        <div class="card-base p-3">
-                          <div class="text-[10px] text-on-surface-variant">累计 Token</div>
-                          <div class="num-metal text-xl leading-none mt-1 font-num">3,247</div>
-                          <div class="text-[10px] text-on-surface-variant mt-1">预计 <span class="text-on-surface font-num">~5,800</span></div>
-                        </div>
-                        <div class="card-base p-3">
-                          <div class="text-[10px] text-on-surface-variant">创意度</div>
-                          <div class="num-glow text-xl leading-none mt-1 font-num" id="stat-creativity">0.72</div>
-                          <div class="text-[10px] text-on-surface-variant mt-1">满分 1.00</div>
-                        </div>
-                        <div class="card-base p-3">
-                          <div class="text-[10px] text-on-surface-variant">预估成本</div>
-                          <div class="num-glow text-xl leading-none mt-1 font-num" id="stat-cost">¥0.18</div>
-                          <div class="text-[10px] text-on-surface-variant mt-1">实测 Token <span class="text-on-surface font-num" id="stat-tokens">1,247</span></div>
-                        </div>
-                      </div>
-
-                      <div class="card-base p-3 relative" style="background: rgba(0, 217, 146, 0.04);">
-                        <div class="section-label mb-2">
-                          <span class="dot"></span><span>本次亮点</span>
-                        </div>
-                        <ul class="text-[11px] text-on-surface space-y-1.5">
-                          <li class="flex items-start gap-1.5"><i data-lucide="check-circle" class="w-3 h-3 text-primary mt-0.5 shrink-0"></i><span>封面匹配度 <span class="num-glow font-num">92%</span>，超过历史均值 <span class="text-on-surface-variant font-num">+7%</span></span></li>
-                          <li class="flex items-start gap-1.5"><i data-lucide="check-circle" class="w-3 h-3 text-primary mt-0.5 shrink-0"></i><span>文案 A 方案得分 <span class="num-glow font-num">94</span>，选题命中 <span class="num-glow font-num">95%</span></span></li>
-                          <li class="flex items-start gap-1.5"><i data-lucide="check-circle" class="w-3 h-3 text-primary mt-0.5 shrink-0"></i><span>对比历史 28 条笔记，风格最接近「创业她说」</span></li>
-                        </ul>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- Tab: 参数调节（默认隐藏） -->
-                <div id="panel-params" class="p-4 hidden" role="tabpanel">
-                  <div class="grid grid-cols-2 gap-4">
-                    <!-- 左：风格模板 + 受众 -->
-                    <div class="space-y-4">
-                      <div>
-                        <div class="section-label mb-2.5">
-                          <span class="dot"></span><span>风格模板 / STYLE</span>
-                        </div>
-                        <div class="grid grid-cols-2 gap-2" id="style-grid">
-                          <button id="style-sharp" data-style="sharp" data-prompt="以犀利观点切入，3 段金句收尾，结尾有反转。" class="style-btn active">
-                            <div class="flex items-center justify-between">
-                              <span class="text-xs font-semibold">犀利观点型</span>
-                              <i data-lucide="check" class="w-3.5 h-3.5 text-primary style-check"></i>
-                            </div>
-                            <div class="text-[10px] text-on-surface-variant">直给·反共识</div>
-                          </button>
-                          <button id="style-story" data-style="story" data-prompt="以第一人称视角讲述真实故事，叙事节奏 4 段式，注重情感共鸣。" class="style-btn">
-                            <div class="flex items-center justify-between">
-                              <span class="text-xs font-semibold">故事叙事型</span>
-                              <i data-lucide="check" class="w-3.5 h-3.5 text-primary style-check"></i>
-                            </div>
-                            <div class="text-[10px] text-on-surface-variant">真实·有温度</div>
-                          </button>
-                          <button id="style-list" data-style="list" data-prompt="采用清单结构（1/2/3 编号），每点配一句场景化建议，结尾有总结。" class="style-btn">
-                            <div class="flex items-center justify-between">
-                              <span class="text-xs font-semibold">清单干货型</span>
-                              <i data-lucide="check" class="w-3.5 h-3.5 text-primary style-check"></i>
-                            </div>
-                            <div class="text-[10px] text-on-surface-variant">方法论·收藏</div>
-                          </button>
-                          <button id="style-contrast" data-style="contrast" data-prompt="采用前后 / 上下 / 内外对比结构，制造反差感与话题性。" class="style-btn">
-                            <div class="flex items-center justify-between">
-                              <span class="text-xs font-semibold">反差对比型</span>
-                              <i data-lucide="check" class="w-3.5 h-3.5 text-primary style-check"></i>
-                            </div>
-                            <div class="text-[10px] text-on-surface-variant">对比·反转型</div>
-                          </button>
-                        </div>
-                        <div class="mt-2 bg-surface-container rounded-md p-2.5 text-[11px] text-on-surface-variant leading-relaxed border" style="border-color: #3d3a39;">
-                          <div class="flex items-center gap-1 mb-1">
-                            <i data-lucide="quote" class="w-3 h-3 text-primary"></i>
-                            <span class="text-primary font-medium">当前提示词</span>
-                          </div>
-                          <div id="style-prompt-text">以犀利观点切入，3 段金句收尾，结尾有反转。</div>
-                        </div>
-                      </div>
-
-                      <div>
-                        <div class="section-label mb-2.5">
-                          <span class="dot"></span><span>目标受众 / AUDIENCE</span>
-                        </div>
-                        <div class="flex flex-wrap gap-1.5" id="audience-tags">
-                          <span class="audience-tag"><i data-lucide="user" class="w-3 h-3"></i>创业者</span>
-                          <span class="audience-tag"><i data-lucide="user" class="w-3 h-3"></i>女性</span>
-                          <span class="audience-tag"><i data-lucide="calendar" class="w-3 h-3"></i>25-35岁</span>
-                          <span class="audience-tag"><i data-lucide="briefcase" class="w-3 h-3"></i>互联网</span>
-                          <span class="audience-tag"><i data-lucide="map-pin" class="w-3 h-3"></i>一二线城市</span>
-                          <button id="btn-add-audience" class="inline-flex items-center gap-1 px-2 py-1 bg-surface-container text-on-surface-variant hover:text-primary border border-dashed rounded-md text-xs transition-colors" style="border-color: #3d3a39;">
-                            <i data-lucide="plus" class="w-3 h-3"></i>添加
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-
-                    <!-- 右：滑块参数 -->
-                    <div class="space-y-4">
-                      <div>
-                        <div class="section-label mb-2.5">
-                          <span class="dot"></span><span>生成参数 / PARAMS</span>
-                        </div>
-
-                        <div class="mb-4">
-                          <div class="flex items-center justify-between mb-1.5">
-                            <span class="text-xs text-on-surface-variant">标题字数</span>
-                            <span class="text-xs num-glow font-num font-bold" id="title-len-display">14 / 20 字</span>
-                          </div>
-                          <div class="slider-wrap" id="slider-title" data-min="6" data-max="20" data-value="14">
-                            <div class="slider-track">
-                              <div class="slider-fill" style="width: 53%;"></div>
-                              <div class="slider-thumb" style="left: 53%;"></div>
-                            </div>
-                          </div>
-                          <div class="flex justify-between mt-1 text-[9px] text-on-surface-variant font-num">
-                            <span>6</span><span>10</span><span>14</span><span>18</span><span>20</span>
-                          </div>
-                        </div>
-
-                        <div class="mb-4">
-                          <div class="flex items-center justify-between mb-1.5">
-                            <span class="text-xs text-on-surface-variant">正文字数</span>
-                            <span class="text-xs num-glow font-num font-bold" id="body-len-display">600 / 1200 字</span>
-                          </div>
-                          <div class="slider-wrap" id="slider-body" data-min="200" data-max="1200" data-value="600" data-step="100">
-                            <div class="slider-track">
-                              <div class="slider-fill" style="width: 40%;"></div>
-                              <div class="slider-thumb" style="left: 40%;"></div>
-                            </div>
-                          </div>
-                          <div class="flex justify-between mt-1 text-[9px] text-on-surface-variant font-num">
-                            <span>200</span><span>500</span><span>800</span><span>1200</span>
-                          </div>
-                        </div>
-
-                        <div class="mb-4">
-                          <div class="flex items-center justify-between mb-1.5">
-                            <span class="text-xs text-on-surface-variant">情绪调性</span>
-                            <span class="text-xs num-glow font-num font-bold" id="tone-display">犀利 80% · 共情</span>
-                          </div>
-                          <div class="slider-wrap" id="slider-tone" data-min="0" data-max="100" data-value="80">
-                            <div class="slider-track">
-                              <div class="slider-fill" style="width: 80%;"></div>
-                              <div class="slider-thumb" style="left: 80%;"></div>
-                            </div>
-                          </div>
-                          <div class="flex justify-between mt-1 text-[9px] text-on-surface-variant">
-                            <span>犀利</span><span>克制</span><span>温和</span><span>共情</span>
-                          </div>
-                        </div>
-                      </div>
-
-                      <!-- 操作按钮 -->
-                      <div class="card-active p-3 space-y-2.5" style="border: 1px solid #00d992; border-radius: var(--radius-lg);">
-                        <button id="btn-generate" class="w-full btn-primary rounded-lg py-3 font-bold text-sm tracking-wide flex items-center justify-center gap-2 transition-all btn-press">
-                          <i data-lucide="dices" class="w-4 h-4"></i>
-                          <span id="btn-generate-text">立即生成内容</span>
-                          <span class="text-[10px] ml-1 opacity-70 font-mono">⌘↵</span>
-                        </button>
-                        <div class="grid grid-cols-2 gap-2.5">
-                          <button id="btn-regenerate" class="bg-surface-container text-on-surface hover:bg-surface-container-high border rounded-lg py-2.5 text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors" style="border-color: #3d3a39;">
-                            <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>重新生成
-                          </button>
-                          <button id="btn-save-draft" class="bg-surface-container text-on-surface hover:bg-surface-container-high border rounded-lg py-2.5 text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors" style="border-color: #3d3a39;">
-                            <i data-lucide="bookmark" class="w-3.5 h-3.5"></i>存草稿
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <!-- 违禁词检测面板 -->
-              <div class="card-base overflow-hidden" id="compliance-panel">
-                <div class="px-4 py-2.5 border-b flex items-center justify-between" style="border-color: #3d3a39;">
-                  <div class="section-label" style="color: #ffb800;">
-                    <span class="dot" style="background: #ffb800; box-shadow: 0 0 6px rgba(255, 184, 0, 0.7);"></span>
-                    <span>违禁词检测 / COMPLIANCE</span>
-                  </div>
-                  <div class="flex items-center gap-2">
-                    <span class="flex items-center gap-1 text-[10px] text-primary">
-                      <span class="status-dot status-online"></span>已扫描
-                    </span>
-                    <span class="text-[10px] text-on-surface-variant" id="compliance-stat-text">
-                      已扫描 <span class="text-on-surface font-num">658</span> 字 · 命中 <span class="text-error font-num font-bold" id="compliance-hit">3</span> 处 · 规则库 <span class="text-on-surface font-num">1,284</span> 条
-                    </span>
-                  </div>
-                </div>
-                <div class="p-4 space-y-2.5" id="violation-list">
-                  <!-- 列表-违规1：高敏 -->
-                  <div class="violation-item flex items-start gap-3 rounded-md p-3" data-severity="high" data-violation-id="v1" style="background: rgba(255, 59, 92, 0.05); border: 1px solid rgba(255, 59, 92, 0.30);">
-                    <div class="w-8 h-8 rounded-md flex items-center justify-center shrink-0" style="background: #ff3b5c;">
-                      <i data-lucide="alert-triangle" class="w-3.5 h-3.5 text-on-primary"></i>
-                    </div>
-                    <div class="flex-1 min-w-0">
-                      <div class="flex items-center gap-2 mb-1">
-                        <span class="text-[10px] font-bold" style="color: #ff3b5c;">高敏词</span>
-                        <span class="text-[10px] text-on-surface-variant">·</span>
-                        <span class="text-[10px] text-on-surface-variant">第 3 行 / 第 2 段</span>
-                      </div>
-                      <div class="text-sm">
-                        <span class="text-on-surface">命中词：</span>
-                        <code class="px-1.5 py-0.5 text-xs rounded font-num" data-bad-word="赚钱" style="background: rgba(255, 59, 92, 0.15); color: #ff3b5c;">"赚钱"</code>
-                        <span class="text-on-surface-variant mx-1">→</span>
-                        <span class="text-on-surface">建议改：</span>
-                        <code class="px-1.5 py-0.5 text-xs rounded font-num" data-good-word="创收" style="background: rgba(0, 217, 146, 0.15); color: #00d992;">"创收"</code>
-                      </div>
-                      <div class="text-[10px] text-on-surface-variant mt-1">依据：广告法第 9 条·金融诱导敏感词</div>
-                    </div>
-                    <div class="flex gap-1.5 shrink-0">
-                      <button class="btn-accept-suggest text-[10px] px-2 py-1 rounded transition-colors font-num" style="background: rgba(0, 217, 146, 0.15); color: #00d992; border: 1px solid rgba(0, 217, 146, 0.30);">采纳</button>
-                      <button class="btn-ignore-warn text-[10px] text-on-surface-variant hover:text-error border rounded px-2 py-1 transition-colors" style="border-color: #3d3a39;">忽略</button>
-                    </div>
-                  </div>
-
-                  <!-- 列表-违规2：极限词 -->
-                  <div class="violation-item flex items-start gap-3 rounded-md p-3" data-severity="medium" data-violation-id="v2" style="background: rgba(255, 184, 0, 0.05); border: 1px solid rgba(255, 184, 0, 0.30);">
-                    <div class="w-8 h-8 rounded-md flex items-center justify-center shrink-0" style="background: #ffb800;">
-                      <i data-lucide="alert-circle" class="w-3.5 h-3.5 text-on-primary"></i>
-                    </div>
-                    <div class="flex-1 min-w-0">
-                      <div class="flex items-center gap-2 mb-1">
-                        <span class="text-[10px] font-bold" style="color: #ffb800;">极限词</span>
-                        <span class="text-[10px] text-on-surface-variant">·</span>
-                        <span class="text-[10px] text-on-surface-variant">第 7 行 / 第 1 段</span>
-                      </div>
-                      <div class="text-sm">
-                        <span class="text-on-surface">命中词：</span>
-                        <code class="px-1.5 py-0.5 text-xs rounded font-num" data-bad-word="绝对" style="background: rgba(255, 184, 0, 0.15); color: #ffb800;">"绝对"</code>
-                        <span class="text-on-surface-variant mx-1">→</span>
-                        <span class="text-on-surface">建议：</span>
-                        <code class="px-1.5 py-0.5 text-xs rounded font-num bg-surface-container text-on-surface" data-good-word="">直接删除</code>
-                      </div>
-                      <div class="text-[10px] text-on-surface-variant mt-1">依据：广告法第 8 条·极限用语</div>
-                    </div>
-                    <div class="flex gap-1.5 shrink-0">
-                      <button class="btn-accept-suggest text-[10px] px-2 py-1 rounded transition-colors font-num" style="background: rgba(0, 217, 146, 0.15); color: #00d992; border: 1px solid rgba(0, 217, 146, 0.30);">采纳</button>
-                      <button class="btn-ignore-warn text-[10px] text-on-surface-variant hover:text-error border rounded px-2 py-1 transition-colors" style="border-color: #3d3a39;">忽略</button>
-                    </div>
-                  </div>
-
-                  <!-- 列表-违规3：极限词组合 -->
-                  <div class="violation-item flex items-start gap-3 rounded-md p-3" data-severity="medium" data-violation-id="v3" style="background: rgba(255, 184, 0, 0.05); border: 1px solid rgba(255, 184, 0, 0.30);">
-                    <div class="w-8 h-8 rounded-md flex items-center justify-center shrink-0" style="background: #ffb800;">
-                      <i data-lucide="alert-circle" class="w-3.5 h-3.5 text-on-primary"></i>
-                    </div>
-                    <div class="flex-1 min-w-0">
-                      <div class="flex items-center gap-2 mb-1">
-                        <span class="text-[10px] font-bold" style="color: #ffb800;">极限词</span>
-                        <span class="text-[10px] text-on-surface-variant">·</span>
-                        <span class="text-[10px] text-on-surface-variant">第 12 行 / 第 3 段</span>
-                      </div>
-                      <div class="text-sm">
-                        <span class="text-on-surface">命中词：</span>
-                        <code class="px-1.5 py-0.5 text-xs rounded font-num" data-bad-word="第一" style="background: rgba(255, 184, 0, 0.15); color: #ffb800;">"第一"</code>
-                        <code class="px-1.5 py-0.5 text-xs rounded font-num" data-bad-word="最佳" style="background: rgba(255, 184, 0, 0.15); color: #ffb800;">"最佳"</code>
-                        <code class="px-1.5 py-0.5 text-xs rounded font-num" data-bad-word="顶级" style="background: rgba(255, 184, 0, 0.15); color: #ffb800;">"顶级"</code>
-                        <span class="text-on-surface-variant mx-1">→</span>
-                        <span class="text-on-surface">建议改：</span>
-                        <code class="px-1.5 py-0.5 text-xs rounded font-num" data-good-word="前列" style="background: rgba(0, 217, 146, 0.15); color: #00d992;">"前列"</code>
-                      </div>
-                      <div class="text-[10px] text-on-surface-variant mt-1">依据：广告法第 8 条·极限用语·共 3 个命中</div>
-                    </div>
-                    <div class="flex gap-1.5 shrink-0">
-                      <button class="btn-accept-suggest text-[10px] px-2 py-1 rounded transition-colors font-num" style="background: rgba(0, 217, 146, 0.15); color: #00d992; border: 1px solid rgba(0, 217, 146, 0.30);">采纳</button>
-                      <button class="btn-ignore-warn text-[10px] text-on-surface-variant hover:text-error border rounded px-2 py-1 transition-colors" style="border-color: #3d3a39;">忽略</button>
-                    </div>
-                  </div>
-                </div>
-                <div class="px-4 py-2.5 border-t flex items-center justify-between" style="border-color: #3d3a39;">
-                  <div class="flex items-center gap-3 text-[10px] text-on-surface-variant">
-                    <span>命中 <span class="text-error font-num font-bold" id="footer-hit">3</span> 处</span>
-                    <span style="color: #3d3a39;">|</span>
-                    <span>已扫描 <span class="text-on-surface font-num">658</span> 字</span>
-                    <span style="color: #3d3a39;">|</span>
-                    <span>规则版本 <span class="text-on-surface font-num">2024.06</span></span>
-                  </div>
-                  <button id="btn-rescan" class="text-xs text-primary hover:underline flex items-center gap-1">
-                    <i data-lucide="scan-line" class="w-3 h-3"></i>重新扫描
-                  </button>
-                </div>
-              </div>
-
+            <div class="col-span-4">
+              <span class="text-sm font-medium text-on-surface">2025最值得买的5款降噪耳机横评</span>
+            </div>
+            <div class="col-span-1">
+              <span class="text-xs px-1.5 py-0.5 rounded-sm bg-cyber-cyan/10 text-cyber-cyan font-medium">抖音</span>
+            </div>
+            <div class="col-span-1">
+              <span class="inline-flex items-center px-2 py-0.5 rounded-sm text-xs font-medium bg-warning/15 text-warning">待发布</span>
+            </div>
+            <div class="col-span-1">
+              <span class="text-sm font-semibold text-warning">88</span>
+              <span class="text-xs text-on-surface-variant">分</span>
+            </div>
+            <div class="col-span-2">
+              <span class="text-xs text-on-surface-variant">2025-01-15 10:18</span>
+            </div>
+            <div class="col-span-2 flex items-center gap-2">
+              <button id="btn-edit-2" class="text-primary text-xs font-medium hover:underline">编辑</button>
+              <button id="btn-rewrite-2" class="text-on-surface-variant text-xs font-medium hover:text-primary hover:underline">改写</button>
+              <button id="btn-delete-2" class="text-on-surface-variant text-xs font-medium hover:text-error hover:underline">删除</button>
             </div>
           </div>
-        </section>
-
-        <!-- @main-content:end -->
-      </main>
-    </div>
-  </div>
-  <!-- @nav:end 导航组件 -->
-
-  <div id="toast-container"></div>
-  <div id="modal-root"></div>
-
-  <script>
-    /* ============================================================
-       全局共享：Store / Toast / 高亮导航
-       ============================================================ */
-    const Store = {
-      topicPool: [],
-      pipeline: [],
-      adopted: [],
-      benchmarks: [],
-      calendar: [],
-      KEY: 'xhs_core_v1',
-      load() {
-        try {
-          const raw = localStorage.getItem(this.KEY);
-          if (raw) return Object.assign(this, JSON.parse(raw));
-        } catch(e){}
-        this._seed();
-        this.save();
-        return this;
-      },
-      save() {
-        const snapshot = { topicPool: this.topicPool, pipeline: this.pipeline, adopted: this.adopted, benchmarks: this.benchmarks, calendar: this.calendar };
-        localStorage.setItem(this.KEY, JSON.stringify(snapshot));
-        window.dispatchEvent(new CustomEvent('store:update', { detail: snapshot }));
-      },
-      _seed() {
-        this.topicPool = [
-          { id: 'T-1001', title: '30岁前我亲手关掉公司，才看懂这3件事', score: 94, source: '热门雷达', addedAt: Date.now() - 3600e3 },
-          { id: 'T-1002', title: '普通女生做小红书的第3年，月入6位数', score: 91, source: '对标拆解', addedAt: Date.now() - 7200e3 },
-          { id: 'T-1003', title: '我从大厂裸辞后才明白的5件事', score: 89, source: '长尾潜力', addedAt: Date.now() - 1800e3 }
-        ];
-        this.pipeline = [
-          { id: 'P-2001', topic: '30岁前我亲手关掉公司，才看懂这3件事', step: 3, stepName: '配图生成', status: 'in_progress' },
-          { id: 'P-2002', topic: '普通女生做小红书的第3年，月入6位数', step: 1, stepName: '选题构思', status: 'queue' }
-        ];
-        this.adopted = [];
-        this.benchmarks = ['女力研究所', '创业她说', '清醒Girl的商业课', '33岁姐姐说', '盐系女性成长'];
-        this.calendar = [];
-      },
-      addTopic(item) {
-        if (this.topicPool.find(t => t.id === item.id)) return false;
-        this.topicPool.unshift(Object.assign({ addedAt: Date.now() }, item));
-        this.save();
-        return true;
-      },
-      adoptTopic(item) {
-        if (this.adopted.find(t => t.id === item.id)) return false;
-        this.adopted.unshift(Object.assign({ adoptedAt: Date.now() }, item));
-        this.addTopic(item);
-        this.save();
-        return true;
-      },
-      pushPipeline(item) {
-        if (this.pipeline.find(p => p.id === item.id)) return false;
-        this.pipeline.unshift(item);
-        this.save();
-        return true;
-      }
-    };
-    Store.load();
-
-    window.toast = function(message, type) {
-      const id = 'toast-' + Date.now();
-      const iconName = type === 'success' ? 'check-circle' : (type === 'error' ? 'x-circle' : 'info');
-      const colorCls = type === 'success' ? 'text-primary' : (type === 'error' ? 'text-error' : 'text-on-surface-variant');
-      const $t = $('<div class="toast ' + (type || '') + '"></div>').attr('id', id);
-      const $i = $('<i></i>').addClass('w-4 h-4 ' + colorCls);
-      $i.attr('data-lucide', iconName);
-      $t.append($i).append('<span>' + message + '</span>');
-      $('#toast-container').append($t);
-      lucide.createIcons();
-      setTimeout(() => $('#' + id).remove(), 3000);
-    };
-
-    window.__highlightNav = function (key) {
-      const crumbMap = {
-        radar: '选题引擎',
-        factory: '内容工厂',
-        publish: '发布管理',
-        analytics: '数据复盘',
-        knowledge: '知识库',
-        settings: '系统设置'
-      };
-      document.querySelectorAll('.nav-item').forEach(el => {
-        el.classList.remove('nav-active');
-        if (el.getAttribute('data-nav') === key) el.classList.add('nav-active');
-      });
-      const crumb = document.getElementById('page-crumb');
-      if (crumb) crumb.textContent = crumbMap[key] || '';
-      lucide.createIcons();
-    };
-
-    window.openModal = function({ title, body, confirmText = '确认', cancelText = '取消', onConfirm }) {
-      const root = $('#modal-root');
-      const html = `
-        <div class="modal-backdrop" id="modal-backdrop">
-          <div class="modal-panel">
-            <div class="flex items-center gap-2 mb-3">
-              <i data-lucide="pencil-line" class="w-4 h-4 text-primary"></i>
-              <h3 class="text-base font-semibold text-on-surface">${title}</h3>
+          <!-- 列表-内容3 -->
+          <div class="content-row grid grid-cols-12 px-4 py-3 hover:bg-surface-container/50 transition-colors items-center border-t border-outline-variant/10" data-id="3" data-platform="wechat" data-status="published">
+            <div class="col-span-1 flex items-center justify-center">
+              <input type="checkbox" class="row-checkbox w-3.5 h-3.5 accent-primary">
             </div>
-            <div class="text-sm text-on-surface-variant mb-3">${body}</div>
-            <div class="flex justify-end gap-2 mt-4">
-              <button id="modal-cancel" class="bg-surface-container text-on-surface hover:bg-surface-container-high border border-outline rounded-md px-4 py-2 text-sm font-medium transition-colors">${cancelText}</button>
-              <button id="modal-confirm" class="btn-primary rounded-md px-4 py-2 text-sm">${confirmText}</button>
+            <div class="col-span-4">
+              <span class="text-sm font-medium text-on-surface">新手博主从0到1起号全攻略</span>
+            </div>
+            <div class="col-span-1">
+              <span class="text-xs px-1.5 py-0.5 rounded-sm bg-success/10 text-success font-medium">公众号</span>
+            </div>
+            <div class="col-span-1">
+              <span class="inline-flex items-center px-2 py-0.5 rounded-sm text-xs font-medium bg-success/15 text-success">已发布</span>
+            </div>
+            <div class="col-span-1">
+              <span class="text-sm font-semibold text-warning">95</span>
+              <span class="text-xs text-on-surface-variant">分</span>
+            </div>
+            <div class="col-span-2">
+              <span class="text-xs text-on-surface-variant">2025-01-14 16:45</span>
+            </div>
+            <div class="col-span-2 flex items-center gap-2">
+              <button id="btn-edit-3" class="text-primary text-xs font-medium hover:underline">编辑</button>
+              <button id="btn-rewrite-3" class="text-on-surface-variant text-xs font-medium hover:text-primary hover:underline">改写</button>
+              <button id="btn-delete-3" class="text-on-surface-variant text-xs font-medium hover:text-error hover:underline">删除</button>
+            </div>
+          </div>
+          <!-- 列表-内容4 -->
+          <div class="content-row grid grid-cols-12 px-4 py-3 hover:bg-surface-container/50 transition-colors items-center border-t border-outline-variant/10" data-id="4" data-platform="zhihu" data-status="draft">
+            <div class="col-span-1 flex items-center justify-center">
+              <input type="checkbox" class="row-checkbox w-3.5 h-3.5 accent-primary">
+            </div>
+            <div class="col-span-4">
+              <span class="text-sm font-medium text-on-surface">双11美妆清单：这些才是真回购好物</span>
+            </div>
+            <div class="col-span-1">
+              <span class="text-xs px-1.5 py-0.5 rounded-sm bg-cyber-purple/10 text-cyber-purple font-medium">知乎</span>
+            </div>
+            <div class="col-span-1">
+              <span class="inline-flex items-center px-2 py-0.5 rounded-sm text-xs font-medium bg-on-surface-variant/15 text-on-surface-variant">草稿</span>
+            </div>
+            <div class="col-span-1">
+              <span class="text-sm font-semibold text-warning">76</span>
+              <span class="text-xs text-on-surface-variant">分</span>
+            </div>
+            <div class="col-span-2">
+              <span class="text-xs text-on-surface-variant">2025-01-14 09:20</span>
+            </div>
+            <div class="col-span-2 flex items-center gap-2">
+              <button id="btn-edit-4" class="text-primary text-xs font-medium hover:underline">编辑</button>
+              <button id="btn-rewrite-4" class="text-on-surface-variant text-xs font-medium hover:text-primary hover:underline">改写</button>
+              <button id="btn-delete-4" class="text-on-surface-variant text-xs font-medium hover:text-error hover:underline">删除</button>
+            </div>
+          </div>
+          <!-- 列表-内容5 -->
+          <div class="content-row grid grid-cols-12 px-4 py-3 hover:bg-surface-container/50 transition-colors items-center border-t border-outline-variant/10" data-id="5" data-platform="xiaohongshu" data-status="generated">
+            <div class="col-span-1 flex items-center justify-center">
+              <input type="checkbox" class="row-checkbox w-3.5 h-3.5 accent-primary">
+            </div>
+            <div class="col-span-4">
+              <span class="text-sm font-medium text-on-surface">办公室白领的一周OOTD穿搭分享</span>
+            </div>
+            <div class="col-span-1">
+              <span class="text-xs px-1.5 py-0.5 rounded-sm bg-cyber-magenta/10 text-cyber-magenta font-medium">小红书</span>
+            </div>
+            <div class="col-span-1">
+              <span class="inline-flex items-center px-2 py-0.5 rounded-sm text-xs font-medium bg-cyber-cyan/15 text-cyber-cyan">已生成</span>
+            </div>
+            <div class="col-span-1">
+              <span class="text-sm font-semibold text-warning">84</span>
+              <span class="text-xs text-on-surface-variant">分</span>
+            </div>
+            <div class="col-span-2">
+              <span class="text-xs text-on-surface-variant">2025-01-13 20:05</span>
+            </div>
+            <div class="col-span-2 flex items-center gap-2">
+              <button id="btn-edit-5" class="text-primary text-xs font-medium hover:underline">编辑</button>
+              <button id="btn-rewrite-5" class="text-on-surface-variant text-xs font-medium hover:text-primary hover:underline">改写</button>
+              <button id="btn-delete-5" class="text-on-surface-variant text-xs font-medium hover:text-error hover:underline">删除</button>
+            </div>
+          </div>
+          <!-- 列表-内容6 -->
+          <div class="content-row grid grid-cols-12 px-4 py-3 hover:bg-surface-container/50 transition-colors items-center border-t border-outline-variant/10" data-id="6" data-platform="douyin" data-status="pending">
+            <div class="col-span-1 flex items-center justify-center">
+              <input type="checkbox" class="row-checkbox w-3.5 h-3.5 accent-primary">
+            </div>
+            <div class="col-span-4">
+              <span class="text-sm font-medium text-on-surface">3分钟学会手机拍出电影感Vlog</span>
+            </div>
+            <div class="col-span-1">
+              <span class="text-xs px-1.5 py-0.5 rounded-sm bg-cyber-cyan/10 text-cyber-cyan font-medium">抖音</span>
+            </div>
+            <div class="col-span-1">
+              <span class="inline-flex items-center px-2 py-0.5 rounded-sm text-xs font-medium bg-warning/15 text-warning">待发布</span>
+            </div>
+            <div class="col-span-1">
+              <span class="text-sm font-semibold text-warning">91</span>
+              <span class="text-xs text-on-surface-variant">分</span>
+            </div>
+            <div class="col-span-2">
+              <span class="text-xs text-on-surface-variant">2025-01-13 15:50</span>
+            </div>
+            <div class="col-span-2 flex items-center gap-2">
+              <button id="btn-edit-6" class="text-primary text-xs font-medium hover:underline">编辑</button>
+              <button id="btn-rewrite-6" class="text-on-surface-variant text-xs font-medium hover:text-primary hover:underline">改写</button>
+              <button id="btn-delete-6" class="text-on-surface-variant text-xs font-medium hover:text-error hover:underline">删除</button>
             </div>
           </div>
         </div>
-      `;
-      root.html(html);
-      lucide.createIcons();
-      $('#modal-cancel').on('click', () => root.empty());
-      $('#modal-backdrop').on('click', function(e) { if (e.target === this) root.empty(); });
-      $('#modal-confirm').on('click', function() {
-        if (typeof onConfirm === 'function') onConfirm();
-        root.empty();
-      });
-    };
+      </section>
 
-    $(function() {
-      $('#btn-bell').on('click', function() {
-        toast('暂无新消息，去选题引擎看看新热点吧～', 'info');
-      });
-      $('#btn-refresh').on('click', function() {
-        const $i = $(this).find('i');
-        $i.css('transition', 'transform 0.6s ease').css('transform', 'rotate(360deg)');
-        setTimeout(() => $i.css('transform', ''), 700);
-        toast('已刷新最新数据', 'success');
-        window.dispatchEvent(new CustomEvent('page:refresh'));
-      });
-      $('#btn-pipeline').on('click', function() {
-        if (Store.pipeline.length === 0) {
-          toast('流水线还是空的，先去选题引擎添加选题吧', 'info');
-          setTimeout(() => location.href = 'home.html', 800);
-          return;
-        }
-        location.href = 'content-factory.html';
-      });
-      $('#btn-ai-assistant').on('click', function() {
-        toast('小咸正在赶来…（开发中，敬请期待）', 'info');
-      });
-      $('#global-search').on('keydown', function(e) {
-        if (e.key === 'Enter' && this.value.trim()) {
-          toast(`正在搜索 "${this.value}" …`, 'info');
-        }
-      });
-    });
+      <!-- 内容日历/排期区 -->
+      <section class="mt-8">
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="text-base font-semibold text-on-surface flex items-center gap-2">
+            <i data-lucide="calendar" class="w-4 h-4 text-cyber-purple"></i>
+            内容排期日历
+          </h2>
+          <div class="flex items-center gap-2">
+            <button id="btn-prev-week" class="p-1 rounded hover:bg-surface-container transition-colors">
+              <i data-lucide="chevron-left" class="w-4 h-4 text-on-surface-variant"></i>
+            </button>
+            <span id="calendar-week-label" class="text-sm font-medium text-on-surface">1月13日 - 1月19日</span>
+            <button id="btn-next-week" class="p-1 rounded hover:bg-surface-container transition-colors">
+              <i data-lucide="chevron-right" class="w-4 h-4 text-on-surface-variant"></i>
+            </button>
+          </div>
+        </div>
+        <div class="bg-surface rounded-lg shadow-card overflow-hidden border border-outline-variant/10">
+          <!-- 日历表头 -->
+          <div class="grid grid-cols-7 bg-surface-container">
+            <div class="px-3 py-2 text-center text-xs font-semibold text-on-surface-variant border-r border-outline-variant/10">周一<br><span class="text-[10px] text-on-surface-variant/60">1/13</span></div>
+            <div class="px-3 py-2 text-center text-xs font-semibold text-on-surface-variant border-r border-outline-variant/10">周二<br><span class="text-[10px] text-on-surface-variant/60">1/14</span></div>
+            <div class="px-3 py-2 text-center text-xs font-semibold text-on-surface-variant border-r border-outline-variant/10">周三<br><span class="text-[10px] text-on-surface-variant/60">1/15</span></div>
+            <div class="px-3 py-2 text-center text-xs font-semibold text-primary border-r border-outline-variant/10">周四<br><span class="text-[10px] text-primary/60">1/16</span></div>
+            <div class="px-3 py-2 text-center text-xs font-semibold text-on-surface-variant border-r border-outline-variant/10">周五<br><span class="text-[10px] text-on-surface-variant/60">1/17</span></div>
+            <div class="px-3 py-2 text-center text-xs font-semibold text-on-surface-variant border-r border-outline-variant/10">周六<br><span class="text-[10px] text-on-surface-variant/60">1/18</span></div>
+            <div class="px-3 py-2 text-center text-xs font-semibold text-on-surface-variant">周日<br><span class="text-[10px] text-on-surface-variant/60">1/19</span></div>
+          </div>
+          <!-- 日历内容行 -->
+          <div class="grid grid-cols-7 min-h-[120px]">
+            <!-- 周一 -->
+            <div class="p-2 border-r border-outline-variant/10 border-t border-outline-variant/10">
+              <div class="text-[10px] px-1.5 py-1 rounded bg-success/15 text-success mb-1 cursor-pointer hover:bg-success/25 transition-colors">新手博主从0到1起号...</div>
+            </div>
+            <!-- 周二 -->
+            <div class="p-2 border-r border-outline-variant/10 border-t border-outline-variant/10">
+              <div class="text-[10px] px-1.5 py-1 rounded bg-on-surface-variant/15 text-on-surface-variant mb-1 cursor-pointer hover:bg-on-surface-variant/25 transition-colors">双11美妆清单草稿</div>
+            </div>
+            <!-- 周三 -->
+            <div class="p-2 border-r border-outline-variant/10 border-t border-outline-variant/10">
+              <div class="text-[10px] px-1.5 py-1 rounded bg-cyber-cyan/15 text-cyber-cyan mb-1 cursor-pointer hover:bg-cyber-cyan/25 transition-colors">熬夜党必看精华液</div>
+              <div class="text-[10px] px-1.5 py-1 rounded bg-warning/15 text-warning mb-1 cursor-pointer hover:bg-warning/25 transition-colors">5款降噪耳机横评</div>
+            </div>
+            <!-- 周四（今天） -->
+            <div class="p-2 border-r border-outline-variant/10 border-t border-outline-variant/10 bg-primary/5">
+              <div class="text-[10px] px-1.5 py-1 rounded bg-cyber-cyan/15 text-cyber-cyan mb-1 cursor-pointer hover:bg-cyber-cyan/25 transition-colors">白领一周OOTD</div>
+            </div>
+            <!-- 周五 -->
+            <div class="p-2 border-r border-outline-variant/10 border-t border-outline-variant/10">
+              <div class="text-[10px] px-1.5 py-1 rounded bg-warning/15 text-warning mb-1 cursor-pointer hover:bg-warning/25 transition-colors">3分钟手机拍Vlog</div>
+            </div>
+            <!-- 周六 -->
+            <div class="p-2 border-r border-outline-variant/10 border-t border-outline-variant/10">
+              <span class="text-[10px] text-on-surface-variant/30 italic">暂无排期</span>
+            </div>
+            <!-- 周日 -->
+            <div class="p-2 border-t border-outline-variant/10">
+              <span class="text-[10px] text-on-surface-variant/30 italic">暂无排期</span>
+            </div>
+          </div>
+        </div>
+      </section>
 
-    window.__highlightNav('factory');
-    lucide.createIcons();
-  </script>
+      <!-- 编辑器弹窗 -->
+      <div id="editor-modal" class="fixed inset-0 bg-black/60 flex items-center justify-center p-4 z-50 hidden">
+        <div class="bg-surface rounded-xl shadow-dialog max-w-2xl w-full max-h-[85vh] overflow-y-auto">
+          <!-- 编辑器头部 -->
+          <div class="flex items-center justify-between px-6 py-4 border-b border-outline-variant/20">
+            <h3 class="text-base font-semibold text-on-surface">内容编辑</h3>
+            <button id="btn-close-editor" class="p-1 rounded hover:bg-surface-container transition-colors">
+              <i data-lucide="x" class="w-4 h-4 text-on-surface-variant"></i>
+            </button>
+          </div>
+          <!-- 编辑器内容 -->
+          <div class="p-6">
+            <div class="mb-4">
+              <label class="block text-xs text-on-surface-variant mb-1.5">内容标题</label>
+              <input id="editor-title" type="text" value="熬夜党必看！这款精华液让我皮肤回春了" class="w-full bg-surface-container border-none rounded-md px-3 py-2 text-sm text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/30 transition-colors">
+            </div>
+            <div class="mb-4">
+              <label class="block text-xs text-on-surface-variant mb-1.5">正文内容</label>
+              <textarea id="editor-content" rows="8" class="w-full bg-surface-container border-none rounded-md px-3 py-2 text-sm text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/30 transition-colors resize-none">姐妹们！作为一个资深熬夜选手，皮肤状态一度跌到谷底😭 但自从入手了这款XX精华液，真的绝了！
+
+✨核心成分：烟酰胺+视黄醇+玻尿酸
+💧质地：清爽不粘腻，吸收超快
+🕐使用感：连续用了一周，暗沉明显改善
+
+最让我惊喜的是它的保湿力，早上起来脸还是润润的，上妆也不卡粉了！
+
+#熬夜护肤 #精华液推荐 #护肤好物</textarea>
+            </div>
+            <!-- AI工具栏 -->
+            <div class="flex items-center gap-2 mb-4">
+              <span class="text-xs text-on-surface-variant mr-1">AI工具：</span>
+              <button id="btn-ai-rewrite" class="bg-surface-container text-on-surface px-3 py-1.5 rounded-md text-xs font-medium hover:bg-surface-container-high active:scale-[0.98] transition-all inline-flex items-center gap-1">
+                <i data-lucide="refresh-cw" class="w-3 h-3"></i>改写
+              </button>
+              <button id="btn-ai-style" class="bg-surface-container text-on-surface px-3 py-1.5 rounded-md text-xs font-medium hover:bg-surface-container-high active:scale-[0.98] transition-all inline-flex items-center gap-1">
+                <i data-lucide="palette" class="w-3 h-3"></i>换风格
+              </button>
+              <button id="btn-ai-continue" class="bg-surface-container text-on-surface px-3 py-1.5 rounded-md text-xs font-medium hover:bg-surface-container-high active:scale-[0.98] transition-all inline-flex items-center gap-1">
+                <i data-lucide="arrow-right" class="w-3 h-3"></i>续写
+              </button>
+              <button id="btn-ai-regenerate" class="bg-surface-container text-on-surface px-3 py-1.5 rounded-md text-xs font-medium hover:bg-surface-container-high active:scale-[0.98] transition-all inline-flex items-center gap-1">
+                <i data-lucide="wand-2" class="w-3 h-3"></i>局部重生成
+              </button>
+            </div>
+            <!-- 审核结果区 -->
+            <div id="audit-result-area" class="hidden mb-4">
+              <label class="block text-xs text-on-surface-variant mb-1.5">AI审核结果</label>
+              <div class="bg-surface-container rounded-md p-3 text-sm">
+                <div class="flex items-center gap-2 mb-2">
+                  <span class="inline-flex items-center px-2 py-0.5 rounded-sm text-xs font-medium bg-error/15 text-error">违禁词 2 处</span>
+                  <span class="inline-flex items-center px-2 py-0.5 rounded-sm text-xs font-medium bg-success/15 text-success">安全词 28 处</span>
+                </div>
+                <p class="text-xs text-on-surface-variant leading-relaxed">
+                  检测到违禁词：<span class="text-error font-medium">"绝了"</span>（夸大效果）、<span class="text-error font-medium">"回春"</span>（医疗暗示），建议替换为更中性的表达。其余内容安全合规。
+                </p>
+              </div>
+            </div>
+          </div>
+          <!-- 编辑器底部 -->
+          <div class="flex items-center justify-between px-6 py-4 border-t border-outline-variant/20">
+            <button id="btn-editor-audit" class="bg-surface-container text-on-surface px-4 py-2 rounded-md text-sm font-medium hover:bg-surface-container-high active:scale-[0.98] transition-all inline-flex items-center gap-2">
+              <i data-lucide="shield-check" class="w-4 h-4"></i>违禁词扫描
+            </button>
+            <div class="flex items-center gap-3">
+              <button id="btn-editor-cancel" class="bg-surface-container text-on-surface px-4 py-2 rounded-md text-sm font-medium hover:bg-surface-container-high active:scale-[0.98] transition-all">取消</button>
+              <button id="btn-editor-save" class="bg-primary text-on-primary px-4 py-2 rounded-md text-sm font-medium hover:opacity-90 active:scale-[0.98] transition-all inline-flex items-center gap-2">
+                <i data-lucide="save" class="w-4 h-4"></i>保存
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 生成进度弹窗 -->
+      <div id="generating-modal" class="fixed inset-0 bg-black/60 flex items-center justify-center p-4 z-50 hidden">
+        <div class="bg-surface rounded-xl shadow-dialog max-w-sm w-full p-6 text-center">
+          <div class="w-12 h-12 mx-auto mb-4 rounded-full bg-primary/20 flex items-center justify-center">
+            <i data-lucide="loader-2" class="w-6 h-6 text-primary animate-spin"></i>
+          </div>
+          <h3 class="text-base font-semibold text-on-surface mb-2">正在批量生成...</h3>
+          <p class="text-sm text-on-surface-variant mb-4">AI正在为你生成5条内容，请稍候</p>
+          <div class="w-full bg-surface-container rounded-full h-1.5 mb-2">
+            <div id="gen-progress-bar" class="bg-primary h-1.5 rounded-full transition-all duration-1000" style="width: 0%"></div>
+          </div>
+          <span id="gen-progress-text" class="text-xs text-on-surface-variant">0%</span>
+        </div>
+      </div>
+
+    </main>
+    <!-- @main-content:end -->
+  </div>
 
   <script>
-    /* ============== 页面专属交互逻辑 ============== */
-    $(function () {
+  $(function() {
 
-      const TOPIC_ID = 'T-FACTORY-001';
-      const TOPIC_TITLE = '30岁创业第3年，我终于学会不解释';
-      const COVER_LS_KEY = 'xhs_cover_' + TOPIC_ID;
-      const COPY_LS_KEY  = 'xhs_copy_'  + TOPIC_ID;
-
-      /* ---------- 主 Tab 切换：生成结果 / 步骤详情 / 参数调节 ---------- */
-      $('#result-tabs').on('click', '.result-tab', function () {
-        const tab = $(this).data('tab');
-        $('#result-tabs .result-tab').removeClass('active').attr('aria-selected', 'false');
-        $(this).addClass('active').attr('aria-selected', 'true');
-        $('#panel-cover, #panel-steps, #panel-params').addClass('hidden');
-        if (tab === 'cover') {
-          $('#panel-cover').removeClass('hidden');
-        } else if (tab === 'steps') {
-          $('#panel-steps').removeClass('hidden');
-        } else if (tab === 'params') {
-          $('#panel-params').removeClass('hidden');
-        }
-      });
-
-      /* ---------- 子 Tab 切换：封面候选 / 文案 A vs B（位于"生成结果"内） ---------- */
-      $('#subtab-cover, #subtab-copy').on('click', function () {
-        const sub = $(this).data('subtab');
-        $('#subtab-cover, #subtab-copy').removeClass('active');
-        $(this).addClass('active');
-        if (sub === 'cover') {
-          $('#subpanel-cover').removeClass('hidden');
-          $('#subpanel-copy').addClass('hidden');
-        } else {
-          $('#subpanel-cover').addClass('hidden');
-          $('#subpanel-copy').removeClass('hidden');
-        }
-      });
-
-      /* ---------- 风格模板切换 ---------- */
-      $('#style-grid').on('click', '.style-btn', function () {
-        $('.style-btn').removeClass('active');
-        $(this).addClass('active');
-        const prompt = $(this).data('prompt') || '';
-        $('#style-prompt-text').text(prompt);
-        lucide.createIcons();
-        toast('已切换到「' + $(this).find('span').first().text().trim() + '」', 'info');
-      });
-
-      /* ---------- 通用滑块交互 ---------- */
-      function bindSlider(sel, displaySel, formatter) {
-        const $wrap = $(sel);
-        const $track = $wrap.find('.slider-track');
-        const $fill = $track.find('.slider-fill');
-        const $thumb = $track.find('.slider-thumb');
-        const min = parseFloat($wrap.data('min'));
-        const max = parseFloat($wrap.data('max'));
-        let dragging = false;
-        const update = function (clientX) {
-          const rect = $track[0].getBoundingClientRect();
-          let pct = ((clientX - rect.left) / rect.width) * 100;
-          pct = Math.max(0, Math.min(100, pct));
-          const v = min + (max - min) * (pct / 100);
-          $fill.css('width', pct + '%');
-          $thumb.css('left', pct + '%');
-          $(displaySel).text(formatter(v));
-        };
-        $thumb.on('mousedown', function (e) { dragging = true; e.preventDefault(); });
-        $track.on('mousedown', function (e) { dragging = true; update(e.clientX); });
-        $(document).on('mousemove', function (e) { if (dragging) update(e.clientX); });
-        $(document).on('mouseup', function () { dragging = false; });
-      }
-
-      bindSlider('#slider-title', '#title-len-display', function (v) {
-        return Math.round(v) + ' / 20 字';
-      });
-      bindSlider('#slider-body', '#body-len-display', function (v) {
-        return Math.round(v / 50) * 50 + ' / 1200 字';
-      });
-      bindSlider('#slider-tone', '#tone-display', function (v) {
-        const left = v < 33 ? '犀利' : v < 66 ? '克制' : v < 80 ? '温和' : '共情';
-        return left + ' ' + Math.round(v) + '%';
-      });
-
-      /* ---------- 添加受众标签 ---------- */
-      $('#btn-add-audience').on('click', function () {
-        // 复杂交互：后续应实现
-        // 1. 弹出一个下拉/输入弹窗，列出预设受众（行业/性别/年龄层/地域/兴趣）
-        // 2. 支持多选、搜索、自定义输入
-        // 3. 选中的标签按顺序追加到 #audience-tags 列表
-        // 4. 已存在标签右上角可点击 × 移除
-        // 5. 修改后联动右侧"人设匹配度"重新计算
-        openModal({
-          title: '添加目标受众',
-          body: '<input id="modal-audience-input" type="text" placeholder="如：互联网 / 90后 / 设计师" class="w-full bg-surface-container border-none rounded-md px-3 py-2 text-sm text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:ring-2 focus:ring-primary/30 mt-2" />',
-          confirmText: '添加',
-          onConfirm: function() {
-            const v = $('#modal-audience-input').val().trim();
-            if (!v) { toast('请输入受众标签', 'error'); return; }
-            const html = '<span class="audience-tag"><i data-lucide="user" class="w-3 h-3"></i>' + v + '</span>';
-            $('#btn-add-audience').before(html);
-            lucide.createIcons();
-            toast('已添加受众：' + v, 'success');
-          }
-        });
-      });
-
-      /* ---------- 3 张封面：采用此封面 ---------- */
-      $('#cover-grid').on('click', '.btn-use-cover', function () {
-        const $card = $(this).closest('.cover-card');
-        const id = $card.data('cover-id');
-        $('.cover-card').removeClass('adopted').find('.btn-use-cover')
-          .removeClass('bg-success hover:bg-success/90')
-          .addClass('bg-primary hover:bg-primary/90')
-          .html('<i data-lucide="check" class="w-3 h-3"></i><span class="btn-use-cover-text">采用此封面</span>');
-        $card.addClass('adopted');
-        $(this).removeClass('bg-primary hover:bg-primary/90')
-               .addClass('bg-success hover:bg-success/90')
-               .html('<i data-lucide="check-circle-2" class="w-3 h-3"></i><span class="btn-use-cover-text">✓ 已采用</span>');
-        lucide.createIcons();
-
-        const img = $card.find('img').attr('src') || '';
-        const text = $card.find('[data-cover-text]').attr('data-cover-text') || '';
-        try { localStorage.setItem(COVER_LS_KEY, JSON.stringify({ id: id, img: img, text: text.replace(/<br\s*\/?>/gi, '\n'), adoptedAt: Date.now() })); } catch (e) {}
-        toast('已采用 C.' + id + ' 封面', 'success');
-      });
-
-      /* ---------- 调整文案 / 调整位置 ---------- */
-      $('#cover-grid').on('click', '.btn-adjust-text', function () {
-        const $card = $(this).closest('.cover-card');
-        const coverId = $card.data('cover-id');
-        const currentText = $card.find('[data-cover-text]').attr('data-cover-text') || '';
-        const display = currentText.replace(/<br\s*\/?>/gi, '\n');
-        // 复杂交互：后续应实现
-        // 1. 弹出内联编辑器覆盖在该封面上
-        // 2. 左侧实时渲染封面图，右侧编辑 标题/副标题/标签文字
-        // 3. 支持多语言、字号、字色、字距、对齐位置
-        // 4. 编辑实时同步到左侧预览
-        // 5. 保存后调用图像生成 API
-        openModal({
-          title: '调整 C.' + coverId + ' 封面文案',
-          body: '<textarea id="modal-cover-text" rows="4" class="w-full bg-surface-container border-none rounded-md px-3 py-2 text-sm text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:ring-2 focus:ring-primary/30 mt-2 font-medium">' + display + '</textarea>' +
-                '<p class="text-[10px] text-on-surface-variant mt-1.5">提示：使用 \\n 换行，建议 8-14 字</p>',
-          confirmText: '保存',
-          onConfirm: function() {
-            const newText = $('#modal-cover-text').val().trim();
-            if (!newText) { toast('文案不能为空', 'error'); return; }
-            const html = newText.replace(/\n/g, '<br/>');
-            $card.find('[data-cover-text]').html(html);
-            toast('C.' + coverId + ' 封面文案已更新', 'success');
-          }
-        });
-      });
-      $('#cover-grid').on('click', '.btn-adjust-pos', function () {
-        const $card = $(this).closest('.cover-card');
-        const coverId = $card.data('cover-id');
-        // 复杂交互：后续应实现
-        // 1. 在封面上叠加 9 宫格定位指示
-        // 2. 用户点击/拖动选择文案落位区域
-        // 3. 支持自由拖动微调，吸附到 1/3 网格线
-        // 4. 实时更新预览，确认后保存新位置
-        openModal({
-          title: '调整 C.' + coverId + ' 文字位置',
-          body: '<div class="grid grid-cols-3 gap-2 mt-2">' +
-                  ['左上','中上','右上','左中','正中','右中','左下','中下','右下'].map(function (p, i) {
-                    return '<button class="pos-btn bg-surface-container hover:bg-primary/15 hover:text-primary text-on-surface text-xs py-3 rounded-md border border-outline transition-colors" data-pos="' + p + '">' + p + '</button>';
-                  }).join('') +
-                '</div>' +
-                '<p class="text-[10px] text-on-surface-variant mt-2">提示：当前默认 "左下"，后续可叠加拖拽微调</p>',
-          confirmText: '应用',
-          onConfirm: function() {
-            const pos = $('.pos-btn.active').data('pos') || '左下';
-            toast('C.' + coverId + ' 文字位置已设为「' + pos + '」', 'success');
-          }
-        });
-        $(document).off('click.posBtn').on('click.posBtn', '.pos-btn', function() {
-          $('.pos-btn').removeClass('active bg-primary/15 text-primary').addClass('bg-surface-container text-on-surface');
-          $(this).addClass('active').removeClass('bg-surface-container text-on-surface');
-        });
-        $('.pos-btn[data-pos="左下"]').addClass('active').removeClass('bg-surface-container text-on-surface');
-      });
-
-      $('#btn-regenerate-covers').on('click', function () {
-        // 复杂交互：后续应调用图像生成 API，返回 3 张新图
-        toast('正在重新生成 3 张封面…', 'info');
-        setTimeout(function() { toast('已生成 3 张新候选封面', 'success'); }, 1200);
-      });
-
-      /* ---------- 选中 A/B 方案 ---------- */
-      $('#copy-compare').on('click', '.btn-pick-version', function () {
-        const v = $(this).data('version');
-        $('.copy-card').removeClass('selected');
-        $('.copy-card[data-version="' + v + '"]').addClass('selected');
-        const title = $('.copy-card[data-version="' + v + '"] ol li').first().text().trim();
-        try { localStorage.setItem(COPY_LS_KEY, JSON.stringify({ version: v, title: title, pickedAt: Date.now() })); } catch (e) {}
-        lucide.createIcons();
-        toast('已选' + v + '方案 · 文案已锁定', 'success');
-      });
-
-      $('#btn-regenerate-copies').on('click', function () {
-        toast('正在重新生成 A/B 文案…', 'info');
-        setTimeout(function() { toast('已生成新的 A/B 方案', 'success'); }, 1200);
-      });
-
-      /* ---------- 任务列表：点击切换当前任务 ---------- */
-      $('#task-list').on('click', '.task-item', function () {
-        $('.task-item').removeClass('card-active');
-        $(this).addClass('card-active');
-        const topic = $(this).data('topic') || '';
-        const id = $(this).data('task-id') || '';
-        $('#detail-topic-title').text(topic);
-        $('#detail-task-id').text(id);
-        toast('已切换到任务 ' + id, 'info');
-      });
-
-      /* ---------- 重新扫描 ---------- */
-      $('#btn-rescan').on('click', function () {
-        // 简单交互：toast 提示
-        // 后续应实现：
-        // 1. 显示扫描中动画（spinner + 进度条）
-        // 2. 调用违禁词检测 API
-        // 3. 扫描完成后重新渲染 #violation-list
-        toast('正在重新扫描…', 'info');
-        setTimeout(function() { toast('扫描完成 · 命中 0 处', 'success'); }, 1200);
-      });
-
-      /* ---------- 立即生成内容 ---------- */
-      function runGenerate(reason) {
-        const $btn = $('#btn-generate');
-        if ($btn.data('busy')) return;
-        $btn.data('busy', 1);
-        const $icon = $btn.find('i[data-lucide="dices"]');
-        const $text = $('#btn-generate-text');
-        const oldText = $text.text();
-        $icon.attr('data-lucide', 'loader-2').addClass('spinning');
-        $text.text('生成中…');
-        lucide.createIcons();
-        $btn.prop('disabled', true).addClass('opacity-80');
-
-        setTimeout(function() {
-          $icon.attr('data-lucide', 'dices').removeClass('spinning');
-          $text.text(oldText);
-          $btn.prop('disabled', false).removeClass('opacity-80').data('busy', 0);
-          lucide.createIcons();
-
-          const curTokens = parseInt(String($('#stat-tokens').text()).replace(/,/g, ''), 10) || 1247;
-          const addTokens = 800 + Math.floor(Math.random() * 600);
-          $('#stat-tokens').text((curTokens + addTokens).toLocaleString());
-          const curCost = parseFloat(String($('#stat-cost').text()).replace(/[¥,]/g, '')) || 0.18;
-          const addCost = (addTokens * 0.00015);
-          $('#stat-cost').text('¥' + (curCost + addCost).toFixed(2));
-          const curC = parseFloat($('#stat-creativity').text()) || 0.72;
-          $('#stat-creativity').text(Math.min(0.95, curC + 0.03).toFixed(2));
-
-          Store.pushPipeline({
-            id: 'P-' + Date.now(),
-            topic: TOPIC_TITLE,
-            step: 3,
-            stepName: '配图生成',
-            status: 'in_progress'
-          });
-
-          $('html, body').animate({ scrollTop: $('#result-panel').offset().top - 16 }, 400);
-          toast('已生成 2 版文案 + 3 张封面', 'success');
-        }, 1500);
-      }
-      $('#btn-generate').on('click', function() { runGenerate('manual'); });
-
-      $(document).on('keydown', function(e) {
-        if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
-          e.preventDefault();
-          runGenerate('shortcut');
-        }
-      });
-
-      $('#btn-regenerate').on('click', function() { runGenerate('regenerate'); });
-
-      $('#btn-save-draft').on('click', function () {
-        const $btn = $(this);
-        if ($btn.data('saved')) return;
-        const pushed = Store.pushPipeline({
-          id: 'P-' + Date.now(),
-          topic: TOPIC_TITLE,
-          step: 3,
-          stepName: '配图生成',
-          status: 'in_progress',
-          source: 'draft_save'
-        });
-        $btn.data('saved', 1)
-            .html('<i data-lucide="check" class="w-3.5 h-3.5"></i>✓ 已保存草稿')
-            .addClass('border-primary/40 text-primary');
-        lucide.createIcons();
-        toast('已保存到草稿 · 流水线 +1', 'success');
-      });
-
-      /* ---------- 5 步工作流：可点击回看已完成的步骤 ---------- */
-      $('#workflow-bar').on('click', '.step-clickable', function() {
-        const stepNum = $(this).data('step');
-        const $marker = $(this).find('.step-marker');
-        $marker.css('box-shadow', '0 0 0 6px rgba(0, 217, 146, 0.5), 0 0 18px rgba(0, 217, 146, 0.6)');
-        setTimeout(function() { $marker.css('box-shadow', ''); }, 1200);
-        const stepName = $(this).find('div.font-semibold, div.font-medium').first().text().trim();
-        toast('回看步骤 ' + stepNum + ' · ' + stepName, 'info');
-      });
-
-      /* ---------- 监听 page:refresh，数字微变 ---------- */
-      let refreshTick = 0;
-      window.addEventListener('page:refresh', function() {
-        refreshTick++;
-        const baseHeat = 92;
-        const newHeat = baseHeat + Math.floor(Math.random() * 5) - 2;
-        $('#metric-heat').text(Math.max(80, Math.min(99, newHeat)));
-        const baseMatch = 95;
-        const newMatch = baseMatch + Math.floor(Math.random() * 4) - 1;
-        $('#metric-match').text(Math.max(88, Math.min(99, newMatch)) + '%');
-      });
-
-      /* ---------- 启动：恢复已采用 / 已选 ---------- */
-      try {
-        const savedCover = JSON.parse(localStorage.getItem(COVER_LS_KEY) || 'null');
-        if (savedCover && savedCover.id) {
-          const $card = $('.cover-card[data-cover-id="' + savedCover.id + '"]');
-          if ($card.length) {
-            $card.addClass('adopted');
-            $card.find('.btn-use-cover')
-              .removeClass('bg-primary hover:bg-primary/90')
-              .addClass('bg-success hover:bg-success/90')
-              .html('<i data-lucide="check-circle-2" class="w-3 h-3"></i><span class="btn-use-cover-text">✓ 已采用</span>');
-            lucide.createIcons();
-          }
-        }
-      } catch (e) {}
-
-      try {
-        const savedCopy = JSON.parse(localStorage.getItem(COPY_LS_KEY) || 'null');
-        if (savedCopy && savedCopy.version) {
-          $('.copy-card').removeClass('selected');
-          $('.copy-card[data-version="' + savedCopy.version + '"]').addClass('selected');
-          lucide.createIcons();
-        }
-      } catch (e) {}
-
-      lucide.createIcons();
+    // === 模板选中 ===
+    $('#sel-template').on('change', function() {
+      var tpl = $(this).val();
+      $('.content-template').removeClass('border-cyber-cyan/50 bg-surface-container/30');
+      var $target = $('.content-template[data-template="' + tpl + '"]');
+      $target.addClass('border-cyber-cyan/50 bg-surface-container/30');
     });
+
+    // 模板卡片点击选用
+    $('.content-template').on('click', function() {
+      var tpl = $(this).data('template');
+      $('#sel-template').val(tpl);
+      $('.content-template').removeClass('border-cyber-cyan/50 bg-surface-container/30');
+      $(this).addClass('border-cyber-cyan/50 bg-surface-container/30');
+    });
+
+    // === 批量生成面板折叠 ===
+    $('#btn-toggle-panel').on('click', function() {
+      var $body = $('#batch-panel-body');
+      var $icon = $(this).find('[data-lucide]');
+      if ($body.is(':visible')) {
+        $body.slideUp(200);
+        $(this).contents().filter(function() { return this.nodeType === 3; }).remove();
+        $(this).prepend('展开 ');
+      } else {
+        $body.slideDown(200);
+        $(this).contents().filter(function() { return this.nodeType === 3; }).remove();
+        $(this).prepend('收起 ');
+      }
+    });
+
+    // === 全选/取消 ===
+    $('#select-all').on('change', function() {
+      $('.row-checkbox').prop('checked', $(this).prop('checked'));
+    });
+
+    // === 批量删除 ===
+    // 批量删除 - 点击后应实现：
+    // 1. 检查是否有选中的checkbox
+    // 2. 弹出确认对话框
+    // 3. 确认后删除选中的行，从DOM中移除
+    // 4. 更新全选checkbox状态
+    $('#btn-batch-delete').on('click', function() {
+      var checked = $('.row-checkbox:checked');
+      if (checked.length === 0) {
+        console.log('请先选择要删除的内容');
+        return;
+      }
+      console.log('批量删除：选中' + checked.length + '条内容，应弹出确认弹窗后删除');
+    });
+
+    // === 批量发布 ===
+    // 批量发布 - 点击后应实现：
+    // 1. 检查是否有选中的checkbox
+    // 2. 仅允许状态为"已生成"或"待发布"的内容进行发布
+    // 3. 弹出确认对话框，展示将要发布的内容列表
+    // 4. 确认后跳转到发布管理页面，传递选中内容的id列表
+    $('#btn-batch-publish').on('click', function() {
+      var checked = $('.row-checkbox:checked');
+      if (checked.length === 0) {
+        console.log('请先选择要发布的内容');
+        return;
+      }
+      console.log('批量发布：选中' + checked.length + '条内容，应跳转至发布管理页面');
+      // window.location.href = 'publish.html?ids=1,2,3';
+    });
+
+    // === 编辑按钮 ===
+    // 编辑按钮 - 点击后应实现：
+    // 1. 打开编辑器弹窗，加载对应内容的标题和正文
+    // 2. 支持改写/换风格/续写/局部重生成等AI工具
+    // 3. 支持违禁词扫描
+    // 4. 保存后更新列表中对应行的标题
+    $('#btn-edit-1, #btn-edit-2, #btn-edit-3, #btn-edit-4, #btn-edit-5, #btn-edit-6').on('click', function() {
+      var id = $(this).attr('id').replace('btn-edit-', '');
+      var title = $(this).closest('.content-row').find('.text-sm.font-medium.text-on-surface').first().text();
+      $('#editor-title').val(title);
+      $('#audit-result-area').addClass('hidden');
+      $('#editor-modal').removeClass('hidden');
+      console.log('打开编辑器，内容ID：' + id);
+    });
+
+    // === 关闭编辑器 ===
+    $('#btn-close-editor, #btn-editor-cancel').on('click', function() {
+      $('#editor-modal').addClass('hidden');
+    });
+
+    // === 保存编辑 ===
+    // 保存编辑 - 点击后应实现：
+    // 1. 收集编辑器中的标题和正文内容
+    // 2. 调用后端接口保存
+    // 3. 更新列表中对应行的标题文字
+    // 4. 显示保存成功提示
+    $('#btn-editor-save').on('click', function() {
+      console.log('保存内容：' + $('#editor-title').val());
+      $('#editor-modal').addClass('hidden');
+    });
+
+    // === 改写按钮 ===
+    // 改写按钮 - 点击后应实现：
+    // 1. 获取编辑器中的正文内容
+    // 2. 调用AI改写接口，保持核心含义不变，调整表达方式
+    // 3. 显示loading状态
+    // 4. 返回后将改写结果替换编辑器正文内容
+    $('#btn-ai-rewrite').on('click', function() {
+      console.log('AI改写：调用接口对正文进行改写');
+    });
+
+    // === 换风格按钮 ===
+    // 换风格按钮 - 点击后应实现：
+    // 1. 弹出风格选择面板（幽默/专业/温馨/潮流等）
+    // 2. 根据选择的风格调用AI换风格接口
+    // 3. 返回后将结果替换编辑器正文内容
+    $('#btn-ai-style').on('click', function() {
+      console.log('AI换风格：应弹出风格选择面板后调用接口');
+    });
+
+    // === 续写按钮 ===
+    // 续写按钮 - 点击后应实现：
+    // 1. 获取编辑器中的正文内容
+    // 2. 调用AI续写接口，在现有内容后继续生成
+    // 3. 返回后将续写内容追加到编辑器正文末尾
+    $('#btn-ai-continue').on('click', function() {
+      console.log('AI续写：调用接口在正文后继续生成内容');
+    });
+
+    // === 局部重生成按钮 ===
+    // 局部重生成按钮 - 点击后应实现：
+    // 1. 用户选中正文中的一段文字
+    // 2. 弹出"局部重生成"确认
+    // 3. 调用AI接口对选中部分重新生成
+    // 4. 返回后替换选中的文字部分
+    $('#btn-ai-regenerate').on('click', function() {
+      console.log('AI局部重生成：应选中正文片段后调用接口重生成该部分');
+    });
+
+    // === 违禁词扫描 ===
+    // 违禁词扫描 - 点击后应实现：
+    // 1. 获取编辑器中的全文内容
+    // 2. 调用AI违禁词检测接口
+    // 3. 在审核结果区展示：违禁词数量（红色标注）、安全词数量（绿色标注）
+    // 4. 对违禁词在正文中高亮标注（红色下划线/红色背景）
+    // 5. 给出替换建议
+    $('#btn-editor-audit').on('click', function() {
+      console.log('AI违禁词扫描：调用接口检测正文违禁词');
+      $('#audit-result-area').removeClass('hidden');
+    });
+
+    // === 顶部AI审核按钮 ===
+    // 顶部AI审核 - 点击后应实现：
+    // 1. 对列表中所有选中或全部内容进行批量违禁词扫描
+    // 2. 在列表中标注有问题的行
+    // 3. 展示扫描结果摘要
+    $('#btn-audit').on('click', function() {
+      console.log('批量AI审核：对列表内容进行批量违禁词扫描');
+    });
+
+    // === 删除按钮 ===
+    // 删除按钮 - 点击后应实现：
+    // 1. 弹出确认对话框
+    // 2. 确认后从DOM中移除该行
+    // 3. 更新全选checkbox状态
+    $('#btn-delete-1, #btn-delete-2, #btn-delete-3, #btn-delete-4, #btn-delete-5, #btn-delete-6').on('click', function() {
+      var id = $(this).attr('id').replace('btn-delete-', '');
+      console.log('删除内容ID：' + id + '，应弹出确认后删除');
+      $(this).closest('.content-row').fadeOut(300, function() { $(this).remove(); });
+    });
+
+    // === 改写按钮（列表行内） ===
+    // 改写按钮 - 点击后应实现：
+    // 1. 打开编辑器弹窗
+    // 2. 自动触发AI改写操作
+    // 3. 改写结果填充到编辑器中
+    $('#btn-rewrite-1, #btn-rewrite-2, #btn-rewrite-3, #btn-rewrite-4, #btn-rewrite-5, #btn-rewrite-6').on('click', function() {
+      var id = $(this).attr('id').replace('btn-rewrite-', '');
+      var title = $(this).closest('.content-row').find('.text-sm.font-medium.text-on-surface').first().text();
+      $('#editor-title').val(title);
+      $('#audit-result-area').addClass('hidden');
+      $('#editor-modal').removeClass('hidden');
+      console.log('改写内容ID：' + id + '，打开编辑器并自动触发AI改写');
+    });
+
+    // === 开始批量生成 ===
+    // 批量生成 - 点击后应实现：
+    // 1. 收集生成参数（模板、角色、行业、平台、数量）
+    // 2. 弹出生成进度弹窗
+    // 3. 调用后端AI批量生成接口
+    // 4. 进度条动态更新
+    // 5. 生成完成后关闭进度弹窗，将新内容添加到列表中
+    $('#btn-start-generate').on('click', function() {
+      var template = $('#sel-template').val();
+      var role = $('#sel-role').val();
+      var industry = $('#sel-industry').val();
+      var platform = $('#sel-platform').val();
+      var count = $('#sel-count').val();
+
+      console.log('开始批量生成：模板=' + template + ', 角色=' + role + ', 行业=' + industry + ', 平台=' + platform + ', 数量=' + count);
+
+      // 显示进度弹窗并模拟进度
+      $('#generating-modal').removeClass('hidden');
+      var progress = 0;
+      var interval = setInterval(function() {
+        progress += Math.floor(Math.random() * 15) + 5;
+        if (progress >= 100) {
+          progress = 100;
+          clearInterval(interval);
+          setTimeout(function() {
+            $('#generating-modal').addClass('hidden');
+            $('#gen-progress-bar').css('width', '0%');
+            $('#gen-progress-text').text('0%');
+            console.log('批量生成完成');
+          }, 500);
+        }
+        $('#gen-progress-bar').css('width', progress + '%');
+        $('#gen-progress-text').text(progress + '%');
+      }, 400);
+    });
+
+    // === 顶部批量生成按钮 ===
+    $('#btn-batch-generate').on('click', function() {
+      $('html, body').animate({ scrollTop: $('#batch-panel').offset().top - 20 }, 300);
+      // 滚动到生成面板后自动展开
+      if ($('#batch-panel-body').is(':hidden')) {
+        $('#batch-panel-body').slideDown(200);
+      }
+    });
+
+    // === 日历拖拽排期 ===
+    // 日历拖拽排期 - 后续应实现：
+    // 1. 日历中的内容卡片支持拖拽
+    // 2. 拖拽到不同日期格子可调整发布排期
+    // 3. 从列表中拖拽内容到日历可创建排期
+    // 4. 排期变更后更新后端数据
+    console.log('日历拖拽排期功能待实现：支持拖拽内容卡片到不同日期调整排期');
+
+    // === 搜索功能 ===
+    // 搜索 - 输入后应实现：
+    // 1. 根据输入文字实时过滤列表
+    // 2. 隐藏标题不匹配的行
+    // 3. 清空搜索时恢复所有行
+    $('#input-search').on('input', function() {
+      var keyword = $(this).val().toLowerCase();
+      $('.content-row').each(function() {
+        var title = $(this).find('.text-sm.font-medium.text-on-surface').first().text().toLowerCase();
+        if (keyword === '' || title.indexOf(keyword) > -1) {
+          $(this).show();
+        } else {
+          $(this).hide();
+        }
+      });
+    });
+
+    // === 平台筛选 ===
+    $('#filter-platform').on('change', function() {
+      var val = $(this).val();
+      $('.content-row').each(function() {
+        if (val === 'all' || $(this).data('platform') === val) {
+          $(this).show();
+        } else {
+          $(this).hide();
+        }
+      });
+    });
+
+    // === 状态筛选 ===
+    $('#filter-status').on('change', function() {
+      var val = $(this).val();
+      $('.content-row').each(function() {
+        if (val === 'all' || $(this).data('status') === val) {
+          $(this).show();
+        } else {
+          $(this).hide();
+        }
+      });
+    });
+
+  });
   </script>
 
   <script>lucide.createIcons();</script>

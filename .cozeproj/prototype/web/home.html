@@ -5,7 +5,10 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <link href="https://lf-code-agent.coze.cn/obj/x-ai-cn/fonts/google/google-all-fonts.css" rel="stylesheet" />
+  <!-- 赛博/科技感字体 -->
+  <link href="https://lf-code-agent.coze.cn/obj/x-ai-cn/fonts/google/orbitron.css" rel="stylesheet"/>
+  <link href="https://lf-code-agent.coze.cn/obj/x-ai-cn/fonts/google/spacedock.css" rel="stylesheet"/>
+  <link href="https://lf-code-agent.coze.cn/obj/x-ai-cn/fonts/google/noto-sans-sc.css" rel="stylesheet"/>
 
   <script src="https://lf-code-agent.coze.cn/obj/x-ai-cn/cdn/jquery/jquery-3.7.1.min.js"></script>
   <script src="https://lf-code-agent.coze.cn/obj/x-ai-cn/cdn/lucide/lucide-1.11.0.min.js"></script>
@@ -13,343 +16,113 @@
 
   <style type="text/tailwindcss">
     @theme {
-      /* === 品牌色：唯一亮色 = 翡翠绿 === */
-      --color-primary:              #00d992;
-      --color-primary-container:    rgba(0, 217, 146, 0.12);
-      --color-on-primary:           #050507;
-      --color-accent:               #00d992;
-      --color-accent-container:     rgba(0, 217, 146, 0.08);
-      /* === 背景 / 表面（极黑 + 碳黑） === */
-      --color-background:                 #050507;
-      --color-surface-container-lowest:   #020203;
-      --color-surface:                    #0d0d10;
-      --color-surface-container:          #15151a;
-      --color-surface-container-high:     #1c1c22;
-      --color-surface-container-highest:  #25252b;
+      /* === 品牌色（红涨/正向） === */
+      --color-primary:              #FF3B5C;
+      --color-primary-container:    #2A1520;
+      --color-on-primary:           #ffffff;
+      /* === 赛博霓虹点缀色 === */
+      --color-cyber-cyan:           #21E6C1;
+      --color-cyber-magenta:        #FF2E97;
+      --color-cyber-purple:         #8B5CFF;
+      /* === 涨跌语义色（中国股市红涨绿跌） === */
+      --color-bull:                 #FF3B5C;
+      --color-bear:                 #15E0A0;
+      /* === 背景 / 表面 === */
+      --color-background:                 #0A0E14;
+      --color-surface-container-lowest:   #0D1117;
+      --color-surface:                    #111820;
+      --color-surface-container:          #161D27;
+      --color-surface-container-high:     #1A2332;
+      --color-surface-container-highest:  #1F2937;
       /* === 文字 === */
-      --color-on-surface:           #f5f5f7;
-      --color-on-surface-variant:   #8a8a8f;
-      /* === 功能色（涨绿跌红） === */
-      --color-success:  #00d992;
-      --color-error:    #ff3b5c;
-      --color-warning:  #ffb800;
-      /* === 边框（暖灰 + Ghost） === */
-      --color-outline:          #3d3a39;
-      --color-outline-variant:  rgba(255, 255, 255, 0.06);
+      --color-on-surface:           #F2F5FA;
+      --color-on-surface-variant:   #8A94A6;
+      /* === 功能色 === */
+      --color-success:  #15E0A0;
+      --color-error:    #FF3B5C;
+      --color-warning:  #F5A623;
+      /* === 边框 === */
+      --color-outline:          #2A3444;
+      --color-outline-variant:  #1E2838;
       /* === 圆角 === */
-      --radius-sm:   0.25rem;
+      --radius-sm:   0.375rem;
       --radius-md:   0.5rem;
-      --radius-lg:   0.625rem;
-      --radius-xl:   0.875rem;
-      --radius-2xl:  1.125rem;
+      --radius-lg:   0.75rem;
+      --radius-xl:   1rem;
+      --radius-2xl:  1.5rem;
       --radius-full: 9999px;
-      /* === 阴影（暗底+翡翠绿光晕） === */
-      --shadow-card:   0 1px 0 rgba(255,255,255,0.04) inset, 0 4px 14px rgba(0,0,0,0.55);
-      --shadow-float:  0 1px 0 rgba(255,255,255,0.06) inset, 0 10px 30px rgba(0,0,0,0.65);
-      --shadow-dialog: 0 1px 0 rgba(255,255,255,0.06) inset, 0 25px 60px rgba(0,0,0,0.75);
-      --shadow-glow:   0 0 20px rgba(0, 217, 146, 0.35), 0 0 40px rgba(0, 217, 146, 0.15);
-      /* === 渐变金属质感 === */
-      --gradient-metal: linear-gradient(135deg, #00d992 0%, #b8ffe2 35%, #ffffff 55%, #00d992 80%, #008f63 100%);
-      --gradient-pink-purple: linear-gradient(135deg, #ff77c8 0%, #b86bff 50%, #7c3aed 100%);
-      /* === 字体（赛博：等宽+无衬线） === */
-      --font-sans: "Inter", "Noto Sans SC", "PingFang SC", system-ui, sans-serif;
-      --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+      /* === 阴影 === */
+      --shadow-card:   0 2px 8px rgba(0,0,0,0.4);
+      --shadow-float:  0 10px 25px rgba(0,0,0,0.5);
+      --shadow-dialog: 0 25px 50px rgba(0,0,0,0.6);
+      --shadow-glow-red:     0 0 20px rgba(255,59,92,0.15);
+      --shadow-glow-cyan:    0 0 20px rgba(33,230,193,0.15);
+      --shadow-glow-magenta: 0 0 20px rgba(255,46,151,0.15);
+      /* === 字体 === */
+      --font-display: "Orbitron", "SpaceDock", monospace;
+      --font-mono: "SpaceDock", "Orbitron", monospace;
+      --font-sans: "Noto Sans SC", system-ui, sans-serif;
     }
+
+    /* 自定义滚动条 */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: #0A0E14; }
+    ::-webkit-scrollbar-thumb { background: #2A3444; border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: #3A4454; }
+
+    /* 霓虹文字效果 */
+    .neon-text-red { text-shadow: 0 0 10px rgba(255,59,92,0.5), 0 0 20px rgba(255,59,92,0.2); }
+    .neon-text-cyan { text-shadow: 0 0 10px rgba(33,230,193,0.5), 0 0 20px rgba(33,230,193,0.2); }
+    .neon-text-magenta { text-shadow: 0 0 10px rgba(255,46,151,0.5), 0 0 20px rgba(255,46,151,0.2); }
+
+    /* 角色卡片辉光 */
+    .role-card { transition: all 0.3s ease; border: 1px solid rgba(42,52,68,0.5); }
+    .role-card:hover { border-color: rgba(255,59,92,0.5); box-shadow: 0 0 24px rgba(255,59,92,0.15), 0 0 48px rgba(255,59,92,0.05); }
+    .role-card.active { border-color: rgba(255,59,92,0.7); box-shadow: 0 0 24px rgba(255,59,92,0.2), 0 0 48px rgba(255,59,92,0.08); }
+
+    /* 生成按钮辉光脉冲 */
+    @keyframes glow-pulse {
+      0%, 100% { box-shadow: 0 0 20px rgba(255,59,92,0.3), 0 0 40px rgba(255,59,92,0.1); }
+      50% { box-shadow: 0 0 30px rgba(255,59,92,0.5), 0 0 60px rgba(255,59,92,0.2); }
+    }
+    .btn-generate { animation: glow-pulse 2.5s ease-in-out infinite; }
+    .btn-generate:hover { animation: none; box-shadow: 0 0 35px rgba(255,59,92,0.6), 0 0 70px rgba(255,59,92,0.25); }
+
+    /* 快捷标签 */
+    .tag-chip { transition: all 0.2s ease; cursor: pointer; }
+    .tag-chip:hover { background: rgba(255,59,92,0.08); border-color: rgba(255,59,92,0.3); }
+    .tag-chip.selected { background: rgba(255,59,92,0.1); color: #FF3B5C; border-color: rgba(255,59,92,0.4); }
+
+    /* 趋势线动画 */
+    @keyframes dash-flow {
+      to { stroke-dashoffset: -100; }
+    }
+    .trend-line { animation: dash-flow 4s linear infinite; }
+
+    /* 网格背景装饰 */
+    .grid-bg {
+      background-image:
+        linear-gradient(rgba(42,52,68,0.15) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(42,52,68,0.15) 1px, transparent 1px);
+      background-size: 40px 40px;
+    }
+
+    /* 数据流装饰 */
+    @keyframes data-scroll {
+      0% { transform: translateY(0); }
+      100% { transform: translateY(-50%); }
+    }
+    .data-stream { animation: data-scroll 12s linear infinite; }
+
+    /* 呼吸灯效果 */
+    @keyframes breathe {
+      0%, 100% { opacity: 0.4; }
+      50% { opacity: 0.8; }
+    }
+    .breathe { animation: breathe 3s ease-in-out infinite; }
   </style>
 
-  <style>
-    /* ===== 全局背景：极黑 + 顶部一抹翡翠绿微光 ===== */
-    body {
-      background:
-        radial-gradient(ellipse 1400px 320px at 50% -120px, rgba(0, 217, 146, 0.06), transparent 60%),
-        radial-gradient(ellipse 900px 280px at 100% 8%, rgba(0, 217, 146, 0.03), transparent 60%),
-        #050507;
-      background-attachment: fixed;
-      font-feature-settings: "tnum" 1, "ss01" 1;
-    }
-    ::-webkit-scrollbar { width: 8px; height: 8px; }
-    ::-webkit-scrollbar-track { background: #050507; }
-    ::-webkit-scrollbar-thumb { background: #25252b; border-radius: 9999px; }
-    ::-webkit-scrollbar-thumb:hover { background: #00d992; }
-
-    .font-num, .font-mono, .tabular {
-      font-family: var(--font-mono);
-      font-variant-numeric: tabular-nums;
-      letter-spacing: -0.01em;
-    }
-    .num-metal {
-      background: var(--gradient-metal);
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-      font-family: var(--font-mono);
-      font-variant-numeric: tabular-nums;
-      font-weight: 700;
-      letter-spacing: -0.02em;
-      text-shadow: 0 0 18px rgba(0, 217, 146, 0.25);
-    }
-    .num-glow {
-      color: #00d992;
-      font-family: var(--font-mono);
-      font-variant-numeric: tabular-nums;
-      font-weight: 600;
-      text-shadow: 0 0 10px rgba(0, 217, 146, 0.55), 0 0 24px rgba(0, 217, 146, 0.25);
-    }
-    .num-up   { color: #00d992; text-shadow: 0 0 8px rgba(0, 217, 146, 0.35); }
-    .num-down { color: #ff3b5c; text-shadow: 0 0 8px rgba(255, 59, 92, 0.35); }
-
-    .ticker-bar {
-      background: linear-gradient(90deg, rgba(0, 217, 146, 0.05) 0%, rgba(13,13,16,0.0) 50%, rgba(0, 217, 146, 0.05) 100%);
-      border-bottom: 1px solid #3d3a39;
-      height: 28px;
-      overflow: hidden;
-      position: relative;
-      display: flex;
-      align-items: center;
-    }
-    .ticker-bar::before, .ticker-bar::after {
-      content: ""; position: absolute; top: 0; bottom: 0; width: 60px; z-index: 2; pointer-events: none;
-    }
-    .ticker-bar::before { left: 0; background: linear-gradient(90deg, #050507 0%, transparent 100%); }
-    .ticker-bar::after  { right: 0; background: linear-gradient(-90deg, #050507 0%, transparent 100%); }
-    .ticker-track {
-      display: inline-flex; align-items: center; gap: 36px;
-      white-space: nowrap;
-      animation: ticker-scroll 40s linear infinite;
-      padding-left: 100%;
-      font-family: var(--font-mono);
-      font-size: 11px;
-    }
-    .ticker-track:hover { animation-play-state: paused; }
-    @keyframes ticker-scroll {
-      0%   { transform: translateX(0); }
-      100% { transform: translateX(-100%); }
-    }
-    .ticker-item { display: inline-flex; align-items: center; gap: 6px; color: #f5f5f7; }
-    .ticker-item .k { color: #8a8a8f; }
-    .ticker-item .v.up   { color: #00d992; }
-    .ticker-item .v.down { color: #ff3b5c; }
-    .ticker-item .v.flat { color: #ffb800; }
-
-    .status-dot {
-      display: inline-block;
-      width: 8px; height: 8px;
-      border-radius: 9999px;
-      position: relative;
-    }
-    .status-dot::after {
-      content: ""; position: absolute; inset: -3px; border-radius: 9999px;
-    }
-    .status-online {
-      background: #00d992;
-      box-shadow: 0 0 8px rgba(0, 217, 146, 0.7);
-      animation: pulse-green 1.6s ease-in-out infinite;
-    }
-    .status-online::after {
-      box-shadow: 0 0 0 0 rgba(0, 217, 146, 0.6);
-      animation: pulse-ring 1.6s ease-out infinite;
-    }
-    .status-pending {
-      background: #ff3b5c;
-      box-shadow: 0 0 8px rgba(255, 59, 92, 0.7);
-      animation: pulse-red 1.2s ease-in-out infinite;
-    }
-    .status-pending::after {
-      box-shadow: 0 0 0 0 rgba(255, 59, 92, 0.6);
-      animation: pulse-ring-red 1.2s ease-out infinite;
-    }
-    .status-queue {
-      background: #5a5a5e;
-      box-shadow: none;
-      animation: none;
-    }
-    @keyframes pulse-green {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.55; }
-    }
-    @keyframes pulse-red {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.5; }
-    }
-    @keyframes pulse-ring {
-      0%   { box-shadow: 0 0 0 0 rgba(0, 217, 146, 0.6); }
-      100% { box-shadow: 0 0 0 8px rgba(0, 217, 146, 0); }
-    }
-    @keyframes pulse-ring-red {
-      0%   { box-shadow: 0 0 0 0 rgba(255, 59, 92, 0.6); }
-      100% { box-shadow: 0 0 0 8px rgba(255, 59, 92, 0); }
-    }
-
-    .nav-active {
-      background: linear-gradient(90deg, rgba(0, 217, 146, 0.14), rgba(0, 217, 146, 0.02));
-      border-left: 3px solid #00d992;
-      color: #00d992 !important;
-      box-shadow: inset 0 0 18px rgba(0, 217, 146, 0.06);
-    }
-    .nav-active i { color: #00d992; }
-
-    .btn-press { transition: transform 0.08s ease, opacity 0.15s ease, background-color 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease; }
-    .btn-press:active { transform: translateY(1px) scale(0.98); }
-
-    .btn-glow {
-      position: relative;
-      transition: all 0.2s ease;
-    }
-    .btn-glow:hover {
-      border-color: #00d992 !important;
-      box-shadow: 0 0 0 1px rgba(0, 217, 146, 0.5), 0 0 18px rgba(0, 217, 146, 0.25);
-      color: #00d992;
-    }
-
-    .btn-primary {
-      background: linear-gradient(135deg, #00d992 0%, #00b87a 100%);
-      color: #050507;
-      font-weight: 600;
-      transition: all 0.2s ease;
-      box-shadow: 0 0 0 1px rgba(0, 217, 146, 0.5), 0 4px 18px rgba(0, 217, 146, 0.25);
-    }
-    .btn-primary:hover {
-      box-shadow: 0 0 0 1px rgba(0, 217, 146, 0.7), 0 6px 24px rgba(0, 217, 146, 0.4);
-      transform: translateY(-1px);
-    }
-    .btn-primary:active { transform: translateY(0) scale(0.98); }
-
-    .card-base {
-      background: #0d0d10;
-      border: 1px solid #3d3a39;
-      border-radius: var(--radius-lg);
-      box-shadow: var(--shadow-card);
-      transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
-      position: relative;
-      overflow: hidden;
-    }
-    .card-base:hover {
-      border-color: rgba(0, 217, 146, 0.6);
-      box-shadow: var(--shadow-card), 0 0 0 1px rgba(0, 217, 146, 0.25), 0 0 22px rgba(0, 217, 146, 0.12);
-    }
-    .card-click-flash {
-      cursor: pointer;
-    }
-    .card-click-flash::after {
-      content: ""; position: absolute; inset: -2px; border-radius: inherit;
-      box-shadow: 0 0 0 2px rgba(0, 217, 146, 0);
-      pointer-events: none;
-      transition: box-shadow 0.2s ease;
-    }
-    .card-click-flash.is-flash::after {
-      animation: click-flash 0.6s ease-out;
-    }
-    @keyframes click-flash {
-      0%   { box-shadow: 0 0 0 0 rgba(0, 217, 146, 0.7), 0 0 30px rgba(0, 217, 146, 0.45); }
-      100% { box-shadow: 0 0 0 14px rgba(0, 217, 146, 0), 0 0 60px rgba(0, 217, 146, 0); }
-    }
-
-    .deco-emoji {
-      position: absolute;
-      bottom: -8px; right: -6px;
-      font-size: 88px;
-      line-height: 1;
-      opacity: 0.10;
-      pointer-events: none;
-      filter: grayscale(20%);
-      user-select: none;
-    }
-    .deco-ai {
-      position: absolute;
-      bottom: -12px; right: -10px;
-      width: 110px; height: 110px;
-      opacity: 0.18;
-      pointer-events: none;
-      user-select: none;
-    }
-
-    .ai-avatar {
-      position: relative;
-      width: 40px; height: 40px;
-      border-radius: 9999px;
-      display: flex; align-items: center; justify-content: center;
-      background: var(--gradient-pink-purple);
-      box-shadow: 0 0 0 1px rgba(255,255,255,0.08), 0 0 18px rgba(184, 107, 255, 0.45), 0 0 32px rgba(255, 119, 200, 0.25);
-      font-weight: 700; color: #fff;
-      font-family: var(--font-mono);
-    }
-    .ai-avatar::after {
-      content: ""; position: absolute; inset: -3px;
-      border-radius: 9999px;
-      background: var(--gradient-pink-purple);
-      filter: blur(10px); opacity: 0.35; z-index: -1;
-    }
-
-    .badge { display: inline-flex; align-items: center; gap: 5px; padding: 2px 8px; border-radius: 9999px; font-size: 11px; font-weight: 500; font-family: var(--font-mono); }
-    .badge-up    { background: rgba(0, 217, 146, 0.12); color: #00d992; border: 1px solid rgba(0, 217, 146, 0.25); }
-    .badge-down  { background: rgba(255, 59, 92, 0.12); color: #ff3b5c; border: 1px solid rgba(255, 59, 92, 0.25); }
-    .badge-flat  { background: rgba(138, 138, 143, 0.10); color: #8a8a8f; border: 1px solid rgba(138, 138, 143, 0.22); }
-    .badge-warn  { background: rgba(255, 184, 0, 0.12); color: #ffb800; border: 1px solid rgba(255, 184, 0, 0.28); }
-
-    .toast {
-      position: fixed; bottom: 24px; right: 24px; z-index: 9999;
-      background: linear-gradient(135deg, #15151a, #1c1c22);
-      color: #f5f5f7; padding: 12px 20px; border-radius: 10px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.7), 0 0 0 1px rgba(0, 217, 146, 0.25);
-      border: 1px solid rgba(0, 217, 146, 0.35);
-      font-size: 13px; display: flex; align-items: center; gap: 10px;
-      animation: toast-in 0.3s ease, toast-out 0.3s ease 2.7s forwards;
-    }
-    .toast.success { border-color: rgba(0, 217, 146, 0.5); }
-    .toast.error   { border-color: rgba(255, 59, 92, 0.5); box-shadow: 0 10px 30px rgba(0,0,0,0.7), 0 0 0 1px rgba(255, 59, 92, 0.3); }
-    .toast.info    { border-color: rgba(138, 138, 143, 0.4); }
-    @keyframes toast-in { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-    @keyframes toast-out { to { transform: translateY(20px); opacity: 0; } }
-
-    /* ===== Page-local 工具类 ===== */
-    .seq-stamp {
-      background: linear-gradient(135deg, #00d992 0%, #008f63 100%);
-      color: #050507;
-      font-family: var(--font-mono);
-      border-radius: 4px;
-      letter-spacing: 0.02em;
-    }
-    .heat-bar { position: relative; height: 4px; background: rgba(0, 217, 146, 0.10); border-radius: 9999px; overflow: hidden; }
-    .heat-bar > span { position: absolute; inset: 0; background: linear-gradient(90deg, #008f63 0%, #00d992 50%, #b8ffe2 100%); border-radius: 9999px; box-shadow: 0 0 8px rgba(0, 217, 146, 0.4); }
-    .dim-bar { position: relative; height: 3px; background: rgba(255,255,255,0.06); border-radius: 9999px; overflow: hidden; }
-    .dim-bar > span { position: absolute; inset: 0; background: linear-gradient(90deg, #00d992, #b8ffe2); border-radius: 9999px; }
-    .progress-track { position: relative; height: 3px; background: rgba(255,255,255,0.05); border-radius: 9999px; overflow: hidden; }
-    .progress-fill { position: absolute; inset: 0; background: linear-gradient(90deg, #00d992, #b8ffe2); border-radius: 9999px; box-shadow: 0 0 6px rgba(0, 217, 146, 0.3); }
-
-    .pulse-dot { animation: pulse-soft 2s ease-in-out infinite; }
-    @keyframes pulse-soft { 0%, 100% { opacity: 1; } 50% { opacity: 0.45; } }
-
-    .spin-slow { animation: spin-slow 1s linear infinite; }
-    @keyframes spin-slow { from { transform: rotate(0); } to { transform: rotate(360deg); } }
-
-    .modal-mask { position: fixed; inset: 0; z-index: 999; background: rgba(0,0,0,0.6); display: flex; align-items: center; justify-content: center; backdrop-filter: blur(4px); animation: fade-in 0.2s ease; }
-    @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
-
-    /* "已加入"态 */
-    .btn-pool.is-added {
-      background: rgba(0, 217, 146, 0.12) !important;
-      color: #00d992 !important;
-      border-color: rgba(0, 217, 146, 0.35) !important;
-      box-shadow: 0 0 0 1px rgba(0, 217, 146, 0.2) !important;
-    }
-
-    /* tab 切换激活态 */
-    .tab-btn {
-      position: relative;
-      padding: 10px 14px;
-      font-size: 12px;
-      font-weight: 500;
-      color: #8a8a8f;
-      border-bottom: 2px solid transparent;
-      transition: color 0.15s ease, border-color 0.15s ease;
-    }
-    .tab-btn:hover { color: #f5f5f7; }
-    .tab-btn.is-active {
-      color: #00d992;
-      border-bottom-color: #00d992;
-    }
-  </style>
-
+  <!-- 图片兜底 -->
   <script>
     document.addEventListener('error', function (e) {
       const img = e.target;
@@ -362,1986 +135,393 @@
       const icons = { '人物': '👤', '自然风景': '🏞', '动物': '🐾', '建筑城市': '🏙', '运动体育': '⚽', '交通工具': '🚗', '食物': '🍽', '服饰时尚': '👗', '商业科技': '💼', '游戏娱乐': '🎮', '艺术': '🎨', '其他': '🖼' };
       const icon = icons[cat] || '🖼';
       const w = img.width || 400, h = img.height || 300;
-      const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}"><rect width="100%" height="100%" fill="%230d0d10"/><text x="50%" y="45%" text-anchor="middle" font-size="${Math.min(w, h) * 0.18}" fill="%2300d992" dominant-baseline="central">${icon}</text><text x="50%" y="68%" text-anchor="middle" font-size="${Math.min(w, h) * 0.07}" fill="%238a8a8f" font-family="system-ui,sans-serif" dominant-baseline="central">${label}</text></svg>`;
+      const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}"><rect width="100%" height="100%" fill="%23111820"/><text x="50%" y="45%" text-anchor="middle" font-size="${Math.min(w, h) * 0.18}" fill="%238A94A6" dominant-baseline="central">${icon}</text><text x="50%" y="68%" text-anchor="middle" font-size="${Math.min(w, h) * 0.07}" fill="%235A6476" font-family="system-ui,sans-serif" dominant-baseline="central">${label}</text></svg>`;
       img.src = 'data:image/svg+xml,' + svg;
     }, true);
   </script>
 </head>
 
-<body class="bg-background text-on-surface font-sans min-h-screen">
+<body class="bg-background text-on-surface font-sans">
 
   <!-- @nav:start 导航组件 -->
-  <div class="flex min-h-screen" style="height: 100vh;">
-
-    <!-- Sidebar -->
-    <aside class="w-60 shrink-0 bg-surface border-r flex flex-col" style="border-color: #3d3a39;">
-      <div class="h-16 px-5 flex items-center gap-3 border-b" style="border-color: #3d3a39;">
-        <div class="relative w-9 h-9 rounded-lg flex items-center justify-center text-on-primary font-bold text-base" style="background: linear-gradient(135deg, #00d992 0%, #008f63 100%); box-shadow: 0 0 0 1px rgba(0,217,146,0.4), 0 0 18px rgba(0,217,146,0.4);">
-          咸
-          <span class="status-dot status-online absolute -top-0.5 -right-0.5" style="border: 2px solid #0d0d10;"></span>
+  <header class="bg-surface sticky top-0 z-40 h-14 flex items-center justify-between px-5 border-b border-outline-variant/30">
+    <div class="flex items-center gap-3">
+      <div class="flex items-center gap-2">
+        <div class="w-8 h-8 rounded-md bg-primary/20 flex items-center justify-center">
+          <i data-lucide="zap" class="w-4 h-4 text-primary"></i>
         </div>
-        <div class="flex-1 min-w-0">
-          <div class="font-semibold text-[15px] text-on-surface tracking-tight">咸聊 AI</div>
-          <div class="text-[11px] text-on-surface-variant font-num">XHSDX · 终端 v2.0</div>
-        </div>
+        <span class="font-display font-bold text-base tracking-wider neon-text-red">XIANLIAO</span>
+        <span class="text-xs text-on-surface-variant font-mono ml-1">AI</span>
       </div>
-
-      <div class="px-4 py-3 border-b" style="border-color: #3d3a39;">
-        <button id="btn-ai-assistant" class="w-full bg-surface-container hover:bg-surface-container-high border border-outline rounded-lg px-3 py-2.5 flex items-center gap-2.5 transition-all btn-glow">
-          <div class="ai-avatar !w-7 !h-7 text-xs" style="box-shadow: 0 0 0 1px rgba(255,255,255,0.1), 0 0 12px rgba(184, 107, 255, 0.5);">咸</div>
-          <div class="flex-1 text-left min-w-0">
-            <div class="text-xs font-medium text-on-surface">问问小咸</div>
-            <div class="text-[10px] text-on-surface-variant truncate">"今天适合发什么选题？"</div>
-          </div>
-          <i data-lucide="sparkles" class="w-3.5 h-3.5 text-primary"></i>
-        </button>
+    </div>
+    <div class="flex items-center gap-3">
+      <button class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-on-surface-variant hover:text-on-surface hover:bg-surface-container rounded-md transition-colors">
+        <i data-lucide="bell" class="w-3.5 h-3.5"></i>
+      </button>
+      <div class="w-7 h-7 rounded-full bg-primary/20 flex items-center justify-center text-xs font-medium text-primary">
+        咸
       </div>
+    </div>
+  </header>
 
-      <nav class="flex-1 overflow-y-auto py-3">
-        <div class="px-5 mb-2 text-[11px] font-medium text-on-surface-variant tracking-widest uppercase">主功能</div>
-        <a href="home.html" data-nav="radar" class="nav-item flex items-center gap-3 px-5 py-2.5 text-sm font-medium text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors" aria-current="page">
-          <i data-lucide="radar" class="w-4 h-4"></i><span>选题引擎</span>
-          <span class="ml-auto badge badge-up" data-nav-count="radar">28</span>
+  <div class="flex" style="height: calc(100vh - 3.5rem)">
+    <aside class="w-52 shrink-0 bg-surface-container-lowest border-r border-outline-variant/20 overflow-y-auto">
+      <div class="p-3 space-y-0.5">
+        <a href="home.html" class="flex items-center gap-3 px-3 py-2.5 rounded-md bg-primary/10 text-primary font-medium text-sm" aria-current="page">
+          <i data-lucide="home" class="w-4 h-4"></i>首页
         </a>
-        <a href="content-factory.html" data-nav="factory" class="nav-item flex items-center gap-3 px-5 py-2.5 text-sm font-medium text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors">
-          <i data-lucide="factory" class="w-4 h-4"></i><span>内容工厂</span>
+        <a href="generate.html" class="flex items-center gap-3 px-3 py-2.5 rounded-md text-on-surface-variant hover:bg-surface-container hover:text-on-surface font-medium text-sm transition-colors">
+          <i data-lucide="sparkles" class="w-4 h-4"></i>一键生成
         </a>
-        <a href="publish.html" data-nav="publish" class="nav-item flex items-center gap-3 px-5 py-2.5 text-sm font-medium text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors">
-          <i data-lucide="send" class="w-4 h-4"></i><span>发布管理</span>
-          <span class="ml-auto badge badge-warn" data-nav-count="publish">3</span>
-        </a>
-        <a href="analytics.html" data-nav="analytics" class="nav-item flex items-center gap-3 px-5 py-2.5 text-sm font-medium text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors">
-          <i data-lucide="bar-chart-horizontal" class="w-4 h-4"></i><span>数据复盘</span>
-        </a>
-        <a href="knowledge.html" data-nav="knowledge" class="nav-item flex items-center gap-3 px-5 py-2.5 text-sm font-medium text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors">
-          <i data-lucide="database" class="w-4 h-4"></i><span>知识库</span>
+        <a href="brand-assets.html" class="flex items-center gap-3 px-3 py-2.5 rounded-md text-on-surface-variant hover:bg-surface-container hover:text-on-surface font-medium text-sm transition-colors">
+          <i data-lucide="gem" class="w-4 h-4"></i>品牌资产
         </a>
 
-        <div class="px-5 mt-4 mb-2 text-[11px] font-medium text-on-surface-variant tracking-widest uppercase">配置</div>
-        <a href="settings.html" data-nav="settings" class="nav-item flex items-center gap-3 px-5 py-2.5 text-sm font-medium text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors">
-          <i data-lucide="settings" class="w-4 h-4"></i><span>系统设置</span>
-        </a>
-      </nav>
-
-      <div class="border-t p-3" style="border-color: #3d3a39;">
-        <div class="bg-surface-container rounded-lg p-2.5 flex items-center gap-2.5 border" style="border-color: #3d3a39;">
-          <div class="ai-avatar !w-9 !h-9 text-sm">咸</div>
-          <div class="flex-1 min-w-0">
-            <div class="text-xs font-medium text-on-surface truncate flex items-center gap-1.5">
-              小咸·主理人
-              <span class="status-dot status-online"></span>
-            </div>
-            <div class="text-[10px] text-on-surface-variant font-num">@xianliao_ai</div>
-          </div>
-          <button id="btn-switch-account" class="text-on-surface-variant hover:text-primary transition-colors" title="切换账号">
-            <i data-lucide="chevrons-up-down" class="w-3.5 h-3.5"></i>
-          </button>
+        <div class="pt-4 pb-2 px-3">
+          <span class="text-[10px] font-mono uppercase tracking-widest text-on-surface-variant/50">进阶区</span>
         </div>
+        <a href="topic-engine.html" class="flex items-center gap-3 px-3 py-2.5 rounded-md text-on-surface-variant hover:bg-surface-container hover:text-on-surface font-medium text-sm transition-colors">
+          <i data-lucide="trending-up" class="w-4 h-4"></i>选题引擎
+        </a>
+        <a href="content-factory.html" class="flex items-center gap-3 px-3 py-2.5 rounded-md text-on-surface-variant hover:bg-surface-container hover:text-on-surface font-medium text-sm transition-colors">
+          <i data-lucide="factory" class="w-4 h-4"></i>内容工厂
+        </a>
+        <a href="publish.html" class="flex items-center gap-3 px-3 py-2.5 rounded-md text-on-surface-variant hover:bg-surface-container hover:text-on-surface font-medium text-sm transition-colors">
+          <i data-lucide="send" class="w-4 h-4"></i>发布管理
+        </a>
+        <a href="data-review.html" class="flex items-center gap-3 px-3 py-2.5 rounded-md text-on-surface-variant hover:bg-surface-container hover:text-on-surface font-medium text-sm transition-colors">
+          <i data-lucide="chart-bar" class="w-4 h-4"></i>数据复盘
+        </a>
+        <a href="knowledge-base.html" class="flex items-center gap-3 px-3 py-2.5 rounded-md text-on-surface-variant hover:bg-surface-container hover:text-on-surface font-medium text-sm transition-colors">
+          <i data-lucide="brain" class="w-4 h-4"></i>知识库
+        </a>
+        <a href="settings.html" class="flex items-center gap-3 px-3 py-2.5 rounded-md text-on-surface-variant hover:bg-surface-container hover:text-on-surface font-medium text-sm transition-colors">
+          <i data-lucide="settings" class="w-4 h-4"></i>设置
+        </a>
       </div>
     </aside>
 
-    <!-- Main area -->
-    <div class="flex-1 min-w-0 flex flex-col">
-      <!-- 顶部跑马灯条：实时行情 -->
-      <div class="ticker-bar">
-        <div class="ticker-track" id="ticker-track">
-          <span class="ticker-item"><span class="k">XHSIDX</span> <span class="v up">12,847.62</span> <span class="num-up">▲ +2.34%</span></span>
-          <span class="ticker-item"><span class="k">选题命中</span> <span class="v up">94.6%</span> <span class="num-up">▲ +1.2%</span></span>
-          <span class="ticker-item"><span class="k">流水线</span> <span class="v">2/3</span> <span class="num-up">▲ 工作中</span></span>
-          <span class="ticker-item"><span class="k">今日发布</span> <span class="v">8</span> <span class="num-up">▲ 7 已排</span></span>
-          <span class="ticker-item"><span class="k">总曝光</span> <span class="v up">1,284,930</span> <span class="num-up">▲ +18.7%</span></span>
-          <span class="ticker-item"><span class="k">互动率</span> <span class="v up">6.82%</span> <span class="num-up">▲ +0.4%</span></span>
-          <span class="ticker-item"><span class="k">掉粉</span> <span class="v down">-23</span> <span class="num-down">▼ -0.05%</span></span>
-          <span class="ticker-item"><span class="k">小咸在线</span> <span class="v up">3 节点</span> <span class="num-up">▲ 健康</span></span>
-          <span class="ticker-item"><span class="k">XHSIDX</span> <span class="v up">12,847.62</span> <span class="num-up">▲ +2.34%</span></span>
-          <span class="ticker-item"><span class="k">选题命中</span> <span class="v up">94.6%</span> <span class="num-up">▲ +1.2%</span></span>
-          <span class="ticker-item"><span class="k">流水线</span> <span class="v">2/3</span> <span class="num-up">▲ 工作中</span></span>
-          <span class="ticker-item"><span class="k">今日发布</span> <span class="v">8</span> <span class="num-up">▲ 7 已排</span></span>
-          <span class="ticker-item"><span class="k">总曝光</span> <span class="v up">1,284,930</span> <span class="num-up">▲ +18.7%</span></span>
-          <span class="ticker-item"><span class="k">互动率</span> <span class="v up">6.82%</span> <span class="num-up">▲ +0.4%</span></span>
-          <span class="ticker-item"><span class="k">掉粉</span> <span class="v down">-23</span> <span class="num-down">▼ -0.05%</span></span>
-          <span class="ticker-item"><span class="k">小咸在线</span> <span class="v up">3 节点</span> <span class="num-up">▲ 健康</span></span>
+    <!-- @main-content:start -->
+    <main class="flex-1 min-w-0 overflow-y-auto bg-background grid-bg relative">
+
+      <!-- 装饰性数据流 - 右上角 -->
+      <div class="absolute top-0 right-0 w-72 h-full overflow-hidden pointer-events-none opacity-30">
+        <div class="data-stream absolute top-0 right-4 text-[10px] font-mono text-cyber-cyan/40 space-y-3 leading-relaxed">
+          <div>MARKET.OPEN ▲ 3287.42</div>
+          <div>SENTIMENT 0.87 BULL</div>
+          <div>TREND.LINE +12.6%</div>
+          <div>HOT.SECTOR 美妆</div>
+          <div>ENGAGE.RATE 4.2%</div>
+          <div>CONV.SCORE 92</div>
+          <div>CTR.PREDICT 3.8%</div>
+          <div>BID.PRICE ▲ 0.034</div>
+          <div>VOL.24H 1.2M</div>
+          <div>ALPHA.SIG +0.78</div>
+          <div>MARKET.OPEN ▲ 3287.42</div>
+          <div>SENTIMENT 0.87 BULL</div>
+          <div>TREND.LINE +12.6%</div>
+          <div>HOT.SECTOR 美妆</div>
+          <div>ENGAGE.RATE 4.2%</div>
+          <div>CONV.SCORE 92</div>
+          <div>CTR.PREDICT 3.8%</div>
+          <div>BID.PRICE ▲ 0.034</div>
+          <div>VOL.24H 1.2M</div>
+          <div>ALPHA.SIG +0.78</div>
         </div>
       </div>
 
-      <!-- 顶栏 -->
-      <header class="h-16 bg-surface/80 backdrop-blur border-b flex items-center px-6 gap-4 shrink-0" style="border-color: #3d3a39;">
-        <div class="flex items-center gap-2 text-sm">
-          <span class="text-on-surface-variant">咸聊 AI</span>
-          <i data-lucide="chevron-right" class="w-3.5 h-3.5 text-on-surface-variant/50"></i>
-          <span id="page-crumb" class="text-on-surface font-medium">选题引擎</span>
+      <!-- 装饰性趋势图 - 右下角 -->
+      <div class="absolute bottom-6 right-8 pointer-events-none opacity-25">
+        <svg width="280" height="120" viewBox="0 0 280 120" fill="none">
+          <!-- 网格线 -->
+          <line x1="0" y1="30" x2="280" y2="30" stroke="#2A3444" stroke-width="0.5" stroke-dasharray="4 4"/>
+          <line x1="0" y1="60" x2="280" y2="60" stroke="#2A3444" stroke-width="0.5" stroke-dasharray="4 4"/>
+          <line x1="0" y1="90" x2="280" y2="90" stroke="#2A3444" stroke-width="0.5" stroke-dasharray="4 4"/>
+          <!-- 红色上涨曲线 -->
+          <polyline points="0,100 30,85 60,90 90,70 120,65 150,50 180,55 210,35 240,30 270,20 280,15"
+                    stroke="#FF3B5C" stroke-width="2" fill="none" stroke-dasharray="6 3" class="trend-line"/>
+          <!-- 红色填充 -->
+          <polyline points="0,100 30,85 60,90 90,70 120,65 150,50 180,55 210,35 240,30 270,20 280,15 280,120 0,120"
+                    fill="url(#redGrad)" opacity="0.3"/>
+          <!-- 绿色曲线 -->
+          <polyline points="0,40 30,45 60,55 90,50 120,60 150,58 180,70 210,65 240,75 270,72 280,80"
+                    stroke="#15E0A0" stroke-width="1.5" fill="none" stroke-dasharray="4 3" class="trend-line" style="animation-delay: -2s;"/>
+          <defs>
+            <linearGradient id="redGrad" x1="0" y1="0" x2="0" y2="120">
+              <stop offset="0%" stop-color="#FF3B5C" stop-opacity="0.4"/>
+              <stop offset="100%" stop-color="#FF3B5C" stop-opacity="0"/>
+            </linearGradient>
+          </defs>
+        </svg>
+      </div>
+
+      <!-- 主内容区 - 居中 -->
+      <div class="relative z-10 flex flex-col items-center justify-center min-h-full px-8 py-10">
+
+        <!-- 标题区 -->
+        <div class="text-center mb-10">
+          <h1 class="font-display font-bold text-4xl tracking-wider neon-text-red mb-3">
+            XIANLIAO AI
+          </h1>
+          <p class="text-on-surface-variant text-base">
+            全行业 AI 营销结果工具 — <span class="text-primary/80">对小咸说一句，它就懂</span>
+          </p>
         </div>
-        <div class="flex-1 max-w-xl mx-auto">
+
+        <!-- 角色入口区 -->
+        <div class="w-full max-w-4xl mb-10">
+          <div class="flex items-center gap-2 mb-4">
+            <span class="text-xs font-mono uppercase tracking-widest text-on-surface-variant/60">STEP 1</span>
+            <span class="text-sm text-on-surface-variant">选择你的角色</span>
+          </div>
+          <div class="grid grid-cols-5 gap-3" id="role-cards">
+
+            <!-- 角色-老板 -->
+            <div class="role-card bg-surface-container rounded-xl p-4 cursor-pointer text-center group" id="role-boss" data-role="boss">
+              <div class="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center mx-auto mb-3 group-hover:bg-primary/20 transition-colors">
+                <i data-lucide="crown" class="w-5 h-5 text-primary"></i>
+              </div>
+              <div class="text-sm font-semibold text-on-surface mb-1">老板</div>
+              <div class="text-[11px] text-on-surface-variant leading-snug">全局视角<br/>战略决策</div>
+            </div>
+
+            <!-- 角色-运营 -->
+            <div class="role-card bg-surface-container rounded-xl p-4 cursor-pointer text-center group active" id="role-operator" data-role="operator">
+              <div class="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center mx-auto mb-3 group-hover:bg-primary/20 transition-colors">
+                <i data-lucide="settings-2" class="w-5 h-5 text-primary"></i>
+              </div>
+              <div class="text-sm font-semibold text-on-surface mb-1">运营</div>
+              <div class="text-[11px] text-on-surface-variant leading-snug">数据驱动<br/>内容操盘</div>
+            </div>
+
+            <!-- 角色-销售 -->
+            <div class="role-card bg-surface-container rounded-xl p-4 cursor-pointer text-center group" id="role-sales" data-role="sales">
+              <div class="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center mx-auto mb-3 group-hover:bg-primary/20 transition-colors">
+                <i data-lucide="target" class="w-5 h-5 text-primary"></i>
+              </div>
+              <div class="text-sm font-semibold text-on-surface mb-1">销售</div>
+              <div class="text-[11px] text-on-surface-variant leading-snug">获客转化<br/>业绩倍增</div>
+            </div>
+
+            <!-- 角色-实体店主 -->
+            <div class="role-card bg-surface-container rounded-xl p-4 cursor-pointer text-center group" id="role-store" data-role="store">
+              <div class="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center mx-auto mb-3 group-hover:bg-primary/20 transition-colors">
+                <i data-lucide="store" class="w-5 h-5 text-primary"></i>
+              </div>
+              <div class="text-sm font-semibold text-on-surface mb-1">实体店主</div>
+              <div class="text-[11px] text-on-surface-variant leading-snug">同城引流<br/>到店转化</div>
+            </div>
+
+            <!-- 角色-个人IP -->
+            <div class="role-card bg-surface-container rounded-xl p-4 cursor-pointer text-center group" id="role-ip" data-role="ip">
+              <div class="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center mx-auto mb-3 group-hover:bg-primary/20 transition-colors">
+                <i data-lucide="user-circle" class="w-5 h-5 text-primary"></i>
+              </div>
+              <div class="text-sm font-semibold text-on-surface mb-1">个人IP</div>
+              <div class="text-[11px] text-on-surface-variant leading-snug">人设打造<br/>粉丝增长</div>
+            </div>
+
+          </div>
+          <!-- 自定义角色入口 -->
+          <button class="mt-3 flex items-center gap-2 px-3 py-1.5 text-xs text-on-surface-variant/60 hover:text-on-surface-variant transition-colors" id="role-custom">
+            <i data-lucide="plus-circle" class="w-3.5 h-3.5"></i>
+            <span>自定义角色</span>
+          </button>
+        </div>
+
+        <!-- 一句话输入区 -->
+        <div class="w-full max-w-4xl mb-8">
+          <div class="flex items-center gap-2 mb-4">
+            <span class="text-xs font-mono uppercase tracking-widest text-on-surface-variant/60">STEP 2</span>
+            <span class="text-sm text-on-surface-variant">对小咸说一句</span>
+          </div>
           <div class="relative">
-            <i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-on-surface-variant"></i>
-            <input id="global-search" type="text" placeholder="搜选题、关键词、账号..." class="w-full bg-surface-container border rounded-lg pl-10 pr-12 py-2 text-sm text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none transition-colors font-num" style="border-color: #3d3a39;" onfocus="this.style.borderColor='#00d992'; this.style.boxShadow='0 0 0 2px rgba(0,217,146,0.25)'" onblur="this.style.borderColor='#3d3a39'; this.style.boxShadow='none'" />
-            <kbd class="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] text-on-surface-variant border rounded px-1.5 py-0.5 font-mono" style="border-color: #3d3a39;">⌘K</kbd>
+            <input id="prompt-input"
+                   type="text"
+                   class="w-full bg-surface-container border-none rounded-xl px-5 py-4 text-base
+                          text-on-surface placeholder:text-on-surface-variant/40
+                          focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all pr-24"
+                   placeholder="我是做XX的，想发给XX人群，关于XX..."
+                   value="我是做美妆的，想发给25-35岁女性，关于春季换妆攻略" />
+            <div class="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-2">
+              <button id="btn-voice" class="w-9 h-9 rounded-lg bg-surface-container-high flex items-center justify-center hover:bg-surface-container-highest transition-colors" title="语音输入">
+                <i data-lucide="mic" class="w-4 h-4 text-cyber-cyan"></i>
+              </button>
+              <button id="btn-clear-input" class="w-9 h-9 rounded-lg bg-surface-container-high flex items-center justify-center hover:bg-surface-container-highest transition-colors" title="清空">
+                <i data-lucide="x" class="w-4 h-4 text-on-surface-variant"></i>
+              </button>
+            </div>
           </div>
         </div>
-        <div class="flex items-center gap-2">
-          <button id="btn-bell" class="relative w-9 h-9 rounded-lg flex items-center justify-center text-on-surface-variant hover:text-primary hover:bg-surface-container transition-colors" style="border: 1px solid transparent;" title="消息">
-            <i data-lucide="bell" class="w-4 h-4"></i>
-            <span class="absolute top-1.5 right-1.5 w-1.5 h-1.5 bg-primary rounded-full" style="box-shadow: 0 0 6px rgba(0,217,146,0.8);"></span>
-          </button>
-          <button id="btn-refresh" class="w-9 h-9 rounded-lg flex items-center justify-center text-on-surface-variant hover:text-primary hover:bg-surface-container transition-colors btn-press" style="border: 1px solid #3d3a39;" title="刷新数据">
-            <i data-lucide="refresh-cw" class="w-4 h-4"></i>
-          </button>
-          <button id="btn-pipeline" class="btn-primary font-medium text-sm px-4 h-9 rounded-lg flex items-center gap-2 btn-press">
-            <i data-lucide="zap" class="w-4 h-4"></i>立即生成内容
+
+        <!-- 快捷标签区 -->
+        <div class="w-full max-w-4xl mb-8">
+          <div class="flex items-center gap-2 mb-4">
+            <span class="text-xs font-mono uppercase tracking-widest text-on-surface-variant/60">STEP 3</span>
+            <span class="text-sm text-on-surface-variant">快速标签</span>
+          </div>
+
+          <!-- 性别/人设标签 -->
+          <div class="mb-4">
+            <div class="text-[11px] text-on-surface-variant/50 mb-2 font-mono uppercase tracking-wider">人设</div>
+            <div class="flex flex-wrap gap-2" id="gender-tags">
+              <span class="tag-chip inline-flex items-center px-3 py-1 rounded-full text-xs border border-outline-variant/30 text-on-surface-variant" data-tag="male">男</span>
+              <span class="tag-chip inline-flex items-center px-3 py-1 rounded-full text-xs border border-outline-variant/30 text-on-surface-variant selected" data-tag="female">女</span>
+              <span class="tag-chip inline-flex items-center px-3 py-1 rounded-full text-xs border border-outline-variant/30 text-on-surface-variant" data-tag="any">不限</span>
+            </div>
+          </div>
+
+          <!-- 行业标签 -->
+          <div>
+            <div class="text-[11px] text-on-surface-variant/50 mb-2 font-mono uppercase tracking-wider">行业</div>
+            <div class="flex flex-wrap gap-2" id="industry-tags">
+              <!-- 行业标签-餐饮 -->
+              <span class="tag-chip inline-flex items-center px-3 py-1 rounded-full text-xs border border-outline-variant/30 text-on-surface-variant" data-tag="catering">餐饮</span>
+              <!-- 行业标签-美妆 -->
+              <span class="tag-chip inline-flex items-center px-3 py-1 rounded-full text-xs border border-outline-variant/30 text-on-surface-variant selected" data-tag="beauty">美妆</span>
+              <!-- 行业标签-教育 -->
+              <span class="tag-chip inline-flex items-center px-3 py-1 rounded-full text-xs border border-outline-variant/30 text-on-surface-variant" data-tag="education">教育</span>
+              <!-- 行业标签-汽车租车 -->
+              <span class="tag-chip inline-flex items-center px-3 py-1 rounded-full text-xs border border-outline-variant/30 text-on-surface-variant" data-tag="auto">汽车租车</span>
+              <!-- 行业标签-母婴 -->
+              <span class="tag-chip inline-flex items-center px-3 py-1 rounded-full text-xs border border-outline-variant/30 text-on-surface-variant" data-tag="maternal">母婴</span>
+              <!-- 行业标签-健身 -->
+              <span class="tag-chip inline-flex items-center px-3 py-1 rounded-full text-xs border border-outline-variant/30 text-on-surface-variant" data-tag="fitness">健身</span>
+              <!-- 行业标签-家居 -->
+              <span class="tag-chip inline-flex items-center px-3 py-1 rounded-full text-xs border border-outline-variant/30 text-on-surface-variant" data-tag="home">家居</span>
+              <!-- 行业标签-金融 -->
+              <span class="tag-chip inline-flex items-center px-3 py-1 rounded-full text-xs border border-outline-variant/30 text-on-surface-variant" data-tag="finance">金融</span>
+              <!-- 行业标签-本地生活 -->
+              <span class="tag-chip inline-flex items-center px-3 py-1 rounded-full text-xs border border-outline-variant/30 text-on-surface-variant" data-tag="local">本地生活</span>
+              <!-- 行业标签-电商 -->
+              <span class="tag-chip inline-flex items-center px-3 py-1 rounded-full text-xs border border-outline-variant/30 text-on-surface-variant" data-tag="ecommerce">电商</span>
+              <!-- 行业标签-文旅 -->
+              <span class="tag-chip inline-flex items-center px-3 py-1 rounded-full text-xs border border-outline-variant/30 text-on-surface-variant" data-tag="travel">文旅</span>
+              <!-- 行业标签-自定义 -->
+              <span class="tag-chip inline-flex items-center px-3 py-1 rounded-full text-xs border border-outline-variant/30 text-on-surface-variant" id="tag-custom-industry" data-tag="custom">
+                <i data-lucide="plus" class="w-3 h-3 mr-1"></i>自定义
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 生成按钮 -->
+        <div class="w-full max-w-4xl mb-6">
+          <button id="btn-generate"
+                  class="btn-generate w-full bg-primary text-on-primary py-4 rounded-xl text-lg font-bold
+                         hover:brightness-110 active:scale-[0.98] transition-all inline-flex items-center justify-center gap-3">
+            <i data-lucide="sparkles" class="w-5 h-5"></i>
+            一键生成
           </button>
         </div>
-      </header>
 
-      <main class="flex-1 min-w-0 overflow-y-auto bg-background">
-        <!-- @main-content:start -->
-        <div class="p-5 space-y-4">
-
-          <!-- ========== 模块 1：顶部数据看板 ========== -->
-          <section id="module-kpi">
-            <div class="flex items-center justify-between mb-2.5">
-              <div class="flex items-center gap-2">
-                <div class="w-1 h-4 rounded-full" style="background: linear-gradient(180deg, #00d992, #008f63); box-shadow: 0 0 8px rgba(0,217,146,0.5);"></div>
-                <h2 class="text-sm font-semibold text-on-surface">实时看板</h2>
-                <span class="text-[11px] text-on-surface-variant font-num">/ MARKET OVERVIEW</span>
-                <span class="status-dot status-online ml-1"></span>
-                <span class="text-[10px] text-primary font-num">LIVE</span>
-              </div>
-              <div class="flex items-center gap-3 text-[11px] text-on-surface-variant font-num">
-                <span class="flex items-center gap-1.5">
-                  <span class="w-1.5 h-1.5 bg-primary rounded-full pulse-dot"></span>
-                  <span class="text-on-surface">数据流稳定</span>
-                </span>
-                <span class="text-on-surface-variant/40">|</span>
-                <span>同步于 <span class="text-on-surface">14:32:08</span></span>
-                <button id="btn-refresh-kpi" class="ml-2 flex items-center gap-1 text-primary hover:underline btn-press font-num">
-                  <i data-lucide="refresh-cw" class="w-3 h-3"></i>刷新
-                </button>
-              </div>
-            </div>
-
-            <div class="grid grid-cols-4 gap-3">
-              <!-- KPI 1: 今日命中 -->
-              <div id="kpi-new-topics" class="card-base card-click-flash p-4 cursor-pointer" data-filter-keyword="">
-                <div class="flex items-center justify-between mb-3">
-                  <div class="flex items-center gap-1.5">
-                    <i data-lucide="crosshair" class="w-3.5 h-3.5 text-primary"></i>
-                    <span class="text-[11px] text-on-surface-variant font-num">今日命中</span>
-                  </div>
-                  <span class="badge badge-up font-num">
-                    <i data-lucide="trending-up" class="w-3 h-3"></i>+12.8%
-                  </span>
-                </div>
-                <div class="flex items-end gap-2 mb-2">
-                  <span class="num-metal text-4xl leading-none">47</span>
-                  <span class="text-[10px] text-on-surface-variant mb-1.5 font-num">条</span>
-                </div>
-                <div class="flex items-center justify-between text-[10px] text-on-surface-variant">
-                  <span class="font-num">较昨日 41 条</span>
-                  <span class="num-up font-num">▲ +6</span>
-                </div>
-                <span class="deco-emoji">📈</span>
-              </div>
-
-              <!-- KPI 2: 待处理 -->
-              <div id="kpi-pending" class="card-base card-click-flash p-4 cursor-pointer" data-filter-keyword="待采纳">
-                <div class="flex items-center justify-between mb-3">
-                  <div class="flex items-center gap-1.5">
-                    <span class="status-dot status-pending"></span>
-                    <span class="text-[11px] text-on-surface-variant font-num">待处理</span>
-                  </div>
-                  <span class="badge badge-warn font-num">
-                    <span class="w-1.5 h-1.5 rounded-full bg-warning pulse-dot"></span>14 条
-                  </span>
-                </div>
-                <div class="flex items-end gap-2 mb-2">
-                  <span class="num-metal text-4xl leading-none">14</span>
-                  <span class="text-[10px] text-on-surface-variant mb-1.5 font-num">条待采纳</span>
-                </div>
-                <div class="flex items-center justify-between text-[10px] text-on-surface-variant">
-                  <span class="font-num">高分 ≥ 90</span>
-                  <span class="num-glow text-sm font-bold">6</span>
-                </div>
-                <span class="deco-emoji">⏰</span>
-              </div>
-
-              <!-- KPI 3: 平均评分 -->
-              <div id="kpi-ai-score" class="card-base card-click-flash p-4 cursor-pointer" data-filter-keyword="">
-                <div class="flex items-center justify-between mb-3">
-                  <div class="flex items-center gap-1.5">
-                    <i data-lucide="brain" class="w-3.5 h-3.5 text-primary"></i>
-                    <span class="text-[11px] text-on-surface-variant font-num">平均评分</span>
-                  </div>
-                  <span class="badge badge-flat font-num">
-                    <i data-lucide="activity" class="w-3 h-3"></i>AI 引擎
-                  </span>
-                </div>
-                <div class="flex items-end gap-1 mb-2">
-                  <span class="num-metal text-4xl leading-none">87</span>
-                  <span class="num-glow text-2xl font-bold leading-none">.3</span>
-                  <span class="text-[10px] text-on-surface-variant mb-1.5 font-num">/ 100</span>
-                </div>
-                <div class="flex items-center justify-between text-[10px] text-on-surface-variant">
-                  <span class="font-num">高分占比</span>
-                  <span class="num-up font-num">68% ▲ +2.1</span>
-                </div>
-                <span class="deco-emoji">🧠</span>
-              </div>
-
-              <!-- KPI 4: 对标账号 -->
-              <div id="kpi-benchmark" class="card-base card-click-flash p-4 cursor-pointer" data-filter-keyword="">
-                <div class="flex items-center justify-between mb-3">
-                  <div class="flex items-center gap-1.5">
-                    <i data-lucide="users" class="w-3.5 h-3.5 text-primary"></i>
-                    <span class="text-[11px] text-on-surface-variant font-num">对标账号</span>
-                  </div>
-                  <span class="badge badge-up font-num">
-                    <span class="status-dot status-online" style="width:5px;height:5px"></span>监控中
-                  </span>
-                </div>
-                <div class="flex items-end gap-2 mb-2">
-                  <span class="num-metal text-4xl leading-none">28</span>
-                  <span class="text-[10px] text-on-surface-variant mb-1.5 font-num">个</span>
-                </div>
-                <div class="flex items-center justify-between text-[10px] text-on-surface-variant">
-                  <span class="font-num">7 日活跃</span>
-                  <span class="num-up font-num">22 / 28</span>
-                </div>
-                <span class="deco-emoji">👥</span>
-              </div>
-            </div>
-          </section>
-
-          <!-- ========== 模块 2 + 3：左 60% 热点雷达 / 右 40% 对标监控 ========== -->
-          <section class="grid grid-cols-5 gap-3">
-
-            <!-- 左侧：热点雷达 60% -->
-            <div id="module-radar" class="col-span-3 card-base flex flex-col" style="min-height: 580px;">
-              <div class="h-11 px-4 flex items-center justify-between border-b shrink-0" style="border-color: #3d3a39;">
-                <div class="flex items-center gap-2.5">
-                  <i data-lucide="radar" class="w-4 h-4 text-primary"></i>
-                  <h2 class="text-sm font-semibold text-on-surface">热点雷达</h2>
-                  <span class="text-[11px] text-on-surface-variant font-num">/ HOT RADAR</span>
-                  <span class="status-dot status-online ml-1"></span>
-                  <span class="text-[10px] text-primary font-num">SCANNING</span>
-                </div>
-                <div class="flex items-center gap-2">
-                  <span class="text-[10px] text-on-surface-variant font-num">14:32:08</span>
-                  <button id="btn-scrape" class="btn-glow h-7 px-3 text-[11px] font-medium rounded-md flex items-center gap-1.5 bg-surface-container text-on-surface border btn-press" style="border-color: #3d3a39;">
-                    <i data-lucide="download" class="w-3 h-3"></i>立即抓取
-                  </button>
-                </div>
-              </div>
-
-              <!-- Tab 切换 -->
-              <div class="px-4 flex items-center gap-0.5 border-b shrink-0" style="border-color: #3d3a39;">
-                <button id="tab-xhs" data-tab="xhs" class="tab-btn is-active font-num">[01] 小红书热门</button>
-                <button id="tab-keyword" data-tab="keyword" class="tab-btn font-num">[02] 行业关键词</button>
-                <button id="tab-longtail" data-tab="longtail" class="tab-btn font-num">[03] 长尾潜力</button>
-                <div class="ml-auto flex items-center gap-2 py-2">
-                  <span class="text-[10px] text-on-surface-variant font-num">来源</span>
-                  <select id="radar-source" class="bg-surface-container border rounded-md h-6 px-2 text-[10px] text-on-surface focus:outline-none font-num" style="border-color: #3d3a39;">
-                    <option>全部来源</option>
-                    <option>小红书热门</option>
-                    <option>行业关键词</option>
-                    <option>长尾潜力</option>
-                  </select>
-                  <span class="text-[10px] text-on-surface-variant font-num">排序</span>
-                  <select id="radar-sort" class="bg-surface-container border rounded-md h-6 px-2 text-[10px] text-on-surface focus:outline-none font-num" style="border-color: #3d3a39;">
-                    <option>热度 ↓</option>
-                    <option>时间 ↓</option>
-                    <option>潜力 ↑</option>
-                  </select>
-                  <span class="text-[10px] text-on-surface-variant font-num">时间</span>
-                  <select id="radar-time" class="bg-surface-container border rounded-md h-6 px-2 text-[10px] text-on-surface focus:outline-none font-num" style="border-color: #3d3a39;">
-                    <option>24h</option>
-                    <option>7d</option>
-                    <option>30d</option>
-                  </select>
-                </div>
-              </div>
-
-              <!-- 卡片网格 -->
-              <div id="radar-grid" class="flex-1 overflow-y-auto p-3 grid grid-cols-3 gap-2.5">
-
-                <!-- 列表-热点1 (xhs) -->
-                <article class="hot-card card-base p-3.5 cursor-pointer group" data-tab="xhs" data-score="98" data-status="爆款" data-category="创业故事">
-                  <div class="flex items-center justify-between mb-2">
-                    <div class="flex items-center gap-2">
-                      <span class="seq-stamp text-[10px] font-bold px-1.5 py-0.5">#01</span>
-                      <span class="badge badge-up font-num"><i data-lucide="flame" class="w-2.5 h-2.5"></i>爆款</span>
-                    </div>
-                    <span class="num-glow text-xs font-bold font-num">98.7°</span>
-                  </div>
-                  <div class="heat-bar mb-2.5"><span style="width: 98%"></span></div>
-                  <h3 class="text-sm font-semibold text-on-surface leading-snug mb-2 line-clamp-2">30岁前我亲手关掉公司，才看懂这3件事</h3>
-                  <div class="flex flex-wrap gap-1 mb-2.5">
-                    <span class="text-[10px] bg-primary/15 text-primary px-1.5 py-0.5 rounded font-num">#创业故事</span>
-                    <span class="text-[10px] text-on-surface-variant border px-1.5 py-0.5 rounded font-num" style="border-color: #3d3a39;">#30+女性</span>
-                  </div>
-                  <div class="grid grid-cols-3 gap-1 mb-2.5 text-[10px] font-num">
-                    <div class="text-on-surface-variant"><div class="text-on-surface">12</div><div>对标</div></div>
-                    <div class="text-on-surface-variant"><div class="num-glow">1.28M</div><div>24h曝光</div></div>
-                    <div class="text-on-surface-variant text-right"><div class="num-up">+183%</div><div>涨跌幅</div></div>
-                  </div>
-                  <div class="flex items-center justify-between text-[10px] text-on-surface-variant mb-3 pt-2 border-t font-num" style="border-color: #3d3a39;">
-                    <span>采纳率 <span class="num-glow font-bold">68%</span></span>
-                    <span>📊 女力研究所</span>
-                  </div>
-                  <div class="flex gap-1.5">
-                    <button class="btn-pool btn-glow flex-1 h-8 text-[11px] font-medium rounded-md flex items-center justify-center gap-1 bg-surface-container text-on-surface border btn-press" style="border-color: #3d3a39;" data-topic-id="T-01" data-topic-title="30岁前我亲手关掉公司，才看懂这3件事" data-topic-score="98">
-                      <i data-lucide="bookmark-plus" class="w-3 h-3"></i>加入选题库
-                    </button>
-                    <button class="btn-decompose btn-glow h-8 px-2.5 bg-surface-container text-on-surface border text-[11px] rounded-md btn-press" style="border-color: #3d3a39;">详情</button>
-                    <button class="btn-generate h-8 px-2.5 btn-primary text-[11px] rounded-md flex items-center gap-1 btn-press">
-                      <i data-lucide="zap" class="w-3 h-3"></i>生成
-                    </button>
-                  </div>
-                  <span class="deco-emoji">💼</span>
-                </article>
-
-                <!-- 列表-热点2 (xhs) -->
-                <article class="hot-card card-base p-3.5 cursor-pointer group" data-tab="xhs" data-score="96" data-status="爆款" data-category="副业变现">
-                  <div class="flex items-center justify-between mb-2">
-                    <div class="flex items-center gap-2">
-                      <span class="seq-stamp text-[10px] font-bold px-1.5 py-0.5">#02</span>
-                      <span class="badge badge-up font-num"><i data-lucide="flame" class="w-2.5 h-2.5"></i>爆款</span>
-                    </div>
-                    <span class="num-glow text-xs font-bold font-num">96.2°</span>
-                  </div>
-                  <div class="heat-bar mb-2.5"><span style="width: 96%"></span></div>
-                  <h3 class="text-sm font-semibold text-on-surface leading-snug mb-2 line-clamp-2">普通女生做小红书的第3年，月入6位数</h3>
-                  <div class="flex flex-wrap gap-1 mb-2.5">
-                    <span class="text-[10px] bg-primary/15 text-primary px-1.5 py-0.5 rounded font-num">#副业变现</span>
-                    <span class="text-[10px] text-on-surface-variant border px-1.5 py-0.5 rounded font-num" style="border-color: #3d3a39;">#素人IP</span>
-                  </div>
-                  <div class="grid grid-cols-3 gap-1 mb-2.5 text-[10px] font-num">
-                    <div class="text-on-surface-variant"><div class="text-on-surface">8</div><div>对标</div></div>
-                    <div class="text-on-surface-variant"><div class="num-glow">856k</div><div>24h曝光</div></div>
-                    <div class="text-on-surface-variant text-right"><div class="num-up">+86%</div><div>涨跌幅</div></div>
-                  </div>
-                  <div class="flex items-center justify-between text-[10px] text-on-surface-variant mb-3 pt-2 border-t font-num" style="border-color: #3d3a39;">
-                    <span>采纳率 <span class="num-glow font-bold">72%</span></span>
-                    <span>📊 创业她说</span>
-                  </div>
-                  <div class="flex gap-1.5">
-                    <button class="btn-pool btn-glow flex-1 h-8 text-[11px] font-medium rounded-md flex items-center justify-center gap-1 bg-surface-container text-on-surface border btn-press" style="border-color: #3d3a39;" data-topic-id="T-02" data-topic-title="普通女生做小红书的第3年，月入6位数" data-topic-score="96">
-                      <i data-lucide="bookmark-plus" class="w-3 h-3"></i>加入选题库
-                    </button>
-                    <button class="btn-decompose btn-glow h-8 px-2.5 bg-surface-container text-on-surface border text-[11px] rounded-md btn-press" style="border-color: #3d3a39;">详情</button>
-                    <button class="btn-generate h-8 px-2.5 btn-primary text-[11px] rounded-md flex items-center gap-1 btn-press">
-                      <i data-lucide="zap" class="w-3 h-3"></i>生成
-                    </button>
-                  </div>
-                  <span class="deco-emoji">📈</span>
-                </article>
-
-                <!-- 列表-热点3 (xhs) -->
-                <article class="hot-card card-base p-3.5 cursor-pointer group" data-tab="xhs" data-score="94" data-status="爆款" data-category="职业转型">
-                  <div class="flex items-center justify-between mb-2">
-                    <div class="flex items-center gap-2">
-                      <span class="seq-stamp text-[10px] font-bold px-1.5 py-0.5">#03</span>
-                      <span class="badge badge-up font-num"><i data-lucide="flame" class="w-2.5 h-2.5"></i>爆款</span>
-                    </div>
-                    <span class="num-glow text-xs font-bold font-num">94.5°</span>
-                  </div>
-                  <div class="heat-bar mb-2.5"><span style="width: 94%"></span></div>
-                  <h3 class="text-sm font-semibold text-on-surface leading-snug mb-2 line-clamp-2">我从大厂裸辞后才明白的5件事</h3>
-                  <div class="flex flex-wrap gap-1 mb-2.5">
-                    <span class="text-[10px] bg-primary/15 text-primary px-1.5 py-0.5 rounded font-num">#职业转型</span>
-                    <span class="text-[10px] text-on-surface-variant border px-1.5 py-0.5 rounded font-num" style="border-color: #3d3a39;">#职场</span>
-                  </div>
-                  <div class="grid grid-cols-3 gap-1 mb-2.5 text-[10px] font-num">
-                    <div class="text-on-surface-variant"><div class="text-on-surface">15</div><div>对标</div></div>
-                    <div class="text-on-surface-variant"><div class="num-glow">432k</div><div>24h曝光</div></div>
-                    <div class="text-on-surface-variant text-right"><div class="num-up">+62%</div><div>涨跌幅</div></div>
-                  </div>
-                  <div class="flex items-center justify-between text-[10px] text-on-surface-variant mb-3 pt-2 border-t font-num" style="border-color: #3d3a39;">
-                    <span>采纳率 <span class="num-glow font-bold">84%</span></span>
-                    <span>📊 清醒Girl</span>
-                  </div>
-                  <div class="flex gap-1.5">
-                    <button class="btn-pool btn-glow flex-1 h-8 text-[11px] font-medium rounded-md flex items-center justify-center gap-1 bg-surface-container text-on-surface border btn-press" style="border-color: #3d3a39;" data-topic-id="T-03" data-topic-title="我从大厂裸辞后才明白的5件事" data-topic-score="94">
-                      <i data-lucide="bookmark-plus" class="w-3 h-3"></i>加入选题库
-                    </button>
-                    <button class="btn-decompose btn-glow h-8 px-2.5 bg-surface-container text-on-surface border text-[11px] rounded-md btn-press" style="border-color: #3d3a39;">详情</button>
-                    <button class="btn-generate h-8 px-2.5 btn-primary text-[11px] rounded-md flex items-center gap-1 btn-press">
-                      <i data-lucide="zap" class="w-3 h-3"></i>生成
-                    </button>
-                  </div>
-                  <span class="deco-emoji">💸</span>
-                </article>
-
-                <!-- 列表-热点4 (xhs) -->
-                <article class="hot-card card-base p-3.5 cursor-pointer group" data-tab="xhs" data-score="91" data-status="上升" data-category="辞职">
-                  <div class="flex items-center justify-between mb-2">
-                    <div class="flex items-center gap-2">
-                      <span class="seq-stamp text-[10px] font-bold px-1.5 py-0.5">#04</span>
-                      <span class="badge badge-warn font-num"><i data-lucide="trending-up" class="w-2.5 h-2.5"></i>上升</span>
-                    </div>
-                    <span class="num-glow text-xs font-bold font-num">91.8°</span>
-                  </div>
-                  <div class="heat-bar mb-2.5"><span style="width: 91%"></span></div>
-                  <h3 class="text-sm font-semibold text-on-surface leading-snug mb-2 line-clamp-2">副业月入3万后，我反而辞职了</h3>
-                  <div class="flex flex-wrap gap-1 mb-2.5">
-                    <span class="text-[10px] bg-primary/15 text-primary px-1.5 py-0.5 rounded font-num">#辞职</span>
-                    <span class="text-[10px] text-on-surface-variant border px-1.5 py-0.5 rounded font-num" style="border-color: #3d3a39;">#副业转型</span>
-                  </div>
-                  <div class="grid grid-cols-3 gap-1 mb-2.5 text-[10px] font-num">
-                    <div class="text-on-surface-variant"><div class="text-on-surface">9</div><div>对标</div></div>
-                    <div class="text-on-surface-variant"><div class="num-glow">298k</div><div>24h曝光</div></div>
-                    <div class="text-on-surface-variant text-right"><div class="num-up">+44%</div><div>涨跌幅</div></div>
-                  </div>
-                  <div class="flex items-center justify-between text-[10px] text-on-surface-variant mb-3 pt-2 border-t font-num" style="border-color: #3d3a39;">
-                    <span>采纳率 <span class="num-glow font-bold">56%</span></span>
-                    <span>📊 33岁姐姐说</span>
-                  </div>
-                  <div class="flex gap-1.5">
-                    <button class="btn-pool btn-glow flex-1 h-8 text-[11px] font-medium rounded-md flex items-center justify-center gap-1 bg-surface-container text-on-surface border btn-press" style="border-color: #3d3a39;" data-topic-id="T-04" data-topic-title="副业月入3万后，我反而辞职了" data-topic-score="91">
-                      <i data-lucide="bookmark-plus" class="w-3 h-3"></i>加入选题库
-                    </button>
-                    <button class="btn-decompose btn-glow h-8 px-2.5 bg-surface-container text-on-surface border text-[11px] rounded-md btn-press" style="border-color: #3d3a39;">详情</button>
-                    <button class="btn-generate h-8 px-2.5 btn-primary text-[11px] rounded-md flex items-center gap-1 btn-press">
-                      <i data-lucide="zap" class="w-3 h-3"></i>生成
-                    </button>
-                  </div>
-                  <span class="deco-emoji">💰</span>
-                </article>
-
-                <!-- 列表-热点5 (xhs) -->
-                <article class="hot-card card-base p-3.5 cursor-pointer group" data-tab="xhs" data-score="89" data-status="爆款" data-category="职场干货">
-                  <div class="flex items-center justify-between mb-2">
-                    <div class="flex items-center gap-2">
-                      <span class="seq-stamp text-[10px] font-bold px-1.5 py-0.5">#05</span>
-                      <span class="badge badge-up font-num"><i data-lucide="flame" class="w-2.5 h-2.5"></i>爆款</span>
-                    </div>
-                    <span class="num-glow text-xs font-bold font-num">89.3°</span>
-                  </div>
-                  <div class="heat-bar mb-2.5"><span style="width: 89%"></span></div>
-                  <h3 class="text-sm font-semibold text-on-surface leading-snug mb-2 line-clamp-2">女生学不会向上管理？是你没看懂这3个潜规则</h3>
-                  <div class="flex flex-wrap gap-1 mb-2.5">
-                    <span class="text-[10px] bg-primary/15 text-primary px-1.5 py-0.5 rounded font-num">#职场干货</span>
-                    <span class="text-[10px] text-on-surface-variant border px-1.5 py-0.5 rounded font-num" style="border-color: #3d3a39;">#女性领导力</span>
-                  </div>
-                  <div class="grid grid-cols-3 gap-1 mb-2.5 text-[10px] font-num">
-                    <div class="text-on-surface-variant"><div class="text-on-surface">11</div><div>对标</div></div>
-                    <div class="text-on-surface-variant"><div class="num-glow">1.05M</div><div>24h曝光</div></div>
-                    <div class="text-on-surface-variant text-right"><div class="num-up">+95%</div><div>涨跌幅</div></div>
-                  </div>
-                  <div class="flex items-center justify-between text-[10px] text-on-surface-variant mb-3 pt-2 border-t font-num" style="border-color: #3d3a39;">
-                    <span>采纳率 <span class="num-glow font-bold">79%</span></span>
-                    <span>📊 清醒Girl</span>
-                  </div>
-                  <div class="flex gap-1.5">
-                    <button class="btn-pool btn-glow flex-1 h-8 text-[11px] font-medium rounded-md flex items-center justify-center gap-1 bg-surface-container text-on-surface border btn-press" style="border-color: #3d3a39;" data-topic-id="T-05" data-topic-title="女生学不会向上管理是你没看懂这3个潜规则" data-topic-score="89">
-                      <i data-lucide="bookmark-plus" class="w-3 h-3"></i>加入选题库
-                    </button>
-                    <button class="btn-decompose btn-glow h-8 px-2.5 bg-surface-container text-on-surface border text-[11px] rounded-md btn-press" style="border-color: #3d3a39;">详情</button>
-                    <button class="btn-generate h-8 px-2.5 btn-primary text-[11px] rounded-md flex items-center gap-1 btn-press">
-                      <i data-lucide="zap" class="w-3 h-3"></i>生成
-                    </button>
-                  </div>
-                  <span class="deco-emoji">🌸</span>
-                </article>
-
-                <!-- 列表-热点6 (xhs) -->
-                <article class="hot-card card-base p-3.5 cursor-pointer group" data-tab="xhs" data-score="87" data-status="上升" data-category="私域运营">
-                  <div class="flex items-center justify-between mb-2">
-                    <div class="flex items-center gap-2">
-                      <span class="seq-stamp text-[10px] font-bold px-1.5 py-0.5">#06</span>
-                      <span class="badge badge-warn font-num"><i data-lucide="trending-up" class="w-2.5 h-2.5"></i>上升</span>
-                    </div>
-                    <span class="num-glow text-xs font-bold font-num">87.6°</span>
-                  </div>
-                  <div class="heat-bar mb-2.5"><span style="width: 87%"></span></div>
-                  <h3 class="text-sm font-semibold text-on-surface leading-snug mb-2 line-clamp-2">靠朋友圈成交50万，普通人也能复制的私域公式</h3>
-                  <div class="flex flex-wrap gap-1 mb-2.5">
-                    <span class="text-[10px] bg-primary/15 text-primary px-1.5 py-0.5 rounded font-num">#私域运营</span>
-                    <span class="text-[10px] text-on-surface-variant border px-1.5 py-0.5 rounded font-num" style="border-color: #3d3a39;">#变现</span>
-                  </div>
-                  <div class="grid grid-cols-3 gap-1 mb-2.5 text-[10px] font-num">
-                    <div class="text-on-surface-variant"><div class="text-on-surface">7</div><div>对标</div></div>
-                    <div class="text-on-surface-variant"><div class="num-glow">567k</div><div>24h曝光</div></div>
-                    <div class="text-on-surface-variant text-right"><div class="num-up">+57%</div><div>涨跌幅</div></div>
-                  </div>
-                  <div class="flex items-center justify-between text-[10px] text-on-surface-variant mb-3 pt-2 border-t font-num" style="border-color: #3d3a39;">
-                    <span>采纳率 <span class="num-glow font-bold">65%</span></span>
-                    <span>📊 商业女孩</span>
-                  </div>
-                  <div class="flex gap-1.5">
-                    <button class="btn-pool btn-glow flex-1 h-8 text-[11px] font-medium rounded-md flex items-center justify-center gap-1 bg-surface-container text-on-surface border btn-press" style="border-color: #3d3a39;" data-topic-id="T-06" data-topic-title="靠朋友圈成交50万普通人也能复制的私域公式" data-topic-score="87">
-                      <i data-lucide="bookmark-plus" class="w-3 h-3"></i>加入选题库
-                    </button>
-                    <button class="btn-decompose btn-glow h-8 px-2.5 bg-surface-container text-on-surface border text-[11px] rounded-md btn-press" style="border-color: #3d3a39;">详情</button>
-                    <button class="btn-generate h-8 px-2.5 btn-primary text-[11px] rounded-md flex items-center gap-1 btn-press">
-                      <i data-lucide="zap" class="w-3 h-3"></i>生成
-                    </button>
-                  </div>
-                  <span class="deco-emoji">💵</span>
-                </article>
-
-                <!-- 列表-热点7 (xhs) -->
-                <article class="hot-card card-base p-3.5 cursor-pointer group" data-tab="xhs" data-score="85" data-status="爆款" data-category="自我成长">
-                  <div class="flex items-center justify-between mb-2">
-                    <div class="flex items-center gap-2">
-                      <span class="seq-stamp text-[10px] font-bold px-1.5 py-0.5">#07</span>
-                      <span class="badge badge-up font-num"><i data-lucide="flame" class="w-2.5 h-2.5"></i>爆款</span>
-                    </div>
-                    <span class="num-glow text-xs font-bold font-num">85.1°</span>
-                  </div>
-                  <div class="heat-bar mb-2.5"><span style="width: 85%"></span></div>
-                  <h3 class="text-sm font-semibold text-on-surface leading-snug mb-2 line-clamp-2">30+重新开始，最该投资的是这3项</h3>
-                  <div class="flex flex-wrap gap-1 mb-2.5">
-                    <span class="text-[10px] bg-primary/15 text-primary px-1.5 py-0.5 rounded font-num">#自我成长</span>
-                    <span class="text-[10px] text-on-surface-variant border px-1.5 py-0.5 rounded font-num" style="border-color: #3d3a39;">#30+女性</span>
-                  </div>
-                  <div class="grid grid-cols-3 gap-1 mb-2.5 text-[10px] font-num">
-                    <div class="text-on-surface-variant"><div class="text-on-surface">6</div><div>对标</div></div>
-                    <div class="text-on-surface-variant"><div class="num-glow">389k</div><div>24h曝光</div></div>
-                    <div class="text-on-surface-variant text-right"><div class="num-up">+31%</div><div>涨跌幅</div></div>
-                  </div>
-                  <div class="flex items-center justify-between text-[10px] text-on-surface-variant mb-3 pt-2 border-t font-num" style="border-color: #3d3a39;">
-                    <span>采纳率 <span class="num-glow font-bold">49%</span></span>
-                    <span>📊 盐系成长</span>
-                  </div>
-                  <div class="flex gap-1.5">
-                    <button class="btn-pool btn-glow flex-1 h-8 text-[11px] font-medium rounded-md flex items-center justify-center gap-1 bg-surface-container text-on-surface border btn-press" style="border-color: #3d3a39;" data-topic-id="T-07" data-topic-title="30+重新开始最该投资的是这3项" data-topic-score="85">
-                      <i data-lucide="bookmark-plus" class="w-3 h-3"></i>加入选题库
-                    </button>
-                    <button class="btn-decompose btn-glow h-8 px-2.5 bg-surface-container text-on-surface border text-[11px] rounded-md btn-press" style="border-color: #3d3a39;">详情</button>
-                    <button class="btn-generate h-8 px-2.5 btn-primary text-[11px] rounded-md flex items-center gap-1 btn-press">
-                      <i data-lucide="zap" class="w-3 h-3"></i>生成
-                    </button>
-                  </div>
-                  <span class="deco-emoji">🌱</span>
-                </article>
-
-                <!-- 列表-热点8 (xhs) -->
-                <article class="hot-card card-base p-3.5 cursor-pointer group" data-tab="xhs" data-score="82" data-status="爆款" data-category="逆袭故事">
-                  <div class="flex items-center justify-between mb-2">
-                    <div class="flex items-center gap-2">
-                      <span class="seq-stamp text-[10px] font-bold px-1.5 py-0.5">#08</span>
-                      <span class="badge badge-up font-num"><i data-lucide="flame" class="w-2.5 h-2.5"></i>爆款</span>
-                    </div>
-                    <span class="num-glow text-xs font-bold font-num">82.4°</span>
-                  </div>
-                  <div class="heat-bar mb-2.5"><span style="width: 82%"></span></div>
-                  <h3 class="text-sm font-semibold text-on-surface leading-snug mb-2 line-clamp-2">从月薪5k到年入百万，我做对了什么</h3>
-                  <div class="flex flex-wrap gap-1 mb-2.5">
-                    <span class="text-[10px] bg-primary/15 text-primary px-1.5 py-0.5 rounded font-num">#逆袭故事</span>
-                    <span class="text-[10px] text-on-surface-variant border px-1.5 py-0.5 rounded font-num" style="border-color: #3d3a39;">#财富</span>
-                  </div>
-                  <div class="grid grid-cols-3 gap-1 mb-2.5 text-[10px] font-num">
-                    <div class="text-on-surface-variant"><div class="text-on-surface">10</div><div>对标</div></div>
-                    <div class="text-on-surface-variant"><div class="num-glow">712k</div><div>24h曝光</div></div>
-                    <div class="text-on-surface-variant text-right"><div class="num-up">+28%</div><div>涨跌幅</div></div>
-                  </div>
-                  <div class="flex items-center justify-between text-[10px] text-on-surface-variant mb-3 pt-2 border-t font-num" style="border-color: #3d3a39;">
-                    <span>采纳率 <span class="num-glow font-bold">71%</span></span>
-                    <span>📊 创业她说</span>
-                  </div>
-                  <div class="flex gap-1.5">
-                    <button class="btn-pool btn-glow flex-1 h-8 text-[11px] font-medium rounded-md flex items-center justify-center gap-1 bg-surface-container text-on-surface border btn-press" style="border-color: #3d3a39;" data-topic-id="T-08" data-topic-title="从月薪5k到年入百万我做对了什么" data-topic-score="82">
-                      <i data-lucide="bookmark-plus" class="w-3 h-3"></i>加入选题库
-                    </button>
-                    <button class="btn-decompose btn-glow h-8 px-2.5 bg-surface-container text-on-surface border text-[11px] rounded-md btn-press" style="border-color: #3d3a39;">详情</button>
-                    <button class="btn-generate h-8 px-2.5 btn-primary text-[11px] rounded-md flex items-center gap-1 btn-press">
-                      <i data-lucide="zap" class="w-3 h-3"></i>生成
-                    </button>
-                  </div>
-                  <span class="deco-emoji">💎</span>
-                </article>
-
-                <!-- 列表-热点9 (xhs) -->
-                <article class="hot-card card-base p-3.5 cursor-pointer group" data-tab="xhs" data-score="80" data-status="上升" data-category="创业心法">
-                  <div class="flex items-center justify-between mb-2">
-                    <div class="flex items-center gap-2">
-                      <span class="seq-stamp text-[10px] font-bold px-1.5 py-0.5">#09</span>
-                      <span class="badge badge-warn font-num"><i data-lucide="trending-up" class="w-2.5 h-2.5"></i>上升</span>
-                    </div>
-                    <span class="num-glow text-xs font-bold font-num">80.2°</span>
-                  </div>
-                  <div class="heat-bar mb-2.5"><span style="width: 80%"></span></div>
-                  <h3 class="text-sm font-semibold text-on-surface leading-snug mb-2 line-clamp-2">创业第三年，我终于学会说"不"</h3>
-                  <div class="flex flex-wrap gap-1 mb-2.5">
-                    <span class="text-[10px] bg-primary/15 text-primary px-1.5 py-0.5 rounded font-num">#创业心法</span>
-                    <span class="text-[10px] text-on-surface-variant border px-1.5 py-0.5 rounded font-num" style="border-color: #3d3a39;">#情绪管理</span>
-                  </div>
-                  <div class="grid grid-cols-3 gap-1 mb-2.5 text-[10px] font-num">
-                    <div class="text-on-surface-variant"><div class="text-on-surface">5</div><div>对标</div></div>
-                    <div class="text-on-surface-variant"><div class="num-glow">245k</div><div>24h曝光</div></div>
-                    <div class="text-on-surface-variant text-right"><div class="num-up">+12%</div><div>涨跌幅</div></div>
-                  </div>
-                  <div class="flex items-center justify-between text-[10px] text-on-surface-variant mb-3 pt-2 border-t font-num" style="border-color: #3d3a39;">
-                    <span>采纳率 <span class="num-glow font-bold">38%</span></span>
-                    <span>📊 不被定义的她</span>
-                  </div>
-                  <div class="flex gap-1.5">
-                    <button class="btn-pool btn-glow flex-1 h-8 text-[11px] font-medium rounded-md flex items-center justify-center gap-1 bg-surface-container text-on-surface border btn-press" style="border-color: #3d3a39;" data-topic-id="T-09" data-topic-title="创业第三年我终于学会说不" data-topic-score="80">
-                      <i data-lucide="bookmark-plus" class="w-3 h-3"></i>加入选题库
-                    </button>
-                    <button class="btn-decompose btn-glow h-8 px-2.5 bg-surface-container text-on-surface border text-[11px] rounded-md btn-press" style="border-color: #3d3a39;">详情</button>
-                    <button class="btn-generate h-8 px-2.5 btn-primary text-[11px] rounded-md flex items-center gap-1 btn-press">
-                      <i data-lucide="zap" class="w-3 h-3"></i>生成
-                    </button>
-                  </div>
-                  <span class="deco-emoji">🔥</span>
-                </article>
-
-                <!-- 列表-关键词1 (keyword) -->
-                <article class="hot-card card-base p-3.5 cursor-pointer group" data-tab="keyword" data-score="92" data-status="上升" data-category="创业故事" style="display:none">
-                  <div class="flex items-center justify-between mb-2">
-                    <div class="flex items-center gap-2">
-                      <span class="seq-stamp text-[10px] font-bold px-1.5 py-0.5">KW-01</span>
-                      <span class="badge badge-warn font-num"><i data-lucide="trending-up" class="w-2.5 h-2.5"></i>上升</span>
-                    </div>
-                    <span class="num-glow text-xs font-bold font-num">92.4°</span>
-                  </div>
-                  <div class="heat-bar mb-2.5"><span style="width: 92%"></span></div>
-                  <h3 class="text-sm font-semibold text-on-surface leading-snug mb-2 line-clamp-2">关键词"女性创业"近7天热度 +183%</h3>
-                  <div class="flex flex-wrap gap-1 mb-2.5">
-                    <span class="text-[10px] bg-primary/15 text-primary px-1.5 py-0.5 rounded font-num">#女性创业</span>
-                    <span class="text-[10px] text-on-surface-variant border px-1.5 py-0.5 rounded font-num" style="border-color: #3d3a39;">#热度飙升</span>
-                  </div>
-                  <div class="grid grid-cols-3 gap-1 mb-2.5 text-[10px] font-num">
-                    <div class="text-on-surface-variant"><div class="text-on-surface">全网</div><div>来源</div></div>
-                    <div class="text-on-surface-variant"><div class="num-glow">2.4M</div><div>24h曝光</div></div>
-                    <div class="text-on-surface-variant text-right"><div class="num-up">+183%</div><div>涨跌幅</div></div>
-                  </div>
-                  <div class="flex items-center justify-between text-[10px] text-on-surface-variant mb-3 pt-2 border-t font-num" style="border-color: #3d3a39;">
-                    <span>采纳率 <span class="num-glow font-bold">61%</span></span>
-                    <span>📅 7 日数据</span>
-                  </div>
-                  <div class="flex gap-1.5">
-                    <button class="btn-pool btn-glow flex-1 h-8 text-[11px] font-medium rounded-md flex items-center justify-center gap-1 bg-surface-container text-on-surface border btn-press" style="border-color: #3d3a39;" data-topic-id="T-KW1" data-topic-title="女性创业关键词热度飙升+183%" data-topic-score="92">
-                      <i data-lucide="bookmark-plus" class="w-3 h-3"></i>加入选题库
-                    </button>
-                    <button class="btn-decompose btn-glow h-8 px-2.5 bg-surface-container text-on-surface border text-[11px] rounded-md btn-press" style="border-color: #3d3a39;">详情</button>
-                    <button class="btn-generate h-8 px-2.5 btn-primary text-[11px] rounded-md flex items-center gap-1 btn-press">
-                      <i data-lucide="zap" class="w-3 h-3"></i>生成
-                    </button>
-                  </div>
-                  <span class="deco-emoji">📊</span>
-                </article>
-
-                <!-- 列表-关键词2 (keyword) -->
-                <article class="hot-card card-base p-3.5 cursor-pointer group" data-tab="keyword" data-score="88" data-status="爆款" data-category="副业变现" style="display:none">
-                  <div class="flex items-center justify-between mb-2">
-                    <div class="flex items-center gap-2">
-                      <span class="seq-stamp text-[10px] font-bold px-1.5 py-0.5">KW-02</span>
-                      <span class="badge badge-up font-num"><i data-lucide="flame" class="w-2.5 h-2.5"></i>爆款</span>
-                    </div>
-                    <span class="num-glow text-xs font-bold font-num">88.0°</span>
-                  </div>
-                  <div class="heat-bar mb-2.5"><span style="width: 88%"></span></div>
-                  <h3 class="text-sm font-semibold text-on-surface leading-snug mb-2 line-clamp-2">"副业月入"长尾词热度持续走高</h3>
-                  <div class="flex flex-wrap gap-1 mb-2.5">
-                    <span class="text-[10px] bg-primary/15 text-primary px-1.5 py-0.5 rounded font-num">#副业月入</span>
-                    <span class="text-[10px] text-on-surface-variant border px-1.5 py-0.5 rounded font-num" style="border-color: #3d3a39;">#长尾稳定</span>
-                  </div>
-                  <div class="grid grid-cols-3 gap-1 mb-2.5 text-[10px] font-num">
-                    <div class="text-on-surface-variant"><div class="text-on-surface">全网</div><div>来源</div></div>
-                    <div class="text-on-surface-variant"><div class="num-glow">1.8M</div><div>24h曝光</div></div>
-                    <div class="text-on-surface-variant text-right"><div class="num-up">+86%</div><div>涨跌幅</div></div>
-                  </div>
-                  <div class="flex items-center justify-between text-[10px] text-on-surface-variant mb-3 pt-2 border-t font-num" style="border-color: #3d3a39;">
-                    <span>采纳率 <span class="num-glow font-bold">74%</span></span>
-                    <span>📅 7 日数据</span>
-                  </div>
-                  <div class="flex gap-1.5">
-                    <button class="btn-pool btn-glow flex-1 h-8 text-[11px] font-medium rounded-md flex items-center justify-center gap-1 bg-surface-container text-on-surface border btn-press" style="border-color: #3d3a39;" data-topic-id="T-KW2" data-topic-title="副业月入长尾词持续走高" data-topic-score="88">
-                      <i data-lucide="bookmark-plus" class="w-3 h-3"></i>加入选题库
-                    </button>
-                    <button class="btn-decompose btn-glow h-8 px-2.5 bg-surface-container text-on-surface border text-[11px] rounded-md btn-press" style="border-color: #3d3a39;">详情</button>
-                    <button class="btn-generate h-8 px-2.5 btn-primary text-[11px] rounded-md flex items-center gap-1 btn-press">
-                      <i data-lucide="zap" class="w-3 h-3"></i>生成
-                    </button>
-                  </div>
-                  <span class="deco-emoji">🔑</span>
-                </article>
-
-                <!-- 列表-关键词3 (keyword) -->
-                <article class="hot-card card-base p-3.5 cursor-pointer group" data-tab="keyword" data-score="85" data-status="上升" data-category="职业转型" style="display:none">
-                  <div class="flex items-center justify-between mb-2">
-                    <div class="flex items-center gap-2">
-                      <span class="seq-stamp text-[10px] font-bold px-1.5 py-0.5">KW-03</span>
-                      <span class="badge badge-warn font-num"><i data-lucide="trending-up" class="w-2.5 h-2.5"></i>上升</span>
-                    </div>
-                    <span class="num-glow text-xs font-bold font-num">85.7°</span>
-                  </div>
-                  <div class="heat-bar mb-2.5"><span style="width: 85%"></span></div>
-                  <h3 class="text-sm font-semibold text-on-surface leading-snug mb-2 line-clamp-2">"大厂裸辞"讨论量周环比 +62%</h3>
-                  <div class="flex flex-wrap gap-1 mb-2.5">
-                    <span class="text-[10px] bg-primary/15 text-primary px-1.5 py-0.5 rounded font-num">#大厂裸辞</span>
-                    <span class="text-[10px] text-on-surface-variant border px-1.5 py-0.5 rounded font-num" style="border-color: #3d3a39;">#职业转型</span>
-                  </div>
-                  <div class="grid grid-cols-3 gap-1 mb-2.5 text-[10px] font-num">
-                    <div class="text-on-surface-variant"><div class="text-on-surface">全网</div><div>来源</div></div>
-                    <div class="text-on-surface-variant"><div class="num-glow">965k</div><div>24h曝光</div></div>
-                    <div class="text-on-surface-variant text-right"><div class="num-up">+62%</div><div>涨跌幅</div></div>
-                  </div>
-                  <div class="flex items-center justify-between text-[10px] text-on-surface-variant mb-3 pt-2 border-t font-num" style="border-color: #3d3a39;">
-                    <span>采纳率 <span class="num-glow font-bold">58%</span></span>
-                    <span>📅 7 日数据</span>
-                  </div>
-                  <div class="flex gap-1.5">
-                    <button class="btn-pool btn-glow flex-1 h-8 text-[11px] font-medium rounded-md flex items-center justify-center gap-1 bg-surface-container text-on-surface border btn-press" style="border-color: #3d3a39;" data-topic-id="T-KW3" data-topic-title="大厂裸辞讨论量环比+62%" data-topic-score="85">
-                      <i data-lucide="bookmark-plus" class="w-3 h-3"></i>加入选题库
-                    </button>
-                    <button class="btn-decompose btn-glow h-8 px-2.5 bg-surface-container text-on-surface border text-[11px] rounded-md btn-press" style="border-color: #3d3a39;">详情</button>
-                    <button class="btn-generate h-8 px-2.5 btn-primary text-[11px] rounded-md flex items-center gap-1 btn-press">
-                      <i data-lucide="zap" class="w-3 h-3"></i>生成
-                    </button>
-                  </div>
-                  <span class="deco-emoji">📡</span>
-                </article>
-
-                <!-- 列表-长尾1 (longtail) -->
-                <article class="hot-card card-base p-3.5 cursor-pointer group" data-tab="longtail" data-score="84" data-status="上升" data-category="职业转型" style="display:none">
-                  <div class="flex items-center justify-between mb-2">
-                    <div class="flex items-center gap-2">
-                      <span class="seq-stamp text-[10px] font-bold px-1.5 py-0.5">LT-01</span>
-                      <span class="badge badge-warn font-num"><i data-lucide="trending-up" class="w-2.5 h-2.5"></i>上升</span>
-                    </div>
-                    <span class="num-glow text-xs font-bold font-num">84.3°</span>
-                  </div>
-                  <div class="heat-bar mb-2.5"><span style="width: 84%"></span></div>
-                  <h3 class="text-sm font-semibold text-on-surface leading-snug mb-2 line-clamp-2">"30 岁离开大厂后，我才学会的 3 件事"</h3>
-                  <div class="flex flex-wrap gap-1 mb-2.5">
-                    <span class="text-[10px] bg-primary/15 text-primary px-1.5 py-0.5 rounded font-num">#裸辞成长</span>
-                    <span class="text-[10px] text-on-surface-variant border px-1.5 py-0.5 rounded font-num" style="border-color: #3d3a39;">#长尾潜力</span>
-                  </div>
-                  <div class="grid grid-cols-3 gap-1 mb-2.5 text-[10px] font-num">
-                    <div class="text-on-surface-variant"><div class="text-on-surface">长尾</div><div>来源</div></div>
-                    <div class="text-on-surface-variant"><div class="num-glow">486k</div><div>24h曝光</div></div>
-                    <div class="text-on-surface-variant text-right"><div class="num-up">+38%</div><div>涨跌幅</div></div>
-                  </div>
-                  <div class="flex items-center justify-between text-[10px] text-on-surface-variant mb-3 pt-2 border-t font-num" style="border-color: #3d3a39;">
-                    <span>采纳率 <span class="num-glow font-bold">66%</span></span>
-                    <span>🕒 3 月长尾</span>
-                  </div>
-                  <div class="flex gap-1.5">
-                    <button class="btn-pool btn-glow flex-1 h-8 text-[11px] font-medium rounded-md flex items-center justify-center gap-1 bg-surface-container text-on-surface border btn-press" style="border-color: #3d3a39;" data-topic-id="T-LT1" data-topic-title="30岁离开大厂后我才学会的3件事" data-topic-score="84">
-                      <i data-lucide="bookmark-plus" class="w-3 h-3"></i>加入选题库
-                    </button>
-                    <button class="btn-decompose btn-glow h-8 px-2.5 bg-surface-container text-on-surface border text-[11px] rounded-md btn-press" style="border-color: #3d3a39;">详情</button>
-                    <button class="btn-generate h-8 px-2.5 btn-primary text-[11px] rounded-md flex items-center gap-1 btn-press">
-                      <i data-lucide="zap" class="w-3 h-3"></i>生成
-                    </button>
-                  </div>
-                  <span class="deco-emoji">🕰</span>
-                </article>
-
-                <!-- 列表-长尾2 (longtail) -->
-                <article class="hot-card card-base p-3.5 cursor-pointer group" data-tab="longtail" data-score="80" data-status="上升" data-category="副业变现" style="display:none">
-                  <div class="flex items-center justify-between mb-2">
-                    <div class="flex items-center gap-2">
-                      <span class="seq-stamp text-[10px] font-bold px-1.5 py-0.5">LT-02</span>
-                      <span class="badge badge-warn font-num"><i data-lucide="trending-up" class="w-2.5 h-2.5"></i>上升</span>
-                    </div>
-                    <span class="num-glow text-xs font-bold font-num">80.9°</span>
-                  </div>
-                  <div class="heat-bar mb-2.5"><span style="width: 80%"></span></div>
-                  <h3 class="text-sm font-semibold text-on-surface leading-snug mb-2 line-clamp-2">小红书素人 90 天从 0 到 1 万粉的实操路径</h3>
-                  <div class="flex flex-wrap gap-1 mb-2.5">
-                    <span class="text-[10px] bg-primary/15 text-primary px-1.5 py-0.5 rounded font-num">#素人IP</span>
-                    <span class="text-[10px] text-on-surface-variant border px-1.5 py-0.5 rounded font-num" style="border-color: #3d3a39;">#长尾潜力</span>
-                  </div>
-                  <div class="grid grid-cols-3 gap-1 mb-2.5 text-[10px] font-num">
-                    <div class="text-on-surface-variant"><div class="text-on-surface">长尾</div><div>来源</div></div>
-                    <div class="text-on-surface-variant"><div class="num-glow">324k</div><div>24h曝光</div></div>
-                    <div class="text-on-surface-variant text-right"><div class="num-up">+24%</div><div>涨跌幅</div></div>
-                  </div>
-                  <div class="flex items-center justify-between text-[10px] text-on-surface-variant mb-3 pt-2 border-t font-num" style="border-color: #3d3a39;">
-                    <span>采纳率 <span class="num-glow font-bold">52%</span></span>
-                    <span>🕒 6 月长尾</span>
-                  </div>
-                  <div class="flex gap-1.5">
-                    <button class="btn-pool btn-glow flex-1 h-8 text-[11px] font-medium rounded-md flex items-center justify-center gap-1 bg-surface-container text-on-surface border btn-press" style="border-color: #3d3a39;" data-topic-id="T-LT2" data-topic-title="小红书素人90天从0到1万粉的实操路径" data-topic-score="80">
-                      <i data-lucide="bookmark-plus" class="w-3 h-3"></i>加入选题库
-                    </button>
-                    <button class="btn-decompose btn-glow h-8 px-2.5 bg-surface-container text-on-surface border text-[11px] rounded-md btn-press" style="border-color: #3d3a39;">详情</button>
-                    <button class="btn-generate h-8 px-2.5 btn-primary text-[11px] rounded-md flex items-center gap-1 btn-press">
-                      <i data-lucide="zap" class="w-3 h-3"></i>生成
-                    </button>
-                  </div>
-                  <span class="deco-emoji">📚</span>
-                </article>
-
-                <!-- 列表-长尾3 (longtail) -->
-                <article class="hot-card card-base p-3.5 cursor-pointer group" data-tab="longtail" data-score="77" data-status="爆款" data-category="自我成长" style="display:none">
-                  <div class="flex items-center justify-between mb-2">
-                    <div class="flex items-center gap-2">
-                      <span class="seq-stamp text-[10px] font-bold px-1.5 py-0.5">LT-03</span>
-                      <span class="badge badge-up font-num"><i data-lucide="flame" class="w-2.5 h-2.5"></i>爆款</span>
-                    </div>
-                    <span class="num-glow text-xs font-bold font-num">77.5°</span>
-                  </div>
-                  <div class="heat-bar mb-2.5"><span style="width: 77%"></span></div>
-                  <h3 class="text-sm font-semibold text-on-surface leading-snug mb-2 line-clamp-2">"普通女生"系列内容长期占据推荐位</h3>
-                  <div class="flex flex-wrap gap-1 mb-2.5">
-                    <span class="text-[10px] bg-primary/15 text-primary px-1.5 py-0.5 rounded font-num">#普通女生</span>
-                    <span class="text-[10px] text-on-surface-variant border px-1.5 py-0.5 rounded font-num" style="border-color: #3d3a39;">#长尾潜力</span>
-                  </div>
-                  <div class="grid grid-cols-3 gap-1 mb-2.5 text-[10px] font-num">
-                    <div class="text-on-surface-variant"><div class="text-on-surface">长尾</div><div>来源</div></div>
-                    <div class="text-on-surface-variant"><div class="num-glow">218k</div><div>24h曝光</div></div>
-                    <div class="text-on-surface-variant text-right"><div class="num-up">+18%</div><div>涨跌幅</div></div>
-                  </div>
-                  <div class="flex items-center justify-between text-[10px] text-on-surface-variant mb-3 pt-2 border-t font-num" style="border-color: #3d3a39;">
-                    <span>采纳率 <span class="num-glow font-bold">44%</span></span>
-                    <span>🕒 12 月长尾</span>
-                  </div>
-                  <div class="flex gap-1.5">
-                    <button class="btn-pool btn-glow flex-1 h-8 text-[11px] font-medium rounded-md flex items-center justify-center gap-1 bg-surface-container text-on-surface border btn-press" style="border-color: #3d3a39;" data-topic-id="T-LT3" data-topic-title="普通女生系列内容长期占据推荐位" data-topic-score="77">
-                      <i data-lucide="bookmark-plus" class="w-3 h-3"></i>加入选题库
-                    </button>
-                    <button class="btn-decompose btn-glow h-8 px-2.5 bg-surface-container text-on-surface border text-[11px] rounded-md btn-press" style="border-color: #3d3a39;">详情</button>
-                    <button class="btn-generate h-8 px-2.5 btn-primary text-[11px] rounded-md flex items-center gap-1 btn-press">
-                      <i data-lucide="zap" class="w-3 h-3"></i>生成
-                    </button>
-                  </div>
-                  <span class="deco-emoji">✨</span>
-                </article>
-
-              </div>
-
-              <!-- 分页 / 状态栏 -->
-              <div class="h-9 px-4 flex items-center justify-between border-t shrink-0 text-[11px] text-on-surface-variant font-num" style="border-color: #3d3a39;">
-                <div class="flex items-center gap-3">
-                  <span>今日已抓取：<span class="text-on-surface">238</span> 条</span>
-                  <span class="text-on-surface-variant/40">|</span>
-                  <span>展示 <span class="text-on-surface">9</span> 条</span>
-                </div>
-                <div class="flex items-center gap-2">
-                  <button class="text-on-surface-variant hover:text-primary transition-colors btn-press">← 上一页</button>
-                  <span class="text-primary font-bold">01</span>
-                  <span>/</span>
-                  <span>27</span>
-                  <button class="text-on-surface hover:text-primary transition-colors btn-press">下一页 →</button>
-                </div>
-              </div>
-            </div>
-
-            <!-- 右侧：对标账号监控 40% -->
-            <div id="module-benchmark" class="col-span-2 card-base flex flex-col" style="min-height: 580px;">
-              <div class="h-11 px-4 flex items-center justify-between border-b shrink-0" style="border-color: #3d3a39;">
-                <div class="flex items-center gap-2.5">
-                  <i data-lucide="crosshair" class="w-4 h-4 text-primary"></i>
-                  <h2 class="text-sm font-semibold text-on-surface">对标监控</h2>
-                  <span class="text-[11px] text-on-surface-variant font-num">/ BENCHMARK</span>
-                </div>
-                <button id="btn-add-benchmark" class="btn-glow h-7 px-3 text-[11px] font-medium rounded-md flex items-center gap-1.5 bg-surface-container text-on-surface border btn-press" style="border-color: #3d3a39;">
-                  <i data-lucide="plus" class="w-3 h-3"></i>添加对标
-                </button>
-              </div>
-
-              <div class="px-4 py-2.5 border-b flex items-center gap-3 text-[11px] font-num" style="border-color: #3d3a39;">
-                <div class="flex items-center gap-1.5">
-                  <span class="text-on-surface-variant">在监控</span>
-                  <span class="num-glow font-bold text-sm">28</span>
-                  <span class="text-on-surface-variant">个</span>
-                </div>
-                <div class="h-3 w-px" style="background: #3d3a39;"></div>
-                <div class="flex items-center gap-1.5">
-                  <span class="text-on-surface-variant">7 日活跃</span>
-                  <span class="num-up font-bold text-sm">22</span>
-                </div>
-                <div class="h-3 w-px" style="background: #3d3a39;"></div>
-                <div class="flex items-center gap-1.5">
-                  <span class="text-on-surface-variant">爆款率</span>
-                  <span class="num-glow font-bold text-sm">14.7%</span>
-                </div>
-                <span class="ml-auto text-on-surface-variant">实时</span>
-                <span class="status-dot status-online"></span>
-              </div>
-
-              <div class="px-4 py-1.5 grid grid-cols-12 gap-1 text-[10px] text-on-surface-variant border-b font-num" style="border-color: #3d3a39;">
-                <div class="col-span-5">账号</div>
-                <div class="col-span-2 text-right">爆款数</div>
-                <div class="col-span-3 text-center">命中率</div>
-                <div class="col-span-2 text-right">均赞</div>
-              </div>
-
-              <div id="benchmark-list" class="flex-1 overflow-y-auto">
-                <!-- 对标账号行 1 -->
-                <div class="bench-row px-4 py-2.5 grid grid-cols-12 gap-1 items-center border-b cursor-pointer transition-colors hover:bg-surface-container" data-account="女力研究所" style="border-color: #3d3a39;">
-                  <div class="col-span-5 flex items-center gap-2 min-w-0">
-                    <div class="w-7 h-7 bg-primary/15 border rounded-md flex items-center justify-center text-[11px] font-bold text-primary shrink-0 font-num" style="border-color: rgba(0,217,146,0.4);">女</div>
-                    <div class="min-w-0">
-                      <div class="text-xs font-medium text-on-surface truncate">女力研究所</div>
-                      <div class="text-[10px] text-on-surface-variant truncate font-num">@nuli_research</div>
-                    </div>
-                  </div>
-                  <div class="col-span-2 text-right text-xs font-bold num-glow font-num">38</div>
-                  <div class="col-span-3 px-1">
-                    <div class="flex items-center gap-1.5">
-                      <div class="flex-1 progress-track"><div class="progress-fill" style="width: 82%"></div></div>
-                      <span class="text-[10px] text-on-surface font-num w-8 text-right">82%</span>
-                    </div>
-                  </div>
-                  <div class="col-span-2 text-right text-xs text-on-surface font-num">12.4k</div>
-                </div>
-                <div class="bench-detail px-4 py-2.5 border-b hidden" data-account-detail="女力研究所" style="border-color: #3d3a39; background: #15151a;">
-                  <div class="text-[11px] font-medium text-primary mb-2 flex items-center gap-1.5 font-num">
-                    <i data-lucide="flame" class="w-3 h-3"></i>近期爆款 Top 3
-                  </div>
-                  <div class="space-y-1.5 text-xs text-on-surface">
-                    <div class="flex items-center justify-between"><span class="truncate flex-1">从月薪 8k 到年入百万，我的 3 个底层转变</span><span class="num-up ml-2 shrink-0 font-num">❤ 23.5k</span></div>
-                    <div class="flex items-center justify-between"><span class="truncate flex-1">30+ 后我才看懂：所谓贵人，其实有迹可循</span><span class="num-up ml-2 shrink-0 font-num">❤ 18.7k</span></div>
-                    <div class="flex items-center justify-between"><span class="truncate flex-1">女生学不会谈判？这 5 个话术让你反客为主</span><span class="num-up ml-2 shrink-0 font-num">❤ 14.2k</span></div>
-                  </div>
-                </div>
-                <!-- 对标账号行 2 -->
-                <div class="bench-row px-4 py-2.5 grid grid-cols-12 gap-1 items-center border-b cursor-pointer transition-colors hover:bg-surface-container" data-account="创业她说" style="border-color: #3d3a39;">
-                  <div class="col-span-5 flex items-center gap-2 min-w-0">
-                    <div class="w-7 h-7 bg-primary/15 border rounded-md flex items-center justify-center text-[11px] font-bold text-primary shrink-0 font-num" style="border-color: rgba(0,217,146,0.4);">创</div>
-                    <div class="min-w-0">
-                      <div class="text-xs font-medium text-on-surface truncate">创业她说</div>
-                      <div class="text-[10px] text-on-surface-variant truncate font-num">@chuangye_she</div>
-                    </div>
-                  </div>
-                  <div class="col-span-2 text-right text-xs font-bold num-glow font-num">31</div>
-                  <div class="col-span-3 px-1">
-                    <div class="flex items-center gap-1.5">
-                      <div class="flex-1 progress-track"><div class="progress-fill" style="width: 68%"></div></div>
-                      <span class="text-[10px] text-on-surface font-num w-8 text-right">68%</span>
-                    </div>
-                  </div>
-                  <div class="col-span-2 text-right text-xs text-on-surface font-num">8.7k</div>
-                </div>
-                <div class="bench-detail px-4 py-2.5 border-b hidden" data-account-detail="创业她说" style="border-color: #3d3a39; background: #15151a;">
-                  <div class="text-[11px] font-medium text-primary mb-2 flex items-center gap-1.5 font-num">
-                    <i data-lucide="flame" class="w-3 h-3"></i>近期爆款 Top 3
-                  </div>
-                  <div class="space-y-1.5 text-xs text-on-surface">
-                    <div class="flex items-center justify-between"><span class="truncate flex-1">我用 3 个月把副业做成主业的全过程复盘</span><span class="num-up ml-2 shrink-0 font-num">❤ 19.3k</span></div>
-                    <div class="flex items-center justify-between"><span class="truncate flex-1">女生第一次创业最容易踩的 7 个坑</span><span class="num-up ml-2 shrink-0 font-num">❤ 15.8k</span></div>
-                    <div class="flex items-center justify-between"><span class="truncate flex-1">融资 300 万后我才发现：BP 写得好真没用</span><span class="num-up ml-2 shrink-0 font-num">❤ 11.6k</span></div>
-                  </div>
-                </div>
-                <!-- 对标账号行 3 -->
-                <div class="bench-row px-4 py-2.5 grid grid-cols-12 gap-1 items-center border-b cursor-pointer transition-colors hover:bg-surface-container" data-account="清醒Girl的商业课" style="border-color: #3d3a39;">
-                  <div class="col-span-5 flex items-center gap-2 min-w-0">
-                    <div class="w-7 h-7 bg-primary/15 border rounded-md flex items-center justify-center text-[11px] font-bold text-primary shrink-0 font-num" style="border-color: rgba(0,217,146,0.4);">清</div>
-                    <div class="min-w-0">
-                      <div class="text-xs font-medium text-on-surface truncate">清醒Girl的商业课</div>
-                      <div class="text-[10px] text-on-surface-variant truncate font-num">@qingxing_girl</div>
-                    </div>
-                  </div>
-                  <div class="col-span-2 text-right text-xs font-bold num-glow font-num">27</div>
-                  <div class="col-span-3 px-1">
-                    <div class="flex items-center gap-1.5">
-                      <div class="flex-1 progress-track"><div class="progress-fill" style="width: 73%"></div></div>
-                      <span class="text-[10px] text-on-surface font-num w-8 text-right">73%</span>
-                    </div>
-                  </div>
-                  <div class="col-span-2 text-right text-xs text-on-surface font-num">9.2k</div>
-                </div>
-                <div class="bench-detail px-4 py-2.5 border-b hidden" data-account-detail="清醒Girl的商业课" style="border-color: #3d3a39; background: #15151a;">
-                  <div class="text-[11px] font-medium text-primary mb-2 flex items-center gap-1.5 font-num">
-                    <i data-lucide="flame" class="w-3 h-3"></i>近期爆款 Top 3
-                  </div>
-                  <div class="space-y-1.5 text-xs text-on-surface">
-                    <div class="flex items-center justify-between"><span class="truncate flex-1">30 岁后才明白：消费降级才是真体面</span><span class="num-up ml-2 shrink-0 font-num">❤ 21.4k</span></div>
-                    <div class="flex items-center justify-between"><span class="truncate flex-1">女生理财第一课：先分清"想要"和"需要"</span><span class="num-up ml-2 shrink-0 font-num">❤ 17.2k</span></div>
-                    <div class="flex items-center justify-between"><span class="truncate flex-1">清醒女孩的 5 个消费原则，第 3 个我后悔没早懂</span><span class="num-up ml-2 shrink-0 font-num">❤ 13.5k</span></div>
-                  </div>
-                </div>
-                <!-- 对标账号行 4 -->
-                <div class="bench-row px-4 py-2.5 grid grid-cols-12 gap-1 items-center border-b cursor-pointer transition-colors hover:bg-surface-container" data-account="33岁姐姐说" style="border-color: #3d3a39;">
-                  <div class="col-span-5 flex items-center gap-2 min-w-0">
-                    <div class="w-7 h-7 bg-primary/15 border rounded-md flex items-center justify-center text-[11px] font-bold text-primary shrink-0 font-num" style="border-color: rgba(0,217,146,0.4);">33</div>
-                    <div class="min-w-0">
-                      <div class="text-xs font-medium text-on-surface truncate">33岁姐姐说</div>
-                      <div class="text-[10px] text-on-surface-variant truncate font-num">@33jiejie</div>
-                    </div>
-                  </div>
-                  <div class="col-span-2 text-right text-xs font-bold num-glow font-num">24</div>
-                  <div class="col-span-3 px-1">
-                    <div class="flex items-center gap-1.5">
-                      <div class="flex-1 progress-track"><div class="progress-fill" style="width: 58%"></div></div>
-                      <span class="text-[10px] text-on-surface font-num w-8 text-right">58%</span>
-                    </div>
-                  </div>
-                  <div class="col-span-2 text-right text-xs text-on-surface font-num">6.8k</div>
-                </div>
-                <div class="bench-detail px-4 py-2.5 border-b hidden" data-account-detail="33岁姐姐说" style="border-color: #3d3a39; background: #15151a;">
-                  <div class="text-[11px] font-medium text-primary mb-2 flex items-center gap-1.5 font-num">
-                    <i data-lucide="flame" class="w-3 h-3"></i>近期爆款 Top 3
-                  </div>
-                  <div class="space-y-1.5 text-xs text-on-surface">
-                    <div class="flex items-center justify-between"><span class="truncate flex-1">33 岁离婚后，我才真正活明白的 4 件事</span><span class="num-up ml-2 shrink-0 font-num">❤ 16.8k</span></div>
-                    <div class="flex items-center justify-between"><span class="truncate flex-1">为什么 30+ 反而比 20 岁更迷人？</span><span class="num-up ml-2 shrink-0 font-num">❤ 12.4k</span></div>
-                    <div class="flex items-center justify-between"><span class="truncate flex-1">大龄未婚的真相：是我不想，不是不行</span><span class="num-up ml-2 shrink-0 font-num">❤ 9.7k</span></div>
-                  </div>
-                </div>
-                <!-- 对标账号行 5 -->
-                <div class="bench-row px-4 py-2.5 grid grid-cols-12 gap-1 items-center border-b cursor-pointer transition-colors hover:bg-surface-container" data-account="盐系女性成长" style="border-color: #3d3a39;">
-                  <div class="col-span-5 flex items-center gap-2 min-w-0">
-                    <div class="w-7 h-7 bg-primary/15 border rounded-md flex items-center justify-center text-[11px] font-bold text-primary shrink-0 font-num" style="border-color: rgba(0,217,146,0.4);">盐</div>
-                    <div class="min-w-0">
-                      <div class="text-xs font-medium text-on-surface truncate">盐系女性成长</div>
-                      <div class="text-[10px] text-on-surface-variant truncate font-num">@yanxi_grow</div>
-                    </div>
-                  </div>
-                  <div class="col-span-2 text-right text-xs font-bold num-glow font-num">19</div>
-                  <div class="col-span-3 px-1">
-                    <div class="flex items-center gap-1.5">
-                      <div class="flex-1 progress-track"><div class="progress-fill" style="width: 49%"></div></div>
-                      <span class="text-[10px] text-on-surface font-num w-8 text-right">49%</span>
-                    </div>
-                  </div>
-                  <div class="col-span-2 text-right text-xs text-on-surface font-num">5.3k</div>
-                </div>
-                <div class="bench-detail px-4 py-2.5 border-b hidden" data-account-detail="盐系女性成长" style="border-color: #3d3a39; background: #15151a;">
-                  <div class="text-[11px] font-medium text-primary mb-2 flex items-center gap-1.5 font-num">
-                    <i data-lucide="flame" class="w-3 h-3"></i>近期爆款 Top 3
-                  </div>
-                  <div class="space-y-1.5 text-xs text-on-surface">
-                    <div class="flex items-center justify-between"><span class="truncate flex-1">极简生活 1 年后，我的 5 个真实变化</span><span class="num-up ml-2 shrink-0 font-num">❤ 13.6k</span></div>
-                    <div class="flex items-center justify-between"><span class="truncate flex-1">女生独居的快乐：从 3 个厨房神器开始</span><span class="num-up ml-2 shrink-0 font-num">❤ 10.2k</span></div>
-                    <div class="flex items-center justify-between"><span class="truncate flex-1">30+ 后我把家里这 8 样东西全扔了</span><span class="num-up ml-2 shrink-0 font-num">❤ 8.5k</span></div>
-                  </div>
-                </div>
-                <!-- 对标账号行 6 -->
-                <div class="bench-row px-4 py-2.5 grid grid-cols-12 gap-1 items-center border-b cursor-pointer transition-colors hover:bg-surface-container" data-account="商业女孩Daily" style="border-color: #3d3a39;">
-                  <div class="col-span-5 flex items-center gap-2 min-w-0">
-                    <div class="w-7 h-7 bg-primary/15 border rounded-md flex items-center justify-center text-[11px] font-bold text-primary shrink-0 font-num" style="border-color: rgba(0,217,146,0.4);">商</div>
-                    <div class="min-w-0">
-                      <div class="text-xs font-medium text-on-surface truncate">商业女孩Daily</div>
-                      <div class="text-[10px] text-on-surface-variant truncate font-num">@bizgirl_daily</div>
-                    </div>
-                  </div>
-                  <div class="col-span-2 text-right text-xs font-bold num-glow font-num">16</div>
-                  <div class="col-span-3 px-1">
-                    <div class="flex items-center gap-1.5">
-                      <div class="flex-1 progress-track"><div class="progress-fill" style="width: 44%"></div></div>
-                      <span class="text-[10px] text-on-surface font-num w-8 text-right">44%</span>
-                    </div>
-                  </div>
-                  <div class="col-span-2 text-right text-xs text-on-surface font-num">4.7k</div>
-                </div>
-                <div class="bench-detail px-4 py-2.5 border-b hidden" data-account-detail="商业女孩Daily" style="border-color: #3d3a39; background: #15151a;">
-                  <div class="text-[11px] font-medium text-primary mb-2 flex items-center gap-1.5 font-num">
-                    <i data-lucide="flame" class="w-3 h-3"></i>近期爆款 Top 3
-                  </div>
-                  <div class="space-y-1.5 text-xs text-on-surface">
-                    <div class="flex items-center justify-between"><span class="truncate flex-1">商业女孩的日常：我的 6:30 早起清单</span><span class="num-up ml-2 shrink-0 font-num">❤ 11.8k</span></div>
-                    <div class="flex items-center justify-between"><span class="truncate flex-1">女生做商业博主，最重要的不是口才</span><span class="num-up ml-2 shrink-0 font-num">❤ 9.4k</span></div>
-                    <div class="flex items-center justify-between"><span class="truncate flex-1">我如何在 2 年内，从 0 做到 50 万粉丝</span><span class="num-up ml-2 shrink-0 font-num">❤ 7.6k</span></div>
-                  </div>
-                </div>
-                <!-- 对标账号行 7 -->
-                <div class="bench-row px-4 py-2.5 grid grid-cols-12 gap-1 items-center border-b cursor-pointer transition-colors hover:bg-surface-container" data-account="不被定义的她" style="border-color: #3d3a39;">
-                  <div class="col-span-5 flex items-center gap-2 min-w-0">
-                    <div class="w-7 h-7 bg-primary/15 border rounded-md flex items-center justify-center text-[11px] font-bold text-primary shrink-0 font-num" style="border-color: rgba(0,217,146,0.4);">不</div>
-                    <div class="min-w-0">
-                      <div class="text-xs font-medium text-on-surface truncate">不被定义的她</div>
-                      <div class="text-[10px] text-on-surface-variant truncate font-num">@undefine_her</div>
-                    </div>
-                  </div>
-                  <div class="col-span-2 text-right text-xs font-bold num-glow font-num">14</div>
-                  <div class="col-span-3 px-1">
-                    <div class="flex items-center gap-1.5">
-                      <div class="flex-1 progress-track"><div class="progress-fill" style="width: 38%"></div></div>
-                      <span class="text-[10px] text-on-surface font-num w-8 text-right">38%</span>
-                    </div>
-                  </div>
-                  <div class="col-span-2 text-right text-xs text-on-surface font-num">3.9k</div>
-                </div>
-                <div class="bench-detail px-4 py-2.5 border-b hidden" data-account-detail="不被定义的她" style="border-color: #3d3a39; background: #15151a;">
-                  <div class="text-[11px] font-medium text-primary mb-2 flex items-center gap-1.5 font-num">
-                    <i data-lucide="flame" class="w-3 h-3"></i>近期爆款 Top 3
-                  </div>
-                  <div class="space-y-1.5 text-xs text-on-surface">
-                    <div class="flex items-center justify-between"><span class="truncate flex-1">不被定义的女孩，都做对了这 3 件事</span><span class="num-up ml-2 shrink-0 font-num">❤ 14.7k</span></div>
-                    <div class="flex items-center justify-between"><span class="truncate flex-1">不结婚也可以：我的独居第 5 年</span><span class="num-up ml-2 shrink-0 font-num">❤ 10.8k</span></div>
-                    <div class="flex items-center justify-between"><span class="truncate flex-1">拒绝完美主义后，我反而更成功了</span><span class="num-up ml-2 shrink-0 font-num">❤ 8.9k</span></div>
-                  </div>
-                </div>
-                <!-- 对标账号行 8 -->
-                <div class="bench-row px-4 py-2.5 grid grid-cols-12 gap-1 items-center cursor-pointer transition-colors hover:bg-surface-container" data-account="30+重生日志" style="border-color: #3d3a39;">
-                  <div class="col-span-5 flex items-center gap-2 min-w-0">
-                    <div class="w-7 h-7 bg-primary/15 border rounded-md flex items-center justify-center text-[11px] font-bold text-primary shrink-0 font-num" style="border-color: rgba(0,217,146,0.4);">30</div>
-                    <div class="min-w-0">
-                      <div class="text-xs font-medium text-on-surface truncate">30+重生日志</div>
-                      <div class="text-[10px] text-on-surface-variant truncate font-num">@30plus_reborn</div>
-                    </div>
-                  </div>
-                  <div class="col-span-2 text-right text-xs font-bold num-glow font-num">11</div>
-                  <div class="col-span-3 px-1">
-                    <div class="flex items-center gap-1.5">
-                      <div class="flex-1 progress-track"><div class="progress-fill" style="width: 31%"></div></div>
-                      <span class="text-[10px] text-on-surface font-num w-8 text-right">31%</span>
-                    </div>
-                  </div>
-                  <div class="col-span-2 text-right text-xs text-on-surface font-num">2.8k</div>
-                </div>
-                <div class="bench-detail px-4 py-2.5 hidden" data-account-detail="30+重生日志" style="background: #15151a;">
-                  <div class="text-[11px] font-medium text-primary mb-2 flex items-center gap-1.5 font-num">
-                    <i data-lucide="flame" class="w-3 h-3"></i>近期爆款 Top 3
-                  </div>
-                  <div class="space-y-1.5 text-xs text-on-surface">
-                    <div class="flex items-center justify-between"><span class="truncate flex-1">30+ 重新开始：我用 100 天重启人生</span><span class="num-up ml-2 shrink-0 font-num">❤ 9.3k</span></div>
-                    <div class="flex items-center justify-between"><span class="truncate flex-1">30 岁第一课：跟自己和解，比什么都重要</span><span class="num-up ml-2 shrink-0 font-num">❤ 7.4k</span></div>
-                    <div class="flex items-center justify-between"><span class="truncate flex-1">30+ 后我才发现：人生下半场刚刚开始</span><span class="num-up ml-2 shrink-0 font-num">❤ 5.8k</span></div>
-                  </div>
-                </div>
-              </div>
-
-              <div class="h-9 px-4 flex items-center justify-between border-t shrink-0 text-[11px] font-num" style="border-color: #3d3a39;">
-                <span class="text-on-surface-variant">展示 8 / 共 28</span>
-                <button class="text-primary hover:underline btn-press">查看全部 →</button>
-              </div>
-            </div>
-
-          </section>
-
-          <!-- ========== 模块 4：底部 选题流水线（AI 评分排序） ========== -->
-          <section id="module-topics">
-            <div class="card-base">
-              <div class="h-11 px-4 flex items-center justify-between border-b shrink-0" style="border-color: #3d3a39;">
-                <div class="flex items-center gap-2.5">
-                  <i data-lucide="layers" class="w-4 h-4 text-primary"></i>
-                  <h2 class="text-sm font-semibold text-on-surface">选题流水线</h2>
-                  <span class="text-[11px] text-on-surface-variant font-num">/ AI SCORING</span>
-                  <span class="status-dot status-online ml-1"></span>
-                  <span class="text-[10px] text-primary font-num">RUNNING</span>
-                </div>
-                <div class="flex items-center gap-2">
-                  <button id="btn-batch-adopt" class="btn-primary btn-press h-7 px-3 text-[11px] font-medium rounded-md flex items-center gap-1.5">
-                    <i data-lucide="check-check" class="w-3 h-3"></i>批量采纳
-                  </button>
-                  <button id="btn-export" class="btn-glow h-7 px-3 bg-surface-container text-on-surface border text-[11px] rounded-md flex items-center gap-1.5 btn-press" style="border-color: #3d3a39;">
-                    <i data-lucide="download" class="w-3 h-3"></i>导出
-                  </button>
-                </div>
-              </div>
-
-              <!-- 筛选条 -->
-              <div class="px-4 py-2.5 flex items-center gap-3 border-b text-[11px] font-num" style="border-color: #3d3a39;">
-                <span class="text-on-surface-variant">FILTER</span>
-                <div class="flex items-center gap-1.5">
-                  <span class="text-on-surface-variant">来源</span>
-                  <select id="filter-category" class="bg-surface-container border rounded-md h-7 px-2 text-[11px] text-on-surface focus:outline-none" style="border-color: #3d3a39;">
-                    <option>全部 (47)</option>
-                    <option>创业故事 (12)</option>
-                    <option>副业变现 (10)</option>
-                    <option>职场干货 (9)</option>
-                    <option>自我成长 (8)</option>
-                    <option>私域运营 (5)</option>
-                    <option>女性领导力 (3)</option>
-                  </select>
-                </div>
-                <div class="flex items-center gap-1.5">
-                  <span class="text-on-surface-variant">排序</span>
-                  <select id="filter-score" class="bg-surface-container border rounded-md h-7 px-2 text-[11px] text-on-surface focus:outline-none" style="border-color: #3d3a39;">
-                    <option>AI 评分 ↓</option>
-                    <option>传播潜力 ↓</option>
-                    <option>竞争度 ↑</option>
-                    <option>人设匹配 ↓</option>
-                    <option>时效性 ↓</option>
-                  </select>
-                </div>
-                <div class="flex items-center gap-1.5">
-                  <span class="text-on-surface-variant">状态</span>
-                  <select id="filter-status" class="bg-surface-container border rounded-md h-7 px-2 text-[11px] text-on-surface focus:outline-none" style="border-color: #3d3a39;">
-                    <option>全部状态</option>
-                    <option>待采纳</option>
-                    <option>已采纳</option>
-                    <option>已生成</option>
-                  </select>
-                </div>
-                <div class="flex items-center gap-1.5">
-                  <span class="text-on-surface-variant">时间</span>
-                  <select class="bg-surface-container border rounded-md h-7 px-2 text-[11px] text-on-surface focus:outline-none" style="border-color: #3d3a39;">
-                    <option>24h</option>
-                    <option>7d</option>
-                    <option>30d</option>
-                  </select>
-                </div>
-                <div class="flex items-center gap-1.5">
-                  <span class="text-on-surface-variant">评分 ≥</span>
-                  <div class="flex items-center bg-surface-container border rounded-md h-7 px-2 gap-2" style="border-color: #3d3a39;">
-                    <input id="filter-score-min" type="number" min="0" max="100" value="80" class="w-10 bg-transparent text-[11px] text-on-surface font-num focus:outline-none"/>
-                    <span class="text-on-surface-variant">/ 100</span>
-                  </div>
-                </div>
-                <div class="ml-auto flex items-center gap-2">
-                  <span class="text-on-surface-variant">已选</span>
-                  <span id="filter-result-count" class="num-glow font-bold text-sm">6</span>
-                  <span class="text-on-surface-variant">/ 共 <span class="text-on-surface">47</span></span>
-                </div>
-              </div>
-
-              <!-- 卡片网格 -->
-              <div class="p-3 grid grid-cols-3 gap-3" id="topic-grid">
-
-                <!-- 列表-选题1 -->
-                <article class="topic-card card-base p-4 cursor-pointer" data-category="创业故事" data-score="94">
-                  <div class="flex items-start justify-between mb-2">
-                    <div class="flex items-center gap-2">
-                      <span class="seq-stamp text-[10px] font-bold px-1.5 py-0.5 font-num">T-1042</span>
-                      <span class="text-[10px] bg-primary/15 text-primary px-1.5 py-0.5 rounded font-num">#创业故事</span>
-                    </div>
-                    <div class="flex flex-col items-end">
-                      <span class="text-[9px] text-on-surface-variant font-num">AI 评分</span>
-                      <span class="num-metal text-2xl font-bold leading-none">94</span>
-                    </div>
-                  </div>
-                  <h3 class="text-sm font-semibold text-on-surface leading-snug mb-3">30岁前我亲手关掉公司，才看懂这3件事｜深度复盘</h3>
-                  <div class="space-y-1.5 mb-3 font-num">
-                    <div class="flex items-center gap-2"><span class="text-[10px] text-on-surface-variant w-16 shrink-0">传播潜力</span><div class="flex-1 dim-bar"><span style="width: 96%"></span></div><span class="text-[10px] text-on-surface w-6 text-right">96</span></div>
-                    <div class="flex items-center gap-2"><span class="text-[10px] text-on-surface-variant w-16 shrink-0">竞争度</span><div class="flex-1 dim-bar"><span style="width: 72%"></span></div><span class="text-[10px] text-on-surface w-6 text-right">72</span></div>
-                    <div class="flex items-center gap-2"><span class="text-[10px] text-on-surface-variant w-16 shrink-0">人设匹配</span><div class="flex-1 dim-bar"><span style="width: 91%"></span></div><span class="text-[10px] text-on-surface w-6 text-right">91</span></div>
-                    <div class="flex items-center gap-2"><span class="text-[10px] text-on-surface-variant w-16 shrink-0">时效性</span><div class="flex-1 dim-bar"><span style="width: 88%"></span></div><span class="text-[10px] text-on-surface w-6 text-right">88</span></div>
-                  </div>
-                  <div class="flex items-center justify-between text-[10px] text-on-surface-variant mb-3 pb-2 border-t pt-2 font-num" style="border-color: #3d3a39;">
-                    <span>📊 <span class="text-on-surface">女力研究所 × 2</span></span>
-                    <span class="badge badge-warn"><i data-lucide="clock" class="w-2.5 h-2.5"></i>12h 内</span>
-                  </div>
-                  <div class="flex gap-1.5">
-                    <button class="btn-adopt flex-1 h-8 btn-primary text-[11px] font-medium rounded-md flex items-center justify-center gap-1.5 btn-press" data-topic-id="T-1042" data-topic-title="30岁前我亲手关掉公司才看懂这3件事｜深度复盘" data-topic-score="94">
-                      <i data-lucide="check" class="w-3 h-3"></i>一键采纳
-                    </button>
-                    <button class="btn-rewrite h-8 px-3 btn-glow bg-surface-container text-on-surface border text-[11px] rounded-md flex items-center gap-1.5 btn-press" style="border-color: #3d3a39;" data-topic-id="T-1042" data-topic-title="30岁前我亲手关掉公司才看懂这3件事｜深度复盘">
-                      <i data-lucide="pencil" class="w-3 h-3"></i>改写
-                    </button>
-                  </div>
-                  <span class="deco-emoji">💼</span>
-                </article>
-
-                <!-- 列表-选题2 -->
-                <article class="topic-card card-base p-4 cursor-pointer" data-category="副业变现" data-score="91">
-                  <div class="flex items-start justify-between mb-2">
-                    <div class="flex items-center gap-2">
-                      <span class="seq-stamp text-[10px] font-bold px-1.5 py-0.5 font-num">T-1041</span>
-                      <span class="text-[10px] bg-primary/15 text-primary px-1.5 py-0.5 rounded font-num">#副业变现</span>
-                    </div>
-                    <div class="flex flex-col items-end">
-                      <span class="text-[9px] text-on-surface-variant font-num">AI 评分</span>
-                      <span class="num-metal text-2xl font-bold leading-none">91</span>
-                    </div>
-                  </div>
-                  <h3 class="text-sm font-semibold text-on-surface leading-snug mb-3">普通女生做小红书的第3年，月入6位数｜素人IP方法论</h3>
-                  <div class="space-y-1.5 mb-3 font-num">
-                    <div class="flex items-center gap-2"><span class="text-[10px] text-on-surface-variant w-16 shrink-0">传播潜力</span><div class="flex-1 dim-bar"><span style="width: 93%"></span></div><span class="text-[10px] text-on-surface w-6 text-right">93</span></div>
-                    <div class="flex items-center gap-2"><span class="text-[10px] text-on-surface-variant w-16 shrink-0">竞争度</span><div class="flex-1 dim-bar"><span style="width: 84%"></span></div><span class="text-[10px] text-on-surface w-6 text-right">84</span></div>
-                    <div class="flex items-center gap-2"><span class="text-[10px] text-on-surface-variant w-16 shrink-0">人设匹配</span><div class="flex-1 dim-bar"><span style="width: 95%"></span></div><span class="text-[10px] text-on-surface w-6 text-right">95</span></div>
-                    <div class="flex items-center gap-2"><span class="text-[10px] text-on-surface-variant w-16 shrink-0">时效性</span><div class="flex-1 dim-bar"><span style="width: 78%"></span></div><span class="text-[10px] text-on-surface w-6 text-right">78</span></div>
-                  </div>
-                  <div class="flex items-center justify-between text-[10px] text-on-surface-variant mb-3 pb-2 border-t pt-2 font-num" style="border-color: #3d3a39;">
-                    <span>📊 <span class="text-on-surface">创业她说 × 3</span></span>
-                    <span class="badge badge-up"><i data-lucide="trending-up" class="w-2.5 h-2.5"></i>持续上升</span>
-                  </div>
-                  <div class="flex gap-1.5">
-                    <button class="btn-adopt flex-1 h-8 btn-primary text-[11px] font-medium rounded-md flex items-center justify-center gap-1.5 btn-press" data-topic-id="T-1041" data-topic-title="普通女生做小红书的第3年月入6位数｜素人IP方法论" data-topic-score="91">
-                      <i data-lucide="check" class="w-3 h-3"></i>一键采纳
-                    </button>
-                    <button class="btn-rewrite h-8 px-3 btn-glow bg-surface-container text-on-surface border text-[11px] rounded-md flex items-center gap-1.5 btn-press" style="border-color: #3d3a39;" data-topic-id="T-1041" data-topic-title="普通女生做小红书的第3年月入6位数｜素人IP方法论">
-                      <i data-lucide="pencil" class="w-3 h-3"></i>改写
-                    </button>
-                  </div>
-                  <span class="deco-emoji">📈</span>
-                </article>
-
-                <!-- 列表-选题3 -->
-                <article class="topic-card card-base p-4 cursor-pointer" data-category="职业转型" data-score="89">
-                  <div class="flex items-start justify-between mb-2">
-                    <div class="flex items-center gap-2">
-                      <span class="seq-stamp text-[10px] font-bold px-1.5 py-0.5 font-num">T-1040</span>
-                      <span class="text-[10px] bg-primary/15 text-primary px-1.5 py-0.5 rounded font-num">#职业转型</span>
-                    </div>
-                    <div class="flex flex-col items-end">
-                      <span class="text-[9px] text-on-surface-variant font-num">AI 评分</span>
-                      <span class="num-metal text-2xl font-bold leading-none">89</span>
-                    </div>
-                  </div>
-                  <h3 class="text-sm font-semibold text-on-surface leading-snug mb-3">我从大厂裸辞后才明白的5件事｜给同路人</h3>
-                  <div class="space-y-1.5 mb-3 font-num">
-                    <div class="flex items-center gap-2"><span class="text-[10px] text-on-surface-variant w-16 shrink-0">传播潜力</span><div class="flex-1 dim-bar"><span style="width: 88%"></span></div><span class="text-[10px] text-on-surface w-6 text-right">88</span></div>
-                    <div class="flex items-center gap-2"><span class="text-[10px] text-on-surface-variant w-16 shrink-0">竞争度</span><div class="flex-1 dim-bar"><span style="width: 76%"></span></div><span class="text-[10px] text-on-surface w-6 text-right">76</span></div>
-                    <div class="flex items-center gap-2"><span class="text-[10px] text-on-surface-variant w-16 shrink-0">人设匹配</span><div class="flex-1 dim-bar"><span style="width: 92%"></span></div><span class="text-[10px] text-on-surface w-6 text-right">92</span></div>
-                    <div class="flex items-center gap-2"><span class="text-[10px] text-on-surface-variant w-16 shrink-0">时效性</span><div class="flex-1 dim-bar"><span style="width: 94%"></span></div><span class="text-[10px] text-on-surface w-6 text-right">94</span></div>
-                  </div>
-                  <div class="flex items-center justify-between text-[10px] text-on-surface-variant mb-3 pb-2 border-t pt-2 font-num" style="border-color: #3d3a39;">
-                    <span>📊 <span class="text-on-surface">清醒Girl × 2</span></span>
-                    <span class="badge badge-up"><i data-lucide="flame" class="w-2.5 h-2.5"></i>当下热门</span>
-                  </div>
-                  <div class="flex gap-1.5">
-                    <button class="btn-adopt flex-1 h-8 btn-primary text-[11px] font-medium rounded-md flex items-center justify-center gap-1.5 btn-press" data-topic-id="T-1040" data-topic-title="我从大厂裸辞后才明白的5件事｜给同路人" data-topic-score="89">
-                      <i data-lucide="check" class="w-3 h-3"></i>一键采纳
-                    </button>
-                    <button class="btn-rewrite h-8 px-3 btn-glow bg-surface-container text-on-surface border text-[11px] rounded-md flex items-center gap-1.5 btn-press" style="border-color: #3d3a39;" data-topic-id="T-1040" data-topic-title="我从大厂裸辞后才明白的5件事｜给同路人">
-                      <i data-lucide="pencil" class="w-3 h-3"></i>改写
-                    </button>
-                  </div>
-                  <span class="deco-emoji">💸</span>
-                </article>
-
-                <!-- 列表-选题4 -->
-                <article class="topic-card card-base p-4 cursor-pointer" data-category="职场干货" data-score="86">
-                  <div class="flex items-start justify-between mb-2">
-                    <div class="flex items-center gap-2">
-                      <span class="seq-stamp text-[10px] font-bold px-1.5 py-0.5 font-num">T-1039</span>
-                      <span class="text-[10px] bg-primary/15 text-primary px-1.5 py-0.5 rounded font-num">#职场干货</span>
-                    </div>
-                    <div class="flex flex-col items-end">
-                      <span class="text-[9px] text-on-surface-variant font-num">AI 评分</span>
-                      <span class="num-metal text-2xl font-bold leading-none">86</span>
-                    </div>
-                  </div>
-                  <h3 class="text-sm font-semibold text-on-surface leading-snug mb-3">女生学不会向上管理？是你没看懂这3个潜规则</h3>
-                  <div class="space-y-1.5 mb-3 font-num">
-                    <div class="flex items-center gap-2"><span class="text-[10px] text-on-surface-variant w-16 shrink-0">传播潜力</span><div class="flex-1 dim-bar"><span style="width: 85%"></span></div><span class="text-[10px] text-on-surface w-6 text-right">85</span></div>
-                    <div class="flex items-center gap-2"><span class="text-[10px] text-on-surface-variant w-16 shrink-0">竞争度</span><div class="flex-1 dim-bar"><span style="width: 68%"></span></div><span class="text-[10px] text-on-surface w-6 text-right">68</span></div>
-                    <div class="flex items-center gap-2"><span class="text-[10px] text-on-surface-variant w-16 shrink-0">人设匹配</span><div class="flex-1 dim-bar"><span style="width: 88%"></span></div><span class="text-[10px] text-on-surface w-6 text-right">88</span></div>
-                    <div class="flex items-center gap-2"><span class="text-[10px] text-on-surface-variant w-16 shrink-0">时效性</span><div class="flex-1 dim-bar"><span style="width: 82%"></span></div><span class="text-[10px] text-on-surface w-6 text-right">82</span></div>
-                  </div>
-                  <div class="flex items-center justify-between text-[10px] text-on-surface-variant mb-3 pb-2 border-t pt-2 font-num" style="border-color: #3d3a39;">
-                    <span>📊 <span class="text-on-surface">33岁姐姐说 × 1</span></span>
-                    <span class="badge badge-warn"><i data-lucide="clock" class="w-2.5 h-2.5"></i>24h 内</span>
-                  </div>
-                  <div class="flex gap-1.5">
-                    <button class="btn-adopt flex-1 h-8 btn-primary text-[11px] font-medium rounded-md flex items-center justify-center gap-1.5 btn-press" data-topic-id="T-1039" data-topic-title="女生学不会向上管理是你没看懂这3个潜规则" data-topic-score="86">
-                      <i data-lucide="check" class="w-3 h-3"></i>一键采纳
-                    </button>
-                    <button class="btn-rewrite h-8 px-3 btn-glow bg-surface-container text-on-surface border text-[11px] rounded-md flex items-center gap-1.5 btn-press" style="border-color: #3d3a39;" data-topic-id="T-1039" data-topic-title="女生学不会向上管理是你没看懂这3个潜规则">
-                      <i data-lucide="pencil" class="w-3 h-3"></i>改写
-                    </button>
-                  </div>
-                  <span class="deco-emoji">🌸</span>
-                </article>
-
-                <!-- 列表-选题5 -->
-                <article class="topic-card card-base p-4 cursor-pointer" data-category="私域运营" data-score="83">
-                  <div class="flex items-start justify-between mb-2">
-                    <div class="flex items-center gap-2">
-                      <span class="seq-stamp text-[10px] font-bold px-1.5 py-0.5 font-num">T-1038</span>
-                      <span class="text-[10px] bg-primary/15 text-primary px-1.5 py-0.5 rounded font-num">#私域运营</span>
-                    </div>
-                    <div class="flex flex-col items-end">
-                      <span class="text-[9px] text-on-surface-variant font-num">AI 评分</span>
-                      <span class="num-metal text-2xl font-bold leading-none">83</span>
-                    </div>
-                  </div>
-                  <h3 class="text-sm font-semibold text-on-surface leading-snug mb-3">靠朋友圈成交50万，普通人也能复制的私域公式</h3>
-                  <div class="space-y-1.5 mb-3 font-num">
-                    <div class="flex items-center gap-2"><span class="text-[10px] text-on-surface-variant w-16 shrink-0">传播潜力</span><div class="flex-1 dim-bar"><span style="width: 79%"></span></div><span class="text-[10px] text-on-surface w-6 text-right">79</span></div>
-                    <div class="flex items-center gap-2"><span class="text-[10px] text-on-surface-variant w-16 shrink-0">竞争度</span><div class="flex-1 dim-bar"><span style="width: 56%"></span></div><span class="text-[10px] text-on-surface w-6 text-right">56</span></div>
-                    <div class="flex items-center gap-2"><span class="text-[10px] text-on-surface-variant w-16 shrink-0">人设匹配</span><div class="flex-1 dim-bar"><span style="width: 86%"></span></div><span class="text-[10px] text-on-surface w-6 text-right">86</span></div>
-                    <div class="flex items-center gap-2"><span class="text-[10px] text-on-surface-variant w-16 shrink-0">时效性</span><div class="flex-1 dim-bar"><span style="width: 90%"></span></div><span class="text-[10px] text-on-surface w-6 text-right">90</span></div>
-                  </div>
-                  <div class="flex items-center justify-between text-[10px] text-on-surface-variant mb-3 pb-2 border-t pt-2 font-num" style="border-color: #3d3a39;">
-                    <span>📊 <span class="text-on-surface">商业女孩Daily × 1</span></span>
-                    <span class="badge badge-up"><i data-lucide="gem" class="w-2.5 h-2.5"></i>长尾稳定</span>
-                  </div>
-                  <div class="flex gap-1.5">
-                    <button class="btn-adopt flex-1 h-8 btn-primary text-[11px] font-medium rounded-md flex items-center justify-center gap-1.5 btn-press" data-topic-id="T-1038" data-topic-title="靠朋友圈成交50万普通人也能复制的私域公式" data-topic-score="83">
-                      <i data-lucide="check" class="w-3 h-3"></i>一键采纳
-                    </button>
-                    <button class="btn-rewrite h-8 px-3 btn-glow bg-surface-container text-on-surface border text-[11px] rounded-md flex items-center gap-1.5 btn-press" style="border-color: #3d3a39;" data-topic-id="T-1038" data-topic-title="靠朋友圈成交50万普通人也能复制的私域公式">
-                      <i data-lucide="pencil" class="w-3 h-3"></i>改写
-                    </button>
-                  </div>
-                  <span class="deco-emoji">💵</span>
-                </article>
-
-                <!-- 列表-选题6 -->
-                <article class="topic-card card-base p-4 cursor-pointer" data-category="自我成长" data-score="80">
-                  <div class="flex items-start justify-between mb-2">
-                    <div class="flex items-center gap-2">
-                      <span class="seq-stamp text-[10px] font-bold px-1.5 py-0.5 font-num">T-1037</span>
-                      <span class="text-[10px] bg-primary/15 text-primary px-1.5 py-0.5 rounded font-num">#自我成长</span>
-                    </div>
-                    <div class="flex flex-col items-end">
-                      <span class="text-[9px] text-on-surface-variant font-num">AI 评分</span>
-                      <span class="num-metal text-2xl font-bold leading-none">80</span>
-                    </div>
-                  </div>
-                  <h3 class="text-sm font-semibold text-on-surface leading-snug mb-3">30+重新开始，最该投资的是这3项</h3>
-                  <div class="space-y-1.5 mb-3 font-num">
-                    <div class="flex items-center gap-2"><span class="text-[10px] text-on-surface-variant w-16 shrink-0">传播潜力</span><div class="flex-1 dim-bar"><span style="width: 82%"></span></div><span class="text-[10px] text-on-surface w-6 text-right">82</span></div>
-                    <div class="flex items-center gap-2"><span class="text-[10px] text-on-surface-variant w-16 shrink-0">竞争度</span><div class="flex-1 dim-bar"><span style="width: 62%"></span></div><span class="text-[10px] text-on-surface w-6 text-right">62</span></div>
-                    <div class="flex items-center gap-2"><span class="text-[10px] text-on-surface-variant w-16 shrink-0">人设匹配</span><div class="flex-1 dim-bar"><span style="width: 84%"></span></div><span class="text-[10px] text-on-surface w-6 text-right">84</span></div>
-                    <div class="flex items-center gap-2"><span class="text-[10px] text-on-surface-variant w-16 shrink-0">时效性</span><div class="flex-1 dim-bar"><span style="width: 75%"></span></div><span class="text-[10px] text-on-surface w-6 text-right">75</span></div>
-                  </div>
-                  <div class="flex items-center justify-between text-[10px] text-on-surface-variant mb-3 pb-2 border-t pt-2 font-num" style="border-color: #3d3a39;">
-                    <span>📊 <span class="text-on-surface">盐系女性成长 × 1</span></span>
-                    <span class="badge badge-warn"><i data-lucide="clock" class="w-2.5 h-2.5"></i>48h 内</span>
-                  </div>
-                  <div class="flex gap-1.5">
-                    <button class="btn-adopt flex-1 h-8 btn-primary text-[11px] font-medium rounded-md flex items-center justify-center gap-1.5 btn-press" data-topic-id="T-1037" data-topic-title="30+重新开始最该投资的是这3项" data-topic-score="80">
-                      <i data-lucide="check" class="w-3 h-3"></i>一键采纳
-                    </button>
-                    <button class="btn-rewrite h-8 px-3 btn-glow bg-surface-container text-on-surface border text-[11px] rounded-md flex items-center gap-1.5 btn-press" style="border-color: #3d3a39;" data-topic-id="T-1037" data-topic-title="30+重新开始最该投资的是这3项">
-                      <i data-lucide="pencil" class="w-3 h-3"></i>改写
-                    </button>
-                  </div>
-                  <span class="deco-emoji">🌱</span>
-                </article>
-              </div>
-
-              <!-- 底部 -->
-              <div class="h-9 px-4 flex items-center justify-between border-t text-[11px] text-on-surface-variant font-num" style="border-color: #3d3a39;">
-                <div class="flex items-center gap-3">
-                  <span>引擎：<span class="text-primary">AI V2.4</span></span>
-                  <span class="text-on-surface-variant/40">|</span>
-                  <span>更新于 <span class="text-on-surface">14:32:08</span></span>
-                  <span class="text-on-surface-variant/40">|</span>
-                  <span class="flex items-center gap-1.5">
-                    <span class="status-dot status-online"></span>
-                    <span class="text-primary">AI 评估运行中</span>
-                  </span>
-                </div>
-                <div class="flex items-center gap-3">
-                  <span>展示 <span class="text-on-surface">6</span> / 共 <span class="text-on-surface">47</span></span>
-                  <button class="text-primary hover:underline btn-press">加载更多 ↓</button>
-                </div>
-              </div>
-            </div>
-          </section>
-
+        <!-- 底部状态信息 -->
+        <div class="flex items-center gap-6 text-[11px] text-on-surface-variant/40 font-mono">
+          <span class="flex items-center gap-1.5">
+            <span class="w-1.5 h-1.5 rounded-full bg-success breathe inline-block"></span>
+            SYSTEM ONLINE
+          </span>
+          <span>ENGINE v2.7.1</span>
+          <span>MODEL: XIANLIAO-CORE</span>
+          <span id="current-time">--:--:--</span>
         </div>
-        <!-- @main-content:end -->
-      </main>
-    </div>
+
+      </div>
+    </main>
+    <!-- @main-content:end -->
   </div>
-  <!-- @nav:end 导航组件 -->
-
-  <div id="toast-container"></div>
 
   <script>
-    /* ============================================================
-       全局共享：Store / Toast / 高亮导航
-       ============================================================ */
-
-    const Store = {
-      topicPool: [],
-      pipeline: [],
-      adopted: [],
-      benchmarks: [],
-      calendar: [],
-      KEY: 'xhs_core_v1',
-      load() {
-        try {
-          const raw = localStorage.getItem(this.KEY);
-          if (raw) return Object.assign(this, JSON.parse(raw));
-        } catch(e){}
-        this._seed();
-        this.save();
-        return this;
-      },
-      save() {
-        const snapshot = { topicPool: this.topicPool, pipeline: this.pipeline, adopted: this.adopted, benchmarks: this.benchmarks, calendar: this.calendar };
-        localStorage.setItem(this.KEY, JSON.stringify(snapshot));
-        window.dispatchEvent(new CustomEvent('store:update', { detail: snapshot }));
-      },
-      _seed() {
-        this.topicPool = [
-          { id: 'T-1001', title: '30岁前我亲手关掉公司，才看懂这3件事', score: 94, source: '热门雷达', addedAt: Date.now() - 3600e3 },
-          { id: 'T-1002', title: '普通女生做小红书的第3年，月入6位数', score: 91, source: '对标拆解', addedAt: Date.now() - 7200e3 },
-          { id: 'T-1003', title: '我从大厂裸辞后才明白的5件事', score: 89, source: '长尾潜力', addedAt: Date.now() - 1800e3 }
-        ];
-        this.pipeline = [
-          { id: 'P-2001', topic: '30岁前我亲手关掉公司，才看懂这3件事', step: 3, stepName: '文案生成', status: 'in_progress' },
-          { id: 'P-2002', topic: '普通女生做小红书的第3年，月入6位数', step: 2, stepName: '封面生成', status: 'in_progress' }
-        ];
-        this.adopted = [];
-        this.benchmarks = ['女力研究所', '创业她说', '清醒Girl的商业课', '33岁姐姐说', '盐系女性成长'];
-        this.calendar = [];
-      },
-      addTopic(item) {
-        if (this.topicPool.find(t => t.id === item.id)) return false;
-        this.topicPool.unshift(Object.assign({ addedAt: Date.now() }, item));
-        this.save();
-        return true;
-      },
-      adoptTopic(item) {
-        if (this.adopted.find(t => t.id === item.id)) return false;
-        this.adopted.unshift(Object.assign({ adoptedAt: Date.now() }, item));
-        this.addTopic(item);
-        this.save();
-        return true;
-      },
-      pushPipeline(item) {
-        if (this.pipeline.find(p => p.id === item.id)) return false;
-        this.pipeline.unshift(item);
-        this.save();
-        return true;
-      },
-      addBenchmark(name) {
-        if (this.benchmarks.find(b => b === name)) return false;
-        this.benchmarks.push(name);
-        this.save();
-        return true;
-      }
-    };
-    Store.load();
-
-    window.toast = function(message, type) {
-      const id = 'toast-' + Date.now();
-      const iconName = type === 'success' ? 'check-circle' : (type === 'error' ? 'x-circle' : 'info');
-      const colorCls = type === 'success' ? 'text-primary' : (type === 'error' ? 'text-error' : 'text-on-surface-variant');
-      const $t = $('<div class="toast ' + (type || '') + '"></div>').attr('id', id);
-      const $i = $('<i></i>').addClass('w-4 h-4 ' + colorCls);
-      $i.attr('data-lucide', iconName);
-      $t.append($i).append('<span>' + message + '</span>');
-      $('#toast-container').append($t);
-      lucide.createIcons();
-      setTimeout(() => $('#' + id).remove(), 3000);
-    };
-
-    window.__highlightNav = function (key) {
-      const crumbMap = {
-        radar: '选题引擎',
-        factory: '内容工厂',
-        publish: '发布管理',
-        analytics: '数据复盘',
-        knowledge: '知识库',
-        settings: '系统设置'
-      };
-      document.querySelectorAll('.nav-item').forEach(el => {
-        el.classList.remove('nav-active');
-        if (el.getAttribute('data-nav') === key) el.classList.add('nav-active');
-      });
-      const crumb = document.getElementById('page-crumb');
-      if (crumb) crumb.textContent = crumbMap[key] || '';
-      lucide.createIcons();
-    };
+    lucide.createIcons();
 
     $(function() {
-      $('#btn-bell').on('click', function() {
-        toast('暂无新消息，去选题引擎看看新热点吧～', 'info');
-      });
-      $('#btn-refresh').on('click', function() {
-        const $i = $(this).find('i');
-        $i.css('transition', 'transform 0.6s ease').css('transform', 'rotate(360deg)');
-        setTimeout(() => $i.css('transform', ''), 700);
-        toast('已刷新最新数据', 'success');
-        window.dispatchEvent(new CustomEvent('page:refresh'));
-      });
-      $('#btn-pipeline').on('click', function() {
-        if (Store.pipeline.length === 0) {
-          toast('流水线还是空的，先去选题引擎添加选题吧', 'info');
-          setTimeout(() => location.href = 'home.html', 800);
-          return;
-        }
-        location.href = 'content-factory.html';
-      });
-      $('#btn-ai-assistant').on('click', function() {
-        toast('小咸正在赶来…（开发中，敬请期待）', 'info');
-      });
-      $('#global-search').on('keydown', function(e) {
-        if (e.key === 'Enter' && this.value.trim()) {
-          toast(`正在搜索 "${this.value}" …`, 'info');
-        }
-      });
-    });
 
-    lucide.createIcons();
+      // === 角色卡片选择 ===
+      $('#role-cards').on('click', '.role-card', function() {
+        $('#role-cards .role-card').removeClass('active');
+        $(this).addClass('active');
+      });
+
+      // === 自定义角色按钮 ===
+      // 点击后应实现：1. 弹出输入框让用户输入自定义角色名称和描述
+      // 2. 用户确认后，在角色卡片网格中新增一个卡片
+      // 3. 新卡片自动设为选中态
+      $('#role-custom').on('click', function() {
+        console.log('自定义角色：需要弹出输入框，输入角色名称和描述后新增卡片');
+      });
+
+      // === 快捷标签切换（性别/人设标签互斥） ===
+      $('#gender-tags').on('click', '.tag-chip', function() {
+        $('#gender-tags .tag-chip').removeClass('selected');
+        $(this).addClass('selected');
+      });
+
+      // === 行业标签多选 ===
+      $('#industry-tags').on('click', '.tag-chip', function() {
+        // 排除自定义按钮的切换逻辑
+        if ($(this).attr('id') === 'tag-custom-industry') return;
+        $(this).toggleClass('selected');
+      });
+
+      // === 自定义行业标签 ===
+      // 点击后应实现：1. 弹出输入框让用户输入自定义行业名称
+      // 2. 用户确认后，在"自定义"标签前新增一个行业标签胶囊
+      // 3. 新标签自动设为选中态
+      $('#tag-custom-industry').on('click', function() {
+        console.log('自定义行业标签：需要弹出输入框，输入行业名称后新增标签');
+      });
+
+      // === 语音输入按钮 ===
+      // 点击后应实现：1. 调用浏览器 Web Speech API 开始语音识别
+      // 2. 按钮变为"录音中"状态（图标切换为红色脉冲动画）
+      // 3. 识别结果实时填充到输入框
+      // 4. 再次点击或识别结束后恢复按钮状态
+      $('#btn-voice').on('click', function() {
+        console.log('语音输入：需要调用浏览器 Web Speech API 实现语音识别');
+      });
+
+      // === 清空输入 ===
+      $('#btn-clear-input').on('click', function() {
+        $('#prompt-input').val('').focus();
+      });
+
+      // === 一键生成按钮 ===
+      $('#btn-generate').on('click', function() {
+        const prompt = $('#prompt-input').val().trim();
+        const role = $('#role-cards .role-card.active').data('role') || 'operator';
+        // 收集选中的行业标签
+        const industries = [];
+        $('#industry-tags .tag-chip.selected').each(function() {
+          industries.push($(this).data('tag'));
+        });
+        // 收集选中的性别标签
+        const gender = $('#gender-tags .tag-chip.selected').data('tag') || 'any';
+
+        // 跳转到生成页，传递参数
+        window.location.href = 'generate.html?role=' + encodeURIComponent(role)
+          + '&q=' + encodeURIComponent(prompt)
+          + '&gender=' + encodeURIComponent(gender)
+          + '&industry=' + encodeURIComponent(industries.join(','));
+      });
+
+      // === 实时时钟 ===
+      function updateTime() {
+        const now = new Date();
+        const timeStr = now.toLocaleTimeString('zh-CN', { hour12: false });
+        $('#current-time').text(timeStr);
+      }
+      updateTime();
+      setInterval(updateTime, 1000);
+
+      // === 回车触发生成 ===
+      $('#prompt-input').on('keydown', function(e) {
+        if (e.key === 'Enter') {
+          $('#btn-generate').trigger('click');
+        }
+      });
+
+    });
   </script>
-
-  <script>
-    /* ============================================================
-       页面脚本：home.html（选题引擎）
-       ============================================================ */
-
-    // ====== 导航高亮 ======
-    window.__highlightNav('radar');
-
-    // ====== 工具：更新侧边栏"选题引擎"徽章 ======
-    function updateRadarBadge() {
-      const $badge = $('[data-nav-count="radar"]');
-      const total = (Store.topicPool ? Store.topicPool.length : 0) + 28;
-      if ($badge.length) $badge.text(total);
-    }
-    updateRadarBadge();
-
-    // ====== 工具：根据 Store 同步"加入选题库"按钮状态 ======
-    function syncPoolButtons() {
-      $('.btn-pool').each(function() {
-        const $btn = $(this);
-        const id = $btn.data('topic-id');
-        const inPool = Store.topicPool.find(t => t.id === id);
-        if (inPool) {
-          $btn.addClass('is-added').html('<i data-lucide="check" class="w-3 h-3"></i>已加入');
-        } else {
-          $btn.removeClass('is-added').html('<i data-lucide="bookmark-plus" class="w-3 h-3"></i>加入选题库');
-        }
-        lucide.createIcons();
-      });
-    }
-    syncPoolButtons();
-
-    // ====== 1. KPI 卡片点击 → 闪绿光 + 滚动/筛选联动 ======
-    $('#kpi-new-topics, #kpi-ai-score, #kpi-benchmark, #kpi-pending').on('click', function() {
-      const $el = $(this);
-      // 闪绿光：removeClass → reflow → addClass，使动画重新播放
-      $el.removeClass('is-flash');
-      void $el[0].offsetWidth;
-      $el.addClass('is-flash').delay(600).queue(function() {
-        $(this).removeClass('is-flash').dequeue();
-      });
-      const filterKeyword = $el.data('filter-keyword');
-      $('html, body').animate({ scrollTop: $('#module-topics').offset().top - 80 }, 400);
-      if (filterKeyword && filterKeyword === '待采纳') {
-        $('#filter-status').val('待采纳').trigger('change');
-      } else if ($el.attr('id') === 'kpi-ai-score') {
-        toast('已按 AI 评分排序（默认）', 'info');
-      } else if ($el.attr('id') === 'kpi-benchmark') {
-        toast('已筛选：来自对标账号的选题', 'info');
-      } else {
-        toast('已跳转到选题列表', 'info');
-      }
-    });
-
-    // ====== 2. KPI 刷新按钮 ======
-    $('#btn-refresh-kpi').on('click', function(e) {
-      e.stopPropagation();
-      const $icon = $(this).find('i');
-      $icon.css('transition', 'transform 0.6s ease').css('transform', 'rotate(360deg)');
-      setTimeout(() => $icon.css('transform', ''), 700);
-      const $num1 = $('#kpi-new-topics .num-metal').first();
-      const current = parseInt($num1.text(), 10) || 47;
-      const next = current + Math.floor(Math.random() * 3) + 1;
-      $num1.text(next);
-      toast('数据已刷新', 'success');
-    });
-
-    // ====== 3. Tab 切换（小红书热门 / 行业关键词 / 长尾潜力） ======
-    $('#tab-xhs, #tab-keyword, #tab-longtail').on('click', function() {
-      const tab = $(this).data('tab');
-      $('#tab-xhs, #tab-keyword, #tab-longtail').removeClass('is-active');
-      $(this).addClass('is-active');
-      $('.hot-card').hide();
-      $('.hot-card[data-tab="' + tab + '"]').show();
-      const tabNameMap = { xhs: '小红书热门', keyword: '行业关键词', longtail: '长尾潜力' };
-      toast('已切换到' + tabNameMap[tab], 'info');
-    });
-
-    // ====== 4. 立即抓取按钮 ======
-    $('#btn-scrape').on('click', function() {
-      const $btn = $(this);
-      if ($btn.data('busy')) return;
-      $btn.data('busy', 1);
-      const $grid = $('#radar-grid');
-      $grid.css('opacity', '0.5');
-      const originalHtml = $btn.html();
-      $btn.html('<i data-lucide="loader" class="w-3 h-3 spin-slow"></i>抓取中…').prop('disabled', true);
-      lucide.createIcons();
-      setTimeout(() => {
-        $grid.css('opacity', '1');
-        $btn.html(originalHtml).prop('disabled', false).data('busy', 0);
-        lucide.createIcons();
-        const freshTitles = [
-          '33 岁离婚后才明白：3 段婚姻教会我的事',
-          '从全职太太到 CEO：我用 2 年重启人生',
-          '女生第一次买房，应该避开这 5 个坑',
-          '为什么我 30+ 反而比 25 岁时更值钱？',
-          '清醒女孩的 7 条恋爱潜规则，第 4 条扎心了'
-        ];
-        const title = freshTitles[Math.floor(Math.random() * freshTitles.length)];
-        const score = (75 + Math.random() * 20).toFixed(1);
-        const id = 'T-FRESH-' + Date.now();
-        const activeTab = $('.tab-btn.is-active').data('tab') || 'xhs';
-        const $card = $(
-          '<article class="hot-card card-base p-3.5 cursor-pointer group" data-tab="' + activeTab + '" data-score="' + Math.floor(score) + '" data-status="上升" data-category="新鲜">' +
-            '<div class="flex items-center justify-between mb-2"><div class="flex items-center gap-2"><span class="seq-stamp text-[10px] font-bold px-1.5 py-0.5">#NEW</span><span class="badge badge-warn font-num"><i data-lucide="sparkles" class="w-2.5 h-2.5"></i>新鲜</span></div><span class="num-glow text-xs font-bold font-num">' + score + '°</span></div>' +
-            '<div class="heat-bar mb-2.5"><span style="width: ' + Math.floor(score) + '%"></span></div>' +
-            '<h3 class="text-sm font-semibold text-on-surface leading-snug mb-2 line-clamp-2">' + title + '</h3>' +
-            '<div class="flex flex-wrap gap-1 mb-2.5"><span class="text-[10px] bg-primary/15 text-primary px-1.5 py-0.5 rounded font-num">#新鲜出炉</span><span class="text-[10px] text-on-surface-variant border px-1.5 py-0.5 rounded font-num" style="border-color: #3d3a39;">#AI 抓取</span></div>' +
-            '<div class="grid grid-cols-3 gap-1 mb-2.5 text-[10px] font-num"><div class="text-on-surface-variant"><div class="text-on-surface">0</div><div>对标</div></div><div class="text-on-surface-variant"><div class="num-glow">128k</div><div>24h曝光</div></div><div class="text-on-surface-variant text-right"><div class="num-up">+9%</div><div>涨跌幅</div></div></div>' +
-            '<div class="flex items-center justify-between text-[10px] text-on-surface-variant mb-3 pt-2 border-t font-num" style="border-color: #3d3a39;"><span>采纳率 <span class="num-glow font-bold">--</span></span><span>📊 实时</span></div>' +
-            '<div class="flex gap-1.5"><button class="btn-pool btn-glow flex-1 h-8 text-[11px] font-medium rounded-md flex items-center justify-center gap-1 bg-surface-container text-on-surface border btn-press" style="border-color: #3d3a39;" data-topic-id="' + id + '" data-topic-title="' + title + '" data-topic-score="' + Math.floor(score) + '"><i data-lucide="bookmark-plus" class="w-3 h-3"></i>加入选题库</button><button class="btn-decompose btn-glow h-8 px-2.5 bg-surface-container text-on-surface border text-[11px] rounded-md btn-press" style="border-color: #3d3a39;">详情</button><button class="btn-generate h-8 px-2.5 btn-primary text-[11px] rounded-md flex items-center gap-1 btn-press"><i data-lucide="zap" class="w-3 h-3"></i>生成</button></div>' +
-            '<span class="deco-emoji">✨</span>' +
-          '</article>'
-        );
-        $grid.prepend($card);
-        if (activeTab !== 'xhs') $card.hide();
-        const $kpi = $('#kpi-new-topics .num-metal').first();
-        $kpi.text((parseInt($kpi.text(), 10) || 47) + 1);
-        syncPoolButtons();
-        toast('已抓到 1 条新热点：' + title.slice(0, 12) + '…', 'success');
-      }, 2000);
-    });
-
-    // ====== 5. 雷达排序 ======
-    $('#radar-sort').on('change', function() {
-      const $grid = $('#radar-grid');
-      const $cards = $grid.children('.hot-card:visible').get();
-      $cards.sort(function(a, b) {
-        const sa = parseInt($(a).attr('data-score'), 10) || 0;
-        const sb = parseInt($(b).attr('data-score'), 10) || 0;
-        return sb - sa;
-      });
-      $.each($cards, function(_, el) { $grid.append(el); });
-      toast('已按' + $(this).val() + '排序', 'info');
-    });
-
-    // ====== 6. 雷达来源筛选 ======
-    $('#radar-source').on('change', function() {
-      const v = $(this).val();
-      const tabMap = { '小红书热门': 'xhs', '行业关键词': 'keyword', '长尾潜力': 'longtail' };
-      if (v !== '全部来源') {
-        const targetTab = tabMap[v];
-        if (targetTab) {
-          $('#tab-xhs, #tab-keyword, #tab-longtail').removeClass('is-active');
-          $('#tab-' + targetTab).addClass('is-active');
-          $('.hot-card').hide();
-          $('.hot-card[data-tab="' + targetTab + '"]').show();
-        }
-      }
-    });
-
-    // ====== 7. 选题面板筛选条 ======
-    function applyFilters() {
-      const category = $('#filter-category').val();
-      const status = $('#filter-status').val();
-      const scoreMin = parseInt($('#filter-score-min').val(), 10) || 0;
-      let visible = 0;
-      $('#topic-grid .topic-card').each(function() {
-        const $card = $(this);
-        const cardCat = $card.data('category') || '';
-        const cardScore = parseInt($card.data('score'), 10) || 0;
-        let show = true;
-        if (category && category.indexOf('(') > 0) {
-          const catName = category.split(' ')[0];
-          if (catName !== '全部' && cardCat !== catName) show = false;
-        }
-        if (show && cardScore < scoreMin) show = false;
-        if (show) visible++;
-        $card.toggle(show);
-      });
-      $('#filter-result-count').text(visible);
-    }
-    $('#filter-category, #filter-status, #filter-score-min').on('change input', function() {
-      applyFilters();
-    });
-
-    // ====== 8. "加入选题库"按钮 ======
-    $('#radar-grid').on('click', '.btn-pool', function(e) {
-      e.stopPropagation();
-      const $btn = $(this);
-      if ($btn.hasClass('is-added')) {
-        toast('该选题已在选题库中', 'info');
-        return;
-      }
-      const item = {
-        id: $btn.data('topic-id'),
-        title: $btn.data('topic-title'),
-        score: parseInt($btn.data('topic-score'), 10) || 0,
-        source: '热点雷达'
-      };
-      const added = Store.addTopic(item);
-      if (added) {
-        $btn.addClass('is-added').html('<i data-lucide="check" class="w-3 h-3"></i>已加入');
-        lucide.createIcons();
-        const preview = item.title.length > 15 ? item.title.slice(0, 15) + '…' : item.title;
-        toast('已加入选题库：' + preview, 'success');
-      } else {
-        toast('该选题已在选题库中', 'info');
-      }
-    });
-
-    // ====== 9. 详情按钮 → 跳转内容工厂详情模式 ======
-    $('#radar-grid').on('click', '.btn-decompose', function(e) {
-      e.stopPropagation();
-      const $card = $(this).closest('.hot-card');
-      const $btn = $card.find('.btn-pool');
-      const title = $btn.data('topic-title') || $card.find('h3').text();
-      const id = $btn.data('topic-id') || '';
-      Store.adoptTopic({ id: id, title: title, score: parseInt($btn.data('topic-score'), 10) || 0, source: '热点雷达' });
-      toast('已加入选题库：' + (title.length > 15 ? title.slice(0, 15) + '…' : title), 'success');
-      // 复杂交互：详情页查看完整拆解（应实现：在内容工厂详情面板展开结构化信息：
-      // 1. 标题/封面/正文大纲 2. 4 维度评分详细分解 3. 关联爆款 Top 5 列表 4. 评论区高频关键词 5. 预估曝光/互动曲线）
-      setTimeout(() => location.href = 'content-factory.html?topicId=' + encodeURIComponent(id) + '&mode=decompose', 400);
-    });
-
-    // ====== 10. 立即生成按钮 → 跳转内容工厂生成模式 ======
-    $('#radar-grid').on('click', '.btn-generate', function(e) {
-      e.stopPropagation();
-      const $card = $(this).closest('.hot-card');
-      const $btn = $card.find('.btn-pool');
-      const title = $btn.data('topic-title') || $card.find('h3').text();
-      const id = $btn.data('topic-id') || '';
-      const score = parseInt($btn.data('topic-score'), 10) || 0;
-      // 推入流水线
-      const ok = Store.pushPipeline({ id: 'P-' + id, topic: title, step: 1, stepName: '标题生成', status: 'in_progress' });
-      if (ok) {
-        toast('已加入流水线：' + (title.length > 12 ? title.slice(0, 12) + '…' : title), 'success');
-      }
-      setTimeout(() => location.href = 'content-factory.html?topicId=' + encodeURIComponent(id) + '&mode=generate', 400);
-    });
-
-    // ====== 11. 选题卡"一键采纳" ======
-    $('#topic-grid').on('click', '.btn-adopt', function(e) {
-      e.stopPropagation();
-      const $btn = $(this);
-      const item = {
-        id: $btn.data('topic-id'),
-        title: $btn.data('topic-title'),
-        score: parseInt($btn.data('topic-score'), 10) || 0,
-        source: 'AI 评分'
-      };
-      Store.adoptTopic(item);
-      $btn.html('<i data-lucide="check" class="w-3 h-3"></i>已采纳').prop('disabled', true).addClass('opacity-70 cursor-not-allowed');
-      lucide.createIcons();
-      const preview = item.title.length > 15 ? item.title.slice(0, 15) + '…' : item.title;
-      toast('已采纳：' + preview + '，将进入内容工厂', 'success');
-    });
-
-    // ====== 12. 选题卡"改写" ======
-    $('#topic-grid').on('click', '.btn-rewrite', function(e) {
-      e.stopPropagation();
-      const $btn = $(this);
-      const topicId = $btn.data('topic-id');
-      const title = $btn.data('topic-title');
-      // 复杂交互：内联改写（应实现：
-      // 1. 标题替换为 textarea，自动聚焦并全选
-      // 2. AI 实时根据改写后的标题重新计算 4 维评分
-      // 3. 显示"差异对比"，原标题与新标题左右对照
-      // 4. 按 Ctrl+Enter 保存并触发一键采纳，按 ESC 取消）
-      toast('正在打开手动改写模式：' + (title ? title.slice(0, 12) + '…' : ''), 'info');
-      setTimeout(() => location.href = 'content-factory.html?topicId=' + encodeURIComponent(topicId) + '&mode=rewrite', 400);
-    });
-
-    // ====== 13. 批量采纳 ======
-    $('#btn-batch-adopt').on('click', function() {
-      const $cards = $('#topic-grid .topic-card:visible');
-      let n = 0;
-      $cards.each(function() {
-        const $btn = $(this).find('.btn-adopt');
-        if ($btn.prop('disabled')) return;
-        const item = {
-          id: $btn.data('topic-id'),
-          title: $btn.data('topic-title'),
-          score: parseInt($btn.data('topic-score'), 10) || 0,
-          source: '批量'
-        };
-        Store.adoptTopic(item);
-        $btn.html('<i data-lucide="check" class="w-3 h-3"></i>已采纳').prop('disabled', true).addClass('opacity-70');
-        n++;
-      });
-      lucide.createIcons();
-      toast('已批量采纳 ' + n + ' 条选题', 'success');
-    });
-
-    // ====== 14. 导出 ======
-    $('#btn-export').on('click', function() {
-      toast('正在导出 ' + $('#topic-grid .topic-card:visible').length + ' 条选题为 Excel…', 'info');
-      setTimeout(() => toast('导出完成，文件已发送至邮箱', 'success'), 1200);
-    });
-
-    // ====== 15. 添加对标账号（模态框） ======
-    $('#btn-add-benchmark').on('click', function() {
-      const $mask = $('<div class="modal-mask"></div>');
-      const $dlg = $(`
-        <div class="card-base p-6 w-[420px] shadow-dialog" style="background:#15151a;">
-          <div class="flex items-center justify-between mb-4">
-            <h3 class="text-base font-semibold text-on-surface font-num">添加对标账号</h3>
-            <button class="text-on-surface-variant hover:text-primary transition-colors" id="modal-close">
-              <i data-lucide="x" class="w-4 h-4"></i>
-            </button>
-          </div>
-          <p class="text-xs text-on-surface-variant mb-4">输入小红书账号主页链接或账号名，AI 将自动抓取近 30 天数据</p>
-          <div class="space-y-3">
-            <div>
-              <label class="text-xs text-on-surface-variant mb-1.5 block">账号名称</label>
-              <input id="bench-input" type="text" placeholder="例如：清醒Girl的商业课" class="w-full bg-surface-container border rounded-md px-3 py-2 text-sm text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none font-num" style="border-color: #3d3a39;" />
-            </div>
-            <div>
-              <label class="text-xs text-on-surface-variant mb-1.5 block">分类</label>
-              <select class="w-full bg-surface-container border rounded-md px-3 py-2 text-sm text-on-surface focus:outline-none" style="border-color: #3d3a39;">
-                <option>女性成长</option>
-                <option>创业商业</option>
-                <option>生活方式</option>
-                <option>职场干货</option>
-              </select>
-            </div>
-          </div>
-          <div class="flex justify-end gap-2 mt-5">
-            <button class="modal-cancel h-9 px-4 bg-surface-container text-on-surface border text-sm rounded-md btn-press" style="border-color: #3d3a39;">取消</button>
-            <button class="modal-confirm btn-primary h-9 px-4 text-sm font-medium rounded-md btn-press">添加</button>
-          </div>
-        </div>
-      `);
-      $mask.append($dlg);
-      $('body').append($mask);
-      lucide.createIcons();
-      $mask.find('#bench-input').focus();
-
-      function close() { $mask.remove(); }
-      $mask.on('click', function(e) { if (e.target === this) close(); });
-      $mask.find('#modal-close, .modal-cancel').on('click', close);
-
-      $mask.find('.modal-confirm').on('click', function() {
-        const name = $mask.find('#bench-input').val().trim();
-        if (!name) {
-          toast('请输入账号名称', 'error');
-          return;
-        }
-        if (Store.benchmarks.indexOf(name) >= 0 || $('[data-account="' + name + '"]').length) {
-          toast('该账号已在监控中', 'info');
-          close();
-          return;
-        }
-        Store.addBenchmark(name);
-        const $row = $(
-          '<div class="bench-row px-4 py-2.5 grid grid-cols-12 gap-1 items-center hover:bg-surface-container cursor-pointer transition-colors" data-account="' + name + '" style="border-color: #3d3a39;">' +
-            '<div class="col-span-5 flex items-center gap-2 min-w-0">' +
-              '<div class="w-7 h-7 bg-primary/15 border rounded-md flex items-center justify-center text-[11px] font-bold text-primary shrink-0 font-num" style="border-color: rgba(0,217,146,0.4);">' + name.slice(0, 1) + '</div>' +
-              '<div class="min-w-0">' +
-                '<div class="text-xs font-medium text-on-surface truncate">' + name + '</div>' +
-                '<div class="text-[10px] text-on-surface-variant truncate font-num">@' + name + '_xhs</div>' +
-              '</div>' +
-            '</div>' +
-            '<div class="col-span-2 text-right text-xs font-bold num-glow font-num">0</div>' +
-            '<div class="col-span-3 px-1"><div class="flex items-center gap-1.5"><div class="flex-1 progress-track"><div class="progress-fill" style="width: 0%"></div></div><span class="text-[10px] text-on-surface font-num w-8 text-right">0%</span></div></div>' +
-            '<div class="col-span-2 text-right text-xs text-on-surface font-num">0</div>' +
-          '</div>'
-        );
-        $('#benchmark-list').append($row);
-        const $count = $('#module-benchmark .num-glow').first();
-        const cur = parseInt($count.text(), 10) || 28;
-        $count.text(cur + 1);
-        toast('已添加对标账号：' + name, 'success');
-        close();
-      });
-    });
-
-    // ====== 16. 点击对标账号行 → 展开/收起爆款详情 ======
-    $('#benchmark-list').on('click', '.bench-row', function() {
-      const account = $(this).data('account');
-      const $detail = $('.bench-detail[data-account-detail="' + account + '"]');
-      if ($detail.length) {
-        $detail.toggleClass('hidden');
-        lucide.createIcons();
-      } else {
-        toast('该账号暂无近期爆款数据', 'info');
-      }
-    });
-
-    // ====== 17. page:refresh 事件：数据微变 ======
-    window.addEventListener('page:refresh', function() {
-      const $n1 = $('#kpi-new-topics .num-metal').first();
-      $n1.text((parseInt($n1.text(), 10) || 47) + Math.floor(Math.random() * 3) + 1);
-      const $n3 = $('#kpi-benchmark .num-metal').first();
-      $n3.text((parseInt($n3.text(), 10) || 28) + Math.floor(Math.random() * 2));
-      const $n4 = $('#kpi-ai-score .num-metal').first();
-      $n4.text(86 + Math.floor(Math.random() * 4));
-    });
-
-    // ====== 18. store:update 事件：刷新徽章 + 同步按钮状态 ======
-    window.addEventListener('store:update', function() {
-      updateRadarBadge();
-      syncPoolButtons();
-    });
-
-    lucide.createIcons();
-  </script>
-
-  <script>lucide.createIcons();</script>
 </body>
 
 </html>
