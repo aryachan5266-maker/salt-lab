@@ -1,0 +1,1317 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- 赛博/科技感字体 -->
+  <link href="https://lf-code-agent.coze.cn/obj/x-ai-cn/fonts/google/orbitron.css" rel="stylesheet"/>
+  <link href="https://lf-code-agent.coze.cn/obj/x-ai-cn/fonts/google/share-tech-mono.css" rel="stylesheet"/>
+  <link href="https://lf-code-agent.coze.cn/obj/x-ai-cn/fonts/google/noto-sans-sc.css" rel="stylesheet"/>
+
+  <script src="https://lf-code-agent.coze.cn/obj/x-ai-cn/cdn/jquery/jquery-3.7.1.min.js"></script>
+  <script src="https://lf-code-agent.coze.cn/obj/x-ai-cn/cdn/lucide/lucide-1.11.0.min.js"></script>
+  <script src="https://lf-code-agent.coze.cn/obj/x-ai-cn/cdn/tailwindcss/tailwindcss-browser-4.2.4.min.js"></script>
+
+  <style type="text/tailwindcss">
+    @theme {
+      /* === 品牌色（红涨/正向 — 仅用于数据、走势线、激活态边缘光、关键 CTA 描边） === */
+      --color-primary:              #FF3B5C;
+      --color-primary-container:    #1F1218;
+      --color-on-primary:           #E8EBF0;
+      /* === 赛博霓虹点缀色（仅用于细线点缀） === */
+      --color-cyber-cyan:           #21E6C1;
+      --color-cyber-magenta:        #FF2E97;
+      --color-cyber-purple:         #8B5CFF;
+      /* === 涨跌语义色（中国股市红涨绿跌 — 仅用于数据、走势线） === */
+      --color-bull:                 #FF3B5C;
+      --color-bear:                 #15E0A0;
+      /* === 金属银色系 === */
+      --color-metal-light:          #D6DCE6;
+      --color-metal-mid:            #9AA3B2;
+      --color-metal-dark:           #6B7585;
+      /* === 背景 / 表面 — 金属枪灰 HUD === */
+      --color-background:                 #08090C;
+      --color-surface-container-lowest:   #0C0E12;
+      --color-surface:                    #12151B;
+      --color-surface-container:          #161A22;
+      --color-surface-container-high:     #1A1E26;
+      --color-surface-container-highest:  #1F2430;
+      /* === 文字 === */
+      --color-on-surface:           #E8EBF0;
+      --color-on-surface-variant:   #8A94A6;
+      --color-on-surface-weakest:   #5A6273;
+      /* === 功能色 === */
+      --color-success:  #15E0A0;
+      --color-error:    #FF3B5C;
+      --color-warning:  #F5A623;
+      /* === 边框 — 金属 HUD 描边 === */
+      --color-outline:          rgba(140,150,165,0.18);
+      --color-outline-variant:  rgba(140,150,165,0.10);
+      --color-outline-highlight: rgba(210,216,226,0.35);
+      /* === 圆角 — 更锐利 === */
+      --radius-sm:   0.25rem;
+      --radius-md:   0.375rem;
+      --radius-lg:   0.5rem;
+      --radius-xl:   0.75rem;
+      --radius-2xl:  1rem;
+      --radius-full: 9999px;
+      /* === 阴影 — 金属面板质感 === */
+      --shadow-card:   0 1px 3px rgba(0,0,0,0.5), 0 0 1px rgba(200,206,216,0.08);
+      --shadow-float:  0 8px 24px rgba(0,0,0,0.6), 0 0 1px rgba(200,206,216,0.08);
+      --shadow-dialog: 0 20px 48px rgba(0,0,0,0.7), 0 0 1px rgba(200,206,216,0.08);
+      --shadow-glow-red:     0 0 12px rgba(255,59,92,0.10), 0 0 1px rgba(255,59,92,0.3);
+      --shadow-glow-cyan:    0 0 12px rgba(33,230,193,0.10), 0 0 1px rgba(33,230,193,0.3);
+      --shadow-glow-magenta: 0 0 12px rgba(255,46,151,0.10), 0 0 1px rgba(255,46,151,0.3);
+      /* === 字体 === */
+      --font-display: "Orbitron", monospace;
+      --font-mono: "Share Tech Mono", monospace;
+      --font-sans: "Noto Sans SC", system-ui, sans-serif;
+    }
+
+    /* 自定义滚动条 — 金属灰 */
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: #08090C; }
+    ::-webkit-scrollbar-thumb { background: rgba(140,150,165,0.25); border-radius: 2px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(140,150,165,0.4); }
+
+    /* 金属银渐变文字 */
+    .metal-text {
+      background: linear-gradient(135deg, #D6DCE6 0%, #9AA3B2 50%, #D6DCE6 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    /* 金属面板渐变背景 */
+    .metal-panel {
+      background: linear-gradient(180deg, #12151B 0%, #1A1E26 100%);
+      border: 1px solid rgba(140,150,165,0.18);
+      position: relative;
+    }
+    .metal-panel::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(
+        90deg,
+        transparent,
+        transparent 2px,
+        rgba(200,206,216,0.015) 2px,
+        rgba(200,206,216,0.015) 4px
+      );
+      pointer-events: none;
+      border-radius: inherit;
+    }
+    .metal-panel:hover {
+      border-color: rgba(210,216,226,0.35);
+    }
+
+    /* HUD 切角 — 仅右上 */
+    .hud-clip-tr {
+      clip-path: polygon(
+        0 0,
+        calc(100% - 6px) 0,
+        100% 6px,
+        100% 100%,
+        0 100%
+      );
+    }
+
+    /* 扫描线 overlay — 极淡 */
+    .scanline-overlay {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 9999;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(0,0,0,0.03) 2px,
+        rgba(0,0,0,0.03) 4px
+      );
+    }
+
+    /* 霓虹辉光效果 — 克制版 */
+    .glow-red { box-shadow: 0 0 8px rgba(255,59,92,0.12), inset 0 0 4px rgba(255,59,92,0.06); }
+    .glow-cyan { box-shadow: 0 0 8px rgba(33,230,193,0.12), inset 0 0 4px rgba(33,230,193,0.06); }
+    .glow-magenta { box-shadow: 0 0 8px rgba(255,46,151,0.12), inset 0 0 4px rgba(255,46,151,0.06); }
+
+    /* 霓虹文字效果 — 克制版 */
+    .neon-text-red { text-shadow: 0 0 6px rgba(255,59,92,0.4); }
+    .neon-text-cyan { text-shadow: 0 0 6px rgba(33,230,193,0.4); }
+
+    /* HUD 网格背景 */
+    .hud-grid-bg {
+      background-image:
+        linear-gradient(rgba(140,150,165,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(140,150,165,0.04) 1px, transparent 1px);
+      background-size: 40px 40px;
+    }
+
+    /* HUD 角标装饰 */
+    .hud-corner::before,
+    .hud-corner::after {
+      content: '';
+      position: absolute;
+      width: 8px;
+      height: 8px;
+      border-color: rgba(140,150,165,0.3);
+    }
+    .hud-corner::before {
+      top: -1px;
+      left: -1px;
+      border-top: 1px solid;
+      border-left: 1px solid;
+    }
+    .hud-corner::after {
+      bottom: -1px;
+      right: -1px;
+      border-bottom: 1px solid;
+      border-right: 1px solid;
+    }
+
+    /* 呼吸脉冲动画 */
+    @keyframes pulse-dot {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+    .pulse-dot { animation: pulse-dot 2s ease-in-out infinite; }
+
+    /* HUD 按钮基础样式 */
+    .hud-btn-primary {
+      background: linear-gradient(180deg, #1A1E26 0%, #12151B 100%);
+      border: 1px solid rgba(255,59,92,0.5);
+      color: #E8EBF0;
+      position: relative;
+      box-shadow: 0 0 8px rgba(255,59,92,0.10), inset 0 0 6px rgba(255,59,92,0.05);
+      transition: all 0.2s ease;
+    }
+    .hud-btn-primary:hover {
+      border-color: rgba(255,59,92,0.8);
+      box-shadow: 0 0 16px rgba(255,59,92,0.18), inset 0 0 8px rgba(255,59,92,0.08);
+    }
+
+    /* === 品牌资产页专用样式 === */
+
+    /* 分类Tab — 枪灰金属底 */
+    .hud-tab {
+      background: linear-gradient(180deg, #12151B 0%, #161A22 100%);
+      border: 1px solid rgba(140,150,165,0.10);
+      border-bottom: 1px solid rgba(140,150,165,0.15);
+      color: #8A94A6;
+      position: relative;
+      transition: all 0.2s ease;
+    }
+    .hud-tab:hover {
+      border-color: rgba(140,150,165,0.25);
+      color: #E8EBF0;
+    }
+    .hud-tab.active {
+      background: linear-gradient(180deg, #12151B 0%, #1A1E26 100%);
+      border: 1px solid rgba(255,59,92,0.5);
+      border-bottom: 1px solid rgba(255,59,92,0.5);
+      color: #E8EBF0;
+      box-shadow: 0 0 8px rgba(255,59,92,0.10), inset 0 0 4px rgba(255,59,92,0.06);
+    }
+
+    /* 上传区域 — 虚线 HUD 风格 */
+    .hud-upload-zone {
+      border: 2px dashed rgba(140,150,165,0.2);
+      background: linear-gradient(180deg, #0C0E12 0%, #12151B 100%);
+      transition: all 0.25s ease;
+    }
+    .hud-upload-zone:hover {
+      border-color: rgba(210,216,226,0.35);
+      box-shadow: 0 0 12px rgba(33,230,193,0.08), inset 0 0 6px rgba(33,230,193,0.04);
+    }
+    .hud-upload-zone.drag-over {
+      border-color: #21E6C1;
+      box-shadow: 0 0 16px rgba(33,230,193,0.15), inset 0 0 8px rgba(33,230,193,0.06);
+    }
+
+    /* 资产卡片 — metal-panel + HUD切角 */
+    .hud-asset-card {
+      background: linear-gradient(180deg, #12151B 0%, #1A1E26 100%);
+      border: 1px solid rgba(140,150,165,0.18);
+      position: relative;
+      transition: all 0.2s ease;
+    }
+    .hud-asset-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(
+        90deg,
+        transparent,
+        transparent 2px,
+        rgba(200,206,216,0.012) 2px,
+        rgba(200,206,216,0.012) 4px
+      );
+      pointer-events: none;
+    }
+    .hud-asset-card:hover {
+      border-color: rgba(210,216,226,0.35);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.4), 0 0 1px rgba(200,206,216,0.08);
+    }
+
+    /* 时间线 — HUD 风格 */
+    .hud-timeline-line {
+      position: absolute;
+      left: 15px;
+      top: 0;
+      bottom: 0;
+      width: 1px;
+      background: rgba(140,150,165,0.15);
+    }
+    .hud-timeline-node {
+      position: absolute;
+      left: 11px;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #21E6C1;
+      box-shadow: 0 0 6px rgba(33,230,193,0.4);
+      z-index: 1;
+    }
+    .hud-timeline-node.red {
+      background: #FF3B5C;
+      box-shadow: 0 0 6px rgba(255,59,92,0.4);
+    }
+    .hud-timeline-node.magenta {
+      background: #FF2E97;
+      box-shadow: 0 0 6px rgba(255,46,151,0.4);
+    }
+
+    /* 品牌色圆点 hover */
+    .color-dot-hud {
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .color-dot-hud:hover {
+      transform: scale(1.15);
+    }
+
+    /* 色块标签 — Share Tech Mono */
+    .color-label {
+      font-family: "Share Tech Mono", monospace;
+    }
+  </style>
+
+  <!-- 图片兜底 -->
+  <script>
+    document.addEventListener('error', function (e) {
+      const img = e.target;
+      if (img.tagName !== 'IMG' || img.dataset.fallback) return;
+      img.dataset.fallback = '1';
+      const esc = s => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+      const cat = img.getAttribute('data-category') || '其他';
+      const alt = img.getAttribute('alt') || '';
+      const label = esc(alt.length > 8 ? alt.slice(0, 8) + '…' : alt);
+      const icons = { '人物': '👤', '自然风景': '🏞', '动物': '🐾', '建筑城市': '🏙', '运动体育': '⚽', '交通工具': '🚗', '食物': '🍽', '服饰时尚': '👗', '商业科技': '💼', '游戏娱乐': '🎮', '艺术': '🎨', '其他': '🖼' };
+      const icon = icons[cat] || '🖼';
+      const w = img.width || 400, h = img.height || 300;
+      const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}"><rect width="100%" height="100%" fill="%2312151B"/><text x="50%" y="45%" text-anchor="middle" font-size="${Math.min(w, h) * 0.18}" fill="%238A94A6" dominant-baseline="central">${icon}</text><text x="50%" y="68%" text-anchor="middle" font-size="${Math.min(w, h) * 0.07}" fill="%235A6273" font-family="system-ui,sans-serif" dominant-baseline="central">${label}</text></svg>`;
+      img.src = 'data:image/svg+xml,' + svg;
+    }, true);
+  </script>
+</head>
+
+<body class="bg-background text-on-surface font-sans" style="letter-spacing: 0.02em;">
+
+  <!-- 扫描线 overlay -->
+  <div class="scanline-overlay"></div>
+
+  <!-- @nav:start 导航组件 -->
+  <header class="bg-surface sticky top-0 z-40 h-12 flex items-center justify-between px-5" style="border-bottom: 1px solid rgba(140,150,165,0.18); background: linear-gradient(180deg, #12151B 0%, #0E1016 100%);">
+    <div class="flex items-center gap-3">
+      <div class="flex items-center gap-2.5">
+        <div class="w-7 h-7 flex items-center justify-center hud-clip-tr" style="background: linear-gradient(180deg, #1A1E26 0%, #12151B 100%); border: 1px solid rgba(140,150,165,0.2);">
+          <i data-lucide="zap" class="w-3.5 h-3.5" style="color: #FF3B5C;"></i>
+        </div>
+        <span class="font-display font-bold text-sm tracking-[0.2em] metal-text">XIANLIAO</span>
+        <span class="text-[10px] font-mono tracking-wider" style="color: #5A6273;">AI</span>
+        <span class="text-[9px] font-mono px-1.5 py-0.5 ml-1" style="color: #21E6C1; background: rgba(33,230,193,0.08); border: 1px solid rgba(33,230,193,0.15);">v2.0</span>
+      </div>
+    </div>
+    <div class="flex items-center gap-2">
+      <button class="flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium rounded-sm transition-colors" style="color: #8A94A6; border: 1px solid transparent;" onmouseover="this.style.borderColor='rgba(140,150,165,0.2)';this.style.color='#E8EBF0'" onmouseout="this.style.borderColor='transparent';this.style.color='#8A94A6'">
+        <i data-lucide="bell" class="w-3.5 h-3.5"></i>
+      </button>
+      <div class="w-6 h-6 flex items-center justify-center text-[10px] font-medium hud-clip-tr" style="color: #9AA3B2; background: linear-gradient(180deg, #1A1E26 0%, #12151B 100%); border: 1px solid rgba(140,150,165,0.2);">
+        咸
+      </div>
+    </div>
+  </header>
+
+  <div class="flex" style="height: calc(100vh - 3rem)">
+    <aside class="w-48 shrink-0 overflow-y-auto" style="background: linear-gradient(180deg, #0C0E12 0%, #08090C 100%); border-right: 1px solid rgba(140,150,165,0.10);">
+      <div class="p-2.5 space-y-0.5">
+        <a href="home.html" class="flex items-center gap-2.5 px-2.5 py-2 rounded-sm text-xs font-medium transition-all" style="color: #8A94A6; border: 1px solid transparent;" onmouseover="this.style.background='rgba(140,150,165,0.06)';this.style.borderColor='rgba(140,150,165,0.12)';this.style.color='#E8EBF0'" onmouseout="this.style.background='';this.style.borderColor='transparent';this.style.color='#8A94A6'">
+          <i data-lucide="home" class="w-3.5 h-3.5"></i>首页
+        </a>
+        <a href="generate.html" class="flex items-center gap-2.5 px-2.5 py-2 rounded-sm text-xs font-medium transition-all" style="color: #8A94A6; border: 1px solid transparent;" onmouseover="this.style.background='rgba(140,150,165,0.06)';this.style.borderColor='rgba(140,150,165,0.12)';this.style.color='#E8EBF0'" onmouseout="this.style.background='';this.style.borderColor='transparent';this.style.color='#8A94A6'">
+          <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>一键生成
+        </a>
+        <a href="brand-assets.html" class="flex items-center gap-2.5 px-2.5 py-2 rounded-sm text-xs font-medium transition-all hud-clip-tr" style="background: rgba(255,59,92,0.08); color: #FF3B5C; border: 1px solid rgba(255,59,92,0.2);" aria-current="page">
+          <i data-lucide="gem" class="w-3.5 h-3.5"></i>品牌资产
+        </a>
+
+        <div class="pt-3 pb-1.5 px-2.5">
+          <span class="text-[9px] font-mono uppercase tracking-[0.2em]" style="color: #5A6273;">ADVANCED</span>
+        </div>
+        <a href="topic-engine.html" class="flex items-center gap-2.5 px-2.5 py-2 rounded-sm text-xs font-medium transition-all" style="color: #8A94A6; border: 1px solid transparent;" onmouseover="this.style.background='rgba(140,150,165,0.06)';this.style.borderColor='rgba(140,150,165,0.12)';this.style.color='#E8EBF0'" onmouseout="this.style.background='';this.style.borderColor='transparent';this.style.color='#8A94A6'">
+          <i data-lucide="trending-up" class="w-3.5 h-3.5"></i>选题引擎
+        </a>
+        <a href="content-factory.html" class="flex items-center gap-2.5 px-2.5 py-2 rounded-sm text-xs font-medium transition-all" style="color: #8A94A6; border: 1px solid transparent;" onmouseover="this.style.background='rgba(140,150,165,0.06)';this.style.borderColor='rgba(140,150,165,0.12)';this.style.color='#E8EBF0'" onmouseout="this.style.background='';this.style.borderColor='transparent';this.style.color='#8A94A6'">
+          <i data-lucide="factory" class="w-3.5 h-3.5"></i>内容工厂
+        </a>
+        <a href="publish.html" class="flex items-center gap-2.5 px-2.5 py-2 rounded-sm text-xs font-medium transition-all" style="color: #8A94A6; border: 1px solid transparent;" onmouseover="this.style.background='rgba(140,150,165,0.06)';this.style.borderColor='rgba(140,150,165,0.12)';this.style.color='#E8EBF0'" onmouseout="this.style.background='';this.style.borderColor='transparent';this.style.color='#8A94A6'">
+          <i data-lucide="send" class="w-3.5 h-3.5"></i>发布管理
+        </a>
+        <a href="data-review.html" class="flex items-center gap-2.5 px-2.5 py-2 rounded-sm text-xs font-medium transition-all" style="color: #8A94A6; border: 1px solid transparent;" onmouseover="this.style.background='rgba(140,150,165,0.06)';this.style.borderColor='rgba(140,150,165,0.12)';this.style.color='#E8EBF0'" onmouseout="this.style.background='';this.style.borderColor='transparent';this.style.color='#8A94A6'">
+          <i data-lucide="chart-bar" class="w-3.5 h-3.5"></i>数据复盘
+        </a>
+        <a href="knowledge-base.html" class="flex items-center gap-2.5 px-2.5 py-2 rounded-sm text-xs font-medium transition-all" style="color: #8A94A6; border: 1px solid transparent;" onmouseover="this.style.background='rgba(140,150,165,0.06)';this.style.borderColor='rgba(140,150,165,0.12)';this.style.color='#E8EBF0'" onmouseout="this.style.background='';this.style.borderColor='transparent';this.style.color='#8A94A6'">
+          <i data-lucide="brain" class="w-3.5 h-3.5"></i>知识库
+        </a>
+        <a href="settings.html" class="flex items-center gap-2.5 px-2.5 py-2 rounded-sm text-xs font-medium transition-all" style="color: #8A94A6; border: 1px solid transparent;" onmouseover="this.style.background='rgba(140,150,165,0.06)';this.style.borderColor='rgba(140,150,165,0.12)';this.style.color='#E8EBF0'" onmouseout="this.style.background='';this.style.borderColor='transparent';this.style.color='#8A94A6'">
+          <i data-lucide="settings" class="w-3.5 h-3.5"></i>设置
+        </a>
+      </div>
+
+      <!-- 侧边栏底部状态 -->
+      <div class="absolute bottom-0 left-0 w-48 p-2.5" style="border-top: 1px solid rgba(140,150,165,0.10);">
+        <div class="flex items-center gap-1.5 text-[9px] font-mono" style="color: #5A6273;">
+          <span class="w-1.5 h-1.5 rounded-full pulse-dot" style="background: #21E6C1;"></span>
+          SYSTEM ONLINE
+        </div>
+      </div>
+    </aside>
+
+    <!-- @main-content:start -->
+    <main class="flex-1 min-w-0 overflow-y-auto bg-background p-6 hud-grid-bg relative">
+
+      <!-- 页面标题区 -->
+      <div class="flex items-center justify-between mb-6">
+        <div>
+          <h1 class="text-2xl font-bold font-display tracking-wider metal-text">BRAND ASSETS</h1>
+          <p class="text-sm text-on-surface-variant mt-1 font-mono" style="letter-spacing:0.05em;">一次上传，全程复用 // ASSET SYNC ACTIVE</p>
+        </div>
+        <div class="flex items-center gap-4">
+          <!-- HUD 统计数据 -->
+          <div class="flex items-center gap-4 text-xs font-mono" style="color: #5A6273;">
+            <span class="flex items-center gap-1.5">
+              <i data-lucide="database" class="w-3.5 h-3.5"></i>
+              <span id="stat-total" class="text-on-surface font-semibold color-label">24</span>
+              <span style="color: #8A94A6;">ASSETS</span>
+            </span>
+            <span class="flex items-center gap-1.5">
+              <span class="w-1.5 h-1.5 rounded-full" style="background: #F5A623;"></span>
+              <span style="color: #F5A623;" class="font-semibold color-label">6</span>
+              <span style="color: #8A94A6;">PINNED</span>
+            </span>
+          </div>
+          <button id="btn-upload-global" class="hud-btn-primary hud-clip-tr px-4 py-2 text-xs font-mono tracking-wider inline-flex items-center gap-2">
+            <i data-lucide="upload" class="w-3.5 h-3.5"></i>UPLOAD
+          </button>
+        </div>
+      </div>
+
+      <!-- 分类Tab — 枪灰金属底 HUD 风格 -->
+      <div class="flex items-center gap-1 mb-6">
+        <button id="tab-logo" class="tab-btn hud-tab hud-clip-tr active px-4 py-2 text-xs font-mono tracking-wider inline-flex items-center gap-1.5" data-tab="logo">
+          <i data-lucide="hexagon" class="w-3.5 h-3.5"></i>LOGO
+        </button>
+        <button id="tab-photo" class="tab-btn hud-tab hud-clip-tr px-4 py-2 text-xs font-mono tracking-wider inline-flex items-center gap-1.5" data-tab="photo">
+          <i data-lucide="user" class="w-3.5 h-3.5"></i>PHOTO
+        </button>
+        <button id="tab-product" class="tab-btn hud-tab hud-clip-tr px-4 py-2 text-xs font-mono tracking-wider inline-flex items-center gap-1.5" data-tab="product">
+          <i data-lucide="package" class="w-3.5 h-3.5"></i>PRODUCT
+        </button>
+        <button id="tab-brand" class="tab-btn hud-tab hud-clip-tr px-4 py-2 text-xs font-mono tracking-wider inline-flex items-center gap-1.5" data-tab="brand">
+          <i data-lucide="palette" class="w-3.5 h-3.5"></i>BRAND
+        </button>
+        <button id="tab-style" class="tab-btn hud-tab hud-clip-tr px-4 py-2 text-xs font-mono tracking-wider inline-flex items-center gap-1.5" data-tab="style">
+          <i data-lucide="eye" class="w-3.5 h-3.5"></i>STYLE
+        </button>
+        <button id="tab-generated" class="tab-btn hud-tab hud-clip-tr px-4 py-2 text-xs font-mono tracking-wider inline-flex items-center gap-1.5" data-tab="generated">
+          <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>GEN
+        </button>
+      </div>
+
+      <!-- ==================== Logo Tab ==================== -->
+      <div id="panel-logo" class="tab-panel">
+        <div class="grid grid-cols-4 gap-4">
+          <!-- 上传区域 -->
+          <div id="upload-zone-logo" class="hud-upload-zone hud-clip-tr rounded-sm flex flex-col items-center justify-center py-10 cursor-pointer min-h-[200px]">
+            <i data-lucide="cloud-upload" class="w-8 h-8 mb-2" style="color: #5A6273;"></i>
+            <p class="text-xs text-on-surface-variant font-mono">DRAG / CLICK UPLOAD</p>
+            <p class="text-[10px] font-mono mt-1" style="color: #5A6273;">PNG / SVG / AI</p>
+          </div>
+
+          <!-- 列表-Logo1 -->
+          <div id="asset-logo-1" class="asset-card hud-asset-card hud-clip-tr rounded-sm overflow-hidden group cursor-pointer relative">
+            <div class="aspect-square flex items-center justify-center p-4" style="background: #0C0E12;">
+              <img src="https://images.unsplash.com/photo-1611532736597-de2d4265fba3" alt="咸聊AI主Logo红色版" data-category="商业科技" class="w-full h-full object-contain">
+            </div>
+            <div class="p-3">
+              <p class="text-sm font-medium text-on-surface truncate">Logo-主色版</p>
+              <div class="flex items-center justify-between mt-1">
+                <span class="text-[10px] font-mono" style="color: #5A6273;">SVG · 12KB</span>
+                <button class="btn-star opacity-0 group-hover:opacity-100 transition-opacity" data-id="logo-1">
+                  <i data-lucide="star" class="w-3.5 h-3.5" style="color: #F5A623;"></i>
+                </button>
+              </div>
+            </div>
+            <!-- 常用标记 -->
+            <div class="absolute top-2 right-2 rounded-full p-1" style="background: rgba(245,166,35,0.15);">
+              <i data-lucide="star" class="w-3 h-3" style="color: #F5A623;"></i>
+            </div>
+          </div>
+
+          <!-- 列表-Logo2 -->
+          <div id="asset-logo-2" class="asset-card hud-asset-card hud-clip-tr rounded-sm overflow-hidden group cursor-pointer relative">
+            <div class="aspect-square flex items-center justify-center p-4" style="background: #0C0E12;">
+              <img src="https://images.unsplash.com/photo-1609921212029-bb5a28e60960" alt="咸聊AI Logo白色版" data-category="商业科技" class="w-full h-full object-contain">
+            </div>
+            <div class="p-3">
+              <p class="text-sm font-medium text-on-surface truncate">Logo-白底版</p>
+              <div class="flex items-center justify-between mt-1">
+                <span class="text-[10px] font-mono" style="color: #5A6273;">PNG · 24KB</span>
+                <button class="btn-star opacity-0 group-hover:opacity-100 transition-opacity" data-id="logo-2">
+                  <i data-lucide="star" class="w-3.5 h-3.5" style="color: #5A6273;"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- 列表-Logo3 -->
+          <div id="asset-logo-3" class="asset-card hud-asset-card hud-clip-tr rounded-sm overflow-hidden group cursor-pointer relative">
+            <div class="aspect-square flex items-center justify-center p-4" style="background: #0C0E12;">
+              <img src="https://images.unsplash.com/photo-1620288627223-53302f4e8c74" alt="咸聊AI Logo图标版" data-category="商业科技" class="w-full h-full object-contain">
+            </div>
+            <div class="p-3">
+              <p class="text-sm font-medium text-on-surface truncate">Logo-Icon版</p>
+              <div class="flex items-center justify-between mt-1">
+                <span class="text-[10px] font-mono" style="color: #5A6273;">SVG · 6KB</span>
+                <button class="btn-star opacity-0 group-hover:opacity-100 transition-opacity" data-id="logo-3">
+                  <i data-lucide="star" class="w-3.5 h-3.5" style="color: #5A6273;"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==================== 人物照片 Tab ==================== -->
+      <div id="panel-photo" class="tab-panel hidden">
+        <div class="grid grid-cols-4 gap-4">
+          <!-- 上传区域 -->
+          <div id="upload-zone-photo" class="hud-upload-zone hud-clip-tr rounded-sm flex flex-col items-center justify-center py-10 cursor-pointer min-h-[200px]">
+            <i data-lucide="cloud-upload" class="w-8 h-8 mb-2" style="color: #5A6273;"></i>
+            <p class="text-xs text-on-surface-variant font-mono">DRAG / CLICK UPLOAD</p>
+            <p class="text-[10px] font-mono mt-1" style="color: #5A6273;">JPG / PNG</p>
+          </div>
+
+          <!-- 列表-人物照片1 -->
+          <div id="asset-photo-1" class="asset-card hud-asset-card hud-clip-tr rounded-sm overflow-hidden group cursor-pointer relative">
+            <div class="aspect-square overflow-hidden" style="background: #0C0E12;">
+              <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d" alt="品牌创始人正面形象照" data-category="人物" class="w-full h-full object-cover">
+            </div>
+            <div class="p-3">
+              <p class="text-sm font-medium text-on-surface truncate">创始人-正式照</p>
+              <div class="flex items-center justify-between mt-1">
+                <span class="text-[10px] font-mono" style="color: #5A6273;">JPG · 340KB</span>
+                <button class="btn-star opacity-0 group-hover:opacity-100 transition-opacity" data-id="photo-1">
+                  <i data-lucide="star" class="w-3.5 h-3.5" style="color: #F5A623;"></i>
+                </button>
+              </div>
+            </div>
+            <div class="absolute top-2 right-2 rounded-full p-1" style="background: rgba(245,166,35,0.15);">
+              <i data-lucide="star" class="w-3 h-3" style="color: #F5A623;"></i>
+            </div>
+          </div>
+
+          <!-- 列表-人物照片2 -->
+          <div id="asset-photo-2" class="asset-card hud-asset-card hud-clip-tr rounded-sm overflow-hidden group cursor-pointer relative">
+            <div class="aspect-square overflow-hidden" style="background: #0C0E12;">
+              <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330" alt="品牌代言人半身照" data-category="人物" class="w-full h-full object-cover">
+            </div>
+            <div class="p-3">
+              <p class="text-sm font-medium text-on-surface truncate">代言人-生活照</p>
+              <div class="flex items-center justify-between mt-1">
+                <span class="text-[10px] font-mono" style="color: #5A6273;">JPG · 520KB</span>
+                <button class="btn-star opacity-0 group-hover:opacity-100 transition-opacity" data-id="photo-2">
+                  <i data-lucide="star" class="w-3.5 h-3.5" style="color: #5A6273;"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- 列表-人物照片3 -->
+          <div id="asset-photo-3" class="asset-card hud-asset-card hud-clip-tr rounded-sm overflow-hidden group cursor-pointer relative">
+            <div class="aspect-square overflow-hidden" style="background: #0C0E12;">
+              <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80" alt="团队核心成员职业形象" data-category="人物" class="w-full h-full object-cover">
+            </div>
+            <div class="p-3">
+              <p class="text-sm font-medium text-on-surface truncate">团队-核心成员照</p>
+              <div class="flex items-center justify-between mt-1">
+                <span class="text-[10px] font-mono" style="color: #5A6273;">JPG · 280KB</span>
+                <button class="btn-star opacity-0 group-hover:opacity-100 transition-opacity" data-id="photo-3">
+                  <i data-lucide="star" class="w-3.5 h-3.5" style="color: #5A6273;"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==================== 产品图 Tab ==================== -->
+      <div id="panel-product" class="tab-panel hidden">
+        <div class="grid grid-cols-4 gap-4">
+          <!-- 上传区域 -->
+          <div id="upload-zone-product" class="hud-upload-zone hud-clip-tr rounded-sm flex flex-col items-center justify-center py-10 cursor-pointer min-h-[200px]">
+            <i data-lucide="cloud-upload" class="w-8 h-8 mb-2" style="color: #5A6273;"></i>
+            <p class="text-xs text-on-surface-variant font-mono">DRAG / CLICK UPLOAD</p>
+            <p class="text-[10px] font-mono mt-1" style="color: #5A6273;">JPG / PNG / WebP</p>
+          </div>
+
+          <!-- 列表-产品图1 -->
+          <div id="asset-product-1" class="asset-card hud-asset-card hud-clip-tr rounded-sm overflow-hidden group cursor-pointer relative">
+            <div class="aspect-square overflow-hidden" style="background: #0C0E12;">
+              <img src="https://images.unsplash.com/photo-1523275335684-37898b6baf30" alt="咸聊AI智能手表产品图" data-category="商业科技" class="w-full h-full object-cover">
+            </div>
+            <div class="p-3">
+              <p class="text-sm font-medium text-on-surface truncate">智能手表-主图</p>
+              <div class="flex items-center justify-between mt-1">
+                <span class="text-[10px] font-mono" style="color: #5A6273;">PNG · 1.2MB</span>
+                <button class="btn-star opacity-0 group-hover:opacity-100 transition-opacity" data-id="product-1">
+                  <i data-lucide="star" class="w-3.5 h-3.5" style="color: #F5A623;"></i>
+                </button>
+              </div>
+            </div>
+            <div class="absolute top-2 right-2 rounded-full p-1" style="background: rgba(245,166,35,0.15);">
+              <i data-lucide="star" class="w-3 h-3" style="color: #F5A623;"></i>
+            </div>
+          </div>
+
+          <!-- 列表-产品图2 -->
+          <div id="asset-product-2" class="asset-card hud-asset-card hud-clip-tr rounded-sm overflow-hidden group cursor-pointer relative">
+            <div class="aspect-square overflow-hidden" style="background: #0C0E12;">
+              <img src="https://images.unsplash.com/photo-1546868871-af0de0ae72be" alt="咸聊AI耳机产品渲染图" data-category="商业科技" class="w-full h-full object-cover">
+            </div>
+            <div class="p-3">
+              <p class="text-sm font-medium text-on-surface truncate">AI耳机-场景图</p>
+              <div class="flex items-center justify-between mt-1">
+                <span class="text-[10px] font-mono" style="color: #5A6273;">JPG · 890KB</span>
+                <button class="btn-star opacity-0 group-hover:opacity-100 transition-opacity" data-id="product-2">
+                  <i data-lucide="star" class="w-3.5 h-3.5" style="color: #5A6273;"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- 列表-产品图3 -->
+          <div id="asset-product-3" class="asset-card hud-asset-card hud-clip-tr rounded-sm overflow-hidden group cursor-pointer relative">
+            <div class="aspect-square overflow-hidden" style="background: #0C0E12;">
+              <img src="https://images.unsplash.com/photo-1585386959984-a4155224a1ad" alt="咸聊AI香氛产品白底图" data-category="商业科技" class="w-full h-full object-cover">
+            </div>
+            <div class="p-3">
+              <p class="text-sm font-medium text-on-surface truncate">香氛机-白底图</p>
+              <div class="flex items-center justify-between mt-1">
+                <span class="text-[10px] font-mono" style="color: #5A6273;">PNG · 760KB</span>
+                <button class="btn-star opacity-0 group-hover:opacity-100 transition-opacity" data-id="product-3">
+                  <i data-lucide="star" class="w-3.5 h-3.5" style="color: #5A6273;"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- 列表-产品图4 -->
+          <div id="asset-product-4" class="asset-card hud-asset-card hud-clip-tr rounded-sm overflow-hidden group cursor-pointer relative">
+            <div class="aspect-square overflow-hidden" style="background: #0C0E12;">
+              <img src="https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0" alt="咸聊AI礼盒套装展示图" data-category="商业科技" class="w-full h-full object-cover">
+            </div>
+            <div class="p-3">
+              <p class="text-sm font-medium text-on-surface truncate">礼盒套装-展示图</p>
+              <div class="flex items-center justify-between mt-1">
+                <span class="text-[10px] font-mono" style="color: #5A6273;">JPG · 1.5MB</span>
+                <button class="btn-star opacity-0 group-hover:opacity-100 transition-opacity" data-id="product-4">
+                  <i data-lucide="star" class="w-3.5 h-3.5" style="color: #5A6273;"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==================== 品牌资料 Tab ==================== -->
+      <div id="panel-brand" class="tab-panel hidden">
+        <div class="grid grid-cols-2 gap-6">
+
+          <!-- 品牌色提取展示 — 圆形色块 + Share Tech Mono 色值标签 -->
+          <div class="metal-panel hud-clip-tr rounded-sm p-5 hud-corner relative">
+            <h2 class="text-base font-semibold font-display tracking-wider text-on-surface mb-4 flex items-center gap-2">
+              <i data-lucide="palette" class="w-4 h-4" style="color: #FF3B5C;"></i>COLOR PALETTE
+            </h2>
+            <div class="flex items-center gap-5">
+              <!-- 品牌色1 — 赤焰红 -->
+              <div class="flex flex-col items-center gap-2">
+                <div class="color-dot-hud w-14 h-14 rounded-full shadow-glow-red" style="background-color: #FF3B5C;"></div>
+                <div class="text-center">
+                  <p class="text-[11px] color-label font-semibold text-on-surface">#FF3B5C</p>
+                  <p class="text-[10px]" style="color: #5A6273;">赤焰红</p>
+                </div>
+              </div>
+              <!-- 品牌色2 — 赛博青 -->
+              <div class="flex flex-col items-center gap-2">
+                <div class="color-dot-hud w-14 h-14 rounded-full shadow-glow-cyan" style="background-color: #21E6C1;"></div>
+                <div class="text-center">
+                  <p class="text-[11px] color-label font-semibold text-on-surface">#21E6C1</p>
+                  <p class="text-[10px]" style="color: #5A6273;">赛博青</p>
+                </div>
+              </div>
+              <!-- 品牌色3 — 霓虹粉 -->
+              <div class="flex flex-col items-center gap-2">
+                <div class="color-dot-hud w-14 h-14 rounded-full shadow-glow-magenta" style="background-color: #FF2E97;"></div>
+                <div class="text-center">
+                  <p class="text-[11px] color-label font-semibold text-on-surface">#FF2E97</p>
+                  <p class="text-[10px]" style="color: #5A6273;">霓虹粉</p>
+                </div>
+              </div>
+              <!-- 品牌色4 — 深渊黑 -->
+              <div class="flex flex-col items-center gap-2">
+                <div class="color-dot-hud w-14 h-14 rounded-full" style="background-color: #08090C; border: 1px solid rgba(140,150,165,0.18);"></div>
+                <div class="text-center">
+                  <p class="text-[11px] color-label font-semibold text-on-surface">#08090C</p>
+                  <p class="text-[10px]" style="color: #5A6273;">深渊黑</p>
+                </div>
+              </div>
+            </div>
+            <!-- 色值一键复制 -->
+            <div class="mt-4 pt-4 flex items-center gap-2" style="border-top: 1px solid rgba(140,150,165,0.10);">
+              <input id="color-copy-input" class="flex-1 border-none rounded-sm px-3 py-2 text-xs color-label text-on-surface focus:outline-none" style="background: #0C0E12;" value="#FF3B5C" readonly>
+              <button id="btn-copy-color" class="px-3 py-2 rounded-sm text-xs font-mono transition-colors" style="background: #161A22; color: #8A94A6; border: 1px solid rgba(140,150,165,0.15);" onmouseover="this.style.borderColor='rgba(210,216,226,0.35)';this.style.color='#E8EBF0'" onmouseout="this.style.borderColor='rgba(140,150,165,0.15)';this.style.color='#8A94A6'">
+                <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- Slogan & 品牌信息 -->
+          <div class="metal-panel hud-clip-tr rounded-sm p-5 hud-corner relative">
+            <h2 class="text-base font-semibold font-display tracking-wider text-on-surface mb-4 flex items-center gap-2">
+              <i data-lucide="quote" class="w-4 h-4" style="color: #21E6C1;"></i>BRAND VOICE
+            </h2>
+            <!-- Slogan -->
+            <div class="rounded-sm p-4 mb-4" style="background: #0C0E12; border: 1px solid rgba(140,150,165,0.08);">
+              <p class="text-[10px] font-mono mb-1" style="color: #5A6273;">SLOGAN</p>
+              <p class="text-lg font-bold neon-text-red" style="color: #FF3B5C;">咸聊一下，营销到家</p>
+            </div>
+            <!-- 辅助文案 -->
+            <div class="rounded-sm p-4 mb-4" style="background: #0C0E12; border: 1px solid rgba(140,150,165,0.08);">
+              <p class="text-[10px] font-mono mb-1" style="color: #5A6273;">SUB COPY</p>
+              <p class="text-sm text-on-surface">AI驱动，让每一句话都带流量</p>
+            </div>
+            <!-- 品牌关键词 -->
+            <div>
+              <p class="text-[10px] font-mono mb-2" style="color: #5A6273;">KEYWORDS</p>
+              <div class="flex flex-wrap gap-2">
+                <span class="inline-flex items-center px-2.5 py-1 rounded-sm text-xs font-medium" style="background: rgba(255,59,92,0.10); color: #FF3B5C; border: 1px solid rgba(255,59,92,0.15);">智能</span>
+                <span class="inline-flex items-center px-2.5 py-1 rounded-sm text-xs font-medium" style="background: rgba(33,230,193,0.10); color: #21E6C1; border: 1px solid rgba(33,230,193,0.15);">高效</span>
+                <span class="inline-flex items-center px-2.5 py-1 rounded-sm text-xs font-medium" style="background: rgba(255,46,151,0.10); color: #FF2E97; border: 1px solid rgba(255,46,151,0.15);">有趣</span>
+                <span class="inline-flex items-center px-2.5 py-1 rounded-sm text-xs font-medium" style="background: rgba(139,92,255,0.10); color: #8B5CFF; border: 1px solid rgba(139,92,255,0.15);">专业</span>
+                <span class="inline-flex items-center px-2.5 py-1 rounded-sm text-xs font-medium" style="background: rgba(245,166,35,0.10); color: #F5A623; border: 1px solid rgba(245,166,35,0.15);">接地气</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 人设语料 -->
+          <div class="metal-panel hud-clip-tr rounded-sm p-5 hud-corner relative">
+            <h2 class="text-base font-semibold font-display tracking-wider text-on-surface mb-4 flex items-center gap-2">
+              <i data-lucide="message-circle" class="w-4 h-4" style="color: #FF2E97;"></i>PERSONA LINES
+            </h2>
+            <div class="space-y-3">
+              <!-- 语料1 -->
+              <div class="rounded-sm p-3" style="background: #0C0E12; border: 1px solid rgba(140,150,165,0.08);">
+                <div class="flex items-center gap-2 mb-1.5">
+                  <span class="inline-flex items-center px-2 py-0.5 rounded-sm text-[10px] font-mono font-medium" style="background: rgba(255,59,92,0.10); color: #FF3B5C; border: 1px solid rgba(255,59,92,0.12);">OPENING</span>
+                </div>
+                <p class="text-sm text-on-surface">"哈喽宝子们，今天又来给大家整活了！"</p>
+              </div>
+              <!-- 语料2 -->
+              <div class="rounded-sm p-3" style="background: #0C0E12; border: 1px solid rgba(140,150,165,0.08);">
+                <div class="flex items-center gap-2 mb-1.5">
+                  <span class="inline-flex items-center px-2 py-0.5 rounded-sm text-[10px] font-mono font-medium" style="background: rgba(33,230,193,0.10); color: #21E6C1; border: 1px solid rgba(33,230,193,0.12);">HOOK</span>
+                </div>
+                <p class="text-sm text-on-surface">"先别划走！这个干货值三个赞！"</p>
+              </div>
+              <!-- 语料3 -->
+              <div class="rounded-sm p-3" style="background: #0C0E12; border: 1px solid rgba(140,150,165,0.08);">
+                <div class="flex items-center gap-2 mb-1.5">
+                  <span class="inline-flex items-center px-2 py-0.5 rounded-sm text-[10px] font-mono font-medium" style="background: rgba(139,92,255,0.10); color: #8B5CFF; border: 1px solid rgba(139,92,255,0.12);">CLOSING</span>
+                </div>
+                <p class="text-sm text-on-surface">"学会了就点收藏，下次找得到！"</p>
+              </div>
+              <!-- 语料4 -->
+              <div class="rounded-sm p-3" style="background: #0C0E12; border: 1px solid rgba(140,150,165,0.08);">
+                <div class="flex items-center gap-2 mb-1.5">
+                  <span class="inline-flex items-center px-2 py-0.5 rounded-sm text-[10px] font-mono font-medium" style="background: rgba(245,166,35,0.10); color: #F5A623; border: 1px solid rgba(245,166,35,0.12);">TACTIC</span>
+                </div>
+                <p class="text-sm text-on-surface">"说实话我自己都没想到效果这么好…"</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- 过往爆款记录 — 红绿语义色仅用于数据 -->
+          <div class="metal-panel hud-clip-tr rounded-sm p-5 hud-corner relative">
+            <h2 class="text-base font-semibold font-display tracking-wider text-on-surface mb-4 flex items-center gap-2">
+              <i data-lucide="flame" class="w-4 h-4" style="color: #F5A623;"></i>VIRAL LOG
+            </h2>
+            <div class="space-y-3">
+              <!-- 爆款1 -->
+              <div class="rounded-sm p-3 flex items-center gap-3" style="background: #0C0E12; border: 1px solid rgba(140,150,165,0.08);">
+                <div class="w-12 h-12 rounded-sm overflow-hidden shrink-0" style="background: #161A22;">
+                  <img src="https://images.unsplash.com/photo-1611162617474-5b21e879e113" alt="爆款短视频封面" data-category="游戏娱乐" class="w-full h-full object-cover">
+                </div>
+                <div class="flex-1 min-w-0">
+                  <p class="text-sm font-medium text-on-surface truncate">3步搞定小红书爆款标题</p>
+                  <p class="text-[10px] font-mono mt-0.5" style="color: #5A6273;">2024-12-08 · 小红书</p>
+                </div>
+                <div class="text-right shrink-0">
+                  <p class="text-sm font-semibold color-label" style="color: #FF3B5C;">+286%</p>
+                  <p class="text-[10px] font-mono" style="color: #5A6273;">互动率</p>
+                </div>
+              </div>
+              <!-- 爆款2 -->
+              <div class="rounded-sm p-3 flex items-center gap-3" style="background: #0C0E12; border: 1px solid rgba(140,150,165,0.08);">
+                <div class="w-12 h-12 rounded-sm overflow-hidden shrink-0" style="background: #161A22;">
+                  <img src="https://images.unsplash.com/photo-1611162616305-c69b3fa7fbe0" alt="爆款图文封面" data-category="游戏娱乐" class="w-full h-full object-cover">
+                </div>
+                <div class="flex-1 min-w-0">
+                  <p class="text-sm font-medium text-on-surface truncate">AI文案 vs 人工文案实测对比</p>
+                  <p class="text-[10px] font-mono mt-0.5" style="color: #5A6273;">2024-11-22 · 抖音</p>
+                </div>
+                <div class="text-right shrink-0">
+                  <p class="text-sm font-semibold color-label" style="color: #FF3B5C;">+195%</p>
+                  <p class="text-[10px] font-mono" style="color: #5A6273;">播放量</p>
+                </div>
+              </div>
+              <!-- 爆款3 -->
+              <div class="rounded-sm p-3 flex items-center gap-3" style="background: #0C0E12; border: 1px solid rgba(140,150,165,0.08);">
+                <div class="w-12 h-12 rounded-sm overflow-hidden shrink-0" style="background: #161A22;">
+                  <img src="https://images.unsplash.com/photo-1542744173-8e7e53415bb0" alt="爆款直播封面" data-category="商业科技" class="w-full h-full object-cover">
+                </div>
+                <div class="flex-1 min-w-0">
+                  <p class="text-sm font-medium text-on-surface truncate">咸聊新品首发直播回顾</p>
+                  <p class="text-[10px] font-mono mt-0.5" style="color: #5A6273;">2024-10-15 · 视频号</p>
+                </div>
+                <div class="text-right shrink-0">
+                  <p class="text-sm font-semibold color-label" style="color: #15E0A0;">+42%</p>
+                  <p class="text-[10px] font-mono" style="color: #5A6273;">转化率</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==================== 风格参考 Tab ==================== -->
+      <div id="panel-style" class="tab-panel hidden">
+        <div class="grid grid-cols-4 gap-4">
+          <!-- 上传区域 -->
+          <div id="upload-zone-style" class="hud-upload-zone hud-clip-tr rounded-sm flex flex-col items-center justify-center py-10 cursor-pointer min-h-[200px]">
+            <i data-lucide="cloud-upload" class="w-8 h-8 mb-2" style="color: #5A6273;"></i>
+            <p class="text-xs text-on-surface-variant font-mono">DRAG / CLICK UPLOAD</p>
+            <p class="text-[10px] font-mono mt-1" style="color: #5A6273;">JPG / PNG / PDF</p>
+          </div>
+
+          <!-- 列表-风格参考1 -->
+          <div id="asset-style-1" class="asset-card hud-asset-card hud-clip-tr rounded-sm overflow-hidden group cursor-pointer relative">
+            <div class="aspect-square overflow-hidden" style="background: #0C0E12;">
+              <img src="https://images.unsplash.com/photo-1558618666-fcd25c85f82e" alt="赛博朋克风格视觉参考" data-category="艺术" class="w-full h-full object-cover">
+            </div>
+            <div class="p-3">
+              <p class="text-sm font-medium text-on-surface truncate">赛博朋克视觉参考</p>
+              <div class="flex items-center justify-between mt-1">
+                <span class="text-[10px] font-mono" style="color: #5A6273;">JPG · 2.1MB</span>
+                <button class="btn-star opacity-0 group-hover:opacity-100 transition-opacity" data-id="style-1">
+                  <i data-lucide="star" class="w-3.5 h-3.5" style="color: #F5A623;"></i>
+                </button>
+              </div>
+            </div>
+            <div class="absolute top-2 right-2 rounded-full p-1" style="background: rgba(245,166,35,0.15);">
+              <i data-lucide="star" class="w-3 h-3" style="color: #F5A623;"></i>
+            </div>
+          </div>
+
+          <!-- 列表-风格参考2 -->
+          <div id="asset-style-2" class="asset-card hud-asset-card hud-clip-tr rounded-sm overflow-hidden group cursor-pointer relative">
+            <div class="aspect-square overflow-hidden" style="background: #0C0E12;">
+              <img src="https://images.unsplash.com/photo-1561070791-2526d30994b5" alt="极简INS风格排版参考" data-category="艺术" class="w-full h-full object-cover">
+            </div>
+            <div class="p-3">
+              <p class="text-sm font-medium text-on-surface truncate">极简INS风排版</p>
+              <div class="flex items-center justify-between mt-1">
+                <span class="text-[10px] font-mono" style="color: #5A6273;">PNG · 1.8MB</span>
+                <button class="btn-star opacity-0 group-hover:opacity-100 transition-opacity" data-id="style-2">
+                  <i data-lucide="star" class="w-3.5 h-3.5" style="color: #5A6273;"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- 列表-风格参考3 -->
+          <div id="asset-style-3" class="asset-card hud-asset-card hud-clip-tr rounded-sm overflow-hidden group cursor-pointer relative">
+            <div class="aspect-square overflow-hidden" style="background: #0C0E12;">
+              <img src="https://images.unsplash.com/photo-1541462608143-67571c6738dd" alt="渐变霓虹色彩风格参考" data-category="艺术" class="w-full h-full object-cover">
+            </div>
+            <div class="p-3">
+              <p class="text-sm font-medium text-on-surface truncate">渐变霓虹色彩方案</p>
+              <div class="flex items-center justify-between mt-1">
+                <span class="text-[10px] font-mono" style="color: #5A6273;">JPG · 3.4MB</span>
+                <button class="btn-star opacity-0 group-hover:opacity-100 transition-opacity" data-id="style-3">
+                  <i data-lucide="star" class="w-3.5 h-3.5" style="color: #5A6273;"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==================== 生成物 Tab ==================== -->
+      <div id="panel-generated" class="tab-panel hidden">
+        <!-- 搜索与筛选栏 -->
+        <div class="flex items-center gap-3 mb-6">
+          <div class="relative flex-1 max-w-md">
+            <i data-lucide="search" class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2" style="color: #5A6273;"></i>
+            <input id="search-generated" class="w-full border-none rounded-sm pl-9 pr-3 py-2 text-sm text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none font-mono" style="background: #0C0E12;" placeholder="SEARCH GENERATED...">
+          </div>
+          <div class="flex items-center gap-1">
+            <button id="filter-all" class="filter-btn hud-tab hud-clip-tr active px-3 py-1.5 rounded-sm text-[10px] font-mono tracking-wider" data-filter="all">ALL</button>
+            <button id="filter-text" class="filter-btn hud-tab hud-clip-tr px-3 py-1.5 rounded-sm text-[10px] font-mono tracking-wider" data-filter="text">TEXT</button>
+            <button id="filter-image" class="filter-btn hud-tab hud-clip-tr px-3 py-1.5 rounded-sm text-[10px] font-mono tracking-wider" data-filter="image">IMG</button>
+            <button id="filter-video" class="filter-btn hud-tab hud-clip-tr px-3 py-1.5 rounded-sm text-[10px] font-mono tracking-wider" data-filter="video">VID</button>
+          </div>
+        </div>
+
+        <!-- 时间线 — HUD风格 -->
+        <div class="relative pl-10" id="timeline-container">
+          <div class="hud-timeline-line"></div>
+
+          <!-- 时间线-生成物1 -->
+          <div class="gen-item relative pb-8" data-type="text">
+            <div class="hud-timeline-node red" style="top: 4px;"></div>
+            <div class="metal-panel hud-clip-tr rounded-sm p-4 ml-4 hud-corner relative">
+              <div class="flex items-center justify-between mb-2">
+                <div class="flex items-center gap-2">
+                  <span class="inline-flex items-center px-2 py-0.5 rounded-sm text-[10px] font-mono font-medium" style="background: rgba(255,59,92,0.10); color: #FF3B5C; border: 1px solid rgba(255,59,92,0.12);">TEXT</span>
+                  <span class="text-[10px] font-mono" style="color: #5A6273;">2025-01-15 14:32</span>
+                </div>
+                <div class="flex items-center gap-1.5">
+                  <button id="btn-edit-gen-1" class="p-1 rounded-sm transition-colors" style="color: #5A6273;" onmouseover="this.style.color='#E8EBF0';this.style.background='#161A22'" onmouseout="this.style.color='#5A6273';this.style.background=''" title="编辑">
+                    <i data-lucide="pencil" class="w-3.5 h-3.5"></i>
+                  </button>
+                  <button id="btn-download-gen-1" class="p-1 rounded-sm transition-colors" style="color: #5A6273;" onmouseover="this.style.color='#E8EBF0';this.style.background='#161A22'" onmouseout="this.style.color='#5A6273';this.style.background=''" title="下载">
+                    <i data-lucide="download" class="w-3.5 h-3.5"></i>
+                  </button>
+                  <button id="btn-delete-gen-1" class="p-1 rounded-sm transition-colors" style="color: #FF3B5C;" onmouseover="this.style.background='rgba(255,59,92,0.10)'" onmouseout="this.style.background=''" title="删除">
+                    <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                  </button>
+                </div>
+              </div>
+              <p class="text-sm text-on-surface leading-relaxed">🔥 咸聊AI上新！一键生成爆款文案，3秒搞定小红书标题。再也不用对着空白页面发呆了，让AI帮你「聊」出好内容！</p>
+              <div class="flex items-center gap-3 mt-2 text-[10px] font-mono" style="color: #5A6273;">
+                <span>SRC: 选题引擎</span>
+                <span>LEN: 62</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 时间线-生成物2 -->
+          <div class="gen-item relative pb-8" data-type="image">
+            <div class="hud-timeline-node" style="top: 4px;"></div>
+            <div class="metal-panel hud-clip-tr rounded-sm p-4 ml-4 hud-corner relative">
+              <div class="flex items-center justify-between mb-2">
+                <div class="flex items-center gap-2">
+                  <span class="inline-flex items-center px-2 py-0.5 rounded-sm text-[10px] font-mono font-medium" style="background: rgba(33,230,193,0.10); color: #21E6C1; border: 1px solid rgba(33,230,193,0.12);">IMG</span>
+                  <span class="text-[10px] font-mono" style="color: #5A6273;">2025-01-14 20:15</span>
+                </div>
+                <div class="flex items-center gap-1.5">
+                  <button id="btn-edit-gen-2" class="p-1 rounded-sm transition-colors" style="color: #5A6273;" onmouseover="this.style.color='#E8EBF0';this.style.background='#161A22'" onmouseout="this.style.color='#5A6273';this.style.background=''" title="编辑">
+                    <i data-lucide="pencil" class="w-3.5 h-3.5"></i>
+                  </button>
+                  <button id="btn-download-gen-2" class="p-1 rounded-sm transition-colors" style="color: #5A6273;" onmouseover="this.style.color='#E8EBF0';this.style.background='#161A22'" onmouseout="this.style.color='#5A6273';this.style.background=''" title="下载">
+                    <i data-lucide="download" class="w-3.5 h-3.5"></i>
+                  </button>
+                  <button id="btn-delete-gen-2" class="p-1 rounded-sm transition-colors" style="color: #FF3B5C;" onmouseover="this.style.background='rgba(255,59,92,0.10)'" onmouseout="this.style.background=''" title="删除">
+                    <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                  </button>
+                </div>
+              </div>
+              <div class="rounded-sm overflow-hidden mb-2" style="border: 1px solid rgba(140,150,165,0.10);">
+                <img src="https://images.unsplash.com/photo-1633356122544-f134324a6cee" alt="AI生成的社交媒体配图" data-category="商业科技" class="w-full h-48 object-cover">
+              </div>
+              <p class="text-sm text-on-surface">AI生成-社交媒体配图-赛博风格</p>
+              <div class="flex items-center gap-3 mt-2 text-[10px] font-mono" style="color: #5A6273;">
+                <span>SRC: 内容工厂</span>
+                <span>SIZE: 1080×1080</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 时间线-生成物3 -->
+          <div class="gen-item relative pb-8" data-type="text">
+            <div class="hud-timeline-node red" style="top: 4px;"></div>
+            <div class="metal-panel hud-clip-tr rounded-sm p-4 ml-4 hud-corner relative">
+              <div class="flex items-center justify-between mb-2">
+                <div class="flex items-center gap-2">
+                  <span class="inline-flex items-center px-2 py-0.5 rounded-sm text-[10px] font-mono font-medium" style="background: rgba(255,59,92,0.10); color: #FF3B5C; border: 1px solid rgba(255,59,92,0.12);">TEXT</span>
+                  <span class="text-[10px] font-mono" style="color: #5A6273;">2025-01-13 09:48</span>
+                </div>
+                <div class="flex items-center gap-1.5">
+                  <button id="btn-edit-gen-3" class="p-1 rounded-sm transition-colors" style="color: #5A6273;" onmouseover="this.style.color='#E8EBF0';this.style.background='#161A22'" onmouseout="this.style.color='#5A6273';this.style.background=''" title="编辑">
+                    <i data-lucide="pencil" class="w-3.5 h-3.5"></i>
+                  </button>
+                  <button id="btn-download-gen-3" class="p-1 rounded-sm transition-colors" style="color: #5A6273;" onmouseover="this.style.color='#E8EBF0';this.style.background='#161A22'" onmouseout="this.style.color='#5A6273';this.style.background=''" title="下载">
+                    <i data-lucide="download" class="w-3.5 h-3.5"></i>
+                  </button>
+                  <button id="btn-delete-gen-3" class="p-1 rounded-sm transition-colors" style="color: #FF3B5C;" onmouseover="this.style.background='rgba(255,59,92,0.10)'" onmouseout="this.style.background=''" title="删除">
+                    <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                  </button>
+                </div>
+              </div>
+              <p class="text-sm text-on-surface leading-relaxed">年终大促来了！咸聊AI年度会员低至5折，送给每一个认真做内容的人。2025年，让AI成为你的营销搭档。</p>
+              <div class="flex items-center gap-3 mt-2 text-[10px] font-mono" style="color: #5A6273;">
+                <span>SRC: 一键生成</span>
+                <span>LEN: 52</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 时间线-生成物4 -->
+          <div class="gen-item relative pb-8" data-type="video">
+            <div class="hud-timeline-node magenta" style="top: 4px;"></div>
+            <div class="metal-panel hud-clip-tr rounded-sm p-4 ml-4 hud-corner relative">
+              <div class="flex items-center justify-between mb-2">
+                <div class="flex items-center gap-2">
+                  <span class="inline-flex items-center px-2 py-0.5 rounded-sm text-[10px] font-mono font-medium" style="background: rgba(255,46,151,0.10); color: #FF2E97; border: 1px solid rgba(255,46,151,0.12);">VID</span>
+                  <span class="text-[10px] font-mono" style="color: #5A6273;">2025-01-12 16:20</span>
+                </div>
+                <div class="flex items-center gap-1.5">
+                  <button id="btn-edit-gen-4" class="p-1 rounded-sm transition-colors" style="color: #5A6273;" onmouseover="this.style.color='#E8EBF0';this.style.background='#161A22'" onmouseout="this.style.color='#5A6273';this.style.background=''" title="编辑">
+                    <i data-lucide="pencil" class="w-3.5 h-3.5"></i>
+                  </button>
+                  <button id="btn-download-gen-4" class="p-1 rounded-sm transition-colors" style="color: #5A6273;" onmouseover="this.style.color='#E8EBF0';this.style.background='#161A22'" onmouseout="this.style.color='#5A6273';this.style.background=''" title="下载">
+                    <i data-lucide="download" class="w-3.5 h-3.5"></i>
+                  </button>
+                  <button id="btn-delete-gen-4" class="p-1 rounded-sm transition-colors" style="color: #FF3B5C;" onmouseover="this.style.background='rgba(255,59,92,0.10)'" onmouseout="this.style.background=''" title="删除">
+                    <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                  </button>
+                </div>
+              </div>
+              <div class="relative rounded-sm overflow-hidden mb-2" style="border: 1px solid rgba(140,150,165,0.10);">
+                <img src="https://images.unsplash.com/photo-1536240478700-b869070f9279" alt="AI生成的短视频封面帧" data-category="商业科技" class="w-full h-48 object-cover">
+                <div class="absolute inset-0 flex items-center justify-center" style="background: rgba(0,0,0,0.30);">
+                  <div class="w-12 h-12 rounded-full flex items-center justify-center" style="background: rgba(255,59,92,0.80);">
+                    <i data-lucide="play" class="w-5 h-5 ml-0.5" style="color: #E8EBF0;"></i>
+                  </div>
+                </div>
+                <span class="absolute bottom-2 right-2 text-[10px] font-mono px-1.5 py-0.5 rounded-sm" style="background: rgba(0,0,0,0.60); color: #E8EBF0;">0:32</span>
+              </div>
+              <p class="text-sm text-on-surface">AI生成-产品开箱短视频</p>
+              <div class="flex items-center gap-3 mt-2 text-[10px] font-mono" style="color: #5A6273;">
+                <span>SRC: 内容工厂</span>
+                <span>DUR: 32s</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 时间线-生成物5 -->
+          <div class="gen-item relative pb-4" data-type="image">
+            <div class="hud-timeline-node" style="top: 4px;"></div>
+            <div class="metal-panel hud-clip-tr rounded-sm p-4 ml-4 hud-corner relative">
+              <div class="flex items-center justify-between mb-2">
+                <div class="flex items-center gap-2">
+                  <span class="inline-flex items-center px-2 py-0.5 rounded-sm text-[10px] font-mono font-medium" style="background: rgba(33,230,193,0.10); color: #21E6C1; border: 1px solid rgba(33,230,193,0.12);">IMG</span>
+                  <span class="text-[10px] font-mono" style="color: #5A6273;">2025-01-10 11:05</span>
+                </div>
+                <div class="flex items-center gap-1.5">
+                  <button id="btn-edit-gen-5" class="p-1 rounded-sm transition-colors" style="color: #5A6273;" onmouseover="this.style.color='#E8EBF0';this.style.background='#161A22'" onmouseout="this.style.color='#5A6273';this.style.background=''" title="编辑">
+                    <i data-lucide="pencil" class="w-3.5 h-3.5"></i>
+                  </button>
+                  <button id="btn-download-gen-5" class="p-1 rounded-sm transition-colors" style="color: #5A6273;" onmouseover="this.style.color='#E8EBF0';this.style.background='#161A22'" onmouseout="this.style.color='#5A6273';this.style.background=''" title="下载">
+                    <i data-lucide="download" class="w-3.5 h-3.5"></i>
+                  </button>
+                  <button id="btn-delete-gen-5" class="p-1 rounded-sm transition-colors" style="color: #FF3B5C;" onmouseover="this.style.background='rgba(255,59,92,0.10)'" onmouseout="this.style.background=''" title="删除">
+                    <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                  </button>
+                </div>
+              </div>
+              <div class="rounded-sm overflow-hidden mb-2" style="border: 1px solid rgba(140,150,165,0.10);">
+                <img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe" alt="AI生成的艺术风格海报" data-category="艺术" class="w-full h-48 object-cover">
+              </div>
+              <p class="text-sm text-on-surface">AI生成-品牌海报-抽象渐变</p>
+              <div class="flex items-center gap-3 mt-2 text-[10px] font-mono" style="color: #5A6273;">
+                <span>SRC: 一键生成</span>
+                <span>SIZE: 1920×1080</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </main>
+    <!-- @main-content:end -->
+  </div>
+
+  <!-- 资产详情模态框 — HUD 风格 -->
+  <div id="modal-asset-detail" class="fixed inset-0 flex items-center justify-center p-4 z-50 hidden" style="background: rgba(0,0,0,0.70);">
+    <div class="metal-panel hud-clip-tr rounded-sm max-w-lg w-full max-h-[90vh] overflow-y-auto p-6 hud-corner relative">
+      <div class="flex items-center justify-between mb-4">
+        <h3 id="modal-asset-title" class="text-base font-semibold font-display tracking-wider text-on-surface">ASSET DETAIL</h3>
+        <button id="btn-close-modal" class="p-1 rounded-sm transition-colors" style="color: #5A6273;" onmouseover="this.style.color='#E8EBF0';this.style.background='#161A22'" onmouseout="this.style.color='#5A6273';this.style.background=''">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+      <div class="rounded-sm overflow-hidden mb-4" style="background: #0C0E12; border: 1px solid rgba(140,150,165,0.10);">
+        <img id="modal-asset-image" src="" alt="资产预览" data-category="其他" class="w-full h-64 object-cover">
+      </div>
+      <div class="space-y-3">
+        <div class="flex items-center justify-between">
+          <span class="text-sm" style="color: #5A6273;">文件名</span>
+          <span id="modal-asset-filename" class="text-sm text-on-surface font-medium color-label">Logo-主色版.svg</span>
+        </div>
+        <div class="flex items-center justify-between">
+          <span class="text-sm" style="color: #5A6273;">大小</span>
+          <span id="modal-asset-size" class="text-sm text-on-surface font-medium color-label">12KB</span>
+        </div>
+        <div class="flex items-center justify-between">
+          <span class="text-sm" style="color: #5A6273;">上传时间</span>
+          <span id="modal-asset-date" class="text-sm text-on-surface font-medium color-label">2025-01-08</span>
+        </div>
+        <div class="flex items-center justify-between">
+          <span class="text-sm" style="color: #5A6273;">类型</span>
+          <span id="modal-asset-type" class="text-sm text-on-surface font-medium color-label">SVG</span>
+        </div>
+      </div>
+      <div class="flex items-center gap-3 mt-6 pt-4" style="border-top: 1px solid rgba(140,150,165,0.10);">
+        <button id="btn-modal-download" class="flex-1 hud-btn-primary hud-clip-tr px-4 py-2 text-xs font-mono tracking-wider inline-flex items-center justify-center gap-2">
+          <i data-lucide="download" class="w-3.5 h-3.5"></i>DOWNLOAD
+        </button>
+        <button id="btn-modal-star" class="flex-1 px-4 py-2 rounded-sm text-xs font-mono tracking-wider inline-flex items-center justify-center gap-2 transition-colors" style="background: #161A22; color: #8A94A6; border: 1px solid rgba(140,150,165,0.18);" onmouseover="this.style.borderColor='rgba(210,216,226,0.35)';this.style.color='#E8EBF0'" onmouseout="this.style.borderColor='rgba(140,150,165,0.18)';this.style.color='#8A94A6'">
+          <i data-lucide="star" class="w-3.5 h-3.5"></i>PIN
+        </button>
+        <button id="btn-modal-delete" class="flex-1 px-4 py-2 rounded-sm text-xs font-mono tracking-wider inline-flex items-center justify-center gap-2 transition-colors" style="background: rgba(255,59,92,0.08); color: #FF3B5C; border: 1px solid rgba(255,59,92,0.15);" onmouseover="this.style.background='rgba(255,59,92,0.15)'" onmouseout="this.style.background='rgba(255,59,92,0.08)'">
+          <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>DELETE
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    $(function() {
+
+      // ========== Tab 切换 ==========
+      var tabMap = {
+        'logo': 'panel-logo',
+        'photo': 'panel-photo',
+        'product': 'panel-product',
+        'brand': 'panel-brand',
+        'style': 'panel-style',
+        'generated': 'panel-generated'
+      };
+
+      $('.tab-btn').on('click', function() {
+        var tab = $(this).data('tab');
+        // 切换按钮样式 — 移除active，恢复默认
+        $('.tab-btn').removeClass('active');
+        // 切换面板
+        $('.tab-panel').addClass('hidden');
+        $('#' + tabMap[tab]).removeClass('hidden');
+        // 激活当前Tab
+        $(this).addClass('active');
+        // 重新初始化图标
+        lucide.createIcons();
+      });
+
+      // ========== 资产卡片点击 → 详情模态框 ==========
+      // 点击资产卡片打开详情
+      $('.asset-card').on('click', function(e) {
+        if ($(e.target).closest('.btn-star').length) return;
+        var assetId = $(this).attr('id').replace('asset-', '');
+        // 根据id获取卡片内的信息并填充模态框
+        var title = $(this).find('.text-sm.font-medium').first().text();
+        var meta = $(this).find('.font-mono').first().text();
+        var metaParts = meta.split(' · ');
+        var imgSrc = $(this).find('img').first().attr('src');
+        $('#modal-asset-title').text(title.toUpperCase());
+        $('#modal-asset-image').attr('src', imgSrc).attr('alt', title);
+        $('#modal-asset-filename').text(title + '.' + (metaParts[0] || '').toLowerCase());
+        $('#modal-asset-size').text(metaParts[1] || '--');
+        $('#modal-asset-date').text('2025-01-08');
+        $('#modal-asset-type').text(metaParts[0] || '--');
+        $('#modal-asset-detail').removeClass('hidden');
+        lucide.createIcons();
+      });
+
+      // 关闭模态框
+      $('#btn-close-modal').on('click', function() {
+        $('#modal-asset-detail').addClass('hidden');
+      });
+      $('#modal-asset-detail').on('click', function(e) {
+        if ($(e.target).is('#modal-asset-detail')) {
+          $(this).addClass('hidden');
+        }
+      });
+
+      // 模态框内下载按钮
+      $('#btn-modal-download').on('click', function() {
+        console.log('下载资产: ' + $('#modal-asset-filename').text());
+      });
+
+      // 模态框内标记常用
+      $('#btn-modal-star').on('click', function() {
+        // 标记常用 - 点击后应实现：
+        // 1. 将当前资产标记为"常用"，更新数据库状态
+        // 2. 在对应资产卡片上显示星标图标
+        // 3. 按钮文字切换为"UNPIN"
+        console.log('标记常用: ' + $('#modal-asset-title').text());
+      });
+
+      // 模态框内删除
+      $('#btn-modal-delete').on('click', function() {
+        // 删除资产 - 点击后应实现：
+        // 1. 弹出确认对话框，提示"确定删除该资产？删除后不可恢复"
+        // 2. 确认后从列表中移除该资产卡片
+        // 3. 关闭模态框
+        // 4. 显示删除成功提示
+        console.log('删除资产: ' + $('#modal-asset-title').text());
+        $('#modal-asset-detail').addClass('hidden');
+      });
+
+      // ========== 星标常用 ==========
+      $('.btn-star').on('click', function(e) {
+        e.stopPropagation();
+        var icon = $(this).find('i, [data-lucide]');
+        if (icon.css('color') === 'rgb(245, 166, 35)') {
+          icon.css('color', '#5A6273');
+          console.log('取消常用: ' + $(this).data('id'));
+        } else {
+          icon.css('color', '#F5A623');
+          console.log('标记常用: ' + $(this).data('id'));
+        }
+      });
+
+      // ========== 上传区域拖拽交互 ==========
+      $('.hud-upload-zone').on('dragover', function(e) {
+        e.preventDefault();
+        $(this).addClass('drag-over');
+      }).on('dragleave drop', function(e) {
+        e.preventDefault();
+        $(this).removeClass('drag-over');
+      }).on('click', function() {
+        // 上传文件 - 点击后应实现：
+        // 1. 创建隐藏的 input[type=file] 元素
+        // 2. 根据当前Tab设置接受的文件类型
+        // 3. 监听 change 事件，获取文件
+        // 4. 上传到服务器并在列表中插入新卡片
+        console.log('触发上传: ' + $(this).attr('id'));
+      });
+
+      // ========== 全局上传按钮 ==========
+      $('#btn-upload-global').on('click', function() {
+        // 全局上传 - 点击后应实现：
+        // 1. 弹出上传对话框，让用户选择资产分类
+        // 2. 创建隐藏的 input[type=file] 元素
+        // 3. 上传文件并在对应分类Tab中插入新卡片
+        console.log('全局上传按钮点击');
+      });
+
+      // ========== 生成物筛选 ==========
+      $('.filter-btn').on('click', function() {
+        var filter = $(this).data('filter');
+        // 切换按钮样式
+        $('.filter-btn').removeClass('active');
+        $(this).addClass('active');
+        // 筛选时间线条目
+        if (filter === 'all') {
+          $('.gen-item').removeClass('hidden');
+        } else {
+          $('.gen-item').addClass('hidden');
+          $('.gen-item[data-type="' + filter + '"]').removeClass('hidden');
+        }
+      });
+
+      // ========== 生成物搜索 ==========
+      $('#search-generated').on('input', function() {
+        var keyword = $(this).val().toLowerCase();
+        if (!keyword) {
+          $('.gen-item').removeClass('hidden');
+          return;
+        }
+        $('.gen-item').each(function() {
+          var text = $(this).text().toLowerCase();
+          if (text.indexOf(keyword) >= 0) {
+            $(this).removeClass('hidden');
+          } else {
+            $(this).addClass('hidden');
+          }
+        });
+      });
+
+      // ========== 生成物删除 ==========
+      $('[id^="btn-delete-gen-"]').on('click', function(e) {
+        e.stopPropagation();
+        // 删除生成物 - 点击后应实现：
+        // 1. 弹出确认对话框
+        // 2. 确认后从时间线中移除该项
+        // 3. 更新统计数据
+        var genId = $(this).attr('id').replace('btn-delete-gen-', '');
+        console.log('删除生成物 #' + genId);
+      });
+
+      // ========== 生成物编辑 ==========
+      $('[id^="btn-edit-gen-"]').on('click', function(e) {
+        e.stopPropagation();
+        // 编辑生成物 - 点击后应实现：
+        // 1. 如果是文案类型，打开编辑模态框，允许修改文字内容
+        // 2. 如果是图片/视频类型，打开编辑工具面板
+        // 3. 保存后更新时间线中的内容
+        var genId = $(this).attr('id').replace('btn-edit-gen-', '');
+        console.log('编辑生成物 #' + genId);
+      });
+
+      // ========== 生成物下载 ==========
+      $('[id^="btn-download-gen-"]').on('click', function(e) {
+        e.stopPropagation();
+        var genId = $(this).attr('id').replace('btn-download-gen-', '');
+        console.log('下载生成物 #' + genId);
+      });
+
+      // ========== 色值一键复制 ==========
+      $('#btn-copy-color').on('click', function() {
+        var colorVal = $('#color-copy-input').val();
+        // 复制色值 - 点击后应实现：
+        // 1. 将色值写入剪贴板
+        // 2. 显示"已复制"提示
+        console.log('复制色值: ' + colorVal);
+      });
+
+      // ========== 品牌色块点击 ==========
+      $('.color-dot-hud').on('click', function() {
+        var bgColor = $(this).css('background-color');
+        // 点击色块 - 将色值填入复制输入框
+        // 需要将rgb格式转为hex
+        $('#color-copy-input').val(bgColor);
+        console.log('选中色值: ' + bgColor);
+      });
+
+    });
+  </script>
+
+  <script>lucide.createIcons();</script>
+</body>
+
+</html>

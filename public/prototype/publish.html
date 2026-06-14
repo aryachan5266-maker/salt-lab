@@ -1,0 +1,1123 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- 赛博/科技感字体 -->
+  <link href="https://lf-code-agent.coze.cn/obj/x-ai-cn/fonts/google/orbitron.css" rel="stylesheet"/>
+  <link href="https://lf-code-agent.coze.cn/obj/x-ai-cn/fonts/google/share-tech-mono.css" rel="stylesheet"/>
+  <link href="https://lf-code-agent.coze.cn/obj/x-ai-cn/fonts/google/noto-sans-sc.css" rel="stylesheet"/>
+
+  <script src="https://lf-code-agent.coze.cn/obj/x-ai-cn/cdn/jquery/jquery-3.7.1.min.js"></script>
+  <script src="https://lf-code-agent.coze.cn/obj/x-ai-cn/cdn/lucide/lucide-1.11.0.min.js"></script>
+  <script src="https://lf-code-agent.coze.cn/obj/x-ai-cn/cdn/tailwindcss/tailwindcss-browser-4.2.4.min.js"></script>
+
+  <style type="text/tailwindcss">
+    @theme {
+      /* === 品牌色（红涨/正向 — 仅用于数据、走势线、激活态边缘光、关键 CTA 描边） === */
+      --color-primary:              #FF3B5C;
+      --color-primary-container:    #1F1218;
+      --color-on-primary:           #E8EBF0;
+      /* === 赛博霓虹点缀色（仅用于细线点缀） === */
+      --color-cyber-cyan:           #21E6C1;
+      --color-cyber-magenta:        #FF2E97;
+      --color-cyber-purple:         #8B5CFF;
+      /* === 涨跌语义色（中国股市红涨绿跌 — 仅用于数据、走势线） === */
+      --color-bull:                 #FF3B5C;
+      --color-bear:                 #15E0A0;
+      /* === 金属银色系 === */
+      --color-metal-light:          #D6DCE6;
+      --color-metal-mid:            #9AA3B2;
+      --color-metal-dark:           #6B7585;
+      /* === 背景 / 表面 — 金属枪灰 HUD === */
+      --color-background:                 #08090C;
+      --color-surface-container-lowest:   #0C0E12;
+      --color-surface:                    #12151B;
+      --color-surface-container:          #161A22;
+      --color-surface-container-high:     #1A1E26;
+      --color-surface-container-highest:  #1F2430;
+      /* === 文字 === */
+      --color-on-surface:           #E8EBF0;
+      --color-on-surface-variant:   #8A94A6;
+      --color-on-surface-weakest:   #5A6273;
+      /* === 功能色 === */
+      --color-success:  #15E0A0;
+      --color-error:    #FF3B5C;
+      --color-warning:  #F5A623;
+      /* === 边框 — 金属 HUD 描边 === */
+      --color-outline:          rgba(140,150,165,0.18);
+      --color-outline-variant:  rgba(140,150,165,0.10);
+      --color-outline-highlight: rgba(210,216,226,0.35);
+      /* === 圆角 — 更锐利 === */
+      --radius-sm:   0.25rem;
+      --radius-md:   0.375rem;
+      --radius-lg:   0.5rem;
+      --radius-xl:   0.75rem;
+      --radius-2xl:  1rem;
+      --radius-full: 9999px;
+      /* === 阴影 — 金属面板质感 === */
+      --shadow-card:   0 1px 3px rgba(0,0,0,0.5), 0 0 1px rgba(200,206,216,0.08);
+      --shadow-float:  0 8px 24px rgba(0,0,0,0.6), 0 0 1px rgba(200,206,216,0.08);
+      --shadow-dialog: 0 20px 48px rgba(0,0,0,0.7), 0 0 1px rgba(200,206,216,0.08);
+      --shadow-glow-red:     0 0 12px rgba(255,59,92,0.10), 0 0 1px rgba(255,59,92,0.3);
+      --shadow-glow-cyan:    0 0 12px rgba(33,230,193,0.10), 0 0 1px rgba(33,230,193,0.3);
+      --shadow-glow-magenta: 0 0 12px rgba(255,46,151,0.10), 0 0 1px rgba(255,46,151,0.3);
+      /* === 字体 === */
+      --font-display: "Orbitron", monospace;
+      --font-mono: "Share Tech Mono", monospace;
+      --font-sans: "Noto Sans SC", system-ui, sans-serif;
+    }
+
+    /* 自定义滚动条 — 金属灰 */
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: #08090C; }
+    ::-webkit-scrollbar-thumb { background: rgba(140,150,165,0.25); border-radius: 2px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(140,150,165,0.4); }
+
+    /* 金属银渐变文字 */
+    .metal-text {
+      background: linear-gradient(135deg, #D6DCE6 0%, #9AA3B2 50%, #D6DCE6 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    /* 金属面板渐变背景 */
+    .metal-panel {
+      background: linear-gradient(180deg, #12151B 0%, #1A1E26 100%);
+      border: 1px solid rgba(140,150,165,0.18);
+      position: relative;
+    }
+    .metal-panel::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(
+        90deg,
+        transparent,
+        transparent 2px,
+        rgba(200,206,216,0.015) 2px,
+        rgba(200,206,216,0.015) 4px
+      );
+      pointer-events: none;
+      border-radius: inherit;
+    }
+    .metal-panel:hover {
+      border-color: rgba(210,216,226,0.35);
+    }
+
+    /* HUD 切角 — 右上 + 左下 */
+    .hud-clip {
+      clip-path: polygon(
+        0 0,
+        calc(100% - 8px) 0,
+        100% 8px,
+        100% 100%,
+        8px 100%,
+        0 calc(100% - 8px)
+      );
+    }
+
+    /* HUD 切角 — 仅右上 */
+    .hud-clip-tr {
+      clip-path: polygon(
+        0 0,
+        calc(100% - 6px) 0,
+        100% 6px,
+        100% 100%,
+        0 100%
+      );
+    }
+
+    /* 扫描线 overlay — 极淡 */
+    .scanline-overlay {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 9999;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(0,0,0,0.03) 2px,
+        rgba(0,0,0,0.03) 4px
+      );
+    }
+
+    /* 霓虹辉光效果 — 克制版 */
+    .glow-red { box-shadow: 0 0 8px rgba(255,59,92,0.12), inset 0 0 4px rgba(255,59,92,0.06); }
+    .glow-cyan { box-shadow: 0 0 8px rgba(33,230,193,0.12), inset 0 0 4px rgba(33,230,193,0.06); }
+    .glow-magenta { box-shadow: 0 0 8px rgba(255,46,151,0.12), inset 0 0 4px rgba(255,46,151,0.06); }
+
+    /* 霓虹文字效果 — 克制版 */
+    .neon-text-red { text-shadow: 0 0 6px rgba(255,59,92,0.4); }
+    .neon-text-cyan { text-shadow: 0 0 6px rgba(33,230,193,0.4); }
+    .neon-text-magenta { text-shadow: 0 0 6px rgba(255,46,151,0.4); }
+
+    /* HUD 网格背景 */
+    .hud-grid-bg {
+      background-image:
+        linear-gradient(rgba(140,150,165,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(140,150,165,0.04) 1px, transparent 1px);
+      background-size: 40px 40px;
+    }
+
+    /* HUD 角标装饰 */
+    .hud-corner::before,
+    .hud-corner::after {
+      content: '';
+      position: absolute;
+      width: 8px;
+      height: 8px;
+      border-color: rgba(140,150,165,0.3);
+    }
+    .hud-corner::before {
+      top: -1px;
+      left: -1px;
+      border-top: 1px solid;
+      border-left: 1px solid;
+    }
+    .hud-corner::after {
+      bottom: -1px;
+      right: -1px;
+      border-bottom: 1px solid;
+      border-right: 1px solid;
+    }
+
+    /* 呼吸脉冲动画 — 用于状态指示灯 */
+    @keyframes pulse-dot {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+    .pulse-dot { animation: pulse-dot 2s ease-in-out infinite; }
+
+    /* HUD 按钮基础样式 — 枪灰金属底 + 霓虹描边 */
+    .hud-btn-primary {
+      background: linear-gradient(180deg, #1A1E26 0%, #12151B 100%);
+      border: 1px solid rgba(255,59,92,0.5);
+      color: #E8EBF0;
+      position: relative;
+      box-shadow: 0 0 8px rgba(255,59,92,0.10), inset 0 0 6px rgba(255,59,92,0.05);
+      transition: all 0.2s ease;
+    }
+    .hud-btn-primary:hover {
+      border-color: rgba(255,59,92,0.8);
+      box-shadow: 0 0 16px rgba(255,59,92,0.18), inset 0 0 8px rgba(255,59,92,0.08);
+    }
+
+    /* 迷你走势线占位 */
+    .sparkline-placeholder {
+      opacity: 0.4;
+    }
+
+    /* 发布状态标签样式 */
+    .status-pending { background: rgba(245,166,35,0.15); color: #F5A623; }
+    .status-publishing { background: rgba(33,230,193,0.15); color: #21E6C1; }
+    .status-published { background: rgba(21,224,160,0.15); color: #15E0A0; }
+    .status-failed { background: rgba(255,59,92,0.15); color: #FF3B5C; }
+
+    /* 日历网格线 */
+    .calendar-grid {
+      border-collapse: collapse;
+    }
+    .calendar-grid th,
+    .calendar-grid td {
+      border: 1px solid rgba(140,150,165,0.08);
+    }
+
+    /* HUD 进度条 */
+    .hud-progress-bar {
+      background: rgba(140,150,165,0.08);
+      height: 3px;
+      border-radius: 1px;
+      overflow: hidden;
+    }
+    .hud-progress-fill {
+      height: 100%;
+      border-radius: 1px;
+      transition: width 0.3s ease;
+    }
+
+    /* HUD 面板标题栏装饰线 */
+    .panel-title-bar {
+      position: relative;
+      padding-left: 10px;
+    }
+    .panel-title-bar::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 3px;
+      height: 60%;
+      background: #FF3B5C;
+      border-radius: 1px;
+    }
+
+    /* 平台图标色彩 */
+    .platform-xhs { color: rgba(255,59,92,0.8); }
+    .platform-dy { color: rgba(33,230,193,0.8); }
+  </style>
+
+  <!-- 图片兜底 -->
+  <script>
+    document.addEventListener('error', function (e) {
+      const img = e.target;
+      if (img.tagName !== 'IMG' || img.dataset.fallback) return;
+      img.dataset.fallback = '1';
+      const esc = s => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+      const cat = img.getAttribute('data-category') || '其他';
+      const alt = img.getAttribute('alt') || '';
+      const label = esc(alt.length > 8 ? alt.slice(0, 8) + '…' : alt);
+      const icons = { '人物': '👤', '自然风景': '🏞', '动物': '🐾', '建筑城市': '🏙', '运动体育': '⚽', '交通工具': '🚗', '食物': '🍽', '服饰时尚': '👗', '商业科技': '💼', '游戏娱乐': '🎮', '艺术': '🎨', '其他': '🖼' };
+      const icon = icons[cat] || '🖼';
+      const w = img.width || 400, h = img.height || 300;
+      const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}"><rect width="100%" height="100%" fill="%2312151B"/><text x="50%" y="45%" text-anchor="middle" font-size="${Math.min(w, h) * 0.18}" fill="%238A94A6" dominant-baseline="central">${icon}</text><text x="50%" y="68%" text-anchor="middle" font-size="${Math.min(w, h) * 0.07}" fill="%235A6273" font-family="system-ui,sans-serif" dominant-baseline="central">${label}</text></svg>`;
+      img.src = 'data:image/svg+xml,' + svg;
+    }, true);
+  </script>
+</head>
+
+<body class="bg-background text-on-surface font-sans">
+
+  <!-- 扫描线 overlay -->
+  <div class="scanline-overlay"></div>
+
+  <!-- @nav:start 导航组件 -->
+  <header class="bg-surface sticky top-0 z-40 h-12 flex items-center justify-between px-5" style="border-bottom: 1px solid rgba(140,150,165,0.18); background: linear-gradient(180deg, #12151B 0%, #0E1016 100%);">
+    <div class="flex items-center gap-3">
+      <div class="flex items-center gap-2.5">
+        <div class="w-7 h-7 flex items-center justify-center hud-clip-tr" style="background: linear-gradient(180deg, #1A1E26 0%, #12151B 100%); border: 1px solid rgba(140,150,165,0.2);">
+          <i data-lucide="zap" class="w-3.5 h-3.5" style="color: #FF3B5C;"></i>
+        </div>
+        <span class="font-display font-bold text-sm tracking-[0.2em] metal-text">XIANLIAO</span>
+        <span class="text-[10px] font-mono tracking-wider" style="color: #5A6273;">AI</span>
+        <span class="text-[9px] font-mono px-1.5 py-0.5 ml-1" style="color: #21E6C1; background: rgba(33,230,193,0.08); border: 1px solid rgba(33,230,193,0.15);">v2.0</span>
+      </div>
+    </div>
+    <div class="flex items-center gap-2">
+      <button class="flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium rounded-sm transition-colors" style="color: #8A94A6; border: 1px solid transparent;" onmouseover="this.style.borderColor='rgba(140,150,165,0.2)';this.style.color='#E8EBF0'" onmouseout="this.style.borderColor='transparent';this.style.color='#8A94A6'">
+        <i data-lucide="bell" class="w-3.5 h-3.5"></i>
+      </button>
+      <div class="w-6 h-6 flex items-center justify-center text-[10px] font-medium hud-clip-tr" style="color: #9AA3B2; background: linear-gradient(180deg, #1A1E26 0%, #12151B 100%); border: 1px solid rgba(140,150,165,0.2);">
+        咸
+      </div>
+    </div>
+  </header>
+
+  <div class="flex" style="height: calc(100vh - 3rem)">
+    <aside class="w-48 shrink-0 overflow-y-auto" style="background: linear-gradient(180deg, #0C0E12 0%, #08090C 100%); border-right: 1px solid rgba(140,150,165,0.10);">
+      <div class="p-2.5 space-y-0.5">
+        <a href="home.html" class="flex items-center gap-2.5 px-2.5 py-2 rounded-sm text-xs font-medium transition-all" style="color: #8A94A6; border: 1px solid transparent;" onmouseover="this.style.background='rgba(140,150,165,0.06)';this.style.borderColor='rgba(140,150,165,0.12)';this.style.color='#E8EBF0'" onmouseout="this.style.background='';this.style.borderColor='transparent';this.style.color='#8A94A6'">
+          <i data-lucide="home" class="w-3.5 h-3.5"></i>首页
+        </a>
+        <a href="generate.html" class="flex items-center gap-2.5 px-2.5 py-2 rounded-sm text-xs font-medium transition-all" style="color: #8A94A6; border: 1px solid transparent;" onmouseover="this.style.background='rgba(140,150,165,0.06)';this.style.borderColor='rgba(140,150,165,0.12)';this.style.color='#E8EBF0'" onmouseout="this.style.background='';this.style.borderColor='transparent';this.style.color='#8A94A6'">
+          <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>一键生成
+        </a>
+        <a href="brand-assets.html" class="flex items-center gap-2.5 px-2.5 py-2 rounded-sm text-xs font-medium transition-all" style="color: #8A94A6; border: 1px solid transparent;" onmouseover="this.style.background='rgba(140,150,165,0.06)';this.style.borderColor='rgba(140,150,165,0.12)';this.style.color='#E8EBF0'" onmouseout="this.style.background='';this.style.borderColor='transparent';this.style.color='#8A94A6'">
+          <i data-lucide="gem" class="w-3.5 h-3.5"></i>品牌资产
+        </a>
+
+        <div class="pt-3 pb-1.5 px-2.5">
+          <span class="text-[9px] font-mono uppercase tracking-[0.2em]" style="color: #5A6273;">ADVANCED</span>
+        </div>
+        <a href="topic-engine.html" class="flex items-center gap-2.5 px-2.5 py-2 rounded-sm text-xs font-medium transition-all" style="color: #8A94A6; border: 1px solid transparent;" onmouseover="this.style.background='rgba(140,150,165,0.06)';this.style.borderColor='rgba(140,150,165,0.12)';this.style.color='#E8EBF0'" onmouseout="this.style.background='';this.style.borderColor='transparent';this.style.color='#8A94A6'">
+          <i data-lucide="trending-up" class="w-3.5 h-3.5"></i>选题引擎
+        </a>
+        <a href="content-factory.html" class="flex items-center gap-2.5 px-2.5 py-2 rounded-sm text-xs font-medium transition-all" style="color: #8A94A6; border: 1px solid transparent;" onmouseover="this.style.background='rgba(140,150,165,0.06)';this.style.borderColor='rgba(140,150,165,0.12)';this.style.color='#E8EBF0'" onmouseout="this.style.background='';this.style.borderColor='transparent';this.style.color='#8A94A6'">
+          <i data-lucide="factory" class="w-3.5 h-3.5"></i>内容工厂
+        </a>
+        <a href="publish.html" class="flex items-center gap-2.5 px-2.5 py-2 rounded-sm text-xs font-medium transition-all hud-clip-tr" style="background: rgba(255,59,92,0.08); color: #FF3B5C; border: 1px solid rgba(255,59,92,0.2);" aria-current="page">
+          <i data-lucide="send" class="w-3.5 h-3.5"></i>发布管理
+        </a>
+        <a href="data-review.html" class="flex items-center gap-2.5 px-2.5 py-2 rounded-sm text-xs font-medium transition-all" style="color: #8A94A6; border: 1px solid transparent;" onmouseover="this.style.background='rgba(140,150,165,0.06)';this.style.borderColor='rgba(140,150,165,0.12)';this.style.color='#E8EBF0'" onmouseout="this.style.background='';this.style.borderColor='transparent';this.style.color='#8A94A6'">
+          <i data-lucide="chart-bar" class="w-3.5 h-3.5"></i>数据复盘
+        </a>
+        <a href="knowledge-base.html" class="flex items-center gap-2.5 px-2.5 py-2 rounded-sm text-xs font-medium transition-all" style="color: #8A94A6; border: 1px solid transparent;" onmouseover="this.style.background='rgba(140,150,165,0.06)';this.style.borderColor='rgba(140,150,165,0.12)';this.style.color='#E8EBF0'" onmouseout="this.style.background='';this.style.borderColor='transparent';this.style.color='#8A94A6'">
+          <i data-lucide="brain" class="w-3.5 h-3.5"></i>知识库
+        </a>
+        <a href="settings.html" class="flex items-center gap-2.5 px-2.5 py-2 rounded-sm text-xs font-medium transition-all" style="color: #8A94A6; border: 1px solid transparent;" onmouseover="this.style.background='rgba(140,150,165,0.06)';this.style.borderColor='rgba(140,150,165,0.12)';this.style.color='#E8EBF0'" onmouseout="this.style.background='';this.style.borderColor='transparent';this.style.color='#8A94A6'">
+          <i data-lucide="settings" class="w-3.5 h-3.5"></i>设置
+        </a>
+      </div>
+
+      <!-- 侧边栏底部状态 -->
+      <div class="absolute bottom-0 left-0 w-48 p-2.5" style="border-top: 1px solid rgba(140,150,165,0.10);">
+        <div class="flex items-center gap-1.5 text-[9px] font-mono" style="color: #5A6273;">
+          <span class="w-1.5 h-1.5 rounded-full pulse-dot" style="background: #21E6C1;"></span>
+          SYSTEM ONLINE
+        </div>
+      </div>
+    </aside>
+
+    <!-- @main-content:start -->
+    <main class="flex-1 min-w-0 overflow-y-auto bg-background p-6 hud-grid-bg relative">
+
+      <!-- 页面标题区域 -->
+      <div class="flex items-center justify-between mb-6">
+        <div class="flex items-center gap-4">
+          <h1 class="text-2xl font-bold font-display tracking-wider metal-text">PUBLISH</h1>
+          <span class="text-sm font-sans" style="color: #8A94A6; letter-spacing: 0.02em;">发布管理</span>
+          <span class="text-[9px] font-mono px-1.5 py-0.5 ml-1" style="color: #5A6273; background: rgba(140,150,165,0.06); border: 1px solid rgba(140,150,165,0.10);">QUEUE ACTIVE</span>
+        </div>
+        <div class="flex items-center gap-3">
+          <button id="btn-refresh-queue" class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-sm transition-all" style="color: #8A94A6; background: transparent; border: 1px solid rgba(140,150,165,0.18);" onmouseover="this.style.borderColor='rgba(210,216,226,0.35)';this.style.color='#E8EBF0'" onmouseout="this.style.borderColor='rgba(140,150,165,0.18)';this.style.color='#8A94A6'">
+            <i data-lucide="refresh-cw" class="w-3 h-3"></i>
+            <span class="font-mono">REFRESH</span>
+          </button>
+          <button id="btn-one-click-publish" class="hud-btn-primary hud-clip-tr flex items-center gap-2 px-4 py-2 text-xs font-medium rounded-sm">
+            <i data-lucide="rocket" class="w-3.5 h-3.5"></i>
+            <span class="font-mono tracking-wider">一键发布</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- HUD 数据概览条 -->
+      <div class="grid grid-cols-4 gap-3 mb-6">
+        <!-- 概览-待发布 -->
+        <div class="metal-panel hud-clip-tr p-3 rounded-sm relative overflow-hidden">
+          <div class="flex items-center justify-between">
+            <span class="text-[10px] font-mono uppercase tracking-wider" style="color: #5A6273;">PENDING</span>
+            <i data-lucide="clock" class="w-3 h-3" style="color: #F5A623;"></i>
+          </div>
+          <div class="mt-2 flex items-end gap-2">
+            <span class="text-2xl font-display font-bold" style="color: #F5A623;">3</span>
+            <span class="text-[10px] font-mono pb-1" style="color: #5A6273;">ITEMS</span>
+          </div>
+          <div class="hud-progress-bar mt-2">
+            <div class="hud-progress-fill" style="width: 30%; background: #F5A623;"></div>
+          </div>
+        </div>
+        <!-- 概览-发布中 -->
+        <div class="metal-panel hud-clip-tr p-3 rounded-sm relative overflow-hidden">
+          <div class="flex items-center justify-between">
+            <span class="text-[10px] font-mono uppercase tracking-wider" style="color: #5A6273;">PUBLISHING</span>
+            <span class="w-1.5 h-1.5 rounded-full pulse-dot" style="background: #21E6C1;"></span>
+          </div>
+          <div class="mt-2 flex items-end gap-2">
+            <span class="text-2xl font-display font-bold" style="color: #21E6C1;">2</span>
+            <span class="text-[10px] font-mono pb-1" style="color: #5A6273;">ITEMS</span>
+          </div>
+          <div class="hud-progress-bar mt-2">
+            <div class="hud-progress-fill" style="width: 20%; background: #21E6C1;"></div>
+          </div>
+        </div>
+        <!-- 概览-已发布 -->
+        <div class="metal-panel hud-clip-tr p-3 rounded-sm relative overflow-hidden">
+          <div class="flex items-center justify-between">
+            <span class="text-[10px] font-mono uppercase tracking-wider" style="color: #5A6273;">PUBLISHED</span>
+            <i data-lucide="check-circle" class="w-3 h-3" style="color: #15E0A0;"></i>
+          </div>
+          <div class="mt-2 flex items-end gap-2">
+            <span class="text-2xl font-display font-bold" style="color: #15E0A0;">47</span>
+            <span class="text-[10px] font-mono pb-1" style="color: #5A6273;">ITEMS</span>
+          </div>
+          <div class="hud-progress-bar mt-2">
+            <div class="hud-progress-fill" style="width: 78%; background: #15E0A0;"></div>
+          </div>
+        </div>
+        <!-- 概览-失败 -->
+        <div class="metal-panel hud-clip-tr p-3 rounded-sm relative overflow-hidden">
+          <div class="flex items-center justify-between">
+            <span class="text-[10px] font-mono uppercase tracking-wider" style="color: #5A6273;">FAILED</span>
+            <i data-lucide="alert-triangle" class="w-3 h-3" style="color: #FF3B5C;"></i>
+          </div>
+          <div class="mt-2 flex items-end gap-2">
+            <span class="text-2xl font-display font-bold" style="color: #FF3B5C;">1</span>
+            <span class="text-[10px] font-mono pb-1" style="color: #5A6273;">ITEMS</span>
+          </div>
+          <div class="hud-progress-bar mt-2">
+            <div class="hud-progress-fill" style="width: 8%; background: #FF3B5C;"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 主内容区：左侧发布队列 + 右侧日历 -->
+      <div class="grid grid-cols-3 gap-4 mb-6">
+
+        <!-- 发布队列 -->
+        <div class="col-span-2 metal-panel rounded-md p-0 relative overflow-hidden hud-corner">
+          <div class="px-4 py-3 flex items-center justify-between" style="border-bottom: 1px solid rgba(140,150,165,0.10);">
+            <div class="flex items-center gap-2.5">
+              <span class="panel-title-bar text-sm font-semibold" style="color: #E8EBF0; letter-spacing: 0.02em;">发布队列</span>
+              <span class="text-[9px] font-mono px-1.5 py-0.5" style="color: #FF3B5C; background: rgba(255,59,92,0.08); border: 1px solid rgba(255,59,92,0.15);">LIVE</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <select id="queue-filter" class="text-[10px] font-mono px-2 py-1 rounded-sm" style="background: rgba(140,150,165,0.06); color: #8A94A6; border: 1px solid rgba(140,150,165,0.15); outline: none;">
+                <option value="all">ALL STATUS</option>
+                <option value="pending">PENDING</option>
+                <option value="publishing">PUBLISHING</option>
+                <option value="published">PUBLISHED</option>
+                <option value="failed">FAILED</option>
+              </select>
+            </div>
+          </div>
+          <div class="px-4 py-2.5 grid grid-cols-12 gap-2 text-[10px] font-mono uppercase tracking-wider" style="color: #5A6273; border-bottom: 1px solid rgba(140,150,165,0.06);">
+            <span class="col-span-4">CONTENT</span>
+            <span class="col-span-2">PLATFORM</span>
+            <span class="col-span-2">STATUS</span>
+            <span class="col-span-2">SCHEDULE</span>
+            <span class="col-span-2">ACTION</span>
+          </div>
+          <div id="queue-list">
+            <!-- 列表-队列1 -->
+            <div class="queue-item px-4 py-3 grid grid-cols-12 gap-2 items-center transition-colors" style="border-bottom: 1px solid rgba(140,150,165,0.06);" data-status="pending">
+              <div class="col-span-4 flex items-center gap-2.5">
+                <div class="w-8 h-8 rounded-sm flex items-center justify-center hud-clip-tr" style="background: rgba(140,150,165,0.06); border: 1px solid rgba(140,150,165,0.10);">
+                  <i data-lucide="image" class="w-3.5 h-3.5" style="color: #8A94A6;"></i>
+                </div>
+                <div class="min-w-0">
+                  <p class="text-xs font-medium truncate" style="color: #E8EBF0; letter-spacing: 0.02em;">夏季清凉穿搭指南</p>
+                  <p class="text-[9px] font-mono" style="color: #5A6273;">ID: PUB-20240615-001</p>
+                </div>
+              </div>
+              <div class="col-span-2 flex items-center gap-1.5">
+                <span class="platform-xhs text-xs"><i data-lucide="bookmark" class="w-3 h-3 inline"></i></span>
+                <span class="text-[10px] font-mono" style="color: rgba(255,59,92,0.8);">小红书</span>
+              </div>
+              <div class="col-span-2">
+                <span class="status-pending text-[10px] font-mono px-1.5 py-0.5 rounded-sm inline-flex items-center gap-1">
+                  <span class="w-1 h-1 rounded-full" style="background: #F5A623;"></span>待发布
+                </span>
+              </div>
+              <div class="col-span-2 text-[10px] font-mono" style="color: #8A94A6;">06/15 18:00</div>
+              <div class="col-span-2 flex items-center gap-1.5">
+                <button id="btn-publish-1" class="text-[10px] font-mono px-2 py-1 rounded-sm transition-all" style="color: #21E6C1; background: rgba(33,230,193,0.08); border: 1px solid rgba(33,230,193,0.15);" onmouseover="this.style.background='rgba(33,230,193,0.15)'" onmouseout="this.style.background='rgba(33,230,193,0.08)'">发布</button>
+                <button id="btn-edit-1" class="text-[10px] font-mono px-2 py-1 rounded-sm transition-all" style="color: #8A94A6; background: transparent; border: 1px solid rgba(140,150,165,0.12);">编辑</button>
+              </div>
+            </div>
+            <!-- 列表-队列2 -->
+            <div class="queue-item px-4 py-3 grid grid-cols-12 gap-2 items-center transition-colors" style="border-bottom: 1px solid rgba(140,150,165,0.06);" data-status="publishing">
+              <div class="col-span-4 flex items-center gap-2.5">
+                <div class="w-8 h-8 rounded-sm flex items-center justify-center hud-clip-tr" style="background: rgba(33,230,193,0.06); border: 1px solid rgba(33,230,193,0.12);">
+                  <i data-lucide="video" class="w-3.5 h-3.5" style="color: #21E6C1;"></i>
+                </div>
+                <div class="min-w-0">
+                  <p class="text-xs font-medium truncate" style="color: #E8EBF0; letter-spacing: 0.02em;">探店VLOG·长沙夜市美食</p>
+                  <p class="text-[9px] font-mono" style="color: #5A6273;">ID: PUB-20240615-002</p>
+                </div>
+              </div>
+              <div class="col-span-2 flex items-center gap-1.5">
+                <span class="platform-dy text-xs"><i data-lucide="music" class="w-3 h-3 inline"></i></span>
+                <span class="text-[10px] font-mono" style="color: rgba(33,230,193,0.8);">抖音</span>
+              </div>
+              <div class="col-span-2">
+                <span class="status-publishing text-[10px] font-mono px-1.5 py-0.5 rounded-sm inline-flex items-center gap-1">
+                  <span class="w-1 h-1 rounded-full pulse-dot" style="background: #21E6C1;"></span>发布中
+                </span>
+              </div>
+              <div class="col-span-2 text-[10px] font-mono" style="color: #8A94A6;">06/15 14:30</div>
+              <div class="col-span-2 flex items-center gap-1.5">
+                <div class="hud-progress-bar w-16">
+                  <div class="hud-progress-fill" style="width: 68%; background: #21E6C1;"></div>
+                </div>
+                <span class="text-[9px] font-mono" style="color: #21E6C1;">68%</span>
+              </div>
+            </div>
+            <!-- 列表-队列3 -->
+            <div class="queue-item px-4 py-3 grid grid-cols-12 gap-2 items-center transition-colors" style="border-bottom: 1px solid rgba(140,150,165,0.06);" data-status="published">
+              <div class="col-span-4 flex items-center gap-2.5">
+                <div class="w-8 h-8 rounded-sm flex items-center justify-center hud-clip-tr" style="background: rgba(21,224,160,0.06); border: 1px solid rgba(21,224,160,0.12);">
+                  <i data-lucide="file-text" class="w-3.5 h-3.5" style="color: #15E0A0;"></i>
+                </div>
+                <div class="min-w-0">
+                  <p class="text-xs font-medium truncate" style="color: #E8EBF0; letter-spacing: 0.02em;">护肤成分科普·烟酰胺</p>
+                  <p class="text-[9px] font-mono" style="color: #5A6273;">ID: PUB-20240614-003</p>
+                </div>
+              </div>
+              <div class="col-span-2 flex items-center gap-1.5">
+                <span class="platform-xhs text-xs"><i data-lucide="bookmark" class="w-3 h-3 inline"></i></span>
+                <span class="text-[10px] font-mono" style="color: rgba(255,59,92,0.8);">小红书</span>
+              </div>
+              <div class="col-span-2">
+                <span class="status-published text-[10px] font-mono px-1.5 py-0.5 rounded-sm inline-flex items-center gap-1">
+                  <span class="w-1 h-1 rounded-full" style="background: #15E0A0;"></span>已发布
+                </span>
+              </div>
+              <div class="col-span-2 text-[10px] font-mono" style="color: #8A94A6;">06/14 20:00</div>
+              <div class="col-span-2 flex items-center gap-1.5">
+                <a href="data-review.html?id=PUB-20240614-003" class="text-[10px] font-mono px-2 py-1 rounded-sm transition-all" style="color: #8A94A6; background: rgba(140,150,165,0.06); border: 1px solid rgba(140,150,165,0.10);">数据</a>
+              </div>
+            </div>
+            <!-- 列表-队列4 -->
+            <div class="queue-item px-4 py-3 grid grid-cols-12 gap-2 items-center transition-colors" style="border-bottom: 1px solid rgba(140,150,165,0.06);" data-status="failed">
+              <div class="col-span-4 flex items-center gap-2.5">
+                <div class="w-8 h-8 rounded-sm flex items-center justify-center hud-clip-tr" style="background: rgba(255,59,92,0.06); border: 1px solid rgba(255,59,92,0.12);">
+                  <i data-lucide="image" class="w-3.5 h-3.5" style="color: #FF3B5C;"></i>
+                </div>
+                <div class="min-w-0">
+                  <p class="text-xs font-medium truncate" style="color: #E8EBF0; letter-spacing: 0.02em;">夏日防晒大作战</p>
+                  <p class="text-[9px] font-mono" style="color: #5A6273;">ID: PUB-20240614-004</p>
+                </div>
+              </div>
+              <div class="col-span-2 flex items-center gap-1.5">
+                <span class="platform-xhs text-xs"><i data-lucide="bookmark" class="w-3 h-3 inline"></i></span>
+                <span class="text-[10px] font-mono" style="color: rgba(255,59,92,0.8);">小红书</span>
+              </div>
+              <div class="col-span-2">
+                <span class="status-failed text-[10px] font-mono px-1.5 py-0.5 rounded-sm inline-flex items-center gap-1">
+                  <span class="w-1 h-1 rounded-full" style="background: #FF3B5C;"></span>失败
+                </span>
+              </div>
+              <div class="col-span-2 text-[10px] font-mono" style="color: #8A94A6;">06/14 12:00</div>
+              <div class="col-span-2 flex items-center gap-1.5">
+                <button id="btn-retry-4" class="text-[10px] font-mono px-2 py-1 rounded-sm transition-all" style="color: #FF3B5C; background: rgba(255,59,92,0.08); border: 1px solid rgba(255,59,92,0.15);">重试</button>
+                <span class="text-[9px] font-mono" style="color: #5A6273;" title="Token过期，请重新授权">Token过期</span>
+              </div>
+            </div>
+            <!-- 列表-队列5 -->
+            <div class="queue-item px-4 py-3 grid grid-cols-12 gap-2 items-center transition-colors" style="border-bottom: 1px solid rgba(140,150,165,0.06);" data-status="pending">
+              <div class="col-span-4 flex items-center gap-2.5">
+                <div class="w-8 h-8 rounded-sm flex items-center justify-center hud-clip-tr" style="background: rgba(140,150,165,0.06); border: 1px solid rgba(140,150,165,0.10);">
+                  <i data-lucide="video" class="w-3.5 h-3.5" style="color: #8A94A6;"></i>
+                </div>
+                <div class="min-w-0">
+                  <p class="text-xs font-medium truncate" style="color: #E8EBF0; letter-spacing: 0.02em;">好物开箱·科技数码</p>
+                  <p class="text-[9px] font-mono" style="color: #5A6273;">ID: PUB-20240616-005</p>
+                </div>
+              </div>
+              <div class="col-span-2 flex items-center gap-1.5">
+                <span class="platform-dy text-xs"><i data-lucide="music" class="w-3 h-3 inline"></i></span>
+                <span class="text-[10px] font-mono" style="color: rgba(33,230,193,0.8);">抖音</span>
+              </div>
+              <div class="col-span-2">
+                <span class="status-pending text-[10px] font-mono px-1.5 py-0.5 rounded-sm inline-flex items-center gap-1">
+                  <span class="w-1 h-1 rounded-full" style="background: #F5A623;"></span>待发布
+                </span>
+              </div>
+              <div class="col-span-2 text-[10px] font-mono" style="color: #8A94A6;">06/16 10:00</div>
+              <div class="col-span-2 flex items-center gap-1.5">
+                <button id="btn-publish-5" class="text-[10px] font-mono px-2 py-1 rounded-sm transition-all" style="color: #21E6C1; background: rgba(33,230,193,0.08); border: 1px solid rgba(33,230,193,0.15);" onmouseover="this.style.background='rgba(33,230,193,0.15)'" onmouseout="this.style.background='rgba(33,230,193,0.08)'">发布</button>
+                <button id="btn-edit-5" class="text-[10px] font-mono px-2 py-1 rounded-sm transition-all" style="color: #8A94A6; background: transparent; border: 1px solid rgba(140,150,165,0.12);">编辑</button>
+              </div>
+            </div>
+            <!-- 列表-队列6 -->
+            <div class="queue-item px-4 py-3 grid grid-cols-12 gap-2 items-center transition-colors" data-status="publishing">
+              <div class="col-span-4 flex items-center gap-2.5">
+                <div class="w-8 h-8 rounded-sm flex items-center justify-center hud-clip-tr" style="background: rgba(33,230,193,0.06); border: 1px solid rgba(33,230,193,0.12);">
+                  <i data-lucide="image" class="w-3.5 h-3.5" style="color: #21E6C1;"></i>
+                </div>
+                <div class="min-w-0">
+                  <p class="text-xs font-medium truncate" style="color: #E8EBF0; letter-spacing: 0.02em;">周末亲子时光打卡</p>
+                  <p class="text-[9px] font-mono" style="color: #5A6273;">ID: PUB-20240615-006</p>
+                </div>
+              </div>
+              <div class="col-span-2 flex items-center gap-1.5">
+                <span class="platform-xhs text-xs"><i data-lucide="bookmark" class="w-3 h-3 inline"></i></span>
+                <span class="text-[10px] font-mono" style="color: rgba(255,59,92,0.8);">小红书</span>
+              </div>
+              <div class="col-span-2">
+                <span class="status-publishing text-[10px] font-mono px-1.5 py-0.5 rounded-sm inline-flex items-center gap-1">
+                  <span class="w-1 h-1 rounded-full pulse-dot" style="background: #21E6C1;"></span>发布中
+                </span>
+              </div>
+              <div class="col-span-2 text-[10px] font-mono" style="color: #8A94A6;">06/15 15:45</div>
+              <div class="col-span-2 flex items-center gap-1.5">
+                <div class="hud-progress-bar w-16">
+                  <div class="hud-progress-fill" style="width: 42%; background: #21E6C1;"></div>
+                </div>
+                <span class="text-[9px] font-mono" style="color: #21E6C1;">42%</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 发布日历 -->
+        <div class="col-span-1 metal-panel rounded-md p-0 relative overflow-hidden hud-corner">
+          <div class="px-4 py-3 flex items-center justify-between" style="border-bottom: 1px solid rgba(140,150,165,0.10);">
+            <div class="flex items-center gap-2.5">
+              <span class="panel-title-bar text-sm font-semibold" style="color: #E8EBF0; letter-spacing: 0.02em;">发布日历</span>
+            </div>
+            <div class="flex items-center gap-1">
+              <button id="btn-cal-prev" class="w-5 h-5 flex items-center justify-center rounded-sm" style="color: #8A94A6; border: 1px solid rgba(140,150,165,0.12);">
+                <i data-lucide="chevron-left" class="w-3 h-3"></i>
+              </button>
+              <span id="cal-month-label" class="text-[10px] font-mono px-1" style="color: #8A94A6;">2024.06</span>
+              <button id="btn-cal-next" class="w-5 h-5 flex items-center justify-center rounded-sm" style="color: #8A94A6; border: 1px solid rgba(140,150,165,0.12);">
+                <i data-lucide="chevron-right" class="w-3 h-3"></i>
+              </button>
+            </div>
+          </div>
+          <div class="p-3">
+            <!-- 日历星期头 -->
+            <div class="grid grid-cols-7 gap-0 mb-1">
+              <span class="text-center text-[9px] font-mono" style="color: #5A6273;">一</span>
+              <span class="text-center text-[9px] font-mono" style="color: #5A6273;">二</span>
+              <span class="text-center text-[9px] font-mono" style="color: #5A6273;">三</span>
+              <span class="text-center text-[9px] font-mono" style="color: #5A6273;">四</span>
+              <span class="text-center text-[9px] font-mono" style="color: #5A6273;">五</span>
+              <span class="text-center text-[9px] font-mono" style="color: #5A6273;">六</span>
+              <span class="text-center text-[9px] font-mono" style="color: #5A6273;">日</span>
+            </div>
+            <!-- 日历网格-6月（第一行） -->
+            <div class="grid grid-cols-7 gap-0">
+              <!-- 空白占位 5/27~5/31 -->
+              <div class="h-8"></div>
+              <div class="h-8"></div>
+              <div class="h-8"></div>
+              <div class="h-8"></div>
+              <div class="h-8"></div>
+              <!-- 6/1 -->
+              <div class="h-8 flex flex-col items-center justify-center relative">
+                <span class="text-[10px] font-mono" style="color: #5A6273;">1</span>
+              </div>
+              <!-- 6/2 -->
+              <div class="h-8 flex flex-col items-center justify-center relative">
+                <span class="text-[10px] font-mono" style="color: #5A6273;">2</span>
+              </div>
+              <!-- 6/3 -->
+              <div class="h-8 flex flex-col items-center justify-center relative">
+                <span class="text-[10px] font-mono" style="color: #8A94A6;">3</span>
+                <span class="w-1 h-1 rounded-full absolute bottom-0.5" style="background: #FF3B5C;"></span>
+              </div>
+              <!-- 6/4 -->
+              <div class="h-8 flex flex-col items-center justify-center relative">
+                <span class="text-[10px] font-mono" style="color: #8A94A6;">4</span>
+              </div>
+              <!-- 6/5 -->
+              <div class="h-8 flex flex-col items-center justify-center relative">
+                <span class="text-[10px] font-mono" style="color: #8A94A6;">5</span>
+                <span class="w-1 h-1 rounded-full absolute bottom-0.5" style="background: #21E6C1;"></span>
+              </div>
+              <!-- 6/6 -->
+              <div class="h-8 flex flex-col items-center justify-center relative">
+                <span class="text-[10px] font-mono" style="color: #8A94A6;">6</span>
+              </div>
+              <!-- 6/7 -->
+              <div class="h-8 flex flex-col items-center justify-center relative">
+                <span class="text-[10px] font-mono" style="color: #8A94A6;">7</span>
+                <span class="w-1 h-1 rounded-full absolute bottom-0.5" style="background: #F5A623;"></span>
+              </div>
+              <!-- 6/8 -->
+              <div class="h-8 flex flex-col items-center justify-center relative">
+                <span class="text-[10px] font-mono" style="color: #8A94A6;">8</span>
+              </div>
+              <!-- 6/9 -->
+              <div class="h-8 flex flex-col items-center justify-center relative">
+                <span class="text-[10px] font-mono" style="color: #8A94A6;">9</span>
+              </div>
+              <!-- 6/10 -->
+              <div class="h-8 flex flex-col items-center justify-center relative">
+                <span class="text-[10px] font-mono" style="color: #8A94A6;">10</span>
+                <span class="w-1 h-1 rounded-full absolute bottom-0.5" style="background: #FF3B5C;"></span>
+                <span class="w-1 h-1 rounded-full absolute bottom-0.5" style="background: #21E6C1; margin-left: 4px;"></span>
+              </div>
+              <!-- 6/11 -->
+              <div class="h-8 flex flex-col items-center justify-center relative">
+                <span class="text-[10px] font-mono" style="color: #8A94A6;">11</span>
+              </div>
+              <!-- 6/12 -->
+              <div class="h-8 flex flex-col items-center justify-center relative">
+                <span class="text-[10px] font-mono" style="color: #8A94A6;">12</span>
+                <span class="w-1 h-1 rounded-full absolute bottom-0.5" style="background: #21E6C1;"></span>
+              </div>
+              <!-- 6/13 -->
+              <div class="h-8 flex flex-col items-center justify-center relative">
+                <span class="text-[10px] font-mono" style="color: #8A94A6;">13</span>
+              </div>
+              <!-- 6/14 -->
+              <div class="h-8 flex flex-col items-center justify-center relative" style="background: rgba(255,59,92,0.06);">
+                <span class="text-[10px] font-mono" style="color: #E8EBF0;">14</span>
+                <span class="w-1 h-1 rounded-full absolute bottom-0.5" style="background: #FF3B5C;"></span>
+                <span class="w-1 h-1 rounded-full absolute bottom-0.5" style="background: #15E0A0; margin-left: 4px;"></span>
+              </div>
+              <!-- 6/15（今天） -->
+              <div id="cal-today" class="h-8 flex flex-col items-center justify-center relative" style="background: rgba(255,59,92,0.12); border: 1px solid rgba(255,59,92,0.3);">
+                <span class="text-[10px] font-mono font-bold" style="color: #FF3B5C;">15</span>
+                <span class="w-1 h-1 rounded-full absolute bottom-0.5" style="background: #21E6C1;"></span>
+                <span class="w-1 h-1 rounded-full absolute bottom-0.5" style="background: #F5A623; margin-left: 4px;"></span>
+              </div>
+              <!-- 6/16 -->
+              <div class="h-8 flex flex-col items-center justify-center relative">
+                <span class="text-[10px] font-mono" style="color: #8A94A6;">16</span>
+                <span class="w-1 h-1 rounded-full absolute bottom-0.5" style="background: #F5A623;"></span>
+              </div>
+              <!-- 6/17 -->
+              <div class="h-8 flex flex-col items-center justify-center relative">
+                <span class="text-[10px] font-mono" style="color: #8A94A6;">17</span>
+              </div>
+              <!-- 6/18 -->
+              <div class="h-8 flex flex-col items-center justify-center relative">
+                <span class="text-[10px] font-mono" style="color: #8A94A6;">18</span>
+                <span class="w-1 h-1 rounded-full absolute bottom-0.5" style="background: #21E6C1;"></span>
+              </div>
+              <!-- 6/19 -->
+              <div class="h-8 flex flex-col items-center justify-center relative">
+                <span class="text-[10px] font-mono" style="color: #8A94A6;">19</span>
+              </div>
+              <!-- 6/20 -->
+              <div class="h-8 flex flex-col items-center justify-center relative">
+                <span class="text-[10px] font-mono" style="color: #8A94A6;">20</span>
+                <span class="w-1 h-1 rounded-full absolute bottom-0.5" style="background: #FF3B5C;"></span>
+                <span class="w-1 h-1 rounded-full absolute bottom-0.5" style="background: #21E6C1; margin-left: 4px;"></span>
+                <span class="w-1 h-1 rounded-full absolute bottom-0.5" style="background: #F5A623; margin-left: 8px;"></span>
+              </div>
+              <!-- 6/21 -->
+              <div class="h-8 flex flex-col items-center justify-center relative">
+                <span class="text-[10px] font-mono" style="color: #8A94A6;">21</span>
+              </div>
+              <!-- 6/22 -->
+              <div class="h-8 flex flex-col items-center justify-center relative">
+                <span class="text-[10px] font-mono" style="color: #8A94A6;">22</span>
+                <span class="w-1 h-1 rounded-full absolute bottom-0.5" style="background: #21E6C1;"></span>
+              </div>
+              <!-- 6/23 -->
+              <div class="h-8 flex flex-col items-center justify-center relative">
+                <span class="text-[10px] font-mono" style="color: #8A94A6;">23</span>
+              </div>
+              <!-- 6/24 -->
+              <div class="h-8 flex flex-col items-center justify-center relative">
+                <span class="text-[10px] font-mono" style="color: #8A94A6;">24</span>
+              </div>
+              <!-- 6/25 -->
+              <div class="h-8 flex flex-col items-center justify-center relative">
+                <span class="text-[10px] font-mono" style="color: #8A94A6;">25</span>
+                <span class="w-1 h-1 rounded-full absolute bottom-0.5" style="background: #F5A623;"></span>
+              </div>
+              <!-- 6/26 -->
+              <div class="h-8 flex flex-col items-center justify-center relative">
+                <span class="text-[10px] font-mono" style="color: #8A94A6;">26</span>
+              </div>
+              <!-- 6/27 -->
+              <div class="h-8 flex flex-col items-center justify-center relative">
+                <span class="text-[10px] font-mono" style="color: #8A94A6;">27</span>
+              </div>
+              <!-- 6/28 -->
+              <div class="h-8 flex flex-col items-center justify-center relative">
+                <span class="text-[10px] font-mono" style="color: #8A94A6;">28</span>
+                <span class="w-1 h-1 rounded-full absolute bottom-0.5" style="background: #FF3B5C;"></span>
+              </div>
+              <!-- 6/29 -->
+              <div class="h-8 flex flex-col items-center justify-center relative">
+                <span class="text-[10px] font-mono" style="color: #8A94A6;">29</span>
+              </div>
+              <!-- 6/30 -->
+              <div class="h-8 flex flex-col items-center justify-center relative">
+                <span class="text-[10px] font-mono" style="color: #8A94A6;">30</span>
+              </div>
+            </div>
+            <!-- 日历图例 -->
+            <div class="mt-3 flex items-center gap-3 pt-2" style="border-top: 1px solid rgba(140,150,165,0.06);">
+              <div class="flex items-center gap-1">
+                <span class="w-1.5 h-1.5 rounded-full" style="background: #FF3B5C;"></span>
+                <span class="text-[8px] font-mono" style="color: #5A6273;">小红书</span>
+              </div>
+              <div class="flex items-center gap-1">
+                <span class="w-1.5 h-1.5 rounded-full" style="background: #21E6C1;"></span>
+                <span class="text-[8px] font-mono" style="color: #5A6273;">抖音</span>
+              </div>
+              <div class="flex items-center gap-1">
+                <span class="w-1.5 h-1.5 rounded-full" style="background: #F5A623;"></span>
+                <span class="text-[8px] font-mono" style="color: #5A6273;">待发布</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 下方区域：平台账号 + 发布历史 -->
+      <div class="grid grid-cols-3 gap-4">
+
+        <!-- 平台账号 -->
+        <div class="col-span-1 metal-panel rounded-md p-0 relative overflow-hidden hud-corner">
+          <div class="px-4 py-3 flex items-center justify-between" style="border-bottom: 1px solid rgba(140,150,165,0.10);">
+            <div class="flex items-center gap-2.5">
+              <span class="panel-title-bar text-sm font-semibold" style="color: #E8EBF0; letter-spacing: 0.02em;">平台账号</span>
+            </div>
+            <button id="btn-add-account" class="flex items-center gap-1 text-[10px] font-mono px-2 py-1 rounded-sm transition-all" style="color: #21E6C1; background: rgba(33,230,193,0.08); border: 1px solid rgba(33,230,193,0.15);" onmouseover="this.style.background='rgba(33,230,193,0.15)'" onmouseout="this.style.background='rgba(33,230,193,0.08)'">
+              <i data-lucide="plus" class="w-3 h-3"></i>绑定
+            </button>
+          </div>
+          <div class="p-3 space-y-2.5">
+            <!-- 账号-小红书1 -->
+            <div class="flex items-center justify-between p-3 rounded-sm transition-colors" style="background: rgba(140,150,165,0.04); border: 1px solid rgba(140,150,165,0.08);" onmouseover="this.style.borderColor='rgba(210,216,226,0.35)'" onmouseout="this.style.borderColor='rgba(140,150,165,0.08)'">
+              <div class="flex items-center gap-2.5">
+                <div class="w-8 h-8 rounded-sm flex items-center justify-center" style="background: rgba(255,59,92,0.12); border: 1px solid rgba(255,59,92,0.2);">
+                  <i data-lucide="bookmark" class="w-4 h-4 platform-xhs"></i>
+                </div>
+                <div>
+                  <p class="text-xs font-medium" style="color: #E8EBF0; letter-spacing: 0.02em;">小初的种草日记</p>
+                  <p class="text-[9px] font-mono" style="color: #5A6273;">小红书 · 粉丝 12.8w</p>
+                </div>
+              </div>
+              <div class="flex items-center gap-1.5">
+                <span class="w-1.5 h-1.5 rounded-full" style="background: #15E0A0;"></span>
+                <span class="text-[9px] font-mono" style="color: #15E0A0;">已连接</span>
+              </div>
+            </div>
+            <!-- 账号-小红书2 -->
+            <div class="flex items-center justify-between p-3 rounded-sm transition-colors" style="background: rgba(140,150,165,0.04); border: 1px solid rgba(140,150,165,0.08);" onmouseover="this.style.borderColor='rgba(210,216,226,0.35)'" onmouseout="this.style.borderColor='rgba(140,150,165,0.08)'">
+              <div class="flex items-center gap-2.5">
+                <div class="w-8 h-8 rounded-sm flex items-center justify-center" style="background: rgba(255,59,92,0.12); border: 1px solid rgba(255,59,92,0.2);">
+                  <i data-lucide="bookmark" class="w-4 h-4 platform-xhs"></i>
+                </div>
+                <div>
+                  <p class="text-xs font-medium" style="color: #E8EBF0; letter-spacing: 0.02em;">咸聊官方号</p>
+                  <p class="text-[9px] font-mono" style="color: #5A6273;">小红书 · 粉丝 3.2w</p>
+                </div>
+              </div>
+              <div class="flex items-center gap-1.5">
+                <span class="w-1.5 h-1.5 rounded-full" style="background: #15E0A0;"></span>
+                <span class="text-[9px] font-mono" style="color: #15E0A0;">已连接</span>
+              </div>
+            </div>
+            <!-- 账号-抖音1 -->
+            <div class="flex items-center justify-between p-3 rounded-sm transition-colors" style="background: rgba(140,150,165,0.04); border: 1px solid rgba(140,150,165,0.08);" onmouseover="this.style.borderColor='rgba(210,216,226,0.35)'" onmouseout="this.style.borderColor='rgba(140,150,165,0.08)'">
+              <div class="flex items-center gap-2.5">
+                <div class="w-8 h-8 rounded-sm flex items-center justify-center" style="background: rgba(33,230,193,0.12); border: 1px solid rgba(33,230,193,0.2);">
+                  <i data-lucide="music" class="w-4 h-4 platform-dy"></i>
+                </div>
+                <div>
+                  <p class="text-xs font-medium" style="color: #E8EBF0; letter-spacing: 0.02em;">小初探店</p>
+                  <p class="text-[9px] font-mono" style="color: #5A6273;">抖音 · 粉丝 8.5w</p>
+                </div>
+              </div>
+              <div class="flex items-center gap-1.5">
+                <span class="w-1.5 h-1.5 rounded-full" style="background: #15E0A0;"></span>
+                <span class="text-[9px] font-mono" style="color: #15E0A0;">已连接</span>
+              </div>
+            </div>
+            <!-- 账号-抖音2（Token过期） -->
+            <div class="flex items-center justify-between p-3 rounded-sm transition-colors" style="background: rgba(255,59,92,0.03); border: 1px solid rgba(255,59,92,0.12);" onmouseover="this.style.borderColor='rgba(255,59,92,0.25)'" onmouseout="this.style.borderColor='rgba(255,59,92,0.12)'">
+              <div class="flex items-center gap-2.5">
+                <div class="w-8 h-8 rounded-sm flex items-center justify-center" style="background: rgba(33,230,193,0.06); border: 1px solid rgba(33,230,193,0.12);">
+                  <i data-lucide="music" class="w-4 h-4" style="color: rgba(33,230,193,0.4);"></i>
+                </div>
+                <div>
+                  <p class="text-xs font-medium" style="color: #8A94A6; letter-spacing: 0.02em;">咸聊好物推荐</p>
+                  <p class="text-[9px] font-mono" style="color: #5A6273;">抖音 · 粉丝 1.6w</p>
+                </div>
+              </div>
+              <div class="flex items-center gap-1.5">
+                <button id="btn-reauth-4" class="text-[9px] font-mono px-1.5 py-0.5 rounded-sm" style="color: #FF3B5C; background: rgba(255,59,92,0.08); border: 1px solid rgba(255,59,92,0.15);">重新授权</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 发布历史 -->
+        <div class="col-span-2 metal-panel rounded-md p-0 relative overflow-hidden hud-corner">
+          <div class="px-4 py-3 flex items-center justify-between" style="border-bottom: 1px solid rgba(140,150,165,0.10);">
+            <div class="flex items-center gap-2.5">
+              <span class="panel-title-bar text-sm font-semibold" style="color: #E8EBF0; letter-spacing: 0.02em;">发布历史</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <select id="history-platform-filter" class="text-[10px] font-mono px-2 py-1 rounded-sm" style="background: rgba(140,150,165,0.06); color: #8A94A6; border: 1px solid rgba(140,150,165,0.15); outline: none;">
+                <option value="all">ALL PLATFORM</option>
+                <option value="xhs">小红书</option>
+                <option value="dy">抖音</option>
+              </select>
+              <a href="data-review.html" class="text-[10px] font-mono px-2 py-1 rounded-sm transition-all" style="color: #8A94A6; border: 1px solid rgba(140,150,165,0.12);">查看全部</a>
+            </div>
+          </div>
+          <!-- 表头 -->
+          <div class="px-4 py-2.5 grid grid-cols-12 gap-2 text-[10px] font-mono uppercase tracking-wider" style="color: #5A6273; border-bottom: 1px solid rgba(140,150,165,0.06);">
+            <span class="col-span-3">CONTENT</span>
+            <span class="col-span-2">PLATFORM</span>
+            <span class="col-span-2">PUBLISHED AT</span>
+            <span class="col-span-2">VIEWS</span>
+            <span class="col-span-2">ENGAGE</span>
+            <span class="col-span-1">Δ</span>
+          </div>
+          <div id="history-list">
+            <!-- 历史-记录1 -->
+            <div class="history-item px-4 py-3 grid grid-cols-12 gap-2 items-center transition-colors" style="border-bottom: 1px solid rgba(140,150,165,0.06);">
+              <div class="col-span-3 flex items-center gap-2">
+                <i data-lucide="file-text" class="w-3 h-3" style="color: #5A6273;"></i>
+                <span class="text-xs truncate" style="color: #E8EBF0; letter-spacing: 0.02em;">护肤成分科普·烟酰胺</span>
+              </div>
+              <div class="col-span-2 flex items-center gap-1.5">
+                <span class="platform-xhs"><i data-lucide="bookmark" class="w-3 h-3 inline"></i></span>
+                <span class="text-[10px] font-mono" style="color: rgba(255,59,92,0.8);">小红书</span>
+              </div>
+              <div class="col-span-2 text-[10px] font-mono" style="color: #8A94A6;">06/14 20:00</div>
+              <div class="col-span-2 text-xs font-mono font-medium" style="color: #FF3B5C;">12,847</div>
+              <div class="col-span-2 text-xs font-mono" style="color: #8A94A6;">892 <span class="text-[9px]" style="color: #5A6273;">6.9%</span></div>
+              <div class="col-span-1 text-[10px] font-mono" style="color: #FF3B5C;">↑23%</div>
+            </div>
+            <!-- 历史-记录2 -->
+            <div class="history-item px-4 py-3 grid grid-cols-12 gap-2 items-center transition-colors" style="border-bottom: 1px solid rgba(140,150,165,0.06);">
+              <div class="col-span-3 flex items-center gap-2">
+                <i data-lucide="video" class="w-3 h-3" style="color: #5A6273;"></i>
+                <span class="text-xs truncate" style="color: #E8EBF0; letter-spacing: 0.02em;">长沙夜市探店上集</span>
+              </div>
+              <div class="col-span-2 flex items-center gap-1.5">
+                <span class="platform-dy"><i data-lucide="music" class="w-3 h-3 inline"></i></span>
+                <span class="text-[10px] font-mono" style="color: rgba(33,230,193,0.8);">抖音</span>
+              </div>
+              <div class="col-span-2 text-[10px] font-mono" style="color: #8A94A6;">06/13 18:30</div>
+              <div class="col-span-2 text-xs font-mono font-medium" style="color: #FF3B5C;">45,210</div>
+              <div class="col-span-2 text-xs font-mono" style="color: #8A94A6;">3,456 <span class="text-[9px]" style="color: #5A6273;">7.6%</span></div>
+              <div class="col-span-1 text-[10px] font-mono" style="color: #FF3B5C;">↑58%</div>
+            </div>
+            <!-- 历史-记录3 -->
+            <div class="history-item px-4 py-3 grid grid-cols-12 gap-2 items-center transition-colors" style="border-bottom: 1px solid rgba(140,150,165,0.06);">
+              <div class="col-span-3 flex items-center gap-2">
+                <i data-lucide="image" class="w-3 h-3" style="color: #5A6273;"></i>
+                <span class="text-xs truncate" style="color: #E8EBF0; letter-spacing: 0.02em;">办公室好物分享</span>
+              </div>
+              <div class="col-span-2 flex items-center gap-1.5">
+                <span class="platform-xhs"><i data-lucide="bookmark" class="w-3 h-3 inline"></i></span>
+                <span class="text-[10px] font-mono" style="color: rgba(255,59,92,0.8);">小红书</span>
+              </div>
+              <div class="col-span-2 text-[10px] font-mono" style="color: #8A94A6;">06/12 12:00</div>
+              <div class="col-span-2 text-xs font-mono font-medium" style="color: #15E0A0;">5,432</div>
+              <div class="col-span-2 text-xs font-mono" style="color: #8A94A6;">321 <span class="text-[9px]" style="color: #5A6273;">5.9%</span></div>
+              <div class="col-span-1 text-[10px] font-mono" style="color: #15E0A0;">↓12%</div>
+            </div>
+            <!-- 历史-记录4 -->
+            <div class="history-item px-4 py-3 grid grid-cols-12 gap-2 items-center transition-colors" style="border-bottom: 1px solid rgba(140,150,165,0.06);">
+              <div class="col-span-3 flex items-center gap-2">
+                <i data-lucide="video" class="w-3 h-3" style="color: #5A6273;"></i>
+                <span class="text-xs truncate" style="color: #E8EBF0; letter-spacing: 0.02em;">数码产品开箱合集</span>
+              </div>
+              <div class="col-span-2 flex items-center gap-1.5">
+                <span class="platform-dy"><i data-lucide="music" class="w-3 h-3 inline"></i></span>
+                <span class="text-[10px] font-mono" style="color: rgba(33,230,193,0.8);">抖音</span>
+              </div>
+              <div class="col-span-2 text-[10px] font-mono" style="color: #8A94A6;">06/11 20:00</div>
+              <div class="col-span-2 text-xs font-mono font-medium" style="color: #FF3B5C;">28,930</div>
+              <div class="col-span-2 text-xs font-mono" style="color: #8A94A6;">2,178 <span class="text-[9px]" style="color: #5A6273;">7.5%</span></div>
+              <div class="col-span-1 text-[10px] font-mono" style="color: #FF3B5C;">↑34%</div>
+            </div>
+            <!-- 历史-记录5 -->
+            <div class="history-item px-4 py-3 grid grid-cols-12 gap-2 items-center transition-colors">
+              <div class="col-span-3 flex items-center gap-2">
+                <i data-lucide="file-text" class="w-3 h-3" style="color: #5A6273;"></i>
+                <span class="text-xs truncate" style="color: #E8EBF0; letter-spacing: 0.02em;">五分钟出门妆教</span>
+              </div>
+              <div class="col-span-2 flex items-center gap-1.5">
+                <span class="platform-xhs"><i data-lucide="bookmark" class="w-3 h-3 inline"></i></span>
+                <span class="text-[10px] font-mono" style="color: rgba(255,59,92,0.8);">小红书</span>
+              </div>
+              <div class="col-span-2 text-[10px] font-mono" style="color: #8A94A6;">06/10 15:00</div>
+              <div class="col-span-2 text-xs font-mono font-medium" style="color: #15E0A0;">3,156</div>
+              <div class="col-span-2 text-xs font-mono" style="color: #8A94A6;">187 <span class="text-[9px]" style="color: #5A6273;">5.9%</span></div>
+              <div class="col-span-1 text-[10px] font-mono" style="color: #15E0A0;">↓8%</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </main>
+    <!-- @main-content:end -->
+  </div>
+
+  <script>
+  $(function() {
+
+    // === 队列筛选 ===
+    $('#queue-filter').on('change', function() {
+      var status = $(this).val();
+      if (status === 'all') {
+        $('.queue-item').show();
+      } else {
+        $('.queue-item').each(function() {
+          if ($(this).data('status') === status) {
+            $(this).show();
+          } else {
+            $(this).hide();
+          }
+        });
+      }
+    });
+
+    // === 一键发布按钮 ===
+    // 点击后应实现：1. 弹出确认弹窗展示待发布队列所有内容
+    // 2. 用户确认后依次将所有「待发布」内容发布到对应平台
+    // 3. 发布过程中更新队列中每条记录的状态和进度条
+    // 4. 全部完成后弹出结果汇总通知
+    $('#btn-one-click-publish').on('click', function() {
+      console.log('一键发布：确认后批量发布所有待发布内容');
+    });
+
+    // === 单条发布按钮 ===
+    // 点击后应实现：1. 将该条内容的发布状态改为「发布中」
+    // 2. 显示发布进度条和百分比
+    // 3. 发布成功后更新为「已发布」状态
+    // 4. 发布失败后更新为「失败」状态并显示错误原因
+    $('#btn-publish-1').on('click', function() {
+      console.log('发布：夏季清凉穿搭指南 → 小红书');
+    });
+    $('#btn-publish-5').on('click', function() {
+      console.log('发布：好物开箱·科技数码 → 抖音');
+    });
+
+    // === 重试按钮 ===
+    // 点击后应实现：1. 检查对应平台账号Token是否有效
+    // 2. 若Token无效提示重新授权，若有效则重新发起发布请求
+    // 3. 更新队列中该条记录状态为「发布中」
+    $('#btn-retry-4').on('click', function() {
+      console.log('重试发布：夏日防晒大作战 → 小红书（需检查Token）');
+    });
+
+    // === 编辑按钮 ===
+    // 点击后应实现：1. 跳转到内容编辑页面，携带该条内容的ID参数
+    // 2. 编辑页面加载该内容的原始数据进行编辑
+    // 3. 编辑保存后返回发布队列，更新预览内容
+    $('#btn-edit-1').on('click', function() {
+      window.location.href = 'content-factory.html?id=PUB-20240615-001';
+    });
+    $('#btn-edit-5').on('click', function() {
+      window.location.href = 'content-factory.html?id=PUB-20240616-005';
+    });
+
+    // === 刷新队列 ===
+    $('#btn-refresh-queue').on('click', function() {
+      console.log('刷新发布队列，重新拉取最新状态');
+    });
+
+    // === 日历翻月 ===
+    // 点击后应实现：1. 更新日历显示为上/下月的日期网格
+    // 2. 重新加载该月的发布排期数据并标记彩色小点
+    // 3. 更新月份标签文字
+    $('#btn-cal-prev').on('click', function() {
+      console.log('日历翻到上一个月');
+    });
+    $('#btn-cal-next').on('click', function() {
+      console.log('日历翻到下一个月');
+    });
+
+    // === 添加平台账号 ===
+    // 点击后应实现：1. 弹出平台选择弹窗（小红书/抖音）
+    // 2. 选择后跳转到对应平台的OAuth授权页面
+    // 3. 授权成功后回调并在账号列表中新增一条记录
+    $('#btn-add-account').on('click', function() {
+      console.log('添加平台账号：弹出平台选择和OAuth授权流程');
+    });
+
+    // === 重新授权按钮 ===
+    // 点击后应实现：1. 跳转到对应平台的OAuth重新授权页面
+    // 2. 授权成功后更新该账号的连接状态为「已连接」
+    // 3. Token刷新后自动重试该账号下失败的发布任务
+    $('#btn-reauth-4').on('click', function() {
+      console.log('重新授权：咸聊好物推荐 → 抖音OAuth');
+    });
+
+    // === 历史记录筛选 ===
+    $('#history-platform-filter').on('change', function() {
+      var platform = $(this).val();
+      if (platform === 'all') {
+        $('.history-item').show();
+      } else {
+        $('.history-item').each(function() {
+          var itemPlatform = $(this).find('.platform-xhs').length > 0 ? 'xhs' : 'dy';
+          if (itemPlatform === platform) {
+            $(this).show();
+          } else {
+            $(this).hide();
+          }
+        });
+      }
+    });
+
+  });
+  </script>
+
+  <script>lucide.createIcons();</script>
+</body>
+
+</html>

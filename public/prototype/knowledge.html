@@ -1,0 +1,2793 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>知识库 · 咸聊 AI</title>
+
+  <link href="https://lf-code-agent.coze.cn/obj/x-ai-cn/fonts/google/google-all-fonts.css" rel="stylesheet" />
+
+  <script src="https://lf-code-agent.coze.cn/obj/x-ai-cn/cdn/jquery/jquery-3.7.1.min.js"></script>
+  <script src="https://lf-code-agent.coze.cn/obj/x-ai-cn/cdn/lucide/lucide-1.11.0.min.js"></script>
+  <script src="https://lf-code-agent.coze.cn/obj/x-ai-cn/cdn/tailwindcss/tailwindcss-browser-4.2.4.min.js"></script>
+
+  <style type="text/tailwindcss">
+    @theme {
+      /* === 品牌色：唯一亮色 = 翡翠绿 === */
+      --color-primary:              #00d992;
+      --color-primary-container:    rgba(0, 217, 146, 0.12);
+      --color-on-primary:           #050507;
+      --color-accent:               #00d992;
+      --color-accent-container:     rgba(0, 217, 146, 0.08);
+      /* === 背景 / 表面（极黑 + 碳黑） === */
+      --color-background:                 #050507;
+      --color-surface-container-lowest:   #020203;
+      --color-surface:                    #0d0d10;
+      --color-surface-container:          #15151a;
+      --color-surface-container-high:     #1c1c22;
+      --color-surface-container-highest:  #25252b;
+      /* === 文字 === */
+      --color-on-surface:           #f5f5f7;
+      --color-on-surface-variant:   #8a8a8f;
+      /* === 功能色（涨绿跌红） === */
+      --color-success:  #00d992;
+      --color-error:    #ff3b5c;
+      --color-warning:  #ffb800;
+      /* === 边框（暖灰 + Ghost） === */
+      --color-outline:          #3d3a39;
+      --color-outline-variant:  rgba(255, 255, 255, 0.06);
+      /* === 圆角 === */
+      --radius-sm:   0.25rem;
+      --radius-md:   0.5rem;
+      --radius-lg:   0.625rem;
+      --radius-xl:   0.875rem;
+      --radius-2xl:  1.125rem;
+      --radius-full: 9999px;
+      /* === 阴影（暗底+翡翠绿光晕） === */
+      --shadow-card:   0 1px 0 rgba(255,255,255,0.04) inset, 0 4px 14px rgba(0,0,0,0.55);
+      --shadow-float:  0 1px 0 rgba(255,255,255,0.06) inset, 0 10px 30px rgba(0,0,0,0.65);
+      --shadow-dialog: 0 1px 0 rgba(255,255,255,0.06) inset, 0 25px 60px rgba(0,0,0,0.75);
+      --shadow-glow:   0 0 20px rgba(0, 217, 146, 0.35), 0 0 40px rgba(0, 217, 146, 0.15);
+      /* === 渐变金属质感 === */
+      --gradient-metal: linear-gradient(135deg, #00d992 0%, #b8ffe2 35%, #ffffff 55%, #00d992 80%, #008f63 100%);
+      --gradient-pink-purple: linear-gradient(135deg, #ff77c8 0%, #b86bff 50%, #7c3aed 100%);
+      /* === 字体（赛博：等宽+无衬线） === */
+      --font-sans: "Inter", "Noto Sans SC", "PingFang SC", system-ui, sans-serif;
+      --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+    }
+  </style>
+
+  <style>
+    /* ===== 全局背景：极黑 + 顶部一抹翡翠绿微光 ===== */
+    body {
+      background:
+        radial-gradient(ellipse 1400px 320px at 50% -120px, rgba(0, 217, 146, 0.06), transparent 60%),
+        radial-gradient(ellipse 900px 280px at 100% 8%, rgba(0, 217, 146, 0.03), transparent 60%),
+        #050507;
+      background-attachment: fixed;
+      font-feature-settings: "tnum" 1, "ss01" 1;
+    }
+    /* 滚动条 */
+    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    ::-webkit-scrollbar-track { background: #050507; }
+    ::-webkit-scrollbar-thumb { background: #25252b; border-radius: 9999px; }
+    ::-webkit-scrollbar-thumb:hover { background: #00d992; }
+
+    /* ===== 数字：等宽 + 金属渐变 + 发光 ===== */
+    .font-num, .font-mono, .tabular {
+      font-family: var(--font-mono);
+      font-variant-numeric: tabular-nums;
+      letter-spacing: -0.01em;
+    }
+    .num-metal {
+      background: var(--gradient-metal);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      font-family: var(--font-mono);
+      font-variant-numeric: tabular-nums;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      text-shadow: 0 0 18px rgba(0, 217, 146, 0.25);
+    }
+    .num-glow {
+      color: #00d992;
+      font-family: var(--font-mono);
+      font-variant-numeric: tabular-nums;
+      font-weight: 600;
+      text-shadow: 0 0 10px rgba(0, 217, 146, 0.55), 0 0 24px rgba(0, 217, 146, 0.25);
+    }
+    .num-up   { color: #00d992; text-shadow: 0 0 8px rgba(0, 217, 146, 0.35); }
+    .num-down { color: #ff3b5c; text-shadow: 0 0 8px rgba(255, 59, 92, 0.35); }
+
+    /* ===== 顶部跑马灯条 ===== */
+    .ticker-bar {
+      background: linear-gradient(90deg, rgba(0, 217, 146, 0.05) 0%, rgba(13,13,16,0.0) 50%, rgba(0, 217, 146, 0.05) 100%);
+      border-bottom: 1px solid #3d3a39;
+      height: 28px;
+      overflow: hidden;
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+    .ticker-bar::before, .ticker-bar::after {
+      content: ""; position: absolute; top: 0; bottom: 0; width: 60px; z-index: 2; pointer-events: none;
+    }
+    .ticker-bar::before { left: 0; background: linear-gradient(90deg, #050507 0%, transparent 100%); }
+    .ticker-bar::after  { right: 0; background: linear-gradient(-90deg, #050507 0%, transparent 100%); }
+    .ticker-track {
+      display: inline-flex; align-items: center; gap: 36px;
+      white-space: nowrap;
+      animation: ticker-scroll 40s linear infinite;
+      padding-left: 100%;
+      font-family: var(--font-mono);
+      font-size: 11px;
+    }
+    .ticker-track:hover { animation-play-state: paused; }
+    @keyframes ticker-scroll {
+      0%   { transform: translateX(0); }
+      100% { transform: translateX(-100%); }
+    }
+    .ticker-item { display: inline-flex; align-items: center; gap: 6px; color: #f5f5f7; }
+    .ticker-item .k { color: #8a8a8f; }
+    .ticker-item .v.up   { color: #00d992; }
+    .ticker-item .v.down { color: #ff3b5c; }
+    .ticker-item .v.flat { color: #ffb800; }
+
+    /* ===== 呼吸灯（状态指示） ===== */
+    .status-dot {
+      display: inline-block;
+      width: 8px; height: 8px;
+      border-radius: 9999px;
+      position: relative;
+    }
+    .status-dot::after {
+      content: ""; position: absolute; inset: -3px; border-radius: 9999px;
+    }
+    .status-online {
+      background: #00d992;
+      box-shadow: 0 0 8px rgba(0, 217, 146, 0.7);
+      animation: pulse-green 1.6s ease-in-out infinite;
+    }
+    .status-online::after {
+      box-shadow: 0 0 0 0 rgba(0, 217, 146, 0.6);
+      animation: pulse-ring 1.6s ease-out infinite;
+    }
+    .status-pending {
+      background: #ff3b5c;
+      box-shadow: 0 0 8px rgba(255, 59, 92, 0.7);
+      animation: pulse-red 1.2s ease-in-out infinite;
+    }
+    .status-pending::after {
+      box-shadow: 0 0 0 0 rgba(255, 59, 92, 0.6);
+      animation: pulse-ring-red 1.2s ease-out infinite;
+    }
+    .status-queue {
+      background: #5a5a5e;
+      box-shadow: none;
+      animation: none;
+    }
+    @keyframes pulse-green {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.55; }
+    }
+    @keyframes pulse-red {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+    @keyframes pulse-ring {
+      0%   { box-shadow: 0 0 0 0 rgba(0, 217, 146, 0.6); }
+      100% { box-shadow: 0 0 0 8px rgba(0, 217, 146, 0); }
+    }
+    @keyframes pulse-ring-red {
+      0%   { box-shadow: 0 0 0 0 rgba(255, 59, 92, 0.6); }
+      100% { box-shadow: 0 0 0 8px rgba(255, 59, 92, 0); }
+    }
+
+    /* ===== 导航激活态（左侧翡翠绿边） ===== */
+    .nav-active {
+      background: linear-gradient(90deg, rgba(0, 217, 146, 0.14), rgba(0, 217, 146, 0.02));
+      border-left: 3px solid #00d992;
+      color: #00d992 !important;
+      box-shadow: inset 0 0 18px rgba(0, 217, 146, 0.06);
+    }
+    .nav-active i { color: #00d992; }
+
+    /* ===== 按钮：hover 亮绿边框 ===== */
+    .btn-press { transition: transform 0.08s ease, opacity 0.15s ease, background-color 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease; }
+    .btn-press:active { transform: translateY(1px) scale(0.98); }
+
+    .btn-glow {
+      position: relative;
+      transition: all 0.2s ease;
+    }
+    .btn-glow:hover {
+      border-color: #00d992 !important;
+      box-shadow: 0 0 0 1px rgba(0, 217, 146, 0.5), 0 0 18px rgba(0, 217, 146, 0.25);
+      color: #00d992;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #00d992 0%, #00b87a 100%);
+      color: #050507;
+      font-weight: 600;
+      transition: all 0.2s ease;
+      box-shadow: 0 0 0 1px rgba(0, 217, 146, 0.5), 0 4px 18px rgba(0, 217, 146, 0.25);
+    }
+    .btn-primary:hover {
+      box-shadow: 0 0 0 1px rgba(0, 217, 146, 0.7), 0 6px 24px rgba(0, 217, 146, 0.4);
+      transform: translateY(-1px);
+    }
+    .btn-primary:active { transform: translateY(0) scale(0.98); }
+
+    /* ===== 卡片：hover 亮绿边框 + 微光晕 ===== */
+    .card-base {
+      background: #0d0d10;
+      border: 1px solid #3d3a39;
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-card);
+      transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    .card-base:hover {
+      border-color: rgba(0, 217, 146, 0.6);
+      box-shadow: var(--shadow-card), 0 0 0 1px rgba(0, 217, 146, 0.25), 0 0 22px rgba(0, 217, 146, 0.12);
+    }
+    /* 统计卡片点击闪绿光 */
+    .card-click-flash {
+      cursor: pointer;
+    }
+    .card-click-flash::after {
+      content: ""; position: absolute; inset: -2px; border-radius: inherit;
+      box-shadow: 0 0 0 2px rgba(0, 217, 146, 0);
+      pointer-events: none;
+      transition: box-shadow 0.2s ease;
+    }
+    .card-click-flash.is-flash::after {
+      animation: click-flash 0.6s ease-out;
+    }
+    @keyframes click-flash {
+      0%   { box-shadow: 0 0 0 0 rgba(0, 217, 146, 0.7), 0 0 30px rgba(0, 217, 146, 0.45); }
+      100% { box-shadow: 0 0 0 14px rgba(0, 217, 146, 0), 0 0 60px rgba(0, 217, 146, 0); }
+    }
+
+    /* ===== 装饰：大 emoji / AI 小形象 半透明背景 ===== */
+    .deco-emoji {
+      position: absolute;
+      bottom: -8px; right: -6px;
+      font-size: 88px;
+      line-height: 1;
+      opacity: 0.10;
+      pointer-events: none;
+      filter: grayscale(20%);
+      user-select: none;
+    }
+    .deco-ai {
+      position: absolute;
+      bottom: -12px; right: -10px;
+      width: 110px; height: 110px;
+      opacity: 0.18;
+      pointer-events: none;
+      user-select: none;
+    }
+
+    /* ===== 侧边栏 AI 头像（粉紫渐变光晕） ===== */
+    .ai-avatar {
+      position: relative;
+      width: 40px; height: 40px;
+      border-radius: 9999px;
+      display: flex; align-items: center; justify-content: center;
+      background: var(--gradient-pink-purple);
+      box-shadow: 0 0 0 1px rgba(255,255,255,0.08), 0 0 18px rgba(184, 107, 255, 0.45), 0 0 32px rgba(255, 119, 200, 0.25);
+      font-weight: 700; color: #fff;
+      font-family: var(--font-mono);
+    }
+    .ai-avatar::after {
+      content: ""; position: absolute; inset: -3px;
+      border-radius: 9999px;
+      background: var(--gradient-pink-purple);
+      filter: blur(10px); opacity: 0.35; z-index: -1;
+    }
+
+    /* ===== 状态徽章 ===== */
+    .badge { display: inline-flex; align-items: center; gap: 5px; padding: 2px 8px; border-radius: 9999px; font-size: 11px; font-weight: 500; font-family: var(--font-mono); }
+    .badge-up    { background: rgba(0, 217, 146, 0.12); color: #00d992; border: 1px solid rgba(0, 217, 146, 0.25); }
+    .badge-down  { background: rgba(255, 59, 92, 0.12); color: #ff3b5c; border: 1px solid rgba(255, 59, 92, 0.25); }
+    .badge-flat  { background: rgba(138, 138, 143, 0.10); color: #8a8a8f; border: 1px solid rgba(138, 138, 143, 0.22); }
+    .badge-warn  { background: rgba(255, 184, 0, 0.12); color: #ffb800; border: 1px solid rgba(255, 184, 0, 0.28); }
+
+    /* ===== Toast ===== */
+    .toast {
+      position: fixed; bottom: 24px; right: 24px; z-index: 9999;
+      background: linear-gradient(135deg, #15151a, #1c1c22);
+      color: #f5f5f7; padding: 12px 20px; border-radius: 10px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.7), 0 0 0 1px rgba(0, 217, 146, 0.25);
+      border: 1px solid rgba(0, 217, 146, 0.35);
+      font-size: 13px; display: flex; align-items: center; gap: 10px;
+      animation: toast-in 0.3s ease, toast-out 0.3s ease 2.7s forwards;
+    }
+    .toast.success { border-color: rgba(0, 217, 146, 0.5); }
+    .toast.error   { border-color: rgba(255, 59, 92, 0.5); box-shadow: 0 10px 30px rgba(0,0,0,0.7), 0 0 0 1px rgba(255, 59, 92, 0.3); }
+    .toast.info    { border-color: rgba(138, 138, 143, 0.4); }
+    @keyframes toast-in { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+    @keyframes toast-out { to { transform: translateY(20px); opacity: 0; } }
+
+    /* ===== 知识库页面：分类激活态 ===== */
+    .kb-cat-item.is-active {
+      background: linear-gradient(90deg, rgba(0, 217, 146, 0.14), rgba(0, 217, 146, 0.02));
+      border-left: 3px solid #00d992;
+      color: #00d992;
+      box-shadow: inset 0 0 18px rgba(0, 217, 146, 0.06);
+    }
+    .kb-cat-item.is-active i { color: #00d992; }
+    .kb-cat-item.is-active .count { color: #00d992; }
+
+    /* 顶部 tab 激活态 */
+    .kb-top-tab.is-active {
+      background: linear-gradient(180deg, rgba(0, 217, 146, 0.14), rgba(0, 217, 146, 0.02));
+      color: #00d992;
+      border-bottom: 2px solid #00d992;
+      text-shadow: 0 0 8px rgba(0, 217, 146, 0.45);
+    }
+    .kb-top-tab.is-active i { color: #00d992; }
+
+    /* 标签光标 */
+    .tag-pill { cursor: pointer; transition: all 0.2s ease; }
+    .tag-pill:hover { transform: translateY(-1px); }
+
+    /* 数字微动 */
+    .num-jitter { transition: color 0.4s ease, transform 0.4s ease; }
+    .num-jitter.flash { color: #00d992; transform: scale(1.05); }
+  </style>
+
+  <script>
+    document.addEventListener('error', function (e) {
+      const img = e.target;
+      if (img.tagName !== 'IMG' || img.dataset.fallback) return;
+      img.dataset.fallback = '1';
+      const esc = s => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+      const cat = img.getAttribute('data-category') || '其他';
+      const alt = img.getAttribute('alt') || '';
+      const label = esc(alt.length > 8 ? alt.slice(0, 8) + '…' : alt);
+      const icons = { '人物': '👤', '自然风景': '🏞', '动物': '🐾', '建筑城市': '🏙', '运动体育': '⚽', '交通工具': '🚗', '食物': '🍽', '服饰时尚': '👗', '商业科技': '💼', '游戏娱乐': '🎮', '艺术': '🎨', '其他': '🖼' };
+      const icon = icons[cat] || '🖼';
+      const w = img.width || 400, h = img.height || 300;
+      const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}"><rect width="100%" height="100%" fill="%230d0d10"/><text x="50%" y="45%" text-anchor="middle" font-size="${Math.min(w, h) * 0.18}" fill="%2300d992" dominant-baseline="central">${icon}</text><text x="50%" y="68%" text-anchor="middle" font-size="${Math.min(w, h) * 0.07}" fill="%238a8a8f" font-family="system-ui,sans-serif" dominant-baseline="central">${label}</text></svg>`;
+      img.src = 'data:image/svg+xml,' + svg;
+    }, true);
+  </script>
+</head>
+
+<body class="bg-background text-on-surface font-sans min-h-screen">
+
+  <!-- @nav:start 导航组件 -->
+  <div class="flex min-h-screen" style="height: 100vh;">
+
+    <!-- Sidebar -->
+    <aside class="w-60 shrink-0 bg-surface border-r flex flex-col" style="border-color: #3d3a39;">
+      <!-- Logo 区 -->
+      <div class="h-16 px-5 flex items-center gap-3 border-b" style="border-color: #3d3a39;">
+        <div class="relative w-9 h-9 rounded-lg flex items-center justify-center text-on-primary font-bold text-base" style="background: linear-gradient(135deg, #00d992 0%, #008f63 100%); box-shadow: 0 0 0 1px rgba(0,217,146,0.4), 0 0 18px rgba(0,217,146,0.4);">
+          咸
+          <span class="status-dot status-online absolute -top-0.5 -right-0.5" style="border: 2px solid #0d0d10;"></span>
+        </div>
+        <div class="flex-1 min-w-0">
+          <div class="font-semibold text-[15px] text-on-surface tracking-tight">咸聊 AI</div>
+          <div class="text-[11px] text-on-surface-variant font-num">XHSDX · 终端 v2.0</div>
+        </div>
+      </div>
+
+      <!-- AI 助手条 -->
+      <div class="px-4 py-3 border-b" style="border-color: #3d3a39;">
+        <button id="btn-ai-assistant" class="w-full bg-surface-container hover:bg-surface-container-high border border-outline rounded-lg px-3 py-2.5 flex items-center gap-2.5 transition-all btn-glow">
+          <div class="ai-avatar !w-7 !h-7 text-xs" style="box-shadow: 0 0 0 1px rgba(255,255,255,0.1), 0 0 12px rgba(184, 107, 255, 0.5);">咸</div>
+          <div class="flex-1 text-left min-w-0">
+            <div class="text-xs font-medium text-on-surface">问问小咸</div>
+            <div class="text-[10px] text-on-surface-variant truncate">"今天适合发什么选题？"</div>
+          </div>
+          <i data-lucide="sparkles" class="w-3.5 h-3.5 text-primary"></i>
+        </button>
+      </div>
+
+      <!-- 导航菜单 -->
+      <nav class="flex-1 overflow-y-auto py-3">
+        <div class="px-5 mb-2 text-[11px] font-medium text-on-surface-variant tracking-widest uppercase">主功能</div>
+        <a href="home.html" data-nav="radar" class="nav-item flex items-center gap-3 px-5 py-2.5 text-sm font-medium text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors">
+          <i data-lucide="radar" class="w-4 h-4"></i><span>选题引擎</span>
+          <span class="ml-auto badge badge-up" data-nav-count="radar">28</span>
+        </a>
+        <a href="content-factory.html" data-nav="factory" class="nav-item flex items-center gap-3 px-5 py-2.5 text-sm font-medium text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors">
+          <i data-lucide="factory" class="w-4 h-4"></i><span>内容工厂</span>
+        </a>
+        <a href="publish.html" data-nav="publish" class="nav-item flex items-center gap-3 px-5 py-2.5 text-sm font-medium text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors">
+          <i data-lucide="send" class="w-4 h-4"></i><span>发布管理</span>
+          <span class="ml-auto badge badge-warn" data-nav-count="publish">3</span>
+        </a>
+        <a href="analytics.html" data-nav="analytics" class="nav-item flex items-center gap-3 px-5 py-2.5 text-sm font-medium text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors">
+          <i data-lucide="bar-chart-horizontal" class="w-4 h-4"></i><span>数据复盘</span>
+        </a>
+        <a href="knowledge.html" data-nav="knowledge" aria-current="page" class="nav-item flex items-center gap-3 px-5 py-2.5 text-sm font-medium text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors">
+          <i data-lucide="database" class="w-4 h-4"></i><span>知识库</span>
+        </a>
+
+        <div class="px-5 mt-4 mb-2 text-[11px] font-medium text-on-surface-variant tracking-widest uppercase">配置</div>
+        <a href="settings.html" data-nav="settings" class="nav-item flex items-center gap-3 px-5 py-2.5 text-sm font-medium text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors">
+          <i data-lucide="settings" class="w-4 h-4"></i><span>系统设置</span>
+        </a>
+      </nav>
+
+      <!-- 底部：当前账号（粉紫光晕 AI 头像） -->
+      <div class="border-t p-3" style="border-color: #3d3a39;">
+        <div class="bg-surface-container rounded-lg p-2.5 flex items-center gap-2.5 border" style="border-color: #3d3a39;">
+          <div class="ai-avatar !w-9 !h-9 text-sm">咸</div>
+          <div class="flex-1 min-w-0">
+            <div class="text-xs font-medium text-on-surface truncate flex items-center gap-1.5">
+              小咸·主理人
+              <span class="status-dot status-online"></span>
+            </div>
+            <div class="text-[10px] text-on-surface-variant font-num">@xianliao_ai</div>
+          </div>
+          <button id="btn-switch-account" class="text-on-surface-variant hover:text-primary transition-colors" title="切换账号">
+            <i data-lucide="chevrons-up-down" class="w-3.5 h-3.5"></i>
+          </button>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main area -->
+    <div class="flex-1 min-w-0 flex flex-col">
+      <!-- 顶部跑马灯条：实时行情 -->
+      <div class="ticker-bar">
+        <div class="ticker-track" id="ticker-track">
+          <span class="ticker-item"><span class="k">XHSIDX</span> <span class="v up">12,847.62</span> <span class="num-up">▲ +2.34%</span></span>
+          <span class="ticker-item"><span class="k">选题命中</span> <span class="v up">94.6%</span> <span class="num-up">▲ +1.2%</span></span>
+          <span class="ticker-item"><span class="k">流水线</span> <span class="v">2/3</span> <span class="num-up">▲ 工作中</span></span>
+          <span class="ticker-item"><span class="k">今日发布</span> <span class="v">8</span> <span class="num-up">▲ 7 已排</span></span>
+          <span class="ticker-item"><span class="k">总曝光</span> <span class="v up">1,284,930</span> <span class="num-up">▲ +18.7%</span></span>
+          <span class="ticker-item"><span class="k">互动率</span> <span class="v up">6.82%</span> <span class="num-up">▲ +0.4%</span></span>
+          <span class="ticker-item"><span class="k">掉粉</span> <span class="v down">-23</span> <span class="num-down">▼ -0.05%</span></span>
+          <span class="ticker-item"><span class="k">小咸在线</span> <span class="v up">3 节点</span> <span class="num-up">▲ 健康</span></span>
+          <!-- 重复一遍以保证无缝循环 -->
+          <span class="ticker-item"><span class="k">XHSIDX</span> <span class="v up">12,847.62</span> <span class="num-up">▲ +2.34%</span></span>
+          <span class="ticker-item"><span class="k">选题命中</span> <span class="v up">94.6%</span> <span class="num-up">▲ +1.2%</span></span>
+          <span class="ticker-item"><span class="k">流水线</span> <span class="v">2/3</span> <span class="num-up">▲ 工作中</span></span>
+          <span class="ticker-item"><span class="k">今日发布</span> <span class="v">8</span> <span class="num-up">▲ 7 已排</span></span>
+          <span class="ticker-item"><span class="k">总曝光</span> <span class="v up">1,284,930</span> <span class="num-up">▲ +18.7%</span></span>
+          <span class="ticker-item"><span class="k">互动率</span> <span class="v up">6.82%</span> <span class="num-up">▲ +0.4%</span></span>
+          <span class="ticker-item"><span class="k">掉粉</span> <span class="v down">-23</span> <span class="num-down">▼ -0.05%</span></span>
+          <span class="ticker-item"><span class="k">小咸在线</span> <span class="v up">3 节点</span> <span class="num-up">▲ 健康</span></span>
+        </div>
+      </div>
+
+      <!-- 顶栏 -->
+      <header class="h-16 bg-surface/80 backdrop-blur border-b flex items-center px-6 gap-4 shrink-0" style="border-color: #3d3a39;">
+        <div class="flex items-center gap-2 text-sm">
+          <span class="text-on-surface-variant">咸聊 AI</span>
+          <i data-lucide="chevron-right" class="w-3.5 h-3.5 text-on-surface-variant/50"></i>
+          <span id="page-crumb" class="text-on-surface font-medium">知识库</span>
+        </div>
+        <div class="flex-1 max-w-xl mx-auto">
+          <div class="relative">
+            <i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-on-surface-variant"></i>
+            <input id="global-search" type="text" placeholder="搜选题、关键词、账号..." class="w-full bg-surface-container border rounded-lg pl-10 pr-12 py-2 text-sm text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none transition-colors font-num" style="border-color: #3d3a39;" onfocus="this.style.borderColor='#00d992'; this.style.boxShadow='0 0 0 2px rgba(0,217,146,0.25)'" onblur="this.style.borderColor='#3d3a39'; this.style.boxShadow='none'" />
+            <kbd class="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] text-on-surface-variant border rounded px-1.5 py-0.5 font-mono" style="border-color: #3d3a39;">⌘K</kbd>
+          </div>
+        </div>
+        <div class="flex items-center gap-2">
+          <button id="btn-bell" class="relative w-9 h-9 rounded-lg flex items-center justify-center text-on-surface-variant hover:text-primary hover:bg-surface-container transition-colors" style="border: 1px solid transparent;" title="消息">
+            <i data-lucide="bell" class="w-4 h-4"></i>
+            <span class="absolute top-1.5 right-1.5 w-1.5 h-1.5 bg-primary rounded-full" style="box-shadow: 0 0 6px rgba(0,217,146,0.8);"></span>
+          </button>
+          <button id="btn-refresh" class="w-9 h-9 rounded-lg flex items-center justify-center text-on-surface-variant hover:text-primary hover:bg-surface-container transition-colors btn-press" style="border: 1px solid #3d3a39;" title="刷新数据">
+            <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+          </button>
+          <button id="btn-pipeline" class="btn-primary font-medium text-sm px-4 h-9 rounded-lg flex items-center gap-2 btn-press">
+            <i data-lucide="zap" class="w-4 h-4"></i>立即生成内容
+          </button>
+        </div>
+      </header>
+
+      <main class="flex-1 min-w-0 overflow-y-auto bg-background">
+        <!-- @main-content:start -->
+        <div class="p-5 space-y-4">
+
+          <!-- ==================== Section 1: 知识库总览 KPI ==================== -->
+          <section>
+            <div class="flex items-center justify-between mb-3 px-1">
+              <div class="flex items-center gap-2">
+                <i data-lucide="bar-chart-3" class="w-4 h-4 text-primary"></i>
+                <h2 class="text-sm font-semibold text-on-surface tracking-wide">知识库总览</h2>
+                <span class="badge-up flex items-center gap-1">
+                  <span class="status-dot status-online" style="width: 6px; height: 6px;"></span>
+                  LIVE
+                </span>
+                <span class="text-[10px] text-on-surface-variant/70 font-num tracking-wider">REAL-TIME OVERVIEW</span>
+              </div>
+              <div class="flex items-center gap-3 text-[11px] text-on-surface-variant">
+                <span class="flex items-center gap-1.5"><i data-lucide="clock" class="w-3 h-3"></i>最后同步 <span class="text-on-surface font-num">2 分钟前</span></span>
+                <span class="font-num">·</span>
+                <span>云端版本 <span class="text-on-surface font-num">v2.1</span></span>
+              </div>
+            </div>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+
+              <!-- KPI 1: 笔记总数 -->
+              <div id="kpi-notes" class="card-base card-click-flash p-4 cursor-pointer" data-kpi="notes">
+                <div class="flex items-start justify-between mb-2">
+                  <div class="flex items-center gap-1.5">
+                    <i data-lucide="file-text" class="w-3.5 h-3.5 text-on-surface-variant"></i>
+                    <span class="text-[11px] text-on-surface-variant">笔记总数</span>
+                  </div>
+                  <span class="badge-up">+12</span>
+                </div>
+                <div class="flex items-baseline gap-1.5 mb-1">
+                  <span class="num-metal text-3xl font-bold font-num">487</span>
+                  <span class="text-xs text-on-surface-variant">篇</span>
+                </div>
+                <div class="text-[10px] text-on-surface-variant flex items-center justify-between">
+                  <span>近 7 日</span>
+                  <span class="num-up">▲ 12 篇</span>
+                </div>
+                <div class="deco-emoji">📚</div>
+              </div>
+
+              <!-- KPI 2: 分类数 -->
+              <div id="kpi-cats" class="card-base card-click-flash p-4 cursor-pointer" data-kpi="cats">
+                <div class="flex items-start justify-between mb-2">
+                  <div class="flex items-center gap-1.5">
+                    <i data-lucide="folder-tree" class="w-3.5 h-3.5 text-on-surface-variant"></i>
+                    <span class="text-[11px] text-on-surface-variant">分类数</span>
+                  </div>
+                  <span class="badge-flat">7 类</span>
+                </div>
+                <div class="flex items-baseline gap-1.5 mb-1">
+                  <span class="num-glow text-3xl font-bold font-num">07</span>
+                  <span class="text-xs text-on-surface-variant">个</span>
+                </div>
+                <div class="text-[10px] text-on-surface-variant flex items-center justify-between">
+                  <span>本月新增</span>
+                  <span class="font-num text-on-surface-variant">─ 0</span>
+                </div>
+                <div class="deco-emoji">🏷</div>
+              </div>
+
+              <!-- KPI 3: 收藏数 -->
+              <div id="kpi-fav" class="card-base card-click-flash p-4 cursor-pointer" data-kpi="fav">
+                <div class="flex items-start justify-between mb-2">
+                  <div class="flex items-center gap-1.5">
+                    <i data-lucide="bookmark" class="w-3.5 h-3.5 text-on-surface-variant"></i>
+                    <span class="text-[11px] text-on-surface-variant">收藏数</span>
+                  </div>
+                  <span class="badge-up">+38</span>
+                </div>
+                <div class="flex items-baseline gap-1.5 mb-1">
+                  <span class="num-metal text-3xl font-bold font-num">1,284</span>
+                  <span class="text-xs text-on-surface-variant">次</span>
+                </div>
+                <div class="text-[10px] text-on-surface-variant flex items-center justify-between">
+                  <span>今日</span>
+                  <span class="num-up">▲ 38 次</span>
+                </div>
+                <div class="deco-emoji">🔖</div>
+              </div>
+
+              <!-- KPI 4: 命中率 -->
+              <div id="kpi-hit" class="card-base card-click-flash p-4 cursor-pointer" data-kpi="hit">
+                <div class="flex items-start justify-between mb-2">
+                  <div class="flex items-center gap-1.5">
+                    <i data-lucide="target" class="w-3.5 h-3.5 text-on-surface-variant"></i>
+                    <span class="text-[11px] text-on-surface-variant">命中率</span>
+                  </div>
+                  <span class="badge-up">S 级</span>
+                </div>
+                <div class="flex items-baseline gap-1.5 mb-1">
+                  <span class="num-glow text-3xl font-bold font-num">94.6</span>
+                  <span class="text-sm num-glow font-num">%</span>
+                </div>
+                <div class="text-[10px] text-on-surface-variant flex items-center justify-between">
+                  <span>较昨日</span>
+                  <span class="num-up">▲ +1.2%</span>
+                </div>
+                <div class="deco-emoji">📊</div>
+              </div>
+            </div>
+          </section>
+
+          <!-- ==================== Section 2: 标签云 + 快速操作 ==================== -->
+          <section class="grid grid-cols-1 lg:grid-cols-3 gap-3">
+            <!-- 标签云 (col-span-2) -->
+            <div class="card-base p-4 lg:col-span-2 relative">
+              <div class="flex items-center justify-between mb-3">
+                <div class="flex items-center gap-2">
+                  <i data-lucide="hash" class="w-3.5 h-3.5 text-primary"></i>
+                  <span class="text-xs font-semibold text-on-surface">热门标签</span>
+                  <span class="text-[10px] text-on-surface-variant/70 font-num">TOP <span class="text-primary">12</span> / 89</span>
+                </div>
+                <div class="flex items-center gap-2 text-[10px] text-on-surface-variant">
+                  <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-primary" style="box-shadow: 0 0 6px rgba(0,217,146,0.6);"></span>高频</span>
+                  <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-on-surface-variant/40"></span>低频</span>
+                  <button id="btn-tag-more" class="ml-2 text-on-surface-variant hover:text-primary transition-colors flex items-center gap-0.5">
+                    全部 <i data-lucide="chevron-right" class="w-3 h-3"></i>
+                  </button>
+                </div>
+              </div>
+              <div class="flex flex-wrap gap-1.5">
+                <!-- 高频标签（绿色） -->
+                <span class="tag-pill badge-up px-2.5 py-1 font-num">#商业认知 <span class="ml-1 font-bold">86</span></span>
+                <span class="tag-pill badge-up px-2.5 py-1 font-num">#女性商业 <span class="ml-1 font-bold">72</span></span>
+                <span class="tag-pill badge-up px-2.5 py-1 font-num">#决策成本 <span class="ml-1 font-bold">64</span></span>
+                <span class="tag-pill badge-up px-2.5 py-1 font-num">#反常识 <span class="ml-1 font-bold">58</span></span>
+                <span class="tag-pill badge-up px-2.5 py-1 font-num">#认知差 <span class="ml-1 font-bold">47</span></span>
+                <!-- 低频标签（灰色） -->
+                <span class="tag-pill badge-flat px-2.5 py-1 font-num">#职场 <span class="ml-1 font-bold">42</span></span>
+                <span class="tag-pill badge-flat px-2.5 py-1 font-num">#创业 <span class="ml-1 font-bold">38</span></span>
+                <span class="tag-pill badge-flat px-2.5 py-1 font-num">#谈判 <span class="ml-1 font-bold">31</span></span>
+                <span class="tag-pill badge-flat px-2.5 py-1 font-num">#管理 <span class="ml-1 font-bold">28</span></span>
+                <span class="tag-pill badge-flat px-2.5 py-1 font-num">#案例拆解 <span class="ml-1 font-bold">22</span></span>
+                <span class="tag-pill badge-flat px-2.5 py-1 font-num">#消费洞察 <span class="ml-1 font-bold">19</span></span>
+                <span class="tag-pill badge-flat px-2.5 py-1 font-num">#心理学 <span class="ml-1 font-bold">15</span></span>
+              </div>
+              <div class="deco-emoji" style="font-size: 64px;">💎</div>
+            </div>
+
+            <!-- 快速操作 (col-span-1) -->
+            <div class="card-base p-4">
+              <div class="flex items-center justify-between mb-3">
+                <div class="flex items-center gap-2">
+                  <i data-lucide="zap" class="w-3.5 h-3.5 text-primary"></i>
+                  <span class="text-xs font-semibold text-on-surface">快速操作</span>
+                </div>
+                <span class="text-[10px] text-on-surface-variant/70 font-num">QUICK ACTIONS</span>
+              </div>
+              <div class="space-y-2">
+                <button id="qa-import" class="btn-glow w-full flex items-center gap-2.5 px-3 py-2.5 bg-surface-container border border-outline rounded-md text-xs text-on-surface hover:text-primary transition-all text-left btn-press">
+                  <div class="shrink-0 w-7 h-7 rounded-md bg-primary-container border border-primary/30 flex items-center justify-center">
+                    <i data-lucide="upload" class="w-3.5 h-3.5 text-primary"></i>
+                  </div>
+                  <div class="flex-1 min-w-0">
+                    <div class="font-medium">导入素材</div>
+                    <div class="text-[10px] text-on-surface-variant">PDF / DOCX / MD</div>
+                  </div>
+                  <i data-lucide="chevron-right" class="w-3 h-3 text-on-surface-variant/50"></i>
+                </button>
+                <button id="qa-newdoc" class="btn-glow w-full flex items-center gap-2.5 px-3 py-2.5 bg-surface-container border border-outline rounded-md text-xs text-on-surface hover:text-primary transition-all text-left btn-press">
+                  <div class="shrink-0 w-7 h-7 rounded-md bg-primary-container border border-primary/30 flex items-center justify-center">
+                    <i data-lucide="plus" class="w-3.5 h-3.5 text-primary"></i>
+                  </div>
+                  <div class="flex-1 min-w-0">
+                    <div class="font-medium">新建文档</div>
+                    <div class="text-[10px] text-on-surface-variant">从模板创建</div>
+                  </div>
+                  <kbd class="text-[9px] text-on-surface-variant border border-outline rounded px-1.5 py-0.5 font-mono">⌘N</kbd>
+                </button>
+                <button id="qa-search" class="btn-glow w-full flex items-center gap-2.5 px-3 py-2.5 bg-surface-container border border-outline rounded-md text-xs text-on-surface hover:text-primary transition-all text-left btn-press">
+                  <div class="shrink-0 w-7 h-7 rounded-md bg-primary-container border border-primary/30 flex items-center justify-center">
+                    <i data-lucide="search" class="w-3.5 h-3.5 text-primary"></i>
+                  </div>
+                  <div class="flex-1 min-w-0">
+                    <div class="font-medium">全文检索</div>
+                    <div class="text-[10px] text-on-surface-variant">跨分类智能搜索</div>
+                  </div>
+                  <kbd class="text-[9px] text-on-surface-variant border border-outline rounded px-1.5 py-0.5 font-mono">⌘K</kbd>
+                </button>
+                <button id="qa-sync" class="btn-glow w-full flex items-center gap-2.5 px-3 py-2.5 bg-surface-container border border-outline rounded-md text-xs text-on-surface hover:text-primary transition-all text-left btn-press">
+                  <div class="shrink-0 w-7 h-7 rounded-md bg-primary-container border border-primary/30 flex items-center justify-center">
+                    <i data-lucide="refresh-ccw" class="w-3.5 h-3.5 text-primary"></i>
+                  </div>
+                  <div class="flex-1 min-w-0">
+                    <div class="font-medium">同步品牌定位</div>
+                    <div class="text-[10px] text-on-surface-variant">同步到所有 AI</div>
+                  </div>
+                  <i data-lucide="chevron-right" class="w-3 h-3 text-on-surface-variant/50"></i>
+                </button>
+              </div>
+            </div>
+          </section>
+
+          <!-- ==================== Section 3: 主体 3列布局 ==================== -->
+          <section class="flex gap-3">
+
+            <!-- ===== 左侧：分类树 (200px) ===== -->
+            <aside class="w-[200px] shrink-0 flex flex-col gap-3">
+              <div class="card-base p-3 flex flex-col">
+                <div class="flex items-center justify-between mb-2 px-1">
+                  <div class="flex items-center gap-1.5">
+                    <i data-lucide="folder-tree" class="w-3.5 h-3.5 text-primary"></i>
+                    <span class="text-xs font-semibold text-on-surface">知识库分类</span>
+                  </div>
+                  <span class="text-[10px] text-on-surface-variant/70 font-num">07</span>
+                </div>
+                <nav id="kb-categories" class="flex flex-col gap-0.5">
+
+                  <!-- 分类-品牌定位 -->
+                  <button data-tab="brand" class="kb-cat-item is-active w-full flex items-center gap-2 px-2.5 py-2 text-left text-xs font-medium text-on-surface-variant border-l-[3px] border-transparent rounded-r-md hover:bg-surface-container hover:text-on-surface transition-all">
+                    <i data-lucide="crosshair" class="w-3.5 h-3.5 shrink-0"></i>
+                    <span class="flex-1 truncate">品牌定位</span>
+                    <span class="text-[10px] text-on-surface-variant/70 font-num count">05</span>
+                  </button>
+
+                  <!-- 分类-人设语料 -->
+                  <button data-tab="persona" class="kb-cat-item w-full flex items-center gap-2 px-2.5 py-2 text-left text-xs font-medium text-on-surface-variant border-l-[3px] border-transparent rounded-r-md hover:bg-surface-container hover:text-on-surface transition-all">
+                    <i data-lucide="user-cog" class="w-3.5 h-3.5 shrink-0"></i>
+                    <span class="flex-1 truncate">人设语料</span>
+                    <span class="text-[10px] text-on-surface-variant/70 font-num count">128</span>
+                  </button>
+
+                  <!-- 分类-往期内容库 -->
+                  <button data-tab="archive" class="kb-cat-item w-full flex items-center gap-2 px-2.5 py-2 text-left text-xs font-medium text-on-surface-variant border-l-[3px] border-transparent rounded-r-md hover:bg-surface-container hover:text-on-surface transition-all">
+                    <i data-lucide="archive" class="w-3.5 h-3.5 shrink-0"></i>
+                    <span class="flex-1 truncate">往期内容库</span>
+                    <span class="text-[10px] text-on-surface-variant/70 font-num count">216</span>
+                  </button>
+
+                  <!-- 分类-对标账号分析 -->
+                  <button data-tab="benchmark" class="kb-cat-item w-full flex items-center gap-2 px-2.5 py-2 text-left text-xs font-medium text-on-surface-variant border-l-[3px] border-transparent rounded-r-md hover:bg-surface-container hover:text-on-surface transition-all">
+                    <i data-lucide="users" class="w-3.5 h-3.5 shrink-0"></i>
+                    <span class="flex-1 truncate">对标账号分析</span>
+                    <span class="text-[10px] text-on-surface-variant/70 font-num count">12</span>
+                  </button>
+
+                  <!-- 分类-爆款拆解 -->
+                  <button data-tab="viral" class="kb-cat-item w-full flex items-center gap-2 px-2.5 py-2 text-left text-xs font-medium text-on-surface-variant border-l-[3px] border-transparent rounded-r-md hover:bg-surface-container hover:text-on-surface transition-all">
+                    <i data-lucide="flame" class="w-3.5 h-3.5 shrink-0"></i>
+                    <span class="flex-1 truncate">爆款拆解</span>
+                    <span class="text-[10px] text-on-surface-variant/70 font-num count">47</span>
+                  </button>
+
+                  <!-- 分类-选题素材 -->
+                  <button data-tab="material" class="kb-cat-item w-full flex items-center gap-2 px-2.5 py-2 text-left text-xs font-medium text-on-surface-variant border-l-[3px] border-transparent rounded-r-md hover:bg-surface-container hover:text-on-surface transition-all">
+                    <i data-lucide="library" class="w-3.5 h-3.5 shrink-0"></i>
+                    <span class="flex-1 truncate">选题素材</span>
+                    <span class="text-[10px] text-on-surface-variant/70 font-num count">89</span>
+                  </button>
+
+                  <!-- 分类-平台规则 -->
+                  <button data-tab="rule" class="kb-cat-item w-full flex items-center gap-2 px-2.5 py-2 text-left text-xs font-medium text-on-surface-variant border-l-[3px] border-transparent rounded-r-md hover:bg-surface-container hover:text-on-surface transition-all">
+                    <i data-lucide="shield-alert" class="w-3.5 h-3.5 shrink-0"></i>
+                    <span class="flex-1 truncate">平台规则</span>
+                    <span class="text-[10px] text-on-surface-variant/70 font-num count">23</span>
+                  </button>
+                </nav>
+              </div>
+
+              <!-- 存储用量 -->
+              <div class="card-base p-3">
+                <div class="flex items-center justify-between mb-2 px-1">
+                  <span class="text-[11px] text-on-surface-variant">存储用量</span>
+                  <span class="text-[10px] text-primary font-num font-bold" id="storage-pct">68%</span>
+                </div>
+                <div class="h-1.5 bg-surface-container-high rounded-full overflow-hidden mb-1.5">
+                  <div id="storage-bar" class="h-full rounded-full" style="width: 68%; background: linear-gradient(90deg, #00d992 0%, #b8ffe2 100%); box-shadow: 0 0 8px rgba(0,217,146,0.6);"></div>
+                </div>
+                <div class="mt-1 flex items-center justify-between text-[10px] text-on-surface-variant">
+                  <span class="font-num">3.4G / 5G</span>
+                  <button id="btn-upgrade" class="text-primary hover:underline">升级</button>
+                </div>
+              </div>
+            </aside>
+
+            <!-- ===== 中间：Tab 内容 (flex-1) ===== -->
+            <div class="flex-1 min-w-0 flex flex-col gap-3">
+
+              <!-- Tab 头部 -->
+              <div class="card-base">
+                <div class="px-5 py-3 flex items-center gap-4 border-b" style="border-color: #3d3a39;">
+                  <div class="flex items-center gap-2 text-sm">
+                    <i data-lucide="database" class="w-3.5 h-3.5 text-primary"></i>
+                    <span class="text-[11px] text-on-surface-variant">知识库</span>
+                    <i data-lucide="chevron-right" class="w-3 h-3 text-on-surface-variant/50"></i>
+                    <h1 id="kb-tab-title" class="text-sm font-semibold text-on-surface font-num">品牌定位</h1>
+                  </div>
+                  <p id="kb-tab-desc" class="flex-1 text-[11px] text-on-surface-variant truncate">品牌资产核心档案 · 定位 · 人设 · 受众 · 禁区 · 原则</p>
+                  <div class="flex items-center gap-2">
+                    <span class="text-[10px] text-on-surface-variant/80 font-num" id="sync-label">SYNC · 2m ago</span>
+                    <span class="status-dot status-online"></span>
+                  </div>
+                </div>
+                <div id="kb-top-tabs" class="px-5 flex items-center gap-0 overflow-x-auto">
+                  <button data-tab="brand" class="kb-top-tab is-active shrink-0 flex items-center gap-1.5 px-3 py-2.5 text-xs font-medium border-b-2 border-transparent text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors">
+                    <i data-lucide="crosshair" class="w-3.5 h-3.5"></i>品牌定位
+                  </button>
+                  <button data-tab="persona" class="kb-top-tab shrink-0 flex items-center gap-1.5 px-3 py-2.5 text-xs font-medium border-b-2 border-transparent text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors">
+                    <i data-lucide="user-cog" class="w-3.5 h-3.5"></i>人设语料
+                  </button>
+                  <button data-tab="archive" class="kb-top-tab shrink-0 flex items-center gap-1.5 px-3 py-2.5 text-xs font-medium border-b-2 border-transparent text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors">
+                    <i data-lucide="archive" class="w-3.5 h-3.5"></i>往期内容库
+                  </button>
+                  <button data-tab="benchmark" class="kb-top-tab shrink-0 flex items-center gap-1.5 px-3 py-2.5 text-xs font-medium border-b-2 border-transparent text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors">
+                    <i data-lucide="users" class="w-3.5 h-3.5"></i>对标账号
+                  </button>
+                  <button data-tab="viral" class="kb-top-tab shrink-0 flex items-center gap-1.5 px-3 py-2.5 text-xs font-medium border-b-2 border-transparent text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors">
+                    <i data-lucide="flame" class="w-3.5 h-3.5"></i>爆款拆解
+                  </button>
+                  <button data-tab="material" class="kb-top-tab shrink-0 flex items-center gap-1.5 px-3 py-2.5 text-xs font-medium border-b-2 border-transparent text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors">
+                    <i data-lucide="library" class="w-3.5 h-3.5"></i>选题素材
+                  </button>
+                  <button data-tab="rule" class="kb-top-tab shrink-0 flex items-center gap-1.5 px-3 py-2.5 text-xs font-medium border-b-2 border-transparent text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors">
+                    <i data-lucide="shield-alert" class="w-3.5 h-3.5"></i>平台规则
+                  </button>
+                </div>
+              </div>
+
+              <!-- Tab Panes 容器 -->
+              <div id="kb-pane-container" class="flex-1">
+                <!-- @tab-panes:start -->
+
+                <!-- =================== Tab Pane: 品牌定位 =================== -->
+                <section id="pane-brand" class="kb-tab-pane space-y-4">
+
+                  <!-- 品牌信息头 -->
+                  <div class="card-base p-5 relative">
+                    <div class="flex items-start gap-5">
+                      <div class="relative shrink-0 w-16 h-16 rounded-xl flex items-center justify-center text-on-primary font-bold text-2xl" style="background: linear-gradient(135deg, #00d992 0%, #008f63 100%); box-shadow: 0 0 0 1px rgba(0,217,146,0.5), 0 0 20px rgba(0,217,146,0.3);">
+                        咸
+                        <span class="status-dot status-online absolute -top-0.5 -right-0.5" style="border: 2px solid #0d0d10;"></span>
+                      </div>
+                      <div class="flex-1 min-w-0">
+                        <div class="flex items-center gap-3 mb-1.5 flex-wrap">
+                          <h2 class="text-xl font-bold text-on-surface">咸聊AI</h2>
+                          <span class="text-[11px] text-on-surface-variant/80 font-num">@xianliao_ai</span>
+                          <span class="badge-up flex items-center gap-1">
+                            <span class="w-1 h-1 bg-primary rounded-full"></span>商业认知博主
+                          </span>
+                          <span class="badge-up flex items-center gap-1">
+                            <span class="status-dot status-online" style="width: 6px; height: 6px;"></span>运营中
+                          </span>
+                        </div>
+                        <p class="text-sm text-on-surface-variant leading-relaxed mb-3">为25-40岁女性创业者/企业高管提供<span class="num-glow">商业认知升维</span>。拒绝鸡汤、拒绝爹味，用数据和案例拆解真实商业世界。</p>
+                        <div class="flex items-center gap-5 text-[11px] text-on-surface-variant flex-wrap">
+                          <div class="flex items-center gap-1.5"><i data-lucide="users" class="w-3 h-3"></i><span class="text-on-surface font-semibold num-num num-jitter" id="stat-followers">128,500</span> 粉丝</div>
+                          <div class="flex items-center gap-1.5"><i data-lucide="file-text" class="w-3 h-3"></i><span class="text-on-surface font-semibold num-num num-jitter" id="stat-posts">216</span> 笔记</div>
+                          <div class="flex items-center gap-1.5"><i data-lucide="heart" class="w-3 h-3"></i><span class="text-on-surface font-semibold num-num num-jitter" id="stat-likes">2.3M</span> 总点赞</div>
+                          <div class="flex items-center gap-1.5"><i data-lucide="calendar" class="w-3 h-3"></i>入驻 <span class="font-num">2023-03</span></div>
+                        </div>
+                      </div>
+                      <div class="flex flex-col gap-2 shrink-0">
+                        <button id="btn-edit-brand" class="btn-glow flex items-center gap-1.5 px-3 py-1.5 bg-primary-container border border-primary/40 text-primary text-[11px] font-medium rounded-md transition-all" data-id="brand-main">
+                          <i data-lucide="square-pen" class="w-3 h-3"></i>编辑
+                        </button>
+                        <button id="btn-version-brand" class="btn-glow flex items-center gap-1.5 px-3 py-1.5 bg-surface-container border border-outline text-on-surface text-[11px] rounded-md transition-all" data-id="brand-main">
+                          <i data-lucide="history" class="w-3 h-3"></i>版本历史
+                        </button>
+                      </div>
+                    </div>
+                    <div class="deco-emoji" style="font-size: 72px;">🎯</div>
+                  </div>
+
+                  <!-- 核心信息卡组 -->
+                  <div class="grid grid-cols-1 lg:grid-cols-2 gap-3">
+
+                    <!-- 卡1：品牌声音 -->
+                    <div class="card-base p-4 relative">
+                      <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center gap-2">
+                          <span class="badge-up">品牌声音</span>
+                          <span class="text-[10px] text-on-surface-variant/80 font-num">DOC_01</span>
+                        </div>
+                        <div class="flex items-center gap-1">
+                          <button class="btn-edit-doc btn-glow w-7 h-7 rounded-md flex items-center justify-center text-on-surface-variant hover:text-primary transition-colors" data-id="doc-01" data-title="品牌声音">
+                            <i data-lucide="square-pen" class="w-3.5 h-3.5"></i>
+                          </button>
+                          <button class="btn-version btn-glow w-7 h-7 rounded-md flex items-center justify-center text-on-surface-variant hover:text-primary transition-colors" data-id="doc-01" data-title="品牌声音">
+                            <i data-lucide="history" class="w-3.5 h-3.5"></i>
+                          </button>
+                        </div>
+                      </div>
+                      <div class="flex items-start gap-3">
+                        <div class="shrink-0 w-9 h-9 rounded-md bg-primary-container border border-primary/30 flex items-center justify-center">
+                          <i data-lucide="crosshair" class="w-4 h-4 text-primary"></i>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                          <div class="text-[10px] text-on-surface-variant/80 mb-1.5 font-num">ONE-LINE POSITIONING</div>
+                          <p class="text-base font-semibold text-on-surface leading-relaxed">为25-40岁女性创业者/企业高管提供<span class="num-glow">商业认知升维</span></p>
+                          <div class="mt-3 flex flex-wrap gap-1.5">
+                            <span class="tag-pill badge-flat">#女性商业</span>
+                            <span class="tag-pill badge-flat">#认知升维</span>
+                            <span class="tag-pill badge-flat">#高决策力</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- 卡2：表达原则 -->
+                    <div class="card-base p-4 relative">
+                      <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center gap-2">
+                          <span class="badge-up">表达原则</span>
+                          <span class="text-[10px] text-on-surface-variant/80 font-num">DOC_02</span>
+                        </div>
+                        <div class="flex items-center gap-1">
+                          <button class="btn-edit-doc btn-glow w-7 h-7 rounded-md flex items-center justify-center text-on-surface-variant hover:text-primary transition-colors" data-id="doc-02" data-title="表达原则">
+                            <i data-lucide="square-pen" class="w-3.5 h-3.5"></i>
+                          </button>
+                          <button class="btn-version btn-glow w-7 h-7 rounded-md flex items-center justify-center text-on-surface-variant hover:text-primary transition-colors" data-id="doc-02" data-title="表达原则">
+                            <i data-lucide="history" class="w-3.5 h-3.5"></i>
+                          </button>
+                        </div>
+                      </div>
+                      <div class="flex items-start gap-3">
+                        <div class="shrink-0 w-9 h-9 rounded-md bg-primary-container border border-primary/30 flex items-center justify-center">
+                          <i data-lucide="user-cog" class="w-4 h-4 text-primary"></i>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                          <div class="text-[10px] text-on-surface-variant/80 mb-1.5 font-num">PERSONA</div>
+                          <p class="text-base font-semibold text-on-surface leading-relaxed mb-2">
+                            <span class="num-glow">犀利</span> ·
+                            <span class="num-glow">克制</span> ·
+                            <span class="num-glow">敢讲真话</span> ·
+                            有商业洞察但<span class="text-error line-through">不</span>爹味
+                          </p>
+                          <div class="grid grid-cols-2 gap-1.5 text-[11px]">
+                            <div class="flex items-center gap-1.5 text-on-surface-variant"><i data-lucide="check" class="w-3 h-3 text-primary"></i>有数据支撑</div>
+                            <div class="flex items-center gap-1.5 text-on-surface-variant"><i data-lucide="check" class="w-3 h-3 text-primary"></i>有反常识视角</div>
+                            <div class="flex items-center gap-1.5 text-on-surface-variant"><i data-lucide="check" class="w-3 h-3 text-primary"></i>句式短促有力</div>
+                            <div class="flex items-center gap-1.5 text-on-surface-variant"><i data-lucide="check" class="w-3 h-3 text-primary"></i>不端着不讨好</div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- 卡3：目标受众 -->
+                    <div class="card-base p-4 relative">
+                      <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center gap-2">
+                          <span class="badge-up">目标受众</span>
+                          <span class="text-[10px] text-on-surface-variant/80 font-num">DOC_03</span>
+                        </div>
+                        <div class="flex items-center gap-1">
+                          <button class="btn-edit-doc btn-glow w-7 h-7 rounded-md flex items-center justify-center text-on-surface-variant hover:text-primary transition-colors" data-id="doc-03" data-title="目标受众">
+                            <i data-lucide="square-pen" class="w-3.5 h-3.5"></i>
+                          </button>
+                          <button class="btn-version btn-glow w-7 h-7 rounded-md flex items-center justify-center text-on-surface-variant hover:text-primary transition-colors" data-id="doc-03" data-title="目标受众">
+                            <i data-lucide="history" class="w-3.5 h-3.5"></i>
+                          </button>
+                        </div>
+                      </div>
+                      <div class="flex items-start gap-3">
+                        <div class="shrink-0 w-9 h-9 rounded-md bg-primary-container border border-primary/30 flex items-center justify-center">
+                          <i data-lucide="users" class="w-4 h-4 text-primary"></i>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                          <div class="text-[10px] text-on-surface-variant/80 mb-1.5 font-num">AUDIENCE PROFILE</div>
+                          <p class="text-sm text-on-surface leading-relaxed mb-2">
+                            <span class="font-semibold">高决策力女性</span>，年龄 <span class="num-glow font-num">28-40</span>，城市新中产
+                          </p>
+                          <div class="space-y-1.5">
+                            <div class="flex items-start gap-2 text-[11px]">
+                              <span class="text-error shrink-0 w-10 font-num">痛 01</span>
+                              <span class="text-on-surface-variant">商业决策孤独，缺少同频对话者</span>
+                            </div>
+                            <div class="flex items-start gap-2 text-[11px]">
+                              <span class="text-error shrink-0 w-10 font-num">痛 02</span>
+                              <span class="text-on-surface-variant">被信息噪音淹没，难辨真伪</span>
+                            </div>
+                            <div class="flex items-start gap-2 text-[11px]">
+                              <span class="text-error shrink-0 w-10 font-num">痛 03</span>
+                              <span class="text-on-surface-variant">想突破又怕错失，决策成本高</span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- 卡4：内容禁区 -->
+                    <div class="card-base p-4 relative" style="border-color: rgba(255, 59, 92, 0.35);">
+                      <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center gap-2">
+                          <span class="badge-down">内容禁区</span>
+                          <span class="text-[10px] text-on-surface-variant/80 font-num">DOC_04</span>
+                        </div>
+                        <div class="flex items-center gap-1">
+                          <button class="btn-edit-doc btn-glow w-7 h-7 rounded-md flex items-center justify-center text-on-surface-variant hover:text-primary transition-colors" data-id="doc-04" data-title="内容禁区">
+                            <i data-lucide="square-pen" class="w-3.5 h-3.5"></i>
+                          </button>
+                          <button class="btn-version btn-glow w-7 h-7 rounded-md flex items-center justify-center text-on-surface-variant hover:text-primary transition-colors" data-id="doc-04" data-title="内容禁区">
+                            <i data-lucide="history" class="w-3.5 h-3.5"></i>
+                          </button>
+                        </div>
+                      </div>
+                      <div class="flex items-start gap-3">
+                        <div class="shrink-0 w-9 h-9 rounded-md flex items-center justify-center" style="background: rgba(255,59,92,0.12); border: 1px solid rgba(255,59,92,0.3);">
+                          <i data-lucide="ban" class="w-4 h-4 text-error"></i>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                          <div class="text-[10px] text-error mb-1.5 font-num">NEVER SAY</div>
+                          <div class="grid grid-cols-2 gap-1.5 text-[12px]">
+                            <div class="flex items-center gap-1.5 text-on-surface-variant"><i data-lucide="x" class="w-3 h-3 text-error shrink-0"></i>不鸡汤</div>
+                            <div class="flex items-center gap-1.5 text-on-surface-variant"><i data-lucide="x" class="w-3 h-3 text-error shrink-0"></i>不情绪煽动</div>
+                            <div class="flex items-center gap-1.5 text-on-surface-variant"><i data-lucide="x" class="w-3 h-3 text-error shrink-0"></i>不消费女性焦虑</div>
+                            <div class="flex items-center gap-1.5 text-on-surface-variant"><i data-lucide="x" class="w-3 h-3 text-error shrink-0"></i>不讲成功学</div>
+                            <div class="flex items-center gap-1.5 text-on-surface-variant"><i data-lucide="x" class="w-3 h-3 text-error shrink-0"></i>不端架子爹味</div>
+                            <div class="flex items-center gap-1.5 text-on-surface-variant"><i data-lucide="x" class="w-3 h-3 text-error shrink-0"></i>不晒奢靡生活</div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="deco-emoji" style="font-size: 56px;">🚫</div>
+                    </div>
+
+                    <!-- 卡5：内容公式 (全宽) -->
+                    <div class="card-base p-4 lg:col-span-2 relative">
+                      <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center gap-2">
+                          <span class="badge-up">内容公式</span>
+                          <span class="text-[10px] text-on-surface-variant/80 font-num">DOC_05</span>
+                        </div>
+                        <div class="flex items-center gap-1">
+                          <button class="btn-edit-doc btn-glow w-7 h-7 rounded-md flex items-center justify-center text-on-surface-variant hover:text-primary transition-colors" data-id="doc-05" data-title="内容公式">
+                            <i data-lucide="square-pen" class="w-3.5 h-3.5"></i>
+                          </button>
+                          <button class="btn-version btn-glow w-7 h-7 rounded-md flex items-center justify-center text-on-surface-variant hover:text-primary transition-colors" data-id="doc-05" data-title="内容公式">
+                            <i data-lucide="history" class="w-3.5 h-3.5"></i>
+                          </button>
+                        </div>
+                      </div>
+                      <div class="flex items-start gap-3">
+                        <div class="shrink-0 w-9 h-9 rounded-md bg-primary-container border border-primary/30 flex items-center justify-center">
+                          <i data-lucide="square-asterisk" class="w-4 h-4 text-primary"></i>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                          <div class="text-[10px] text-on-surface-variant/80 mb-2 font-num">EXPRESSION FORMULA</div>
+                          <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                            <div class="border-l-2 border-primary pl-3 py-1.5 bg-surface-container rounded-r-md">
+                              <div class="text-[10px] num-glow mb-1 font-num">FORMULA · 01</div>
+                              <div class="text-sm font-semibold text-on-surface mb-0.5">用数据和案例代替形容词</div>
+                              <div class="text-[11px] text-on-surface-variant">"GMV增长300%" &gt; "增长了很多"</div>
+                            </div>
+                            <div class="border-l-2 border-primary pl-3 py-1.5 bg-surface-container rounded-r-md">
+                              <div class="text-[10px] num-glow mb-1 font-num">FORMULA · 02</div>
+                              <div class="text-sm font-semibold text-on-surface mb-0.5">每篇至少1个反常识观点</div>
+                              <div class="text-[11px] text-on-surface-variant">"贵不是问题,贵且不值才是"</div>
+                            </div>
+                            <div class="border-l-2 border-primary pl-3 py-1.5 bg-surface-container rounded-r-md">
+                              <div class="text-[10px] num-glow mb-1 font-num">FORMULA · 03</div>
+                              <div class="text-sm font-semibold text-on-surface mb-0.5">结论先行,案例支撑</div>
+                              <div class="text-[11px] text-on-surface-variant">先给观点再给论证,不要铺垫</div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="deco-emoji" style="font-size: 64px;">✨</div>
+                    </div>
+                  </div>
+
+                  <!-- 底部信息 -->
+                  <div class="flex items-center justify-between text-[11px] text-on-surface-variant px-1 flex-wrap gap-2">
+                    <div class="flex items-center gap-4 flex-wrap">
+                      <span class="flex items-center gap-1.5"><i data-lucide="clock" class="w-3 h-3"></i>上次更新：<span class="text-on-surface font-num" id="brand-update-time">2024-12-20 14:32</span></span>
+                      <span class="flex items-center gap-1.5"><i data-lucide="user" class="w-3 h-3"></i>by <span class="text-on-surface">主理人</span></span>
+                    </div>
+                    <div class="flex items-center gap-3 flex-wrap">
+                      <span class="flex items-center gap-1.5"><span class="w-1.5 h-1.5 bg-primary rounded-full" style="box-shadow: 0 0 6px rgba(0,217,146,0.6);"></span>文档编号 <span class="font-num text-on-surface">KB-BRAND-001</span></span>
+                      <span class="flex items-center gap-1.5"><span class="status-dot status-online" style="width: 6px; height: 6px;"></span><span class="num-glow">已同步</span></span>
+                    </div>
+                  </div>
+                </section>
+
+                <!-- =================== Tab Pane: 人设语料 =================== -->
+                <section id="pane-persona" class="kb-tab-pane hidden space-y-4">
+                  <div class="grid grid-cols-1 lg:grid-cols-3 gap-3">
+
+                    <!-- 语气词卡 -->
+                    <div class="card-base p-4 relative">
+                      <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center gap-2">
+                          <i data-lucide="mic" class="w-4 h-4 text-primary"></i>
+                          <span class="badge-up">语气词</span>
+                        </div>
+                        <span class="text-[10px] num-glow font-num">23 条</span>
+                      </div>
+                      <div class="space-y-1.5 text-sm">
+                        <div class="flex items-start gap-2 p-2 bg-surface-container rounded-md border-l-2 border-primary">
+                          <span class="text-[10px] num-glow w-6 font-num">01</span>
+                          <div class="flex-1">
+                            <div class="text-on-surface">说白了</div>
+                            <div class="text-[11px] text-on-surface-variant">用于揭示真相</div>
+                          </div>
+                        </div>
+                        <div class="flex items-start gap-2 p-2 bg-surface-container rounded-md border-l-2 border-primary">
+                          <span class="text-[10px] num-glow w-6 font-num">02</span>
+                          <div class="flex-1">
+                            <div class="text-on-surface">真相是</div>
+                            <div class="text-[11px] text-on-surface-variant">用于结论先行</div>
+                          </div>
+                        </div>
+                        <div class="flex items-start gap-2 p-2 bg-surface-container rounded-md border-l-2 border-primary">
+                          <span class="text-[10px] num-glow w-6 font-num">03</span>
+                          <div class="flex-1">
+                            <div class="text-on-surface">我反而觉得</div>
+                            <div class="text-[11px] text-on-surface-variant">用于反常识观点</div>
+                          </div>
+                        </div>
+                        <div class="flex items-start gap-2 p-2 bg-surface-container rounded-md border-l-2 border-primary">
+                          <span class="text-[10px] num-glow w-6 font-num">04</span>
+                          <div class="flex-1">
+                            <div class="text-on-surface">数据告诉你</div>
+                            <div class="text-[11px] text-on-surface-variant">用于引用数据</div>
+                          </div>
+                        </div>
+                        <div class="flex items-start gap-2 p-2 bg-surface-container rounded-md border-l-2 border-primary">
+                          <span class="text-[10px] num-glow w-6 font-num">05</span>
+                          <div class="flex-1">
+                            <div class="text-on-surface">别误会</div>
+                            <div class="text-[11px] text-on-surface-variant">用于转折强调</div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- 招牌句式卡 -->
+                    <div class="card-base p-4 relative">
+                      <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center gap-2">
+                          <i data-lucide="quote" class="w-4 h-4 text-primary"></i>
+                          <span class="badge-up">招牌句式</span>
+                        </div>
+                        <span class="text-[10px] num-glow font-num">45 条</span>
+                      </div>
+                      <div class="space-y-2 text-sm">
+                        <div class="p-2.5 bg-surface-container border border-outline rounded-md text-[12px] leading-relaxed">"贵不是问题,<span class="num-glow">贵且不值</span>才是"</div>
+                        <div class="p-2.5 bg-surface-container border border-outline rounded-md text-[12px] leading-relaxed">"你以为是能力问题,其实是<span class="num-glow">规则问题</span>"</div>
+                        <div class="p-2.5 bg-surface-container border border-outline rounded-md text-[12px] leading-relaxed">"认知差才是最贵的<span class="num-glow">税</span>"</div>
+                        <div class="p-2.5 bg-surface-container border border-outline rounded-md text-[12px] leading-relaxed">"不是不能做,是<span class="num-glow">不该现在做</span>"</div>
+                        <div class="p-2.5 bg-surface-container border border-outline rounded-md text-[12px] leading-relaxed">"你赢了所有人,<span class="num-glow">唯独没赢自己</span>"</div>
+                      </div>
+                      <div class="deco-emoji" style="font-size: 64px;">💬</div>
+                    </div>
+
+                    <!-- 禁句卡 -->
+                    <div class="card-base p-4 relative" style="border-color: rgba(255, 59, 92, 0.35);">
+                      <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center gap-2">
+                          <i data-lucide="ban" class="w-4 h-4 text-error"></i>
+                          <span class="badge-down">禁句</span>
+                        </div>
+                        <span class="text-[10px] text-error font-num">60 条</span>
+                      </div>
+                      <div class="space-y-1.5 text-sm text-on-surface-variant">
+                        <div class="flex items-center gap-2 line-through"><i data-lucide="x" class="w-3 h-3 text-error shrink-0"></i>姐妹们冲鸭</div>
+                        <div class="flex items-center gap-2 line-through"><i data-lucide="x" class="w-3 h-3 text-error shrink-0"></i>建议所有女生都去学</div>
+                        <div class="flex items-center gap-2 line-through"><i data-lucide="x" class="w-3 h-3 text-error shrink-0"></i>女生要学会爱自己</div>
+                        <div class="flex items-center gap-2 line-through"><i data-lucide="x" class="w-3 h-3 text-error shrink-0"></i>女孩不该被定义</div>
+                        <div class="flex items-center gap-2 line-through"><i data-lucide="x" class="w-3 h-3 text-error shrink-0"></i>精致女孩的下午茶</div>
+                        <div class="flex items-center gap-2 line-through"><i data-lucide="x" class="w-3 h-3 text-error shrink-0"></i>女孩子要经济独立</div>
+                        <div class="flex items-center gap-2 line-through"><i data-lucide="x" class="w-3 h-3 text-error shrink-0"></i>我太懂你了姐妹</div>
+                      </div>
+                      <div class="deco-emoji" style="font-size: 64px;">🚫</div>
+                    </div>
+                  </div>
+
+                  <!-- 词汇频次 -->
+                  <div class="card-base p-4 relative">
+                    <div class="flex items-center justify-between mb-4">
+                      <div class="flex items-center gap-2">
+                        <span class="badge-up">词汇频次</span>
+                        <span class="text-[10px] text-on-surface-variant/80 font-num">近 90 天</span>
+                      </div>
+                      <div class="flex items-center gap-3 text-[10px] text-on-surface-variant">
+                        <span class="flex items-center gap-1"><span class="w-2 h-2 bg-primary rounded-sm" style="box-shadow: 0 0 6px rgba(0,217,146,0.6);"></span>高频</span>
+                        <span class="flex items-center gap-1"><span class="w-2 h-2 bg-on-surface-variant/40 rounded-sm"></span>低频</span>
+                      </div>
+                    </div>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-2 text-sm">
+                      <div class="flex items-center justify-between p-2.5 bg-surface-container rounded-md border border-outline">
+                        <span class="text-on-surface">商业本质</span>
+                        <span class="num-glow text-xs font-num font-bold">86 次</span>
+                      </div>
+                      <div class="flex items-center justify-between p-2.5 bg-surface-container rounded-md border border-outline">
+                        <span class="text-on-surface">认知差</span>
+                        <span class="num-glow text-xs font-num font-bold">72 次</span>
+                      </div>
+                      <div class="flex items-center justify-between p-2.5 bg-surface-container rounded-md border border-outline">
+                        <span class="text-on-surface">决策成本</span>
+                        <span class="num-glow text-xs font-num font-bold">64 次</span>
+                      </div>
+                      <div class="flex items-center justify-between p-2.5 bg-surface-container rounded-md border border-outline">
+                        <span class="text-on-surface">反常识</span>
+                        <span class="num-glow text-xs font-num font-bold">58 次</span>
+                      </div>
+                      <div class="flex items-center justify-between p-2.5 bg-surface-container rounded-md border border-outline">
+                        <span class="text-on-surface">信息噪音</span>
+                        <span class="num-glow text-xs font-num font-bold">47 次</span>
+                      </div>
+                      <div class="flex items-center justify-between p-2.5 bg-surface-container rounded-md border border-outline">
+                        <span class="text-on-surface">真实世界</span>
+                        <span class="text-on-surface-variant text-xs font-num">31 次</span>
+                      </div>
+                      <div class="flex items-center justify-between p-2.5 bg-surface-container rounded-md border border-outline">
+                        <span class="text-on-surface">数据说话</span>
+                        <span class="text-on-surface-variant text-xs font-num">28 次</span>
+                      </div>
+                      <div class="flex items-center justify-between p-2.5 bg-surface-container rounded-md border border-outline">
+                        <span class="text-on-surface">独立思考</span>
+                        <span class="text-on-surface-variant text-xs font-num">22 次</span>
+                      </div>
+                    </div>
+                    <div class="deco-emoji" style="font-size: 64px;">📈</div>
+                  </div>
+                </section>
+
+                <!-- =================== Tab Pane: 往期内容库 =================== -->
+                <section id="pane-archive" class="kb-tab-pane hidden space-y-4">
+
+                  <!-- 筛选条 -->
+                  <div class="card-base p-3">
+                    <div class="flex items-center gap-3 flex-wrap">
+                      <span class="text-[11px] text-on-surface-variant font-num">FILTER</span>
+                      <div id="archive-filter" class="flex items-center gap-1">
+                        <button data-filter="all" class="badge-up px-2.5 py-1 text-[11px]">全部</button>
+                        <button data-filter="hot" class="badge-flat px-2.5 py-1 text-[11px]">爆款 &gt;10w</button>
+                        <button data-filter="normal" class="badge-flat px-2.5 py-1 text-[11px]">常规</button>
+                        <button data-filter="low" class="badge-flat px-2.5 py-1 text-[11px]">低表现</button>
+                      </div>
+                      <div class="w-px h-5 bg-outline/50"></div>
+                      <div class="flex items-center gap-1.5">
+                        <i data-lucide="calendar" class="w-3.5 h-3.5 text-on-surface-variant"></i>
+                        <select id="archive-date" class="btn-glow bg-surface-container border border-outline text-[11px] text-on-surface rounded-md px-2 py-1 focus:outline-none transition-all">
+                          <option>近 30 天</option>
+                          <option selected>近 90 天</option>
+                          <option>近 6 个月</option>
+                          <option>2024 全年</option>
+                        </select>
+                      </div>
+                      <div class="flex items-center gap-1.5">
+                        <i data-lucide="arrow-up-down" class="w-3.5 h-3.5 text-on-surface-variant"></i>
+                        <select id="archive-sort" class="btn-glow bg-surface-container border border-outline text-[11px] text-on-surface rounded-md px-2 py-1 focus:outline-none transition-all">
+                          <option>按发布时间</option>
+                          <option>按曝光量</option>
+                          <option>按点赞量</option>
+                          <option>按互动率</option>
+                        </select>
+                      </div>
+                      <div class="flex-1"></div>
+                      <div class="flex items-center gap-2 text-[10px] text-on-surface-variant">
+                        <span>共 <span class="text-on-surface font-num">216</span> 篇</span>
+                        <span class="font-num">·</span>
+                        <span>已筛选 <span class="num-glow font-num" id="archive-count">6</span> 篇</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- 6 张往期内容卡 -->
+                  <div id="archive-grid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
+
+                    <!-- 卡片 1 - 爆款 -->
+                    <div class="archive-card card-base overflow-hidden cursor-pointer" data-tier="hot" data-title="为什么你的公司活不过第三年" data-date="2024-12-15" data-views="286000" data-likes="12400" data-erate="4.3" data-image="https://images.unsplash.com/photo-1556761175-5973dc0f32e7?w=600" data-category="商业科技" data-summary="三个死亡信号,直击老板焦虑。结论→3个信号→案例→行动建议的经典结构,适合所有面临增长瓶颈的创业者。">
+                      <div class="relative aspect-[4/3] overflow-hidden bg-surface-container">
+                        <img src="https://images.unsplash.com/photo-1556761175-5973dc0f32e7?w=600" alt="商业会议场景" data-category="商业科技" class="w-full h-full object-cover" />
+                        <div class="absolute top-2 left-2 px-2 py-0.5 badge-up text-[10px] font-medium">爆款</div>
+                        <div class="absolute top-2 right-2 px-2 py-0.5 bg-black/70 text-on-surface text-[10px] font-num rounded">#商业</div>
+                      </div>
+                      <div class="p-3.5">
+                        <h4 class="text-sm font-semibold text-on-surface leading-snug mb-2 line-clamp-2">为什么你的公司活不过第三年?这三个死亡信号被我讲透了</h4>
+                        <div class="flex items-center justify-between text-[11px] text-on-surface-variant mb-2.5">
+                          <span class="flex items-center gap-1 font-num"><i data-lucide="calendar" class="w-3 h-3"></i>2024-12-15</span>
+                          <span class="flex items-center gap-1.5">
+                            <span class="flex items-center gap-0.5"><i data-lucide="eye" class="w-3 h-3"></i><span class="text-on-surface font-num">286K</span></span>
+                            <span class="flex items-center gap-0.5"><i data-lucide="heart" class="w-3 h-3"></i><span class="num-glow font-num">12.4K</span></span>
+                          </span>
+                        </div>
+                        <div class="flex items-center gap-1.5">
+                          <span class="badge-up text-[10px]">互动率 <span class="font-num">4.3%</span></span>
+                          <span class="badge-flat text-[10px]">收藏 <span class="font-num">3.2K</span></span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- 卡片 2 - 爆款 -->
+                    <div class="archive-card card-base overflow-hidden cursor-pointer" data-tier="hot" data-title="30岁女性管理者的隐形困境" data-date="2024-12-08" data-views="412000" data-likes="28700" data-erate="6.9" data-image="https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?w=600" data-category="人物" data-summary="年龄+身份+隐形困境,精准受众。现象→原因→共鸣点→反常识结论,情绪曲线:共鸣→愤怒→释然。">
+                      <div class="relative aspect-[4/3] overflow-hidden bg-surface-container">
+                        <img src="https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?w=600" alt="女性领导者" data-category="人物" class="w-full h-full object-cover" />
+                        <div class="absolute top-2 left-2 px-2 py-0.5 badge-up text-[10px] font-medium">爆款</div>
+                        <div class="absolute top-2 right-2 px-2 py-0.5 bg-black/70 text-on-surface text-[10px] font-num rounded">#认知</div>
+                      </div>
+                      <div class="p-3.5">
+                        <h4 class="text-sm font-semibold text-on-surface leading-snug mb-2 line-clamp-2">30岁女性管理者的"隐形困境":你越能干,周围人越想看你失败</h4>
+                        <div class="flex items-center justify-between text-[11px] text-on-surface-variant mb-2.5">
+                          <span class="flex items-center gap-1 font-num"><i data-lucide="calendar" class="w-3 h-3"></i>2024-12-08</span>
+                          <span class="flex items-center gap-1.5">
+                            <span class="flex items-center gap-0.5"><i data-lucide="eye" class="w-3 h-3"></i><span class="text-on-surface font-num">412K</span></span>
+                            <span class="flex items-center gap-0.5"><i data-lucide="heart" class="w-3 h-3"></i><span class="num-glow font-num">28.7K</span></span>
+                          </span>
+                        </div>
+                        <div class="flex items-center gap-1.5">
+                          <span class="badge-up text-[10px]">互动率 <span class="font-num">6.9%</span></span>
+                          <span class="badge-flat text-[10px]">收藏 <span class="font-num">5.8K</span></span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- 卡片 3 - 常规 -->
+                    <div class="archive-card card-base overflow-hidden cursor-pointer" data-tier="normal" data-title="拆解3个年入千万女性IP" data-date="2024-12-01" data-views="198000" data-likes="9600" data-erate="4.8" data-image="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=600" data-category="商业科技" data-summary="拆解+具体数字,满足好奇心。3个并列案例+共性总结,清晰分段,适合快速阅读。">
+                      <div class="relative aspect-[4/3] overflow-hidden bg-surface-container">
+                        <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=600" alt="商业图表" data-category="商业科技" class="w-full h-full object-cover" />
+                        <div class="absolute top-2 right-2 px-2 py-0.5 bg-black/70 text-on-surface text-[10px] font-num rounded">#案例</div>
+                      </div>
+                      <div class="p-3.5">
+                        <h4 class="text-sm font-semibold text-on-surface leading-snug mb-2 line-clamp-2">拆解3个年入千万女性IP:她们做对了什么?</h4>
+                        <div class="flex items-center justify-between text-[11px] text-on-surface-variant mb-2.5">
+                          <span class="flex items-center gap-1 font-num"><i data-lucide="calendar" class="w-3 h-3"></i>2024-12-01</span>
+                          <span class="flex items-center gap-1.5">
+                            <span class="flex items-center gap-0.5"><i data-lucide="eye" class="w-3 h-3"></i><span class="text-on-surface font-num">198K</span></span>
+                            <span class="flex items-center gap-0.5"><i data-lucide="heart" class="w-3 h-3"></i><span class="text-on-surface font-num">9.6K</span></span>
+                          </span>
+                        </div>
+                        <div class="flex items-center gap-1.5">
+                          <span class="badge-flat text-[10px]">互动率 <span class="font-num">4.8%</span></span>
+                          <span class="badge-flat text-[10px]">收藏 <span class="font-num">2.4K</span></span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- 卡片 4 - 爆款 -->
+                    <div class="archive-card card-base overflow-hidden cursor-pointer" data-tier="hot" data-title="从月薪8千到年入7位数的女性" data-date="2024-11-24" data-views="356000" data-likes="18200" data-erate="5.1" data-image="https://images.unsplash.com/photo-1551836022-d5d88e9218df?w=600" data-category="人物" data-summary="数字对比+性别,激发向往。对比→误区→真相→方法,3个阶段拆解,信息密度大。">
+                      <div class="relative aspect-[4/3] overflow-hidden bg-surface-container">
+                        <img src="https://images.unsplash.com/photo-1551836022-d5d88e9218df?w=600" alt="女性职场" data-category="人物" class="w-full h-full object-cover" />
+                        <div class="absolute top-2 left-2 px-2 py-0.5 badge-up text-[10px] font-medium">爆款</div>
+                        <div class="absolute top-2 right-2 px-2 py-0.5 bg-black/70 text-on-surface text-[10px] font-num rounded">#人物</div>
+                      </div>
+                      <div class="p-3.5">
+                        <h4 class="text-sm font-semibold text-on-surface leading-snug mb-2 line-clamp-2">从月薪8千到年入7位数的女性:我做对了哪3件事</h4>
+                        <div class="flex items-center justify-between text-[11px] text-on-surface-variant mb-2.5">
+                          <span class="flex items-center gap-1 font-num"><i data-lucide="calendar" class="w-3 h-3"></i>2024-11-24</span>
+                          <span class="flex items-center gap-1.5">
+                            <span class="flex items-center gap-0.5"><i data-lucide="eye" class="w-3 h-3"></i><span class="text-on-surface font-num">356K</span></span>
+                            <span class="flex items-center gap-0.5"><i data-lucide="heart" class="w-3 h-3"></i><span class="num-glow font-num">18.2K</span></span>
+                          </span>
+                        </div>
+                        <div class="flex items-center gap-1.5">
+                          <span class="badge-up text-[10px]">互动率 <span class="font-num">5.1%</span></span>
+                          <span class="badge-flat text-[10px]">收藏 <span class="font-num">4.5K</span></span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- 卡片 5 - 常规 -->
+                    <div class="archive-card card-base overflow-hidden cursor-pointer" data-tier="normal" data-title="创业第2年我明白的事" data-date="2024-11-17" data-views="142000" data-likes="6800" data-erate="4.7" data-image="https://images.unsplash.com/photo-1521737711867-e3b97375f902?w=600" data-category="商业科技" data-summary="合伙人不怕分钱少,就怕规则模糊。亲历案例+具体方法,适合小微企业创始人。">
+                      <div class="relative aspect-[4/3] overflow-hidden bg-surface-container">
+                        <img src="https://images.unsplash.com/photo-1521737711867-e3b97375f902?w=600" alt="创业团队" data-category="商业科技" class="w-full h-full object-cover" />
+                        <div class="absolute top-2 right-2 px-2 py-0.5 bg-black/70 text-on-surface text-[10px] font-num rounded">#创业</div>
+                      </div>
+                      <div class="p-3.5">
+                        <h4 class="text-sm font-semibold text-on-surface leading-snug mb-2 line-clamp-2">创业第2年我才明白:合伙人不怕分钱少,就怕规则模糊</h4>
+                        <div class="flex items-center justify-between text-[11px] text-on-surface-variant mb-2.5">
+                          <span class="flex items-center gap-1 font-num"><i data-lucide="calendar" class="w-3 h-3"></i>2024-11-17</span>
+                          <span class="flex items-center gap-1.5">
+                            <span class="flex items-center gap-0.5"><i data-lucide="eye" class="w-3 h-3"></i><span class="text-on-surface font-num">142K</span></span>
+                            <span class="flex items-center gap-0.5"><i data-lucide="heart" class="w-3 h-3"></i><span class="text-on-surface font-num">6.8K</span></span>
+                          </span>
+                        </div>
+                        <div class="flex items-center gap-1.5">
+                          <span class="badge-flat text-[10px]">互动率 <span class="font-num">4.7%</span></span>
+                          <span class="badge-flat text-[10px]">收藏 <span class="font-num">1.8K</span></span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- 卡片 6 - 低表现 -->
+                    <div class="archive-card card-base overflow-hidden cursor-pointer" data-tier="low" data-title="反直觉谈判技巧" data-date="2024-11-10" data-views="98000" data-likes="5200" data-erate="5.3" data-image="https://images.unsplash.com/photo-1573164713988-8665fc963095?w=600" data-category="商业科技" data-summary="3个反直觉谈判技巧,客户反而更愿意为你买单。技巧清单+真实场景,适合B端销售。">
+                      <div class="relative aspect-[4/3] overflow-hidden bg-surface-container">
+                        <img src="https://images.unsplash.com/photo-1573164713988-8665fc963095?w=600" alt="商务谈判" data-category="商业科技" class="w-full h-full object-cover" />
+                        <div class="absolute top-2 right-2 px-2 py-0.5 bg-black/70 text-on-surface text-[10px] font-num rounded">#谈判</div>
+                      </div>
+                      <div class="p-3.5">
+                        <h4 class="text-sm font-semibold text-on-surface leading-snug mb-2 line-clamp-2">3个反直觉谈判技巧:用沉默让客户主动加价</h4>
+                        <div class="flex items-center justify-between text-[11px] text-on-surface-variant mb-2.5">
+                          <span class="flex items-center gap-1 font-num"><i data-lucide="calendar" class="w-3 h-3"></i>2024-11-10</span>
+                          <span class="flex items-center gap-1.5">
+                            <span class="flex items-center gap-0.5"><i data-lucide="eye" class="w-3 h-3"></i><span class="text-on-surface font-num">98K</span></span>
+                            <span class="flex items-center gap-0.5"><i data-lucide="heart" class="w-3 h-3"></i><span class="text-on-surface font-num">5.2K</span></span>
+                          </span>
+                        </div>
+                        <div class="flex items-center gap-1.5">
+                          <span class="badge-warn text-[10px]">互动率 <span class="font-num">5.3%</span></span>
+                          <span class="badge-flat text-[10px]">收藏 <span class="font-num">1.2K</span></span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </section>
+
+                <!-- =================== Tab Pane: 对标账号分析 =================== -->
+                <section id="pane-benchmark" class="kb-tab-pane hidden space-y-4">
+
+                  <!-- 概览 -->
+                  <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                    <div class="card-base p-3.5 card-click-flash cursor-pointer" data-kpi="bench-total">
+                      <div class="text-[10px] text-on-surface-variant/80 mb-1.5 flex items-center gap-1.5 font-num">
+                        <i data-lucide="users" class="w-3 h-3"></i>BENCH COUNT
+                      </div>
+                      <div class="flex items-baseline gap-1.5">
+                        <span class="num-metal text-2xl font-bold font-num">12</span>
+                        <span class="text-xs text-on-surface-variant">个</span>
+                      </div>
+                    </div>
+                    <div class="card-base p-3.5 card-click-flash cursor-pointer" data-kpi="bench-s">
+                      <div class="text-[10px] text-on-surface-variant/80 mb-1.5 flex items-center gap-1.5 font-num">
+                        <i data-lucide="star" class="w-3 h-3"></i>S-TIER
+                      </div>
+                      <div class="flex items-baseline gap-1.5">
+                        <span class="num-glow text-2xl font-bold font-num">04</span>
+                        <span class="text-xs text-on-surface-variant">S 级</span>
+                      </div>
+                    </div>
+                    <div class="card-base p-3.5 card-click-flash cursor-pointer" data-kpi="bench-viral">
+                      <div class="text-[10px] text-on-surface-variant/80 mb-1.5 flex items-center gap-1.5 font-num">
+                        <i data-lucide="flame" class="w-3 h-3"></i>VIRAL HITS
+                      </div>
+                      <div class="flex items-baseline gap-1.5">
+                        <span class="num-metal text-2xl font-bold font-num">47</span>
+                        <span class="text-xs text-on-surface-variant">篇</span>
+                      </div>
+                    </div>
+                    <div class="card-base p-3.5 card-click-flash cursor-pointer" data-kpi="bench-update">
+                      <div class="text-[10px] text-on-surface-variant/80 mb-1.5 flex items-center gap-1.5 font-num">
+                        <i data-lucide="clock" class="w-3 h-3"></i>LAST UPDATE
+                      </div>
+                      <div class="flex items-baseline gap-1.5">
+                        <span class="num-glow text-base font-bold font-num">12-18</span>
+                        <span class="text-xs text-on-surface-variant">3 天前</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- 4 张对标账号卡 -->
+                  <div class="grid grid-cols-1 lg:grid-cols-2 gap-3">
+
+                    <!-- 账号 1 -->
+                    <div class="benchmark-card card-base p-4 relative">
+                      <div class="flex items-start gap-3 mb-3">
+                        <div class="relative shrink-0 w-12 h-12 rounded-full flex items-center justify-center text-on-surface text-base font-bold border border-primary/40" style="background: linear-gradient(135deg, rgba(0,217,146,0.2), rgba(13,13,16,1));">
+                          幂
+                          <div class="absolute -bottom-0.5 -right-0.5 px-1.5 py-0.5 badge-up text-[9px] font-bold rounded-full">S</div>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                          <div class="flex items-center gap-2 mb-1">
+                            <h4 class="text-base font-bold text-on-surface">幂姐说商业</h4>
+                            <span class="text-[10px] text-on-surface-variant/80 font-num">@mijie_biz</span>
+                          </div>
+                          <div class="flex items-center gap-3 text-[11px] text-on-surface-variant mb-1.5 flex-wrap">
+                            <span class="flex items-center gap-1"><i data-lucide="users" class="w-3 h-3"></i><span class="text-on-surface font-num">2.8M</span></span>
+                            <span class="flex items-center gap-1"><i data-lucide="file-text" class="w-3 h-3"></i><span class="text-on-surface font-num">1,240</span></span>
+                            <span class="flex items-center gap-1"><i data-lucide="heart" class="w-3 h-3"></i><span class="text-on-surface font-num">42M</span></span>
+                          </div>
+                          <div class="text-[11px] text-on-surface-variant">内容方向：女性商业思维 · 商业心理学 · 案例拆解</div>
+                        </div>
+                        <button class="btn-add-bench btn-glow w-8 h-8 rounded-md flex items-center justify-center border border-outline text-on-surface-variant hover:text-primary transition-colors shrink-0" data-name="幂姐说商业" title="添加监控">
+                          <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+                        </button>
+                      </div>
+                      <div class="border-t border-outline/50 pt-2.5">
+                        <div class="text-[10px] num-glow mb-2 font-num">VIRAL DNA</div>
+                        <div class="grid grid-cols-2 gap-1.5 text-[11px]">
+                          <div class="flex items-center gap-1.5 text-on-surface-variant"><span class="text-primary">·</span>标题用反问句</div>
+                          <div class="flex items-center gap-1.5 text-on-surface-variant"><span class="text-primary">·</span>3 个数据开篇</div>
+                          <div class="flex items-center gap-1.5 text-on-surface-variant"><span class="text-primary">·</span>个人故事+商业</div>
+                          <div class="flex items-center gap-1.5 text-on-surface-variant"><span class="text-primary">·</span>案例 3-5 个</div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- 账号 2 -->
+                    <div class="benchmark-card card-base p-4 relative">
+                      <div class="flex items-start gap-3 mb-3">
+                        <div class="relative shrink-0 w-12 h-12 rounded-full flex items-center justify-center text-on-surface text-base font-bold border border-primary/40" style="background: linear-gradient(135deg, rgba(0,217,146,0.2), rgba(13,13,16,1));">
+                          兰
+                          <div class="absolute -bottom-0.5 -right-0.5 px-1.5 py-0.5 badge-up text-[9px] font-bold rounded-full">S</div>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                          <div class="flex items-center gap-2 mb-1">
+                            <h4 class="text-base font-bold text-on-surface">兰姐商业观察</h4>
+                            <span class="text-[10px] text-on-surface-variant/80 font-num">@lanjie_obs</span>
+                          </div>
+                          <div class="flex items-center gap-3 text-[11px] text-on-surface-variant mb-1.5 flex-wrap">
+                            <span class="flex items-center gap-1"><i data-lucide="users" class="w-3 h-3"></i><span class="text-on-surface font-num">1.5M</span></span>
+                            <span class="flex items-center gap-1"><i data-lucide="file-text" class="w-3 h-3"></i><span class="text-on-surface font-num">680</span></span>
+                            <span class="flex items-center gap-1"><i data-lucide="heart" class="w-3 h-3"></i><span class="text-on-surface font-num">28M</span></span>
+                          </div>
+                          <div class="text-[11px] text-on-surface-variant">内容方向：商业现象 · 行业内幕 · 深度长文</div>
+                        </div>
+                        <button class="btn-add-bench btn-glow w-8 h-8 rounded-md flex items-center justify-center border border-outline text-on-surface-variant hover:text-primary transition-colors shrink-0" data-name="兰姐商业观察" title="添加监控">
+                          <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+                        </button>
+                      </div>
+                      <div class="border-t border-outline/50 pt-2.5">
+                        <div class="text-[10px] num-glow mb-2 font-num">VIRAL DNA</div>
+                        <div class="grid grid-cols-2 gap-1.5 text-[11px]">
+                          <div class="flex items-center gap-1.5 text-on-surface-variant"><span class="text-primary">·</span>内幕式钩子</div>
+                          <div class="flex items-center gap-1.5 text-on-surface-variant"><span class="text-primary">·</span>配图 3-6 张</div>
+                          <div class="flex items-center gap-1.5 text-on-surface-variant"><span class="text-primary">·</span>数字+百分比</div>
+                          <div class="flex items-center gap-1.5 text-on-surface-variant"><span class="text-primary">·</span>3000 字长文</div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- 账号 3 -->
+                    <div class="benchmark-card card-base p-4 relative">
+                      <div class="flex items-start gap-3 mb-3">
+                        <div class="relative shrink-0 w-12 h-12 rounded-full flex items-center justify-center text-on-surface text-base font-bold border border-primary/40" style="background: linear-gradient(135deg, rgba(0,217,146,0.2), rgba(13,13,16,1));">
+                          初
+                          <div class="absolute -bottom-0.5 -right-0.5 px-1.5 py-0.5 badge-up text-[9px] font-bold rounded-full">S</div>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                          <div class="flex items-center gap-2 mb-1">
+                            <h4 class="text-base font-bold text-on-surface">初夏商业笔记</h4>
+                            <span class="text-[10px] text-on-surface-variant/80 font-num">@chuxia_biz</span>
+                          </div>
+                          <div class="flex items-center gap-3 text-[11px] text-on-surface-variant mb-1.5 flex-wrap">
+                            <span class="flex items-center gap-1"><i data-lucide="users" class="w-3 h-3"></i><span class="text-on-surface font-num">890K</span></span>
+                            <span class="flex items-center gap-1"><i data-lucide="file-text" class="w-3 h-3"></i><span class="text-on-surface font-num">520</span></span>
+                            <span class="flex items-center gap-1"><i data-lucide="heart" class="w-3 h-3"></i><span class="text-on-surface font-num">18M</span></span>
+                          </div>
+                          <div class="text-[11px] text-on-surface-variant">内容方向：女性高管 · 升职加薪 · 谈判技巧</div>
+                        </div>
+                        <button class="btn-add-bench btn-glow w-8 h-8 rounded-md flex items-center justify-center border border-outline text-on-surface-variant hover:text-primary transition-colors shrink-0" data-name="初夏商业笔记" title="添加监控">
+                          <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+                        </button>
+                      </div>
+                      <div class="border-t border-outline/50 pt-2.5">
+                        <div class="text-[10px] num-glow mb-2 font-num">VIRAL DNA</div>
+                        <div class="grid grid-cols-2 gap-1.5 text-[11px]">
+                          <div class="flex items-center gap-1.5 text-on-surface-variant"><span class="text-primary">·</span>职场情景剧</div>
+                          <div class="flex items-center gap-1.5 text-on-surface-variant"><span class="text-primary">·</span>金句结尾</div>
+                          <div class="flex items-center gap-1.5 text-on-surface-variant"><span class="text-primary">·</span>对话体</div>
+                          <div class="flex items-center gap-1.5 text-on-surface-variant"><span class="text-primary">·</span>情绪+方法</div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- 账号 4 -->
+                    <div class="benchmark-card card-base p-4 relative">
+                      <div class="flex items-start gap-3 mb-3">
+                        <div class="relative shrink-0 w-12 h-12 rounded-full flex items-center justify-center text-on-surface text-base font-bold border border-primary/40" style="background: linear-gradient(135deg, rgba(0,217,146,0.2), rgba(13,13,16,1));">
+                          沈
+                          <div class="absolute -bottom-0.5 -right-0.5 px-1.5 py-0.5 badge-up text-[9px] font-bold rounded-full">S</div>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                          <div class="flex items-center gap-2 mb-1">
+                            <h4 class="text-base font-bold text-on-surface">沈老师讲商业</h4>
+                            <span class="text-[10px] text-on-surface-variant/80 font-num">@shen_biz</span>
+                          </div>
+                          <div class="flex items-center gap-3 text-[11px] text-on-surface-variant mb-1.5 flex-wrap">
+                            <span class="flex items-center gap-1"><i data-lucide="users" class="w-3 h-3"></i><span class="text-on-surface font-num">620K</span></span>
+                            <span class="flex items-center gap-1"><i data-lucide="file-text" class="w-3 h-3"></i><span class="text-on-surface font-num">340</span></span>
+                            <span class="flex items-center gap-1"><i data-lucide="heart" class="w-3 h-3"></i><span class="text-on-surface font-num">12M</span></span>
+                          </div>
+                          <div class="text-[11px] text-on-surface-variant">内容方向：商业模型 · 财务基础 · 创业避坑</div>
+                        </div>
+                        <button class="btn-add-bench btn-glow w-8 h-8 rounded-md flex items-center justify-center border border-outline text-on-surface-variant hover:text-primary transition-colors shrink-0" data-name="沈老师讲商业" title="添加监控">
+                          <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+                        </button>
+                      </div>
+                      <div class="border-t border-outline/50 pt-2.5">
+                        <div class="text-[10px] num-glow mb-2 font-num">VIRAL DNA</div>
+                        <div class="grid grid-cols-2 gap-1.5 text-[11px]">
+                          <div class="flex items-center gap-1.5 text-on-surface-variant"><span class="text-primary">·</span>白板手写</div>
+                          <div class="flex items-center gap-1.5 text-on-surface-variant"><span class="text-primary">·</span>模型图解</div>
+                          <div class="flex items-center gap-1.5 text-on-surface-variant"><span class="text-primary">·</span>10-15 分钟</div>
+                          <div class="flex items-center gap-1.5 text-on-surface-variant"><span class="text-primary">·</span>工具清单</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- 定位矩阵 -->
+                  <div class="card-base p-4 relative">
+                    <div class="flex items-center justify-between mb-4">
+                      <div class="flex items-center gap-2">
+                        <span class="badge-up">定位矩阵</span>
+                        <span class="text-[10px] text-on-surface-variant/80">对标账号在商业深度与内容娱乐性两个维度的分布</span>
+                      </div>
+                      <span class="text-[10px] text-on-surface-variant/80 font-num">X = DEPTH · Y = ENTERTAINMENT</span>
+                    </div>
+                    <div class="relative h-56 bg-surface-container border border-outline rounded-md overflow-hidden">
+                      <div class="absolute inset-0 rounded-md" style="background-image: linear-gradient(rgba(0,217,146,0.06) 1px, transparent 1px), linear-gradient(90deg, rgba(0,217,146,0.06) 1px, transparent 1px); background-size: 25% 25%;"></div>
+                      <div class="absolute top-1/2 left-0 right-0 h-px bg-outline/50"></div>
+                      <div class="absolute left-1/2 top-0 bottom-0 w-px bg-outline/50"></div>
+                      <div class="absolute" style="left: 72%; top: 28%;">
+                        <div class="relative">
+                          <div class="w-3.5 h-3.5 bg-primary rotate-45" style="box-shadow: 0 0 10px rgba(0,217,146,0.7);"></div>
+                          <div class="absolute left-5 top-0.5 whitespace-nowrap text-[10px] num-glow font-bold">咸聊AI（你）</div>
+                        </div>
+                      </div>
+                      <div class="absolute" style="left: 78%; top: 22%;">
+                        <div class="w-2.5 h-2.5 bg-on-surface rounded-full"></div>
+                        <div class="absolute left-4 -top-1 whitespace-nowrap text-[10px] text-on-surface">幂姐说商业</div>
+                      </div>
+                      <div class="absolute" style="left: 65%; top: 38%;">
+                        <div class="w-2.5 h-2.5 bg-on-surface rounded-full"></div>
+                        <div class="absolute left-4 -top-1 whitespace-nowrap text-[10px] text-on-surface">兰姐商业观察</div>
+                      </div>
+                      <div class="absolute" style="left: 38%; top: 60%;">
+                        <div class="w-2.5 h-2.5 bg-on-surface rounded-full"></div>
+                        <div class="absolute left-4 -top-1 whitespace-nowrap text-[10px] text-on-surface">初夏商业笔记</div>
+                      </div>
+                      <div class="absolute" style="left: 80%; top: 70%;">
+                        <div class="w-2.5 h-2.5 bg-on-surface rounded-full"></div>
+                        <div class="absolute left-4 -top-1 whitespace-nowrap text-[10px] text-on-surface">沈老师讲商业</div>
+                      </div>
+                      <div class="absolute top-2 left-2 text-[9px] text-on-surface-variant/60 font-num">DEEP · SERIOUS</div>
+                      <div class="absolute top-2 right-2 text-[9px] text-on-surface-variant/60 font-num">DEEP · CASUAL</div>
+                      <div class="absolute bottom-2 left-2 text-[9px] text-on-surface-variant/60 font-num">SHALLOW · SERIOUS</div>
+                      <div class="absolute bottom-2 right-2 text-[9px] text-on-surface-variant/60 font-num">SHALLOW · CASUAL</div>
+                    </div>
+                    <div class="deco-emoji" style="font-size: 56px;">🎯</div>
+                  </div>
+                </section>
+
+                <!-- =================== Tab Pane: 爆款拆解 =================== -->
+                <section id="pane-viral" class="kb-tab-pane hidden space-y-4">
+                  <div class="grid grid-cols-1 lg:grid-cols-2 gap-3">
+
+                    <!-- 爆款 1 -->
+                    <div class="card-base p-4 relative">
+                      <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center gap-2">
+                          <span class="badge-up">爆款 <span class="font-num">001</span></span>
+                          <span class="text-[10px] text-on-surface-variant/80 font-num">2024-12-15</span>
+                        </div>
+                        <span class="text-[10px] num-glow font-num font-bold">286K 曝光</span>
+                      </div>
+                      <h4 class="text-base font-semibold text-on-surface mb-3">"为什么你的公司活不过第三年?"</h4>
+                      <div class="space-y-2 text-sm">
+                        <div class="flex gap-2"><span class="num-glow shrink-0 w-10 text-[10px] mt-0.5 font-num">HOOK</span><span class="text-on-surface">疑问句+死亡信号,直击老板焦虑</span></div>
+                        <div class="flex gap-2"><span class="num-glow shrink-0 w-10 text-[10px] mt-0.5 font-num">FLOW</span><span class="text-on-surface">结论→3个信号→案例→行动建议</span></div>
+                        <div class="flex gap-2"><span class="num-glow shrink-0 w-10 text-[10px] mt-0.5 font-num">MOOD</span><span class="text-on-surface">焦虑→顿悟→行动</span></div>
+                        <div class="flex gap-2"><span class="num-glow shrink-0 w-10 text-[10px] mt-0.5 font-num">PACE</span><span class="text-on-surface">短句+数字+反问,3秒抓注意力</span></div>
+                      </div>
+                    </div>
+
+                    <!-- 爆款 2 -->
+                    <div class="card-base p-4 relative">
+                      <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center gap-2">
+                          <span class="badge-up">爆款 <span class="font-num">002</span></span>
+                          <span class="text-[10px] text-on-surface-variant/80 font-num">2024-12-08</span>
+                        </div>
+                        <span class="text-[10px] num-glow font-num font-bold">412K 曝光</span>
+                      </div>
+                      <h4 class="text-base font-semibold text-on-surface mb-3">"30岁女性管理者的'隐形困境'"</h4>
+                      <div class="space-y-2 text-sm">
+                        <div class="flex gap-2"><span class="num-glow shrink-0 w-10 text-[10px] mt-0.5 font-num">HOOK</span><span class="text-on-surface">年龄+身份+隐形困境,精准受众</span></div>
+                        <div class="flex gap-2"><span class="num-glow shrink-0 w-10 text-[10px] mt-0.5 font-num">FLOW</span><span class="text-on-surface">现象→原因→共鸣点→反常识结论</span></div>
+                        <div class="flex gap-2"><span class="num-glow shrink-0 w-10 text-[10px] mt-0.5 font-num">MOOD</span><span class="text-on-surface">共鸣→愤怒→释然</span></div>
+                        <div class="flex gap-2"><span class="num-glow shrink-0 w-10 text-[10px] mt-0.5 font-num">PACE</span><span class="text-on-surface">案例密度高,每段1个真实场景</span></div>
+                      </div>
+                    </div>
+
+                    <!-- 爆款 3 -->
+                    <div class="card-base p-4 relative">
+                      <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center gap-2">
+                          <span class="badge-up">爆款 <span class="font-num">003</span></span>
+                          <span class="text-[10px] text-on-surface-variant/80 font-num">2024-11-24</span>
+                        </div>
+                        <span class="text-[10px] num-glow font-num font-bold">356K 曝光</span>
+                      </div>
+                      <h4 class="text-base font-semibold text-on-surface mb-3">"从月薪8千到年入7位数的女性"</h4>
+                      <div class="space-y-2 text-sm">
+                        <div class="flex gap-2"><span class="num-glow shrink-0 w-10 text-[10px] mt-0.5 font-num">HOOK</span><span class="text-on-surface">数字对比+性别,激发向往</span></div>
+                        <div class="flex gap-2"><span class="num-glow shrink-0 w-10 text-[10px] mt-0.5 font-num">FLOW</span><span class="text-on-surface">对比→误区→真相→方法</span></div>
+                        <div class="flex gap-2"><span class="num-glow shrink-0 w-10 text-[10px] mt-0.5 font-num">MOOD</span><span class="text-on-surface">羡慕→挫败→希望</span></div>
+                        <div class="flex gap-2"><span class="num-glow shrink-0 w-10 text-[10px] mt-0.5 font-num">PACE</span><span class="text-on-surface">3个阶段拆解,信息密度大</span></div>
+                      </div>
+                    </div>
+
+                    <!-- 爆款 4 -->
+                    <div class="card-base p-4 relative">
+                      <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center gap-2">
+                          <span class="badge-up">爆款 <span class="font-num">004</span></span>
+                          <span class="text-[10px] text-on-surface-variant/80 font-num">2024-12-01</span>
+                        </div>
+                        <span class="text-[10px] num-glow font-num font-bold">198K 曝光</span>
+                      </div>
+                      <h4 class="text-base font-semibold text-on-surface mb-3">"拆解3个年入千万女性IP"</h4>
+                      <div class="space-y-2 text-sm">
+                        <div class="flex gap-2"><span class="num-glow shrink-0 w-10 text-[10px] mt-0.5 font-num">HOOK</span><span class="text-on-surface">"拆解"+具体数字,满足好奇心</span></div>
+                        <div class="flex gap-2"><span class="num-glow shrink-0 w-10 text-[10px] mt-0.5 font-num">FLOW</span><span class="text-on-surface">3个并列案例+共性总结</span></div>
+                        <div class="flex gap-2"><span class="num-glow shrink-0 w-10 text-[10px] mt-0.5 font-num">MOOD</span><span class="text-on-surface">好奇→认同→行动</span></div>
+                        <div class="flex gap-2"><span class="num-glow shrink-0 w-10 text-[10px] mt-0.5 font-num">PACE</span><span class="text-on-surface">清晰分段,适合快速阅读</span></div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- 共性规律总结 -->
+                  <div class="card-base p-4 relative">
+                    <div class="flex items-center gap-2 mb-3">
+                      <span class="badge-up">共性规律</span>
+                      <span class="text-[10px] text-on-surface-variant/80">从以上爆款中提炼的可复用公式</span>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                      <div class="border-l-2 border-primary pl-3 py-1.5 bg-surface-container rounded-r-md">
+                        <div class="text-[10px] num-glow mb-1 font-num">FORMULA · 01</div>
+                        <div class="text-sm font-semibold text-on-surface mb-0.5">数字+身份+反常识</div>
+                        <div class="text-[11px] text-on-surface-variant">"30岁女性管理者"+"隐形困境"</div>
+                      </div>
+                      <div class="border-l-2 border-primary pl-3 py-1.5 bg-surface-container rounded-r-md">
+                        <div class="text-[10px] num-glow mb-1 font-num">FORMULA · 02</div>
+                        <div class="text-sm font-semibold text-on-surface mb-0.5">死亡信号+行动建议</div>
+                        <div class="text-[11px] text-on-surface-variant">讲问题+给方案,缺一不可</div>
+                      </div>
+                      <div class="border-l-2 border-primary pl-3 py-1.5 bg-surface-container rounded-r-md">
+                        <div class="text-[10px] num-glow mb-1 font-num">FORMULA · 03</div>
+                        <div class="text-sm font-semibold text-on-surface mb-0.5">对比反差+共情</div>
+                        <div class="text-[11px] text-on-surface-variant">激发向往后给方法</div>
+                      </div>
+                    </div>
+                    <div class="deco-emoji" style="font-size: 64px;">🔥</div>
+                  </div>
+                </section>
+
+                <!-- =================== Tab Pane: 选题素材 =================== -->
+                <section id="pane-material" class="kb-tab-pane hidden space-y-4">
+                  <div class="card-base p-4 relative">
+                    <div class="flex items-center justify-between mb-4">
+                      <div class="flex items-center gap-2">
+                        <span class="badge-up">选题素材池</span>
+                        <span class="text-[10px] text-on-surface-variant/80 font-num">共 <span class="text-on-surface">89</span> 条 · 已用 <span class="num-glow">34</span> 条</span>
+                      </div>
+                      <span class="text-[10px] text-on-surface-variant/80">点击"加入流水线"可自动进入内容工厂</span>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                      <!-- 素材 1 -->
+                      <div class="p-3.5 card-base">
+                        <div class="flex items-center justify-between mb-2">
+                          <span class="badge-up">女性商业</span>
+                          <span class="text-[10px] text-on-surface-variant/80 font-num">热度 <span class="num-glow font-bold">92</span></span>
+                        </div>
+                        <p class="text-sm text-on-surface leading-snug mb-3">为什么女性创业者的"软决策"反而是优势?</p>
+                        <div class="flex items-center justify-between">
+                          <div class="flex items-center gap-1.5">
+                            <span class="badge-flat text-[10px]">认知</span>
+                            <span class="badge-flat text-[10px]">创业</span>
+                          </div>
+                          <button class="btn-push-pipeline text-[10px] num-glow font-medium flex items-center gap-1 hover:text-primary transition-colors" data-title="为什么女性创业者的软决策反而是优势" data-score="92">
+                            <i data-lucide="plus-circle" class="w-3 h-3"></i>加入流水线
+                          </button>
+                        </div>
+                      </div>
+                      <!-- 素材 2 -->
+                      <div class="p-3.5 card-base">
+                        <div class="flex items-center justify-between mb-2">
+                          <span class="badge-up">职场认知</span>
+                          <span class="text-[10px] text-on-surface-variant/80 font-num">热度 <span class="num-glow font-bold">88</span></span>
+                        </div>
+                        <p class="text-sm text-on-surface leading-snug mb-3">35岁HR总监被裁后,她用3个月看清了3件事</p>
+                        <div class="flex items-center justify-between">
+                          <div class="flex items-center gap-1.5">
+                            <span class="badge-flat text-[10px]">职场</span>
+                            <span class="badge-flat text-[10px]">转型</span>
+                          </div>
+                          <button class="btn-push-pipeline text-[10px] num-glow font-medium flex items-center gap-1 hover:text-primary transition-colors" data-title="35岁HR总监被裁后她用3个月看清了3件事" data-score="88">
+                            <i data-lucide="plus-circle" class="w-3 h-3"></i>加入流水线
+                          </button>
+                        </div>
+                      </div>
+                      <!-- 素材 3 -->
+                      <div class="p-3.5 card-base">
+                        <div class="flex items-center justify-between mb-2">
+                          <span class="badge-warn">反常识</span>
+                          <span class="text-[10px] text-on-surface-variant/80 font-num">热度 <span class="num-glow font-bold">95</span></span>
+                        </div>
+                        <p class="text-sm text-on-surface leading-snug mb-3">"听话"的员工,为什么反而是公司最大的隐患?</p>
+                        <div class="flex items-center justify-between">
+                          <div class="flex items-center gap-1.5">
+                            <span class="badge-flat text-[10px]">管理</span>
+                            <span class="badge-flat text-[10px]">反常识</span>
+                          </div>
+                          <button class="btn-push-pipeline text-[10px] num-glow font-medium flex items-center gap-1 hover:text-primary transition-colors" data-title="听话的员工为什么反而是公司最大的隐患" data-score="95">
+                            <i data-lucide="plus-circle" class="w-3 h-3"></i>加入流水线
+                          </button>
+                        </div>
+                      </div>
+                      <!-- 素材 4 -->
+                      <div class="p-3.5 card-base">
+                        <div class="flex items-center justify-between mb-2">
+                          <span class="badge-up">消费洞察</span>
+                          <span class="text-[10px] text-on-surface-variant/80 font-num">热度 <span class="num-glow font-bold">76</span></span>
+                        </div>
+                        <p class="text-sm text-on-surface leading-snug mb-3">年消费百万的女性客户,最在意的不是产品是"被理解"</p>
+                        <div class="flex items-center justify-between">
+                          <div class="flex items-center gap-1.5">
+                            <span class="badge-flat text-[10px]">消费</span>
+                            <span class="badge-flat text-[10px]">高端</span>
+                          </div>
+                          <button class="btn-push-pipeline text-[10px] num-glow font-medium flex items-center gap-1 hover:text-primary transition-colors" data-title="年消费百万的女性客户最在意被理解" data-score="76">
+                            <i data-lucide="plus-circle" class="w-3 h-3"></i>加入流水线
+                          </button>
+                        </div>
+                      </div>
+                      <!-- 素材 5 -->
+                      <div class="p-3.5 card-base">
+                        <div class="flex items-center justify-between mb-2">
+                          <span class="badge-up">案例拆解</span>
+                          <span class="text-[10px] text-on-surface-variant/80 font-num">热度 <span class="num-glow font-bold">81</span></span>
+                        </div>
+                        <p class="text-sm text-on-surface leading-snug mb-3">估值10亿的moody:女性消费品的3个反直觉打法</p>
+                        <div class="flex items-center justify-between">
+                          <div class="flex items-center gap-1.5">
+                            <span class="badge-flat text-[10px]">品牌</span>
+                            <span class="badge-flat text-[10px]">案例</span>
+                          </div>
+                          <button class="btn-push-pipeline text-[10px] num-glow font-medium flex items-center gap-1 hover:text-primary transition-colors" data-title="估值10亿的moody女性消费品的3个反直觉打法" data-score="81">
+                            <i data-lucide="plus-circle" class="w-3 h-3"></i>加入流水线
+                          </button>
+                        </div>
+                      </div>
+                      <!-- 素材 6 -->
+                      <div class="p-3.5 card-base">
+                        <div class="flex items-center justify-between mb-2">
+                          <span class="badge-up">决策心理</span>
+                          <span class="text-[10px] text-on-surface-variant/80 font-num">热度 <span class="num-glow font-bold">84</span></span>
+                        </div>
+                        <p class="text-sm text-on-surface leading-snug mb-3">"沉没成本"如何绑架了90%的女性创业者?</p>
+                        <div class="flex items-center justify-between">
+                          <div class="flex items-center gap-1.5">
+                            <span class="badge-flat text-[10px]">心理</span>
+                            <span class="badge-flat text-[10px]">决策</span>
+                          </div>
+                          <button class="btn-push-pipeline text-[10px] num-glow font-medium flex items-center gap-1 hover:text-primary transition-colors" data-title="沉没成本如何绑架90%的女性创业者" data-score="84">
+                            <i data-lucide="plus-circle" class="w-3 h-3"></i>加入流水线
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="deco-emoji" style="font-size: 64px;">💡</div>
+                  </div>
+                </section>
+
+                <!-- =================== Tab Pane: 平台规则 =================== -->
+                <section id="pane-rule" class="kb-tab-pane hidden space-y-4">
+                  <div class="grid grid-cols-1 lg:grid-cols-2 gap-3">
+
+                    <!-- 推荐机制 -->
+                    <div class="card-base p-4 relative">
+                      <div class="flex items-center gap-2 mb-3">
+                        <i data-lucide="cog" class="w-4 h-4 text-primary"></i>
+                        <span class="badge-up">推荐机制</span>
+                      </div>
+                      <div class="space-y-2 text-sm">
+                        <div class="flex items-start gap-2 p-2.5 bg-surface-container rounded-md border-l-2 border-primary">
+                          <span class="text-[10px] num-glow w-6 mt-0.5 font-num">01</span>
+                          <div class="flex-1">
+                            <div class="text-on-surface font-medium">初始流量池 <span class="num-glow font-num">200-500</span></div>
+                            <div class="text-[11px] text-on-surface-variant mt-0.5">新发布笔记进入,看 30 分钟数据</div>
+                          </div>
+                        </div>
+                        <div class="flex items-start gap-2 p-2.5 bg-surface-container rounded-md border-l-2 border-primary">
+                          <span class="text-[10px] num-glow w-6 mt-0.5 font-num">02</span>
+                          <div class="flex-1">
+                            <div class="text-on-surface font-medium">互动率阈值 <span class="num-glow font-num">&gt; 3%</span></div>
+                            <div class="text-[11px] text-on-surface-variant mt-0.5">点赞+收藏+评论 / 曝光比值</div>
+                          </div>
+                        </div>
+                        <div class="flex items-start gap-2 p-2.5 bg-surface-container rounded-md border-l-2 border-primary">
+                          <span class="text-[10px] num-glow w-6 mt-0.5 font-num">03</span>
+                          <div class="flex-1">
+                            <div class="text-on-surface font-medium">完读率 <span class="num-glow font-num">&gt; 40%</span></div>
+                            <div class="text-[11px] text-on-surface-variant mt-0.5">图文停留时间 + 下滑率</div>
+                          </div>
+                        </div>
+                        <div class="flex items-start gap-2 p-2.5 bg-surface-container rounded-md border-l-2 border-primary">
+                          <span class="text-[10px] num-glow w-6 mt-0.5 font-num">04</span>
+                          <div class="flex-1">
+                            <div class="text-on-surface font-medium">搜索权重</div>
+                            <div class="text-[11px] text-on-surface-variant mt-0.5">标题+正文关键词命中,长尾词 <span class="num-glow font-num">7</span> 天起效</div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- 限流红线 -->
+                    <div class="card-base p-4 relative" style="border-color: rgba(255, 59, 92, 0.35);">
+                      <div class="flex items-center gap-2 mb-3">
+                        <i data-lucide="alert-triangle" class="w-4 h-4 text-error"></i>
+                        <span class="badge-down">限流红线</span>
+                      </div>
+                      <div class="space-y-2 text-sm">
+                        <div class="flex items-start gap-2 p-2.5 rounded-md border-l-2 border-error" style="background: rgba(255,59,92,0.06);">
+                          <i data-lucide="x" class="w-3.5 h-3.5 text-error shrink-0 mt-0.5"></i>
+                          <div class="flex-1">
+                            <div class="text-on-surface font-medium">敏感词触发</div>
+                            <div class="text-[11px] text-on-surface-variant mt-0.5">医疗 / 金融 / 绝对化用语 / 未认证功效</div>
+                          </div>
+                        </div>
+                        <div class="flex items-start gap-2 p-2.5 rounded-md border-l-2 border-error" style="background: rgba(255,59,92,0.06);">
+                          <i data-lucide="x" class="w-3.5 h-3.5 text-error shrink-0 mt-0.5"></i>
+                          <div class="flex-1">
+                            <div class="text-on-surface font-medium">诱导互动</div>
+                            <div class="text-[11px] text-on-surface-variant mt-0.5">"点赞关注才能看" / 私我领取</div>
+                          </div>
+                        </div>
+                        <div class="flex items-start gap-2 p-2.5 rounded-md border-l-2 border-error" style="background: rgba(255,59,92,0.06);">
+                          <i data-lucide="x" class="w-3.5 h-3.5 text-error shrink-0 mt-0.5"></i>
+                          <div class="flex-1">
+                            <div class="text-on-surface font-medium">搬运 / 二改</div>
+                            <div class="text-[11px] text-on-surface-variant mt-0.5">原创度 <span class="text-error font-num">&lt; 60%</span> 直接降权</div>
+                          </div>
+                        </div>
+                        <div class="flex items-start gap-2 p-2.5 rounded-md border-l-2 border-error" style="background: rgba(255,59,92,0.06);">
+                          <i data-lucide="x" class="w-3.5 h-3.5 text-error shrink-0 mt-0.5"></i>
+                          <div class="flex-1">
+                            <div class="text-on-surface font-medium">营销导流</div>
+                            <div class="text-[11px] text-on-surface-variant mt-0.5">微信号 / 外链 / 二维码 / 小字规避</div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="deco-emoji" style="font-size: 64px;">⚠</div>
+                    </div>
+
+                    <!-- 申诉流程 -->
+                    <div class="card-base p-4 lg:col-span-2 relative">
+                      <div class="flex items-center gap-2 mb-4">
+                        <i data-lucide="file-warning" class="w-4 h-4 text-primary"></i>
+                        <span class="badge-up">申诉流程</span>
+                        <span class="text-[10px] text-on-surface-variant/80 font-num">5 步恢复被限流量</span>
+                      </div>
+                      <div class="grid grid-cols-1 md:grid-cols-5 gap-3">
+                        <div class="p-3 bg-surface-container border border-outline rounded-lg">
+                          <div class="text-[10px] num-glow mb-2 font-num">STEP · 01</div>
+                          <div class="text-sm font-semibold text-on-surface mb-1">检测到限流</div>
+                          <div class="text-[11px] text-on-surface-variant">曝光骤降 <span class="num-down font-num">&gt; 80%</span></div>
+                        </div>
+                        <div class="p-3 bg-surface-container border border-outline rounded-lg">
+                          <div class="text-[10px] num-glow mb-2 font-num">STEP · 02</div>
+                          <div class="text-sm font-semibold text-on-surface mb-1">自查笔记</div>
+                          <div class="text-[11px] text-on-surface-variant">检查最近 <span class="num-glow font-num">5</span> 条内容</div>
+                        </div>
+                        <div class="p-3 bg-surface-container border border-outline rounded-lg">
+                          <div class="text-[10px] num-glow mb-2 font-num">STEP · 03</div>
+                          <div class="text-sm font-semibold text-on-surface mb-1">删除 / 修改</div>
+                          <div class="text-[11px] text-on-surface-variant">违规内容立即处理</div>
+                        </div>
+                        <div class="p-3 bg-surface-container border border-outline rounded-lg">
+                          <div class="text-[10px] num-glow mb-2 font-num">STEP · 04</div>
+                          <div class="text-sm font-semibold text-on-surface mb-1">申诉提交</div>
+                          <div class="text-[11px] text-on-surface-variant">APP 帮助中心</div>
+                        </div>
+                        <div class="p-3 rounded-lg" style="background: rgba(0,217,146,0.08); border: 1px solid rgba(0,217,146,0.4);">
+                          <div class="text-[10px] num-glow mb-2 font-num">STEP · 05</div>
+                          <div class="text-sm font-semibold text-on-surface mb-1">等待 <span class="num-glow">24h</span></div>
+                          <div class="text-[11px] text-on-surface-variant">未恢复可重复申诉</div>
+                        </div>
+                      </div>
+                      <div class="deco-emoji" style="font-size: 64px;">🛡</div>
+                    </div>
+                  </div>
+                </section>
+
+                <!-- @tab-panes:end -->
+              </div>
+            </div>
+
+            <!-- ===== 右侧：最近活动 + 自动同步 (260px) ===== -->
+            <aside class="w-[260px] shrink-0 flex flex-col gap-3">
+              <!-- 最近活动 -->
+              <div class="card-base p-3 flex-1 min-h-[300px] flex flex-col">
+                <div class="flex items-center justify-between mb-2 px-1">
+                  <div class="flex items-center gap-1.5">
+                    <i data-lucide="activity" class="w-3.5 h-3.5 text-primary"></i>
+                    <span class="text-xs font-semibold text-on-surface">最近活动</span>
+                  </div>
+                  <span class="text-[10px] text-on-surface-variant/70 font-num">LIVE</span>
+                </div>
+                <div id="activity-list" class="flex-1 space-y-2 text-[11px] overflow-y-auto pr-1">
+                  <div class="flex items-start gap-2">
+                    <span class="status-dot status-online shrink-0 mt-1.5" style="width: 5px; height: 5px;"></span>
+                    <span class="text-on-surface-variant/80 shrink-0 font-num text-[10px]">14:32</span>
+                    <span class="text-on-surface/90 flex-1">编辑了"品牌声音" v1.5</span>
+                  </div>
+                  <div class="flex items-start gap-2">
+                    <span class="status-dot status-online shrink-0 mt-1.5" style="width: 5px; height: 5px;"></span>
+                    <span class="text-on-surface-variant/80 shrink-0 font-num text-[10px]">13:18</span>
+                    <span class="text-on-surface/90 flex-1">添加监控"幂姐说商业"</span>
+                  </div>
+                  <div class="flex items-start gap-2">
+                    <span class="status-dot status-online shrink-0 mt-1.5" style="width: 5px; height: 5px;"></span>
+                    <span class="text-on-surface-variant/80 shrink-0 font-num text-[10px]">12:05</span>
+                    <span class="text-on-surface/90 flex-1">导入素材"用户访谈 - Q4"</span>
+                  </div>
+                  <div class="flex items-start gap-2">
+                    <span class="status-dot status-queue shrink-0 mt-1.5" style="width: 5px; height: 5px;"></span>
+                    <span class="text-on-surface-variant/80 shrink-0 font-num text-[10px]">11:47</span>
+                    <span class="text-on-surface/90 flex-1">加入流水线"软决策优势"</span>
+                  </div>
+                  <div class="flex items-start gap-2">
+                    <span class="status-dot status-online shrink-0 mt-1.5" style="width: 5px; height: 5px;"></span>
+                    <span class="text-on-surface-variant/80 shrink-0 font-num text-[10px]">10:30</span>
+                    <span class="text-on-surface/90 flex-1">同步品牌定位到 AI</span>
+                  </div>
+                  <div class="flex items-start gap-2">
+                    <span class="status-dot status-online shrink-0 mt-1.5" style="width: 5px; height: 5px;"></span>
+                    <span class="text-on-surface-variant/80 shrink-0 font-num text-[10px]">09:15</span>
+                    <span class="text-on-surface/90 flex-1">新建文档"爆款拆解 - 12月"</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 自动同步 -->
+              <div class="card-base p-3">
+                <div class="flex items-center gap-2 mb-2">
+                  <span class="status-dot status-online"></span>
+                  <span class="text-[11px] font-semibold text-on-surface">自动同步</span>
+                </div>
+                <p class="text-[10px] text-on-surface-variant leading-relaxed mb-2">所有变更已加密同步至云端 · <span class="text-primary font-num">2 分钟前</span></p>
+                <div class="grid grid-cols-3 gap-1.5 text-[10px]">
+                  <div class="flex flex-col items-center gap-0.5 p-1.5 bg-surface-container rounded">
+                    <span class="status-dot status-online" style="width: 5px; height: 5px;"></span>
+                    <span class="text-on-surface-variant">备份</span>
+                  </div>
+                  <div class="flex flex-col items-center gap-0.5 p-1.5 bg-surface-container rounded">
+                    <span class="status-dot status-online" style="width: 5px; height: 5px;"></span>
+                    <span class="text-on-surface-variant">加密</span>
+                  </div>
+                  <div class="flex flex-col items-center gap-0.5 p-1.5 bg-surface-container rounded">
+                    <span class="status-dot status-online" style="width: 5px; height: 5px;"></span>
+                    <span class="text-on-surface-variant">分片</span>
+                  </div>
+                </div>
+              </div>
+            </aside>
+          </section>
+        </div>
+        <!-- @main-content:end -->
+      </main>
+    </div>
+  </div>
+  <!-- @nav:end 导航组件 -->
+
+  <div id="toast-container"></div>
+
+  <!-- ==================== Modals (5 个) ==================== -->
+
+  <!-- Modal: 导入素材 -->
+  <div id="modal-import" class="hidden fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="card-base max-w-md w-full p-6" style="border-color: rgba(0,217,146,0.35); box-shadow: var(--shadow-dialog), 0 0 30px rgba(0,217,146,0.15);">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="text-base font-semibold text-on-surface flex items-center gap-2">
+          <i data-lucide="upload" class="w-4 h-4 text-primary"></i>
+          导入素材
+        </h3>
+        <button id="modal-import-close" class="w-7 h-7 rounded-md flex items-center justify-center text-on-surface-variant hover:text-primary hover:bg-surface-container btn-glow">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+      <p class="text-[11px] text-on-surface-variant mb-4 flex items-center gap-1.5">将添加到：<span class="badge-up" id="modal-import-target">品牌定位</span></p>
+      <div class="space-y-3">
+        <div>
+          <label class="text-[11px] text-on-surface-variant mb-1.5 block font-num">素材标题 <span class="text-error">*</span></label>
+          <input id="import-title" type="text" placeholder="例：用户调研原始数据" class="btn-glow w-full bg-surface-container border border-outline rounded-md px-3 py-2 text-sm text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none transition-all" />
+        </div>
+        <div>
+          <label class="text-[11px] text-on-surface-variant mb-1.5 block font-num">标签 <span class="text-on-surface-variant/60">（逗号分隔）</span></label>
+          <input id="import-tags" type="text" placeholder="例：数据, 调研, 案例" class="btn-glow w-full bg-surface-container border border-outline rounded-md px-3 py-2 text-sm text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none transition-all" />
+        </div>
+        <div>
+          <label class="text-[11px] text-on-surface-variant mb-1.5 block font-num">来源</label>
+          <select id="import-source" class="w-full bg-surface-container border border-outline rounded-md px-3 py-2 text-sm text-on-surface focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/30 transition-all">
+            <option>手动录入</option>
+            <option>小红书抓取</option>
+            <option>微信收藏</option>
+            <option>行业报告</option>
+            <option>用户访谈</option>
+          </select>
+        </div>
+      </div>
+      <div class="mt-5 flex items-center justify-end gap-2">
+        <button id="modal-import-cancel" class="px-4 py-2 bg-surface-container text-on-surface text-sm rounded-md hover:bg-surface-container-high transition-colors">取消</button>
+        <button id="modal-import-confirm" class="btn-primary text-sm px-4 py-2 rounded-md flex items-center gap-1.5 btn-press">
+          <i data-lucide="check" class="w-3.5 h-3.5"></i>确认导入
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: 新建文档 -->
+  <div id="modal-newdoc" class="hidden fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="card-base max-w-md w-full p-6" style="border-color: rgba(0,217,146,0.35); box-shadow: var(--shadow-dialog), 0 0 30px rgba(0,217,146,0.15);">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="text-base font-semibold text-on-surface flex items-center gap-2">
+          <i data-lucide="file-plus-2" class="w-4 h-4 text-primary"></i>
+          新建文档
+        </h3>
+        <button id="modal-newdoc-close" class="w-7 h-7 rounded-md flex items-center justify-center text-on-surface-variant hover:text-primary hover:bg-surface-container btn-glow">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+      <p class="text-[11px] text-on-surface-variant mb-4 flex items-center gap-1.5">将添加到：<span class="badge-up" id="modal-newdoc-target">品牌定位</span></p>
+      <div class="space-y-3">
+        <div>
+          <label class="text-[11px] text-on-surface-variant mb-1.5 block font-num">文档标题 <span class="text-error">*</span></label>
+          <input id="newdoc-title" type="text" placeholder="例：用户访谈纪要 - 12月" class="btn-glow w-full bg-surface-container border border-outline rounded-md px-3 py-2 text-sm text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none transition-all" />
+        </div>
+        <div>
+          <label class="text-[11px] text-on-surface-variant mb-1.5 block font-num">内容</label>
+          <textarea id="newdoc-content" rows="4" placeholder="记录核心内容..." class="btn-glow w-full bg-surface-container border border-outline rounded-md px-3 py-2 text-sm text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none transition-all resize-none"></textarea>
+        </div>
+      </div>
+      <div class="mt-5 flex items-center justify-end gap-2">
+        <button id="modal-newdoc-cancel" class="px-4 py-2 bg-surface-container text-on-surface text-sm rounded-md hover:bg-surface-container-high transition-colors">取消</button>
+        <button id="modal-newdoc-confirm" class="btn-primary text-sm px-4 py-2 rounded-md flex items-center gap-1.5 btn-press">
+          <i data-lucide="check" class="w-3.5 h-3.5"></i>确认创建
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: 编辑品牌卡 -->
+  <div id="modal-edit" class="hidden fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="card-base max-w-lg w-full p-6" style="border-color: rgba(0,217,146,0.35); box-shadow: var(--shadow-dialog), 0 0 30px rgba(0,217,146,0.15);">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="text-base font-semibold text-on-surface flex items-center gap-2">
+          <i data-lucide="square-pen" class="w-4 h-4 text-primary"></i>
+          编辑：<span id="modal-edit-title" class="num-glow">品牌声音</span>
+        </h3>
+        <button id="modal-edit-close" class="w-7 h-7 rounded-md flex items-center justify-center text-on-surface-variant hover:text-primary hover:bg-surface-container btn-glow">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+      <div class="space-y-3">
+        <div>
+          <label class="text-[11px] text-on-surface-variant mb-1.5 block font-num">内容</label>
+          <textarea id="modal-edit-text" rows="6" class="btn-glow w-full bg-surface-container border border-outline rounded-md px-3 py-2 text-sm text-on-surface focus:outline-none transition-all resize-none"></textarea>
+        </div>
+      </div>
+      <div class="mt-5 flex items-center justify-end gap-2">
+        <button id="modal-edit-cancel" class="px-4 py-2 bg-surface-container text-on-surface text-sm rounded-md hover:bg-surface-container-high transition-colors">取消</button>
+        <button id="modal-edit-confirm" class="btn-primary text-sm px-4 py-2 rounded-md flex items-center gap-1.5 btn-press">
+          <i data-lucide="save" class="w-3.5 h-3.5"></i>保存修改
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: 版本历史 -->
+  <div id="modal-version" class="hidden fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="card-base max-w-lg w-full max-h-[80vh] overflow-y-auto p-6" style="border-color: rgba(0,217,146,0.35); box-shadow: var(--shadow-dialog), 0 0 30px rgba(0,217,146,0.15);">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="text-base font-semibold text-on-surface flex items-center gap-2">
+          <i data-lucide="history" class="w-4 h-4 text-primary"></i>
+          版本历史：<span id="modal-version-title" class="num-glow">品牌声音</span>
+        </h3>
+        <button id="modal-version-close" class="w-7 h-7 rounded-md flex items-center justify-center text-on-surface-variant hover:text-primary hover:bg-surface-container btn-glow">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+      <div id="modal-version-list" class="space-y-2.5">
+        <!-- 由 JS 填充 -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: 往期内容详情 -->
+  <div id="modal-archive" class="hidden fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="card-base max-w-2xl w-full max-h-[85vh] overflow-y-auto p-6" style="border-color: rgba(0,217,146,0.35); box-shadow: var(--shadow-dialog), 0 0 30px rgba(0,217,146,0.15);">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="text-base font-semibold text-on-surface flex items-center gap-2" id="modal-archive-title">往期内容详情</h3>
+        <button id="modal-archive-close" class="w-7 h-7 rounded-md flex items-center justify-center text-on-surface-variant hover:text-primary hover:bg-surface-container btn-glow">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+      <div id="modal-archive-body" class="space-y-4">
+        <!-- 由 JS 填充 -->
+      </div>
+    </div>
+  </div>
+
+  <script>
+    /* ============================================================
+       全局共享：Store / Toast / 高亮导航
+       ============================================================ */
+
+    // 本地存储的"选题库"、"流水线"、"已采纳"
+    const Store = {
+      topicPool: [],
+      pipeline: [],
+      adopted: [],
+      benchmarks: [],
+      calendar: [],
+      KEY: 'xhs_core_v1',
+      load() {
+        try {
+          const raw = localStorage.getItem(this.KEY);
+          if (raw) return Object.assign(this, JSON.parse(raw));
+        } catch(e){}
+        this._seed();
+        this.save();
+        return this;
+      },
+      save() {
+        const snapshot = { topicPool: this.topicPool, pipeline: this.pipeline, adopted: this.adopted, benchmarks: this.benchmarks, calendar: this.calendar };
+        localStorage.setItem(this.KEY, JSON.stringify(snapshot));
+        window.dispatchEvent(new CustomEvent('store:update', { detail: snapshot }));
+      },
+      _seed() {
+        this.topicPool = [
+          { id: 'T-1001', title: '30岁前我亲手关掉公司，才看懂这3件事', score: 94, source: '热门雷达', addedAt: Date.now() - 3600e3 },
+          { id: 'T-1002', title: '普通女生做小红书的第3年，月入6位数', score: 91, source: '对标拆解', addedAt: Date.now() - 7200e3 },
+          { id: 'T-1003', title: '我从大厂裸辞后才明白的5件事', score: 89, source: '长尾潜力', addedAt: Date.now() - 1800e3 }
+        ];
+        this.pipeline = [
+          { id: 'P-2001', topic: '30岁前我亲手关掉公司，才看懂这3件事', step: 3, stepName: '文案生成', status: 'in_progress' },
+          { id: 'P-2002', topic: '普通女生做小红书的第3年，月入6位数', step: 2, stepName: '封面生成', status: 'in_progress' }
+        ];
+        this.adopted = [];
+        this.benchmarks = ['女力研究所', '创业她说', '清醒Girl的商业课', '33岁姐姐说', '盐系女性成长'];
+        this.calendar = [];
+      },
+      addTopic(item) {
+        if (this.topicPool.find(t => t.id === item.id)) return false;
+        this.topicPool.unshift(Object.assign({ addedAt: Date.now() }, item));
+        this.save();
+        return true;
+      },
+      adoptTopic(item) {
+        if (this.adopted.find(t => t.id === item.id)) return false;
+        this.adopted.unshift(Object.assign({ adoptedAt: Date.now() }, item));
+        this.addTopic(item);
+        this.save();
+        return true;
+      },
+      pushPipeline(item) {
+        if (this.pipeline.find(p => p.id === item.id)) return false;
+        this.pipeline.unshift(item);
+        this.save();
+        return true;
+      }
+    };
+    Store.load();
+
+    // Toast 提示
+    window.toast = function(message, type) {
+      const id = 'toast-' + Date.now();
+      const iconName = type === 'success' ? 'check-circle' : (type === 'error' ? 'x-circle' : 'info');
+      const colorCls = type === 'success' ? 'text-primary' : (type === 'error' ? 'text-error' : 'text-on-surface-variant');
+      const $t = $('<div class="toast ' + (type || '') + '"></div>').attr('id', id);
+      const $i = $('<i></i>').addClass('w-4 h-4 ' + colorCls);
+      $i.attr('data-lucide', iconName);
+      $t.append($i).append('<span>' + message + '</span>');
+      $('#toast-container').append($t);
+      lucide.createIcons();
+      setTimeout(() => $('#' + id).remove(), 3000);
+    };
+
+    // 导航激活（jQuery 选择器，与页面脚本统一）
+    window.__highlightNav = function (key) {
+      const crumbMap = {
+        radar: '选题引擎',
+        factory: '内容工厂',
+        publish: '发布管理',
+        analytics: '数据复盘',
+        knowledge: '知识库',
+        settings: '系统设置'
+      };
+      $('.nav-item').each(function() {
+        const $el = $(this);
+        $el.removeClass('nav-active');
+        if ($el.attr('data-nav') === key) $el.addClass('nav-active');
+      });
+      const $crumb = $('#page-crumb');
+      if ($crumb.length) $crumb.text(crumbMap[key] || '');
+      lucide.createIcons();
+    };
+
+    // 全局：顶栏按钮 + AI 助手
+    $(function() {
+      $('#btn-bell').on('click', function() {
+        toast('暂无新消息，去选题引擎看看新热点吧～', 'info');
+      });
+      $('#btn-refresh').on('click', function() {
+        const $i = $(this).find('i');
+        $i.css('transition', 'transform 0.6s ease').css('transform', 'rotate(360deg)');
+        setTimeout(() => $i.css('transform', ''), 700);
+        toast('已刷新最新数据', 'success');
+        window.dispatchEvent(new CustomEvent('page:refresh'));
+      });
+      $('#btn-pipeline').on('click', function() {
+        if (Store.pipeline.length === 0) {
+          toast('流水线还是空的，先去选题引擎添加选题吧', 'info');
+          setTimeout(() => location.href = 'home.html', 800);
+          return;
+        }
+        location.href = 'content-factory.html';
+      });
+      $('#btn-ai-assistant').on('click', function() {
+        toast('小咸正在赶来…（开发中，敬请期待）', 'info');
+      });
+      $('#global-search').on('keydown', function(e) {
+        if (e.key === 'Enter' && this.value.trim()) {
+          toast(`正在搜索 "${this.value}" …`, 'info');
+        }
+      });
+    });
+
+    lucide.createIcons();
+  </script>
+
+  <script>
+    /* ============================================================
+       页面专属：分类信息、版本历史、活动日志
+       ============================================================ */
+
+    const TAB_META = {
+      brand:     { title: '品牌定位',   desc: '品牌资产核心档案 · 定位 · 人设 · 受众 · 禁区 · 原则' },
+      persona:   { title: '人设语料',   desc: '内容人设语料库 · 语气词 · 句式 · 高频词 · 禁句' },
+      archive:   { title: '往期内容库', desc: '历史发布内容库 · 标题 · 封面 · 选题 · 表现数据' },
+      benchmark: { title: '对标账号分析', desc: '对标账号档案 · 粉丝量 · 内容方向 · 爆款共性' },
+      viral:     { title: '爆款拆解',   desc: '爆款拆解文档 · 选题 · 钩子 · 结构 · 情绪 · 节奏' },
+      material:  { title: '选题素材',   desc: '选题素材池 · 关键词 · 话题 · 痛点 · 案例' },
+      rule:      { title: '平台规则',   desc: '平台规则手册 · 推荐机制 · 限流红线 · 申诉流程' }
+    };
+
+    const VERSION_DATA = {
+      'brand-main': [
+        { ver: 'v1.5', time: '2024-12-20 14:32', who: '主理人', summary: '补充"30岁女性管理者"画像描述' },
+        { ver: 'v1.4', time: '2024-12-10 09:15', who: '主理人', summary: '调整受众人群年龄区间 25-40 → 28-40' },
+        { ver: 'v1.3', time: '2024-11-25 16:48', who: '主理人', summary: '增加禁区：不晒奢靡生活' },
+        { ver: 'v1.2', time: '2024-10-18 11:20', who: '主理人', summary: '优化表达原则第三条' },
+        { ver: 'v1.1', time: '2024-09-05 10:00', who: '主理人', summary: '初版定位发布' }
+      ],
+      'doc-01': [
+        { ver: 'v1.3', time: '2024-12-15 10:20', who: '主理人', summary: '更新"商业认知升维"为当前核心定位' },
+        { ver: 'v1.2', time: '2024-11-08 14:30', who: '主理人', summary: '调整关键词标签' },
+        { ver: 'v1.1', time: '2024-09-05 10:00', who: '主理人', summary: '初版一句话定位' }
+      ],
+      'doc-02': [
+        { ver: 'v1.2', time: '2024-12-10 09:15', who: '主理人', summary: '加入"句式短促有力"原则' },
+        { ver: 'v1.1', time: '2024-10-01 16:48', who: '主理人', summary: '初版人设定义' }
+      ],
+      'doc-03': [
+        { ver: 'v1.4', time: '2024-12-08 11:20', who: '主理人', summary: '细化 3 个核心痛点' },
+        { ver: 'v1.3', time: '2024-11-15 14:00', who: '主理人', summary: '增加受众特征描述' },
+        { ver: 'v1.2', time: '2024-10-20 09:30', who: '主理人', summary: '调整年龄区间' },
+        { ver: 'v1.1', time: '2024-08-12 15:45', who: '主理人', summary: '初版受众画像' }
+      ],
+      'doc-04': [
+        { ver: 'v1.3', time: '2024-11-25 16:48', who: '主理人', summary: '增加"不晒奢靡生活"禁区' },
+        { ver: 'v1.2', time: '2024-10-08 11:00', who: '主理人', summary: '细化 6 大禁区' },
+        { ver: 'v1.1', time: '2024-08-22 13:30', who: '主理人', summary: '初版内容禁区' }
+      ],
+      'doc-05': [
+        { ver: 'v1.2', time: '2024-12-10 09:15', who: '主理人', summary: '完善原则 02 的反常识案例' },
+        { ver: 'v1.1', time: '2024-09-30 10:00', who: '主理人', summary: '初版表达原则' }
+      ]
+    };
+
+    // 活动日志
+    function addActivity(text) {
+      const arr = (() => { try { return JSON.parse(localStorage.getItem('xhs_activities_v1')) || []; } catch (e) { return []; } })();
+      const now = new Date();
+      const time = now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0');
+      arr.unshift({ time, text, ts: now.getTime() });
+      try { localStorage.setItem('xhs_activities_v1', JSON.stringify(arr.slice(0, 12))); } catch (e) {}
+      renderActivities();
+    }
+    function renderActivities() {
+      const arr = (() => { try { return JSON.parse(localStorage.getItem('xhs_activities_v1')) || []; } catch (e) { return []; } })();
+      const $list = $('#activity-list');
+      if (arr.length === 0) return;
+      const html = arr.map(a => {
+        return '<div class="flex items-start gap-2"><span class="status-dot status-online shrink-0 mt-1.5" style="width: 5px; height: 5px;"></span><span class="text-on-surface-variant/80 shrink-0 font-num text-[10px]">' + a.time + '</span><span class="text-on-surface/90 flex-1">' + a.text + '</span></div>';
+      }).join('');
+      $list.prepend(html);
+    }
+
+    // 当前 Tab
+    let currentTab = 'brand';
+
+    // 切换 Tab
+    function switchTab(tab) {
+      if (!TAB_META[tab]) return;
+      currentTab = tab;
+      const meta = TAB_META[tab];
+
+      // 左侧分类
+      $('.kb-cat-item').removeClass('is-active');
+      $('.kb-cat-item[data-tab="' + tab + '"]').addClass('is-active');
+
+      // 顶部 tab
+      $('.kb-top-tab').removeClass('is-active');
+      $('.kb-top-tab[data-tab="' + tab + '"]').addClass('is-active');
+
+      // 标题 + 描述
+      $('#kb-tab-title').text(meta.title);
+      $('#kb-tab-desc').text(meta.desc);
+
+      // 内容
+      $('.kb-tab-pane').addClass('hidden');
+      $('#pane-' + tab).removeClass('hidden');
+
+      lucide.createIcons();
+    }
+
+    /* ============================================================
+       交互逻辑
+       ============================================================ */
+    $(function() {
+      // 初始化：激活导航
+      if (window.__highlightNav) window.__highlightNav('knowledge');
+
+      // ===== KPI 卡片点击闪绿光 =====
+      // 复杂交互 - 后续应实现：
+      // 1. 点击 KPI 卡片时触发 click-flash 动画
+      // 2. 根据 data-kpi 字段跳转或弹出对应详情
+      // 3. 笔记数→跳转到"往期内容库"分类
+      // 4. 分类数→展开分类列表
+      // 5. 收藏数→跳转到收藏夹
+      // 6. 命中率→打开命中率趋势图
+      $('[data-kpi]').on('click', function() {
+        const $el = $(this);
+        $el.removeClass('is-flash');
+        // 强制 reflow
+        void $el[0].offsetWidth;
+        $el.addClass('is-flash');
+        setTimeout(() => $el.removeClass('is-flash'), 700);
+
+        const kpi = $el.data('kpi');
+        const map = { notes: 'archive', cats: 'brand', fav: 'archive', hit: 'analytics' };
+        const targetTab = map[kpi];
+        if (targetTab && $('.kb-tab-pane#pane-' + targetTab).length) {
+          switchTab(targetTab);
+          toast('已跳转到「' + TAB_META[targetTab].title + '」', 'info');
+        } else {
+          toast('KPI ' + kpi + ' 详情开发中', 'info');
+        }
+      });
+
+      // ===== 标签点击 =====
+      // 复杂交互 - 后续应实现：
+      // 1. 切换到"选题素材"分类并应用该标签过滤
+      // 2. 高亮该标签直到再次点击或关闭
+      $('#btn-tag-more').on('click', function() {
+        switchTab('material');
+        toast('已展开全部 89 个标签', 'info');
+      });
+
+      // ===== 左侧分类点击 =====
+      $('#kb-categories').on('click', '.kb-cat-item', function() {
+        const tab = $(this).data('tab');
+        switchTab(tab);
+      });
+
+      // ===== 顶部 Tab 点击 =====
+      $('#kb-top-tabs').on('click', '.kb-top-tab', function() {
+        const tab = $(this).data('tab');
+        switchTab(tab);
+      });
+
+      // ========== 文档编辑 ==========
+      // 复杂交互 - 后续应实现：
+      // 1. 打开模态框显示该卡片的可编辑 textarea
+      // 2. 支持 Markdown 实时预览（拆分渲染区）
+      // 3. 编辑过程中每 30s 自动保存草稿到 localStorage 的 KB_DRAFT_{id} 键
+      // 4. 点击保存时调用 PATCH /api/kb/{id} 提交修改
+      // 5. 成功后更新卡片内容 DOM 与"上次更新"时间
+      // 6. 点击取消关闭并丢弃本地草稿
+      $('#pane-brand').on('click', '.btn-edit-doc', function() {
+        const docId = $(this).data('id');
+        const title = $(this).data('title') || '文档';
+        const $card = $(this).closest('.card-base');
+        const currentText = $card.find('p').first().text().trim();
+        $('#modal-edit-title').text(title);
+        $('#modal-edit-text').val(currentText);
+        $('#modal-edit').data('doc-id', docId).data('source-card', $card.index()).removeClass('hidden');
+        lucide.createIcons();
+      });
+
+      $('#modal-edit-close, #modal-edit-cancel').on('click', function() {
+        $('#modal-edit').addClass('hidden');
+      });
+
+      $('#modal-edit-confirm').on('click', function() {
+        const docId = $('#modal-edit').data('doc-id');
+        const newText = $('#modal-edit-text').val().trim();
+        if (!newText) { toast('内容不能为空', 'error'); return; }
+        const now = new Date();
+        const t = now.getFullYear() + '-' + (now.getMonth() + 1) + '-' + now.getDate() + ' ' + now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0');
+        $('#brand-update-time').text(t);
+        $('#modal-edit').addClass('hidden');
+        toast('"' + $('#modal-edit-title').text() + '" 已保存到 localStorage', 'success');
+        addActivity('编辑 ' + $('#modal-edit-title').text());
+      });
+
+      // ========== 版本历史 ==========
+      // 复杂交互 - 后续应实现：
+      // 1. 弹出抽屉显示该文档的所有历史版本（按时间倒序）
+      // 2. 每条版本显示：版本号、保存时间、保存人、变更摘要
+      // 3. 支持"对比"按钮：左右分栏展示两个版本的 diff
+      // 4. 支持"回滚到此版本"：确认后覆盖当前内容
+      // 5. 支持"导出历史"：下载该文档所有版本的 zip 包
+      $('#pane-brand').on('click', '.btn-version', function() {
+        const docId = $(this).data('id');
+        const title = $(this).data('title') || '文档';
+        const list = VERSION_DATA[docId] || VERSION_DATA['doc-01'];
+        const html = list.map(v => {
+          return '<div class="flex items-start gap-3 p-3 rounded-lg bg-surface-container border border-outline">'
+            + '<div class="shrink-0 w-10 h-10 rounded-md bg-primary-container border border-primary/30 flex items-center justify-center num-glow text-[11px] font-mono font-semibold">' + v.ver + '</div>'
+            + '<div class="flex-1 min-w-0">'
+            +   '<div class="text-sm text-on-surface mb-0.5">' + v.summary + '</div>'
+            +   '<div class="text-[10px] text-on-surface-variant/80 font-num">' + v.time + ' · ' + v.who + '</div>'
+            + '</div>'
+            + '<button class="text-[10px] text-on-surface-variant hover:text-primary shrink-0 btn-glow px-2 py-1 rounded">回滚</button>'
+            + '</div>';
+        }).join('');
+        $('#modal-version-title').text(title);
+        $('#modal-version-list').html(html);
+        $('#modal-version').removeClass('hidden');
+        lucide.createIcons();
+      });
+
+      $('#modal-version-close').on('click', function() {
+        $('#modal-version').addClass('hidden');
+      });
+
+      // ========== 右侧快速操作 ==========
+      $('#qa-import').on('click', function() {
+        // 复杂交互 - 后续应实现：
+        // 1. 弹出文件上传模态框（支持拖拽多文件）
+        // 2. 支持图片/PDF/Word/Excel
+        // 3. 上传后 AI 分类到对应知识库分类
+        // 4. 用户可调整分类，确认后入库
+        $('#modal-import-target').text(TAB_META[currentTab].title);
+        $('#modal-import').data('target', currentTab).removeClass('hidden');
+        $('#import-title').val('').focus();
+        $('#import-tags').val('');
+        lucide.createIcons();
+      });
+
+      $('#modal-import-close, #modal-import-cancel').on('click', function() {
+        $('#modal-import').addClass('hidden');
+      });
+
+      $('#modal-import-confirm').on('click', function() {
+        const title = $('#import-title').val().trim();
+        const tags = $('#import-tags').val().trim();
+        const source = $('#import-source').val();
+        if (!title) { toast('请填写素材标题', 'error'); return; }
+        const target = $('#modal-import').data('target');
+        const id = 'M-' + Date.now();
+        const item = { id, title, tags: tags ? tags.split(/[,，]/).map(s => s.trim()).filter(Boolean) : [], source, addedAt: Date.now() };
+        if (window.Store && window.Store.topicPool) {
+          window.Store.topicPool.unshift(item);
+          try { window.Store.save && window.Store.save(); } catch(e){}
+        }
+        $('#modal-import').addClass('hidden');
+        toast('素材已导入到「' + TAB_META[target].title + '」', 'success');
+        addActivity('导入素材：' + title);
+      });
+
+      $('#qa-sync').on('click', function() {
+        // 复杂交互 - 后续应实现：
+        // 1. 调用品牌定位 API 获取最新数据
+        // 2. 与本地档案对比，标出新增/变更/删除字段
+        // 3. 用户确认后批量更新本地
+        toast('品牌定位已同步到所有 AI 生成场景', 'success');
+        addActivity('同步品牌定位到 AI');
+        const $i = $(this).find('i');
+        $i.css('transition', 'transform 0.6s ease').css('transform', 'rotate(360deg)');
+        setTimeout(() => $i.css('transform', ''), 700);
+      });
+
+      $('#qa-newdoc').on('click', function() {
+        // 复杂交互 - 后续应实现：
+        // 1. 弹出新建文档表单（标题、分类、标签、模板）
+        // 2. 支持预置模板：品牌档案/语料/爆款拆解/账号分析
+        // 3. 创建后跳转到该文档的编辑页
+        $('#modal-newdoc-target').text(TAB_META[currentTab].title);
+        $('#modal-newdoc').data('target', currentTab).removeClass('hidden');
+        $('#newdoc-title').val('').focus();
+        $('#newdoc-content').val('');
+        lucide.createIcons();
+      });
+
+      $('#modal-newdoc-close, #modal-newdoc-cancel').on('click', function() {
+        $('#modal-newdoc').addClass('hidden');
+      });
+
+      $('#modal-newdoc-confirm').on('click', function() {
+        const title = $('#newdoc-title').val().trim();
+        const content = $('#newdoc-content').val().trim();
+        if (!title) { toast('请填写文档标题', 'error'); return; }
+        const target = $('#modal-newdoc').data('target');
+        const id = 'D-' + Date.now();
+        if (window.Store && window.Store.topicPool) {
+          window.Store.topicPool.unshift({ id, title, content, addedAt: Date.now() });
+          try { window.Store.save && window.Store.save(); } catch(e){}
+        }
+        $('#modal-newdoc').addClass('hidden');
+        toast('文档「' + title + '」已添加到「' + TAB_META[target].title + '」', 'success');
+        addActivity('新建文档：' + title);
+      });
+
+      $('#qa-search').on('click', function() {
+        // 复杂交互 - 后续应实现：
+        // 1. 弹出全局搜索模态框
+        // 2. 跨分类搜索（标题/正文/标签）
+        // 3. 支持高级过滤：时间范围/分类/作者
+        // 4. 搜索结果高亮关键词
+        $('#global-search').focus().select();
+        toast('已聚焦到顶部搜索框', 'info');
+      });
+
+      // ========== 升级按钮 ==========
+      $('#btn-upgrade').on('click', function() {
+        toast('存储升级方案开发中，敬请期待～', 'info');
+      });
+
+      // ========== 往期内容：筛选条 ==========
+      $('#archive-filter').on('click', 'button', function() {
+        $('#archive-filter button').removeClass('badge-up').addClass('badge-flat');
+        $(this).removeClass('badge-flat').addClass('badge-up');
+        const filter = $(this).data('filter');
+        let visible = 0;
+        $('#archive-grid .archive-card').each(function() {
+          const tier = $(this).data('tier');
+          const show = (filter === 'all') || (filter === tier);
+          $(this).toggleClass('hidden', !show);
+          if (show) visible++;
+        });
+        $('#archive-count').text(visible);
+        if (visible > 0) toast('已筛选 ' + visible + ' 篇内容', 'info');
+      });
+
+      // ========== 往期内容：排序/日期选择 ==========
+      $('#archive-sort, #archive-date').on('change', function() {
+        toast('已应用筛选：' + ($(this).val() || '默认'), 'info');
+      });
+
+      // ========== 往期内容：点击卡片打开详情 Modal ==========
+      // 复杂交互 - 后续应实现：
+      // 1. 弹出 Modal 显示该笔记的完整内容、评论、转化数据
+      // 2. 支持"标记为爆款""加入拆解库""基于此生成新选题"
+      // 3. 显示近 7 天趋势曲线
+      $('#archive-grid').on('click', '.archive-card', function() {
+        const $c = $(this);
+        const title = $c.data('title');
+        const date = $c.data('date');
+        const views = $c.data('views');
+        const likes = $c.data('likes');
+        const erate = $c.data('erate');
+        const image = $c.data('image');
+        const summary = $c.data('summary');
+        const tier = $c.data('tier');
+
+        const viewsText = views >= 1000 ? (views / 1000).toFixed(0) + 'K' : views;
+        const likesText = likes >= 1000 ? (likes / 1000).toFixed(1) + 'K' : likes;
+
+        const html = ''
+          + '<div class="aspect-[16/9] bg-surface-container rounded-lg overflow-hidden border border-outline">'
+          +   '<img src="' + image + '" alt="商业场景" data-category="商业科技" class="w-full h-full object-cover" />'
+          + '</div>'
+          + '<div>'
+          +   '<h4 class="text-lg font-bold text-on-surface mb-2">' + title + '</h4>'
+          +   '<div class="flex items-center gap-3 text-xs text-on-surface-variant mb-3">'
+          +     '<span class="flex items-center gap-1 font-num"><i data-lucide="calendar" class="w-3 h-3"></i>' + date + '</span>'
+          +     (tier === 'hot' ? '<span class="badge-up">爆款</span>' : '')
+          +   '</div>'
+          +   '<p class="text-sm text-on-surface/90 leading-relaxed mb-4">' + summary + '</p>'
+          +   '<div class="grid grid-cols-3 gap-3">'
+          +     '<div class="p-3 bg-surface-container rounded-lg text-center border border-outline">'
+          +       '<div class="text-lg font-bold text-on-surface font-num">' + viewsText + '</div>'
+          +       '<div class="text-[10px] text-on-surface-variant mt-1">曝光</div>'
+          +     '</div>'
+          +     '<div class="p-3 bg-surface-container rounded-lg text-center border border-outline">'
+          +       '<div class="text-lg font-bold num-glow font-num">' + likesText + '</div>'
+          +       '<div class="text-[10px] text-on-surface-variant mt-1">点赞</div>'
+          +     '</div>'
+          +     '<div class="p-3 bg-surface-container rounded-lg text-center border border-outline">'
+          +       '<div class="text-lg font-bold text-on-surface font-num">' + erate + '%</div>'
+          +       '<div class="text-[10px] text-on-surface-variant mt-1">互动率</div>'
+          +     '</div>'
+          +   '</div>'
+          + '</div>';
+
+        $('#modal-archive-title').text(title);
+        $('#modal-archive-body').html(html);
+        $('#modal-archive').removeClass('hidden');
+        lucide.createIcons();
+      });
+
+      $('#modal-archive-close').on('click', function() {
+        $('#modal-archive').addClass('hidden');
+      });
+
+      // ========== 对标账号：添加监控 ==========
+      // 复杂交互 - 后续应实现：
+      // 1. 弹窗选择监控维度（粉丝增长、爆款更新、互动率波动）
+      // 2. 设置监控频率（每日 / 每周 / 实时）
+      // 3. 选择通知方式（站内 / 微信 / 邮件）
+      $('#pane-benchmark').on('click', '.btn-add-bench', function() {
+        const name = $(this).data('name');
+        if (window.Store && window.Store.benchmarks) {
+          if (window.Store.benchmarks.indexOf(name) !== -1) {
+            toast('"' + name + '" 已在监控列表中', 'info');
+            return;
+          }
+          window.Store.benchmarks.push(name);
+          try { window.Store.save && window.Store.save(); } catch(e){}
+        }
+        toast('已添加「' + name + '」到监控列表', 'success');
+        addActivity('添加监控：' + name);
+        const $btn = $(this);
+        $btn.find('i').attr('data-lucide', 'check');
+        $btn.addClass('text-primary border-primary').removeClass('text-on-surface-variant');
+        lucide.createIcons();
+        setTimeout(function() {
+          $btn.find('i').attr('data-lucide', 'plus');
+          $btn.removeClass('text-primary border-primary').addClass('text-on-surface-variant');
+          lucide.createIcons();
+        }, 2000);
+      });
+
+      // ========== 选题素材：加入流水线 ==========
+      // 复杂交互 - 后续应实现：
+      // 1. 调用 Store.pushPipeline 加入队列
+      // 2. 跳转到内容工厂页面并预选该选题
+      $('#pane-material').on('click', '.btn-push-pipeline', function() {
+        const title = $(this).data('title');
+        const score = $(this).data('score');
+        const id = 'M-' + Date.now();
+        if (window.Store && typeof window.Store.pushPipeline === 'function') {
+          window.Store.pushPipeline({
+            id: id,
+            topic: title,
+            step: 1,
+            stepName: '选题准备',
+            status: 'pending'
+          });
+        }
+        toast('已加入流水线："' + title + '"', 'success');
+        addActivity('加入流水线：' + title);
+        const $btn = $(this);
+        $btn.html('<i data-lucide="check" class="w-3 h-3"></i>已加入').addClass('num-glow');
+        lucide.createIcons();
+        setTimeout(function() {
+          $btn.html('<i data-lucide="plus-circle" class="w-3 h-3"></i>加入流水线').removeClass('num-glow');
+          lucide.createIcons();
+        }, 2000);
+      });
+
+      // ========== 点击 Modal 背景关闭 ==========
+      $('[id^="modal-"]').on('click', function(e) {
+        if (e.target === this) {
+          $(this).addClass('hidden');
+        }
+      });
+
+      // ========== ESC 关闭 Modal ==========
+      $(document).on('keydown', function(e) {
+        if (e.key === 'Escape') {
+          $('[id^="modal-"]').not('.hidden').addClass('hidden');
+        }
+      });
+
+      // ========== page:refresh 监听：数字微微变化 ==========
+      window.addEventListener('page:refresh', function() {
+        $('.num-jitter').each(function() {
+          const $el = $(this);
+          const old = $el.text();
+          const num = parseFloat(old.replace(/,/g, ''));
+          if (isNaN(num)) return;
+          let next = num;
+          if (old.includes('K')) next = (num + Math.random() * 0.2 - 0.05).toFixed(1) + 'K';
+          else if (old.includes('M')) next = (num + Math.random() * 0.05).toFixed(1) + 'M';
+          else if (old.includes(',')) next = Math.round(num + Math.random() * 30 - 10).toLocaleString();
+          else next = Math.max(1, Math.round(num + (Math.random() > 0.5 ? 1 : -1)));
+          $el.text(next).addClass('flash');
+          setTimeout(() => $el.removeClass('flash'), 500);
+        });
+        addActivity('刷新数据');
+      });
+
+      // ========== 初始化 Lucide 图标 ==========
+      lucide.createIcons();
+    });
+  </script>
+
+  <script>lucide.createIcons();</script>
+</body>
+
+</html>

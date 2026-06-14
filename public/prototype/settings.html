@@ -1,0 +1,1000 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- 赛博/科技感字体 -->
+  <link href="https://lf-code-agent.coze.cn/obj/x-ai-cn/fonts/google/orbitron.css" rel="stylesheet"/>
+  <link href="https://lf-code-agent.coze.cn/obj/x-ai-cn/fonts/google/share-tech-mono.css" rel="stylesheet"/>
+  <link href="https://lf-code-agent.coze.cn/obj/x-ai-cn/fonts/google/noto-sans-sc.css" rel="stylesheet"/>
+
+  <script src="https://lf-code-agent.coze.cn/obj/x-ai-cn/cdn/jquery/jquery-3.7.1.min.js"></script>
+  <script src="https://lf-code-agent.coze.cn/obj/x-ai-cn/cdn/lucide/lucide-1.11.0.min.js"></script>
+  <script src="https://lf-code-agent.coze.cn/obj/x-ai-cn/cdn/tailwindcss/tailwindcss-browser-4.2.4.min.js"></script>
+
+  <style type="text/tailwindcss">
+    @theme {
+      /* === 品牌色（红涨/正向 — 仅用于数据、走势线、激活态边缘光、关键 CTA 描边） === */
+      --color-primary:              #FF3B5C;
+      --color-primary-container:    #1F1218;
+      --color-on-primary:           #E8EBF0;
+      /* === 赛博霓虹点缀色（仅用于细线点缀） === */
+      --color-cyber-cyan:           #21E6C1;
+      --color-cyber-magenta:        #FF2E97;
+      --color-cyber-purple:         #8B5CFF;
+      /* === 涨跌语义色（中国股市红涨绿跌 — 仅用于数据、走势线） === */
+      --color-bull:                 #FF3B5C;
+      --color-bear:                 #15E0A0;
+      /* === 金属银色系 === */
+      --color-metal-light:          #D6DCE6;
+      --color-metal-mid:            #9AA3B2;
+      --color-metal-dark:           #6B7585;
+      /* === 背景 / 表面 — 金属枪灰 HUD === */
+      --color-background:                 #08090C;
+      --color-surface-container-lowest:   #0C0E12;
+      --color-surface:                    #12151B;
+      --color-surface-container:          #161A22;
+      --color-surface-container-high:     #1A1E26;
+      --color-surface-container-highest:  #1F2430;
+      /* === 文字 === */
+      --color-on-surface:           #E8EBF0;
+      --color-on-surface-variant:   #8A94A6;
+      --color-on-surface-weakest:   #5A6273;
+      /* === 功能色 === */
+      --color-success:  #15E0A0;
+      --color-error:    #FF3B5C;
+      --color-warning:  #F5A623;
+      /* === 边框 — 金属 HUD 描边 === */
+      --color-outline:          rgba(140,150,165,0.18);
+      --color-outline-variant:  rgba(140,150,165,0.10);
+      --color-outline-highlight: rgba(210,216,226,0.35);
+      /* === 圆角 — 更锐利 === */
+      --radius-sm:   0.25rem;
+      --radius-md:   0.375rem;
+      --radius-lg:   0.5rem;
+      --radius-xl:   0.75rem;
+      --radius-2xl:  1rem;
+      --radius-full: 9999px;
+      /* === 阴影 — 金属面板质感 === */
+      --shadow-card:   0 1px 3px rgba(0,0,0,0.5), 0 0 1px rgba(200,206,216,0.08);
+      --shadow-float:  0 8px 24px rgba(0,0,0,0.6), 0 0 1px rgba(200,206,216,0.08);
+      --shadow-dialog: 0 20px 48px rgba(0,0,0,0.7), 0 0 1px rgba(200,206,216,0.08);
+      --shadow-glow-red:     0 0 12px rgba(255,59,92,0.10), 0 0 1px rgba(255,59,92,0.3);
+      --shadow-glow-cyan:    0 0 12px rgba(33,230,193,0.10), 0 0 1px rgba(33,230,193,0.3);
+      --shadow-glow-magenta: 0 0 12px rgba(255,46,151,0.10), 0 0 1px rgba(255,46,151,0.3);
+      /* === 字体 === */
+      --font-display: "Orbitron", monospace;
+      --font-mono: "Share Tech Mono", monospace;
+      --font-sans: "Noto Sans SC", system-ui, sans-serif;
+    }
+
+    /* 自定义滚动条 — 金属灰 */
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: #08090C; }
+    ::-webkit-scrollbar-thumb { background: rgba(140,150,165,0.25); border-radius: 2px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(140,150,165,0.4); }
+
+    /* 金属银渐变文字 */
+    .metal-text {
+      background: linear-gradient(135deg, #D6DCE6 0%, #9AA3B2 50%, #D6DCE6 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    /* 金属面板渐变背景 */
+    .metal-panel {
+      background: linear-gradient(180deg, #12151B 0%, #1A1E26 100%);
+      border: 1px solid rgba(140,150,165,0.18);
+      position: relative;
+    }
+    .metal-panel::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(
+        90deg,
+        transparent,
+        transparent 2px,
+        rgba(200,206,216,0.015) 2px,
+        rgba(200,206,216,0.015) 4px
+      );
+      pointer-events: none;
+      border-radius: inherit;
+    }
+    .metal-panel:hover {
+      border-color: rgba(210,216,226,0.35);
+    }
+
+    /* HUD 切角 — 右上 + 左下 */
+    .hud-clip {
+      clip-path: polygon(
+        0 0,
+        calc(100% - 8px) 0,
+        100% 8px,
+        100% 100%,
+        8px 100%,
+        0 calc(100% - 8px)
+      );
+    }
+
+    /* HUD 切角 — 仅右上 */
+    .hud-clip-tr {
+      clip-path: polygon(
+        0 0,
+        calc(100% - 6px) 0,
+        100% 6px,
+        100% 100%,
+        0 100%
+      );
+    }
+
+    /* 扫描线 overlay — 极淡 */
+    .scanline-overlay {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 9999;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(0,0,0,0.03) 2px,
+        rgba(0,0,0,0.03) 4px
+      );
+    }
+
+    /* 霓虹辉光效果 — 克制版 */
+    .glow-red { box-shadow: 0 0 8px rgba(255,59,92,0.12), inset 0 0 4px rgba(255,59,92,0.06); }
+    .glow-cyan { box-shadow: 0 0 8px rgba(33,230,193,0.12), inset 0 0 4px rgba(33,230,193,0.06); }
+    .glow-magenta { box-shadow: 0 0 8px rgba(255,46,151,0.12), inset 0 0 4px rgba(255,46,151,0.06); }
+
+    /* 霓虹文字效果 — 克制版 */
+    .neon-text-red { text-shadow: 0 0 6px rgba(255,59,92,0.4); }
+    .neon-text-cyan { text-shadow: 0 0 6px rgba(33,230,193,0.4); }
+    .neon-text-magenta { text-shadow: 0 0 6px rgba(255,46,151,0.4); }
+
+    /* HUD 网格背景 */
+    .hud-grid-bg {
+      background-image:
+        linear-gradient(rgba(140,150,165,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(140,150,165,0.04) 1px, transparent 1px);
+      background-size: 40px 40px;
+    }
+
+    /* HUD 角标装饰 */
+    .hud-corner::before,
+    .hud-corner::after {
+      content: '';
+      position: absolute;
+      width: 8px;
+      height: 8px;
+      border-color: rgba(140,150,165,0.3);
+    }
+    .hud-corner::before {
+      top: -1px;
+      left: -1px;
+      border-top: 1px solid;
+      border-left: 1px solid;
+    }
+    .hud-corner::after {
+      bottom: -1px;
+      right: -1px;
+      border-bottom: 1px solid;
+      border-right: 1px solid;
+    }
+
+    /* 呼吸脉冲动画 — 用于状态指示灯 */
+    @keyframes pulse-dot {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+    .pulse-dot { animation: pulse-dot 2s ease-in-out infinite; }
+
+    /* HUD 按钮基础样式 — 枪灰金属底 + 霓虹描边 */
+    .hud-btn-primary {
+      background: linear-gradient(180deg, #1A1E26 0%, #12151B 100%);
+      border: 1px solid rgba(255,59,92,0.5);
+      color: #E8EBF0;
+      position: relative;
+      box-shadow: 0 0 8px rgba(255,59,92,0.10), inset 0 0 6px rgba(255,59,92,0.05);
+      transition: all 0.2s ease;
+    }
+    .hud-btn-primary:hover {
+      border-color: rgba(255,59,92,0.8);
+      box-shadow: 0 0 16px rgba(255,59,92,0.18), inset 0 0 8px rgba(255,59,92,0.08);
+    }
+
+    /* 迷你走势线占位 */
+    .sparkline-placeholder {
+      opacity: 0.4;
+    }
+
+    /* === 设置页专属样式 === */
+
+    /* Toggle 开关轨道 */
+    .toggle-track {
+      width: 40px;
+      height: 22px;
+      border-radius: 11px;
+      background: rgba(140,150,165,0.2);
+      position: relative;
+      cursor: pointer;
+      transition: background 0.25s ease;
+      flex-shrink: 0;
+    }
+    .toggle-track.active {
+      background: #21E6C1;
+    }
+    .toggle-track .toggle-thumb {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      position: absolute;
+      top: 3px;
+      left: 3px;
+      transition: transform 0.25s ease;
+      background: linear-gradient(180deg, #D6DCE6 0%, #9AA3B2 100%);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.4);
+    }
+    .toggle-track.active .toggle-thumb {
+      transform: translateX(18px);
+    }
+
+    /* 设置分组卡片标题色标线 */
+    .section-title-bar {
+      width: 3px;
+      height: 14px;
+      border-radius: 1px;
+      flex-shrink: 0;
+    }
+
+    /* 设置项 hover 效果 */
+    .setting-row {
+      transition: background 0.15s ease;
+      border-radius: 0.375rem;
+    }
+    .setting-row:hover {
+      background: rgba(140,150,165,0.04);
+    }
+
+    /* 品牌色块 */
+    .brand-color-swatch {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      border: 1px solid rgba(140,150,165,0.15);
+      flex-shrink: 0;
+    }
+
+    /* 高光描边 */
+    .highlight-border-top {
+      position: relative;
+    }
+    .highlight-border-top::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(200,206,216,0.08) 30%, rgba(200,206,216,0.08) 70%, transparent);
+      pointer-events: none;
+    }
+  </style>
+
+  <!-- 图片兜底 -->
+  <script>
+    document.addEventListener('error', function (e) {
+      const img = e.target;
+      if (img.tagName !== 'IMG' || img.dataset.fallback) return;
+      img.dataset.fallback = '1';
+      const esc = s => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+      const cat = img.getAttribute('data-category') || '其他';
+      const alt = img.getAttribute('alt') || '';
+      const label = esc(alt.length > 8 ? alt.slice(0, 8) + '…' : alt);
+      const icons = { '人物': '👤', '自然风景': '🏞', '动物': '🐾', '建筑城市': '🏙', '运动体育': '⚽', '交通工具': '🚗', '食物': '🍽', '服饰时尚': '👗', '商业科技': '💼', '游戏娱乐': '🎮', '艺术': '🎨', '其他': '🖼' };
+      const icon = icons[cat] || '🖼';
+      const w = img.width || 400, h = img.height || 300;
+      const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}"><rect width="100%" height="100%" fill="%2312151B"/><text x="50%" y="45%" text-anchor="middle" font-size="${Math.min(w, h) * 0.18}" fill="%238A94A6" dominant-baseline="central">${icon}</text><text x="50%" y="68%" text-anchor="middle" font-size="${Math.min(w, h) * 0.07}" fill="%235A6273" font-family="system-ui,sans-serif" dominant-baseline="central">${label}</text></svg>`;
+      img.src = 'data:image/svg+xml,' + svg;
+    }, true);
+  </script>
+</head>
+
+<body class="bg-background text-on-surface font-sans">
+
+  <!-- 扫描线 overlay -->
+  <div class="scanline-overlay"></div>
+
+  <!-- @nav:start 导航组件 -->
+  <header class="bg-surface sticky top-0 z-40 h-12 flex items-center justify-between px-5" style="border-bottom: 1px solid rgba(140,150,165,0.18); background: linear-gradient(180deg, #12151B 0%, #0E1016 100%);">
+    <div class="flex items-center gap-3">
+      <div class="flex items-center gap-2.5">
+        <div class="w-7 h-7 flex items-center justify-center hud-clip-tr" style="background: linear-gradient(180deg, #1A1E26 0%, #12151B 100%); border: 1px solid rgba(140,150,165,0.2);">
+          <i data-lucide="zap" class="w-3.5 h-3.5" style="color: #FF3B5C;"></i>
+        </div>
+        <span class="font-display font-bold text-sm tracking-[0.2em] metal-text">XIANLIAO</span>
+        <span class="text-[10px] font-mono tracking-wider" style="color: #5A6273;">AI</span>
+        <span class="text-[9px] font-mono px-1.5 py-0.5 ml-1" style="color: #21E6C1; background: rgba(33,230,193,0.08); border: 1px solid rgba(33,230,193,0.15);">v2.0</span>
+      </div>
+    </div>
+    <div class="flex items-center gap-2">
+      <button class="flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium rounded-sm transition-colors" style="color: #8A94A6; border: 1px solid transparent;" onmouseover="this.style.borderColor='rgba(140,150,165,0.2)';this.style.color='#E8EBF0'" onmouseout="this.style.borderColor='transparent';this.style.color='#8A94A6'">
+        <i data-lucide="bell" class="w-3.5 h-3.5"></i>
+      </button>
+      <div class="w-6 h-6 flex items-center justify-center text-[10px] font-medium hud-clip-tr" style="color: #9AA3B2; background: linear-gradient(180deg, #1A1E26 0%, #12151B 100%); border: 1px solid rgba(140,150,165,0.2);">
+        咸
+      </div>
+    </div>
+  </header>
+
+  <div class="flex" style="height: calc(100vh - 3rem)">
+    <aside class="w-48 shrink-0 overflow-y-auto" style="background: linear-gradient(180deg, #0C0E12 0%, #08090C 100%); border-right: 1px solid rgba(140,150,165,0.10);">
+      <div class="p-2.5 space-y-0.5">
+        <a href="home.html" class="flex items-center gap-2.5 px-2.5 py-2 rounded-sm text-xs font-medium transition-all" style="color: #8A94A6; border: 1px solid transparent;" onmouseover="this.style.background='rgba(140,150,165,0.06)';this.style.borderColor='rgba(140,150,165,0.12)';this.style.color='#E8EBF0'" onmouseout="this.style.background='';this.style.borderColor='transparent';this.style.color='#8A94A6'">
+          <i data-lucide="home" class="w-3.5 h-3.5"></i>首页
+        </a>
+        <a href="generate.html" class="flex items-center gap-2.5 px-2.5 py-2 rounded-sm text-xs font-medium transition-all" style="color: #8A94A6; border: 1px solid transparent;" onmouseover="this.style.background='rgba(140,150,165,0.06)';this.style.borderColor='rgba(140,150,165,0.12)';this.style.color='#E8EBF0'" onmouseout="this.style.background='';this.style.borderColor='transparent';this.style.color='#8A94A6'">
+          <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>一键生成
+        </a>
+        <a href="brand-assets.html" class="flex items-center gap-2.5 px-2.5 py-2 rounded-sm text-xs font-medium transition-all" style="color: #8A94A6; border: 1px solid transparent;" onmouseover="this.style.background='rgba(140,150,165,0.06)';this.style.borderColor='rgba(140,150,165,0.12)';this.style.color='#E8EBF0'" onmouseout="this.style.background='';this.style.borderColor='transparent';this.style.color='#8A94A6'">
+          <i data-lucide="gem" class="w-3.5 h-3.5"></i>品牌资产
+        </a>
+
+        <div class="pt-3 pb-1.5 px-2.5">
+          <span class="text-[9px] font-mono uppercase tracking-[0.2em]" style="color: #5A6273;">ADVANCED</span>
+        </div>
+        <a href="topic-engine.html" class="flex items-center gap-2.5 px-2.5 py-2 rounded-sm text-xs font-medium transition-all" style="color: #8A94A6; border: 1px solid transparent;" onmouseover="this.style.background='rgba(140,150,165,0.06)';this.style.borderColor='rgba(140,150,165,0.12)';this.style.color='#E8EBF0'" onmouseout="this.style.background='';this.style.borderColor='transparent';this.style.color='#8A94A6'">
+          <i data-lucide="trending-up" class="w-3.5 h-3.5"></i>选题引擎
+        </a>
+        <a href="content-factory.html" class="flex items-center gap-2.5 px-2.5 py-2 rounded-sm text-xs font-medium transition-all" style="color: #8A94A6; border: 1px solid transparent;" onmouseover="this.style.background='rgba(140,150,165,0.06)';this.style.borderColor='rgba(140,150,165,0.12)';this.style.color='#E8EBF0'" onmouseout="this.style.background='';this.style.borderColor='transparent';this.style.color='#8A94A6'">
+          <i data-lucide="factory" class="w-3.5 h-3.5"></i>内容工厂
+        </a>
+        <a href="publish.html" class="flex items-center gap-2.5 px-2.5 py-2 rounded-sm text-xs font-medium transition-all" style="color: #8A94A6; border: 1px solid transparent;" onmouseover="this.style.background='rgba(140,150,165,0.06)';this.style.borderColor='rgba(140,150,165,0.12)';this.style.color='#E8EBF0'" onmouseout="this.style.background='';this.style.borderColor='transparent';this.style.color='#8A94A6'">
+          <i data-lucide="send" class="w-3.5 h-3.5"></i>发布管理
+        </a>
+        <a href="data-review.html" class="flex items-center gap-2.5 px-2.5 py-2 rounded-sm text-xs font-medium transition-all" style="color: #8A94A6; border: 1px solid transparent;" onmouseover="this.style.background='rgba(140,150,165,0.06)';this.style.borderColor='rgba(140,150,165,0.12)';this.style.color='#E8EBF0'" onmouseout="this.style.background='';this.style.borderColor='transparent';this.style.color='#8A94A6'">
+          <i data-lucide="chart-bar" class="w-3.5 h-3.5"></i>数据复盘
+        </a>
+        <a href="knowledge-base.html" class="flex items-center gap-2.5 px-2.5 py-2 rounded-sm text-xs font-medium transition-all" style="color: #8A94A6; border: 1px solid transparent;" onmouseover="this.style.background='rgba(140,150,165,0.06)';this.style.borderColor='rgba(140,150,165,0.12)';this.style.color='#E8EBF0'" onmouseout="this.style.background='';this.style.borderColor='transparent';this.style.color='#8A94A6'">
+          <i data-lucide="brain" class="w-3.5 h-3.5"></i>知识库
+        </a>
+        <a href="settings.html" class="flex items-center gap-2.5 px-2.5 py-2 rounded-sm text-xs font-medium transition-all hud-clip-tr" style="background: rgba(255,59,92,0.08); color: #FF3B5C; border: 1px solid rgba(255,59,92,0.2);" aria-current="page">
+          <i data-lucide="settings" class="w-3.5 h-3.5"></i>设置
+        </a>
+      </div>
+
+      <!-- 侧边栏底部状态 -->
+      <div class="absolute bottom-0 left-0 w-48 p-2.5" style="border-top: 1px solid rgba(140,150,165,0.10);">
+        <div class="flex items-center gap-1.5 text-[9px] font-mono" style="color: #5A6273;">
+          <span class="w-1.5 h-1.5 rounded-full pulse-dot" style="background: #21E6C1;"></span>
+          SYSTEM ONLINE
+        </div>
+      </div>
+    </aside>
+
+    <!-- @main-content:start -->
+    <main class="flex-1 min-w-0 overflow-y-auto bg-background p-6 hud-grid-bg relative">
+      <div class="max-w-4xl mx-auto">
+
+        <!-- 页面标题区域 -->
+        <div class="mb-8">
+          <div class="flex items-center gap-3 mb-2">
+            <h1 class="font-display text-2xl font-bold tracking-[0.15em] metal-text">SETTINGS</h1>
+            <span class="text-[9px] font-mono px-1.5 py-0.5" style="color: #8A94A6; background: rgba(140,150,165,0.08); border: 1px solid rgba(140,150,165,0.12);">SYS.CONFIG</span>
+          </div>
+          <p class="text-sm font-sans" style="color: #8A94A6; letter-spacing: 0.02em;">系统参数配置与个人偏好设定</p>
+        </div>
+
+        <!-- ========== 1. 个人资料 ========== -->
+        <div class="metal-panel hud-clip-tr rounded-md p-5 mb-5 highlight-border-top hud-corner">
+          <!-- 分组标题 -->
+          <div class="flex items-center gap-2.5 mb-5">
+            <div class="section-title-bar" style="background: #FF3B5C;"></div>
+            <span class="text-[10px] font-mono uppercase tracking-[0.18em]" style="color: #9AA3B2;">PERSONAL PROFILE</span>
+            <span class="text-[9px] font-mono" style="color: #5A6273;">// 个人资料</span>
+          </div>
+
+          <!-- 头像 + 基本信息 -->
+          <div class="flex items-start gap-5 mb-5">
+            <div class="relative">
+              <div class="w-16 h-16 flex items-center justify-center text-xl font-medium rounded-md hud-clip-tr" style="background: linear-gradient(180deg, #1A1E26 0%, #12151B 100%); border: 1px solid rgba(140,150,165,0.2); color: #9AA3B2;">
+                初
+              </div>
+              <button id="btn-change-avatar" class="absolute -bottom-1 -right-1 w-5 h-5 flex items-center justify-center rounded-full" style="background: linear-gradient(180deg, #1A1E26 0%, #12151B 100%); border: 1px solid rgba(140,150,165,0.3);">
+                <i data-lucide="camera" class="w-2.5 h-2.5" style="color: #9AA3B2;"></i>
+              </button>
+            </div>
+            <div class="flex-1 space-y-3">
+              <div>
+                <label class="block text-[10px] font-mono uppercase tracking-wider mb-1.5" style="color: #5A6273;">USERNAME</label>
+                <input id="input-username" type="text" value="小初" class="w-full bg-surface-container border-none rounded-md px-3 py-2 text-sm text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:ring-2 focus:ring-primary/20 transition-colors font-sans" style="letter-spacing: 0.02em;"/>
+              </div>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="block text-[10px] font-mono uppercase tracking-wider mb-1.5" style="color: #5A6273;">EMAIL</label>
+              <input id="input-email" type="email" value="xiaochu@xianliao.ai" class="w-full bg-surface-container border-none rounded-md px-3 py-2 text-sm text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:ring-2 focus:ring-primary/20 transition-colors font-sans" style="letter-spacing: 0.02em;"/>
+            </div>
+            <div>
+              <label class="block text-[10px] font-mono uppercase tracking-wider mb-1.5" style="color: #5A6273;">PHONE</label>
+              <input id="input-phone" type="tel" value="138****5678" class="w-full bg-surface-container border-none rounded-md px-3 py-2 text-sm text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:ring-2 focus:ring-primary/20 transition-colors font-sans" style="letter-spacing: 0.02em;"/>
+            </div>
+            <div class="col-span-2">
+              <label class="block text-[10px] font-mono uppercase tracking-wider mb-1.5" style="color: #5A6273;">BIO</label>
+              <textarea id="input-bio" rows="2" class="w-full bg-surface-container border-none rounded-md px-3 py-2 text-sm text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:ring-2 focus:ring-primary/20 transition-colors font-sans resize-none" style="letter-spacing: 0.02em;">内容创作者，专注科技与生活方式领域</textarea>
+            </div>
+          </div>
+        </div>
+
+        <!-- ========== 2. 默认角色 ========== -->
+        <div class="metal-panel hud-clip-tr rounded-md p-5 mb-5 highlight-border-top hud-corner">
+          <div class="flex items-center gap-2.5 mb-5">
+            <div class="section-title-bar" style="background: #21E6C1;"></div>
+            <span class="text-[10px] font-mono uppercase tracking-[0.18em]" style="color: #9AA3B2;">DEFAULT ROLE</span>
+            <span class="text-[9px] font-mono" style="color: #5A6273;">// 默认角色</span>
+          </div>
+
+          <div class="space-y-3">
+            <!-- 角色1 -->
+            <div class="setting-row flex items-center justify-between px-3 py-2.5">
+              <div class="flex items-center gap-3">
+                <div class="w-8 h-8 flex items-center justify-center rounded-sm hud-clip-tr" style="background: rgba(255,59,92,0.1); border: 1px solid rgba(255,59,92,0.2);">
+                  <i data-lucide="pen-tool" class="w-3.5 h-3.5" style="color: #FF3B5C;"></i>
+                </div>
+                <div>
+                  <div class="text-sm font-medium text-on-surface font-sans" style="letter-spacing: 0.02em;">科技博主</div>
+                  <div class="text-[10px] font-mono" style="color: #5A6273;">Tech Blogger</div>
+                </div>
+              </div>
+              <div class="flex items-center gap-2">
+                <span class="text-[9px] font-mono px-1.5 py-0.5" style="color: #21E6C1; background: rgba(33,230,193,0.08); border: 1px solid rgba(33,230,193,0.15);">ACTIVE</span>
+                <div id="toggle-role-1" class="toggle-track active">
+                  <div class="toggle-thumb"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 角色2 -->
+            <div class="setting-row flex items-center justify-between px-3 py-2.5">
+              <div class="flex items-center gap-3">
+                <div class="w-8 h-8 flex items-center justify-center rounded-sm hud-clip-tr" style="background: rgba(33,230,193,0.1); border: 1px solid rgba(33,230,193,0.2);">
+                  <i data-lucide="life-buoy" class="w-3.5 h-3.5" style="color: #21E6C1;"></i>
+                </div>
+                <div>
+                  <div class="text-sm font-medium text-on-surface font-sans" style="letter-spacing: 0.02em;">生活方式达人</div>
+                  <div class="text-[10px] font-mono" style="color: #5A6273;">Lifestyle Influencer</div>
+                </div>
+              </div>
+              <div class="flex items-center gap-2">
+                <div id="toggle-role-2" class="toggle-track">
+                  <div class="toggle-thumb"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 角色3 -->
+            <div class="setting-row flex items-center justify-between px-3 py-2.5">
+              <div class="flex items-center gap-3">
+                <div class="w-8 h-8 flex items-center justify-center rounded-sm hud-clip-tr" style="background: rgba(255,46,151,0.1); border: 1px solid rgba(255,46,151,0.2);">
+                  <i data-lucide="shopping-bag" class="w-3.5 h-3.5" style="color: #FF2E97;"></i>
+                </div>
+                <div>
+                  <div class="text-sm font-medium text-on-surface font-sans" style="letter-spacing: 0.02em;">电商带货主播</div>
+                  <div class="text-[10px] font-mono" style="color: #5A6273;">E-Commerce Streamer</div>
+                </div>
+              </div>
+              <div class="flex items-center gap-2">
+                <div id="toggle-role-3" class="toggle-track">
+                  <div class="toggle-thumb"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 角色4 -->
+            <div class="setting-row flex items-center justify-between px-3 py-2.5">
+              <div class="flex items-center gap-3">
+                <div class="w-8 h-8 flex items-center justify-center rounded-sm hud-clip-tr" style="background: rgba(139,92,255,0.1); border: 1px solid rgba(139,92,255,0.2);">
+                  <i data-lucide="graduation-cap" class="w-3.5 h-3.5" style="color: #8B5CFF;"></i>
+                </div>
+                <div>
+                  <div class="text-sm font-medium text-on-surface font-sans" style="letter-spacing: 0.02em;">知识付费讲师</div>
+                  <div class="text-[10px] font-mono" style="color: #5A6273;">Knowledge Educator</div>
+                </div>
+              </div>
+              <div class="flex items-center gap-2">
+                <div id="toggle-role-4" class="toggle-track">
+                  <div class="toggle-thumb"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ========== 3. 平台账号 ========== -->
+        <div class="metal-panel hud-clip-tr rounded-md p-5 mb-5 highlight-border-top hud-corner">
+          <div class="flex items-center gap-2.5 mb-5">
+            <div class="section-title-bar" style="background: #8B5CFF;"></div>
+            <span class="text-[10px] font-mono uppercase tracking-[0.18em]" style="color: #9AA3B2;">PLATFORM ACCOUNTS</span>
+            <span class="text-[9px] font-mono" style="color: #5A6273;">// 平台账号</span>
+          </div>
+
+          <div class="space-y-2">
+            <!-- 平台1-小红书-已绑定 -->
+            <div class="setting-row flex items-center justify-between px-3 py-3">
+              <div class="flex items-center gap-3">
+                <div class="w-8 h-8 flex items-center justify-center rounded-sm hud-clip-tr" style="background: rgba(255,59,92,0.1); border: 1px solid rgba(255,59,92,0.2);">
+                  <i data-lucide="book-open" class="w-3.5 h-3.5" style="color: #FF3B5C;"></i>
+                </div>
+                <div>
+                  <div class="text-sm font-medium text-on-surface font-sans" style="letter-spacing: 0.02em;">小红书</div>
+                  <div class="text-[10px] font-mono" style="color: #5A6273;">@科技小初</div>
+                </div>
+              </div>
+              <div class="flex items-center gap-3">
+                <span class="text-[10px] font-mono px-2 py-0.5 rounded-sm" style="color: #15E0A0; background: rgba(21,224,160,0.08); border: 1px solid rgba(21,224,160,0.15);">已绑定</span>
+                <button id="btn-unbind-xhs" class="text-[10px] font-mono px-2 py-1 rounded-sm transition-colors" style="color: #8A94A6; border: 1px solid rgba(140,150,165,0.15);" onmouseover="this.style.borderColor='rgba(255,59,92,0.4)';this.style.color='#FF3B5C'" onmouseout="this.style.borderColor='rgba(140,150,165,0.15)';this.style.color='#8A94A6'">解绑</button>
+              </div>
+            </div>
+
+            <!-- 平台2-抖音-已绑定 -->
+            <div class="setting-row flex items-center justify-between px-3 py-3">
+              <div class="flex items-center gap-3">
+                <div class="w-8 h-8 flex items-center justify-center rounded-sm hud-clip-tr" style="background: rgba(33,230,193,0.1); border: 1px solid rgba(33,230,193,0.2);">
+                  <i data-lucide="music" class="w-3.5 h-3.5" style="color: #21E6C1;"></i>
+                </div>
+                <div>
+                  <div class="text-sm font-medium text-on-surface font-sans" style="letter-spacing: 0.02em;">抖音</div>
+                  <div class="text-[10px] font-mono" style="color: #5A6273;">@小初的科技日常</div>
+                </div>
+              </div>
+              <div class="flex items-center gap-3">
+                <span class="text-[10px] font-mono px-2 py-0.5 rounded-sm" style="color: #15E0A0; background: rgba(21,224,160,0.08); border: 1px solid rgba(21,224,160,0.15);">已绑定</span>
+                <button id="btn-unbind-douyin" class="text-[10px] font-mono px-2 py-1 rounded-sm transition-colors" style="color: #8A94A6; border: 1px solid rgba(140,150,165,0.15);" onmouseover="this.style.borderColor='rgba(255,59,92,0.4)';this.style.color='#FF3B5C'" onmouseout="this.style.borderColor='rgba(140,150,165,0.15)';this.style.color='#8A94A6'">解绑</button>
+              </div>
+            </div>
+
+            <!-- 平台3-微信公众号-已绑定 -->
+            <div class="setting-row flex items-center justify-between px-3 py-3">
+              <div class="flex items-center gap-3">
+                <div class="w-8 h-8 flex items-center justify-center rounded-sm hud-clip-tr" style="background: rgba(139,92,255,0.1); border: 1px solid rgba(139,92,255,0.2);">
+                  <i data-lucide="message-circle" class="w-3.5 h-3.5" style="color: #8B5CFF;"></i>
+                </div>
+                <div>
+                  <div class="text-sm font-medium text-on-surface font-sans" style="letter-spacing: 0.02em;">微信公众号</div>
+                  <div class="text-[10px] font-mono" style="color: #5A6273;">咸聊科技</div>
+                </div>
+              </div>
+              <div class="flex items-center gap-3">
+                <span class="text-[10px] font-mono px-2 py-0.5 rounded-sm" style="color: #15E0A0; background: rgba(21,224,160,0.08); border: 1px solid rgba(21,224,160,0.15);">已绑定</span>
+                <button id="btn-unbind-wechat" class="text-[10px] font-mono px-2 py-1 rounded-sm transition-colors" style="color: #8A94A6; border: 1px solid rgba(140,150,165,0.15);" onmouseover="this.style.borderColor='rgba(255,59,92,0.4)';this.style.color='#FF3B5C'" onmouseout="this.style.borderColor='rgba(140,150,165,0.15)';this.style.color='#8A94A6'">解绑</button>
+              </div>
+            </div>
+
+            <!-- 平台4-微博-未绑定 -->
+            <div class="setting-row flex items-center justify-between px-3 py-3">
+              <div class="flex items-center gap-3">
+                <div class="w-8 h-8 flex items-center justify-center rounded-sm hud-clip-tr" style="background: rgba(140,150,165,0.08); border: 1px solid rgba(140,150,165,0.15);">
+                  <i data-lucide="at-sign" class="w-3.5 h-3.5" style="color: #5A6273;"></i>
+                </div>
+                <div>
+                  <div class="text-sm font-medium font-sans" style="color: #8A94A6; letter-spacing: 0.02em;">微博</div>
+                  <div class="text-[10px] font-mono" style="color: #5A6273;">未绑定账号</div>
+                </div>
+              </div>
+              <div class="flex items-center gap-3">
+                <span class="text-[10px] font-mono px-2 py-0.5 rounded-sm" style="color: #5A6273; background: rgba(90,98,115,0.1); border: 1px solid rgba(90,98,115,0.15);">未绑定</span>
+                <button id="btn-bind-weibo" class="text-[10px] font-mono px-2 py-1 rounded-sm transition-colors" style="color: #21E6C1; border: 1px solid rgba(33,230,193,0.3);" onmouseover="this.style.borderColor='rgba(33,230,193,0.6)';this.style.background='rgba(33,230,193,0.06)'" onmouseout="this.style.borderColor='rgba(33,230,193,0.3)';this.style.background=''">绑定</button>
+              </div>
+            </div>
+
+            <!-- 平台5-B站-未绑定 -->
+            <div class="setting-row flex items-center justify-between px-3 py-3">
+              <div class="flex items-center gap-3">
+                <div class="w-8 h-8 flex items-center justify-center rounded-sm hud-clip-tr" style="background: rgba(140,150,165,0.08); border: 1px solid rgba(140,150,165,0.15);">
+                  <i data-lucide="tv" class="w-3.5 h-3.5" style="color: #5A6273;"></i>
+                </div>
+                <div>
+                  <div class="text-sm font-medium font-sans" style="color: #8A94A6; letter-spacing: 0.02em;">哔哩哔哩</div>
+                  <div class="text-[10px] font-mono" style="color: #5A6273;">未绑定账号</div>
+                </div>
+              </div>
+              <div class="flex items-center gap-3">
+                <span class="text-[10px] font-mono px-2 py-0.5 rounded-sm" style="color: #5A6273; background: rgba(90,98,115,0.1); border: 1px solid rgba(90,98,115,0.15);">未绑定</span>
+                <button id="btn-bind-bilibili" class="text-[10px] font-mono px-2 py-1 rounded-sm transition-colors" style="color: #21E6C1; border: 1px solid rgba(33,230,193,0.3);" onmouseover="this.style.borderColor='rgba(33,230,193,0.6)';this.style.background='rgba(33,230,193,0.06)'" onmouseout="this.style.borderColor='rgba(33,230,193,0.3)';this.style.background=''">绑定</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ========== 4. 生成偏好 ========== -->
+        <div class="metal-panel hud-clip-tr rounded-md p-5 mb-5 highlight-border-top hud-corner">
+          <div class="flex items-center gap-2.5 mb-5">
+            <div class="section-title-bar" style="background: #FF2E97;"></div>
+            <span class="text-[10px] font-mono uppercase tracking-[0.18em]" style="color: #9AA3B2;">GENERATION PREFS</span>
+            <span class="text-[9px] font-mono" style="color: #5A6273;">// 生成偏好</span>
+          </div>
+
+          <div class="space-y-4">
+            <!-- 默认内容风格 -->
+            <div class="setting-row px-3 py-2.5">
+              <label class="block text-[10px] font-mono uppercase tracking-wider mb-2" style="color: #5A6273;">DEFAULT STYLE</label>
+              <div class="flex flex-wrap gap-2">
+                <!-- 风格1-选中态 -->
+                <button id="style-professional" class="px-3 py-1.5 text-xs font-medium font-sans rounded-sm transition-all" style="color: #FF3B5C; background: rgba(255,59,92,0.08); border: 1px solid rgba(255,59,92,0.3); letter-spacing: 0.02em;" onclick="selectStyle(this)">专业严谨</button>
+                <!-- 风格2 -->
+                <button id="style-casual" class="px-3 py-1.5 text-xs font-medium font-sans rounded-sm transition-all" style="color: #8A94A6; background: rgba(140,150,165,0.06); border: 1px solid rgba(140,150,165,0.15); letter-spacing: 0.02em;" onclick="selectStyle(this)">轻松活泼</button>
+                <!-- 风格3 -->
+                <button id="style-literary" class="px-3 py-1.5 text-xs font-medium font-sans rounded-sm transition-all" style="color: #8A94A6; background: rgba(140,150,165,0.06); border: 1px solid rgba(140,150,165,0.15); letter-spacing: 0.02em;" onclick="selectStyle(this)">文艺清新</button>
+                <!-- 风格4 -->
+                <button id="style-humorous" class="px-3 py-1.5 text-xs font-medium font-sans rounded-sm transition-all" style="color: #8A94A6; background: rgba(140,150,165,0.06); border: 1px solid rgba(140,150,165,0.15); letter-spacing: 0.02em;" onclick="selectStyle(this)">幽默诙谐</button>
+              </div>
+            </div>
+
+            <!-- 默认内容长度 -->
+            <div class="setting-row px-3 py-2.5">
+              <label class="block text-[10px] font-mono uppercase tracking-wider mb-2" style="color: #5A6273;">CONTENT LENGTH</label>
+              <div class="flex items-center gap-3">
+                <input id="range-length" type="range" min="200" max="3000" value="800" class="flex-1 h-1 rounded-full appearance-none cursor-pointer" style="background: linear-gradient(90deg, rgba(140,150,165,0.2), #FF3B5C); accent-color: #FF3B5C;"/>
+                <span id="length-value" class="text-xs font-mono w-16 text-right" style="color: #9AA3B2;">800字</span>
+              </div>
+            </div>
+
+            <!-- AI创意度 -->
+            <div class="setting-row px-3 py-2.5">
+              <label class="block text-[10px] font-mono uppercase tracking-wider mb-2" style="color: #5A6273;">CREATIVITY LEVEL</label>
+              <div class="flex items-center gap-3">
+                <input id="range-creativity" type="range" min="0" max="100" value="70" class="flex-1 h-1 rounded-full appearance-none cursor-pointer" style="background: linear-gradient(90deg, rgba(140,150,165,0.2), #21E6C1); accent-color: #21E6C1;"/>
+                <span id="creativity-value" class="text-xs font-mono w-10 text-right" style="color: #9AA3B2;">70%</span>
+              </div>
+            </div>
+
+            <!-- 自动优化标题 -->
+            <div class="setting-row flex items-center justify-between px-3 py-2.5">
+              <div>
+                <div class="text-sm font-medium text-on-surface font-sans" style="letter-spacing: 0.02em;">自动优化标题</div>
+                <div class="text-[10px] font-mono mt-0.5" style="color: #5A6273;">AI 自动生成多版本标题供选择</div>
+              </div>
+              <div id="toggle-auto-title" class="toggle-track active">
+                <div class="toggle-thumb"></div>
+              </div>
+            </div>
+
+            <!-- 自动添加标签 -->
+            <div class="setting-row flex items-center justify-between px-3 py-2.5">
+              <div>
+                <div class="text-sm font-medium text-on-surface font-sans" style="letter-spacing: 0.02em;">自动添加标签</div>
+                <div class="text-[10px] font-mono mt-0.5" style="color: #5A6273;">智能提取内容关键词标签</div>
+              </div>
+              <div id="toggle-auto-tags" class="toggle-track active">
+                <div class="toggle-thumb"></div>
+              </div>
+            </div>
+
+            <!-- 自动配图 -->
+            <div class="setting-row flex items-center justify-between px-3 py-2.5">
+              <div>
+                <div class="text-sm font-medium text-on-surface font-sans" style="letter-spacing: 0.02em;">自动配图</div>
+                <div class="text-[10px] font-mono mt-0.5" style="color: #5A6273;">AI 根据内容生成配图建议</div>
+              </div>
+              <div id="toggle-auto-image" class="toggle-track">
+                <div class="toggle-thumb"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ========== 5. 品牌设置 ========== -->
+        <div class="metal-panel hud-clip-tr rounded-md p-5 mb-5 highlight-border-top hud-corner">
+          <div class="flex items-center gap-2.5 mb-5">
+            <div class="section-title-bar" style="background: #F5A623;"></div>
+            <span class="text-[10px] font-mono uppercase tracking-[0.18em]" style="color: #9AA3B2;">BRAND SETTINGS</span>
+            <span class="text-[9px] font-mono" style="color: #5A6273;">// 品牌设置</span>
+          </div>
+
+          <div class="space-y-4">
+            <!-- 品牌名称 -->
+            <div class="setting-row px-3 py-2.5">
+              <label class="block text-[10px] font-mono uppercase tracking-wider mb-1.5" style="color: #5A6273;">BRAND NAME</label>
+              <input id="input-brand-name" type="text" value="咸聊科技" class="w-full bg-surface-container border-none rounded-md px-3 py-2 text-sm text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:ring-2 focus:ring-primary/20 transition-colors font-sans" style="letter-spacing: 0.02em;"/>
+            </div>
+
+            <!-- 品牌Slogan -->
+            <div class="setting-row px-3 py-2.5">
+              <label class="block text-[10px] font-mono uppercase tracking-wider mb-1.5" style="color: #5A6273;">BRAND SLOGAN</label>
+              <input id="input-brand-slogan" type="text" value="用科技点亮生活" class="w-full bg-surface-container border-none rounded-md px-3 py-2 text-sm text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:ring-2 focus:ring-primary/20 transition-colors font-sans" style="letter-spacing: 0.02em;"/>
+            </div>
+
+            <!-- 品牌色调 -->
+            <div class="setting-row px-3 py-2.5">
+              <label class="block text-[10px] font-mono uppercase tracking-wider mb-2.5" style="color: #5A6273;">BRAND COLORS</label>
+              <div class="flex items-center gap-4 flex-wrap">
+                <!-- 品牌色1 -->
+                <div class="flex items-center gap-2">
+                  <div class="brand-color-swatch" style="background: #FF3B5C;"></div>
+                  <span class="text-xs font-mono" style="color: #9AA3B2;">#FF3B5C</span>
+                </div>
+                <!-- 品牌色2 -->
+                <div class="flex items-center gap-2">
+                  <div class="brand-color-swatch" style="background: #21E6C1;"></div>
+                  <span class="text-xs font-mono" style="color: #9AA3B2;">#21E6C1</span>
+                </div>
+                <!-- 品牌色3 -->
+                <div class="flex items-center gap-2">
+                  <div class="brand-color-swatch" style="background: #1A1E26;"></div>
+                  <span class="text-xs font-mono" style="color: #9AA3B2;">#1A1E26</span>
+                </div>
+                <!-- 品牌色4 -->
+                <div class="flex items-center gap-2">
+                  <div class="brand-color-swatch" style="background: #E8EBF0;"></div>
+                  <span class="text-xs font-mono" style="color: #9AA3B2;">#E8EBF0</span>
+                </div>
+                <!-- 添加色块按钮 -->
+                <button id="btn-add-brand-color" class="flex items-center gap-1.5 px-2.5 py-1.5 text-[10px] font-mono rounded-sm transition-colors" style="color: #8A94A6; border: 1px dashed rgba(140,150,165,0.25);" onmouseover="this.style.borderColor='rgba(140,150,165,0.5)';this.style.color='#E8EBF0'" onmouseout="this.style.borderColor='rgba(140,150,165,0.25)';this.style.color='#8A94A6'">
+                  <i data-lucide="plus" class="w-3 h-3"></i>ADD
+                </button>
+              </div>
+            </div>
+
+            <!-- 品牌语调 -->
+            <div class="setting-row px-3 py-2.5">
+              <label class="block text-[10px] font-mono uppercase tracking-wider mb-2" style="color: #5A6273;">BRAND TONE</label>
+              <div class="flex flex-wrap gap-2">
+                <button id="tone-authoritative" class="px-3 py-1.5 text-xs font-medium font-sans rounded-sm transition-all" style="color: #FF3B5C; background: rgba(255,59,92,0.08); border: 1px solid rgba(255,59,92,0.3); letter-spacing: 0.02em;" onclick="selectTone(this)">权威专业</button>
+                <button id="tone-friendly" class="px-3 py-1.5 text-xs font-medium font-sans rounded-sm transition-all" style="color: #8A94A6; background: rgba(140,150,165,0.06); border: 1px solid rgba(140,150,165,0.15); letter-spacing: 0.02em;" onclick="selectTone(this)">亲和友好</button>
+                <button id="tone-innovative" class="px-3 py-1.5 text-xs font-medium font-sans rounded-sm transition-all" style="color: #8A94A6; background: rgba(140,150,165,0.06); border: 1px solid rgba(140,150,165,0.15); letter-spacing: 0.02em;" onclick="selectTone(this)">创新先锋</button>
+                <button id="tone-warm" class="px-3 py-1.5 text-xs font-medium font-sans rounded-sm transition-all" style="color: #8A94A6; background: rgba(140,150,165,0.06); border: 1px solid rgba(140,150,165,0.15); letter-spacing: 0.02em;" onclick="selectTone(this)">温暖关怀</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ========== 6. 通知设置 ========== -->
+        <div class="metal-panel hud-clip-tr rounded-md p-5 mb-5 highlight-border-top hud-corner">
+          <div class="flex items-center gap-2.5 mb-5">
+            <div class="section-title-bar" style="background: #21E6C1;"></div>
+            <span class="text-[10px] font-mono uppercase tracking-[0.18em]" style="color: #9AA3B2;">NOTIFICATION SETTINGS</span>
+            <span class="text-[9px] font-mono" style="color: #5A6273;">// 通知设置</span>
+          </div>
+
+          <div class="space-y-1">
+            <!-- 内容生成完成通知 -->
+            <div class="setting-row flex items-center justify-between px-3 py-3">
+              <div class="flex items-center gap-3">
+                <div class="w-7 h-7 flex items-center justify-center rounded-sm" style="background: rgba(33,230,193,0.08); border: 1px solid rgba(33,230,193,0.12);">
+                  <i data-lucide="check-circle" class="w-3.5 h-3.5" style="color: #21E6C1;"></i>
+                </div>
+                <div>
+                  <div class="text-sm font-medium text-on-surface font-sans" style="letter-spacing: 0.02em;">内容生成完成</div>
+                  <div class="text-[10px] font-mono mt-0.5" style="color: #5A6273;">AI内容生成完毕时通知</div>
+                </div>
+              </div>
+              <div id="toggle-notify-generate" class="toggle-track active">
+                <div class="toggle-thumb"></div>
+              </div>
+            </div>
+
+            <!-- 发布成功通知 -->
+            <div class="setting-row flex items-center justify-between px-3 py-3">
+              <div class="flex items-center gap-3">
+                <div class="w-7 h-7 flex items-center justify-center rounded-sm" style="background: rgba(255,59,92,0.08); border: 1px solid rgba(255,59,92,0.12);">
+                  <i data-lucide="send" class="w-3.5 h-3.5" style="color: #FF3B5C;"></i>
+                </div>
+                <div>
+                  <div class="text-sm font-medium text-on-surface font-sans" style="letter-spacing: 0.02em;">发布成功</div>
+                  <div class="text-[10px] font-mono mt-0.5" style="color: #5A6273;">内容成功发布到平台时通知</div>
+                </div>
+              </div>
+              <div id="toggle-notify-publish" class="toggle-track active">
+                <div class="toggle-thumb"></div>
+              </div>
+            </div>
+
+            <!-- 数据异常提醒 -->
+            <div class="setting-row flex items-center justify-between px-3 py-3">
+              <div class="flex items-center gap-3">
+                <div class="w-7 h-7 flex items-center justify-center rounded-sm" style="background: rgba(245,166,35,0.08); border: 1px solid rgba(245,166,35,0.12);">
+                  <i data-lucide="alert-triangle" class="w-3.5 h-3.5" style="color: #F5A623;"></i>
+                </div>
+                <div>
+                  <div class="text-sm font-medium text-on-surface font-sans" style="letter-spacing: 0.02em;">数据异常提醒</div>
+                  <div class="text-[10px] font-mono mt-0.5" style="color: #5A6273;">内容数据出现异常波动时提醒</div>
+                </div>
+              </div>
+              <div id="toggle-notify-anomaly" class="toggle-track active">
+                <div class="toggle-thumb"></div>
+              </div>
+            </div>
+
+            <!-- 系统更新通知 -->
+            <div class="setting-row flex items-center justify-between px-3 py-3">
+              <div class="flex items-center gap-3">
+                <div class="w-7 h-7 flex items-center justify-center rounded-sm" style="background: rgba(139,92,255,0.08); border: 1px solid rgba(139,92,255,0.12);">
+                  <i data-lucide="refresh-cw" class="w-3.5 h-3.5" style="color: #8B5CFF;"></i>
+                </div>
+                <div>
+                  <div class="text-sm font-medium text-on-surface font-sans" style="letter-spacing: 0.02em;">系统更新</div>
+                  <div class="text-[10px] font-mono mt-0.5" style="color: #5A6273;">功能更新与版本升级通知</div>
+                </div>
+              </div>
+              <div id="toggle-notify-update" class="toggle-track">
+                <div class="toggle-thumb"></div>
+              </div>
+            </div>
+
+            <!-- 账号安全通知 -->
+            <div class="setting-row flex items-center justify-between px-3 py-3">
+              <div class="flex items-center gap-3">
+                <div class="w-7 h-7 flex items-center justify-center rounded-sm" style="background: rgba(255,46,151,0.08); border: 1px solid rgba(255,46,151,0.12);">
+                  <i data-lucide="shield" class="w-3.5 h-3.5" style="color: #FF2E97;"></i>
+                </div>
+                <div>
+                  <div class="text-sm font-medium text-on-surface font-sans" style="letter-spacing: 0.02em;">账号安全</div>
+                  <div class="text-[10px] font-mono mt-0.5" style="color: #5A6273;">登录异常与安全相关通知</div>
+                </div>
+              </div>
+              <div id="toggle-notify-security" class="toggle-track active">
+                <div class="toggle-thumb"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ========== 保存按钮区域 ========== -->
+        <div class="flex items-center justify-between py-4">
+          <div class="flex items-center gap-2">
+            <span class="w-1.5 h-1.5 rounded-full pulse-dot" style="background: #21E6C1;"></span>
+            <span class="text-[10px] font-mono" style="color: #5A6273;">LAST SAVED: 2024-01-15 14:32:08</span>
+          </div>
+          <div class="flex items-center gap-3">
+            <button id="btn-reset-settings" class="px-4 py-2 text-xs font-medium font-sans rounded-sm transition-colors" style="color: #8A94A6; background: rgba(140,150,165,0.06); border: 1px solid rgba(140,150,165,0.15); letter-spacing: 0.02em;" onmouseover="this.style.borderColor='rgba(140,150,165,0.3)';this.style.color='#E8EBF0'" onmouseout="this.style.borderColor='rgba(140,150,165,0.15)';this.style.color='#8A94A6'">
+              <i data-lucide="rotate-ccw" class="w-3 h-3 inline-block mr-1"></i>重置默认
+            </button>
+            <button id="btn-save-settings" class="hud-btn-primary px-5 py-2 text-xs font-mono font-medium tracking-wider rounded-sm hud-clip-tr">
+              <i data-lucide="save" class="w-3 h-3 inline-block mr-1.5"></i>SAVE CONFIG
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </main>
+    <!-- @main-content:end -->
+  </div>
+
+  <script>
+    // 初始化 Lucide 图标
+    lucide.createIcons();
+
+    $(function() {
+
+      // === Toggle 开关交互 ===
+      // 点击 toggle-track 切换激活态
+      $('.toggle-track').on('click', function() {
+        $(this).toggleClass('active');
+      });
+
+      // === 风格选择交互 ===
+      // selectStyle: 点击风格标签时，取消所有选中态并激活当前项
+      // 1. 移除所有兄弟按钮的选中样式（红色边框/文字 → 灰色默认）
+      // 2. 给当前点击的按钮添加选中样式（灰色默认 → 红色边框/文字）
+      window.selectStyle = function(el) {
+        $(el).siblings('button').css({
+          'color': '#8A94A6',
+          'background': 'rgba(140,150,165,0.06)',
+          'border-color': 'rgba(140,150,165,0.15)'
+        });
+        $(el).css({
+          'color': '#FF3B5C',
+          'background': 'rgba(255,59,92,0.08)',
+          'border-color': 'rgba(255,59,92,0.3)'
+        });
+      };
+
+      // === 品牌语调选择交互 ===
+      // selectTone: 与风格选择相同逻辑
+      window.selectTone = function(el) {
+        $(el).siblings('button').css({
+          'color': '#8A94A6',
+          'background': 'rgba(140,150,165,0.06)',
+          'border-color': 'rgba(140,150,165,0.15)'
+        });
+        $(el).css({
+          'color': '#FF3B5C',
+          'background': 'rgba(255,59,92,0.08)',
+          'border-color': 'rgba(255,59,92,0.3)'
+        });
+      };
+
+      // === 滑块实时数值 ===
+      $('#range-length').on('input', function() {
+        $('#length-value').text($(this).val() + '字');
+      });
+
+      $('#range-creativity').on('input', function() {
+        $('#creativity-value').text($(this).val() + '%');
+      });
+
+      // === 保存设置 ===
+      $('#btn-save-settings').on('click', function() {
+        console.log('保存设置: 收集所有表单数据并提交到服务端');
+        // 保存成功反馈 — 按钮短暂变亮
+        var $btn = $(this);
+        $btn.css('border-color', 'rgba(255,59,92,1)');
+        $btn.css('box-shadow', '0 0 20px rgba(255,59,92,0.25), inset 0 0 8px rgba(255,59,92,0.1)');
+        setTimeout(function() {
+          $btn.css('border-color', 'rgba(255,59,92,0.5)');
+          $btn.css('box-shadow', '0 0 8px rgba(255,59,92,0.10), inset 0 0 6px rgba(255,59,92,0.05)');
+        }, 600);
+      });
+
+      // === 重置默认 ===
+      $('#btn-reset-settings').on('click', function() {
+        console.log('重置设置: 将所有配置项恢复为系统默认值');
+        // 重置反馈 — 按钮短暂变色
+        var $btn = $(this);
+        $btn.css('border-color', 'rgba(245,166,35,0.5)');
+        $btn.css('color', '#F5A623');
+        setTimeout(function() {
+          $btn.css('border-color', 'rgba(140,150,165,0.15)');
+          $btn.css('color', '#8A94A6');
+        }, 800);
+      });
+
+      // === 更换头像 ===
+      // 点击后应实现：
+      // 1. 弹出文件选择器，支持上传图片
+      // 2. 图片裁剪为正方形（1:1）
+      // 3. 上传至服务器并更新头像显示
+      $('#btn-change-avatar').on('click', function() {
+        console.log('更换头像: 需调用文件选择器实现头像上传');
+      });
+
+      // === 平台账号绑定 ===
+      // 点击绑定按钮后应实现：
+      // 1. 跳转到对应平台的 OAuth 授权页面
+      // 2. 授权成功后回调并更新绑定状态
+      // 3. 将"未绑定"标签替换为"已绑定"，显示绑定的账号名
+      $('#btn-bind-weibo').on('click', function() {
+        console.log('绑定微博: 需跳转至微博 OAuth 授权页面');
+      });
+
+      $('#btn-bind-bilibili').on('click', function() {
+        console.log('绑定B站: 需跳转至哔哩哔哩 OAuth 授权页面');
+      });
+
+      // === 平台账号解绑 ===
+      // 点击解绑按钮后应实现：
+      // 1. 弹出确认弹窗，提示解绑后该平台将无法发布内容
+      // 2. 确认后调用解绑接口
+      // 3. 成功后更新状态标签为"未绑定"，清空账号名，按钮变为"绑定"
+      $('#btn-unbind-xhs').on('click', function() {
+        console.log('解绑小红书: 需弹出确认弹窗后调用解绑接口');
+      });
+
+      $('#btn-unbind-douyin').on('click', function() {
+        console.log('解绑抖音: 需弹出确认弹窗后调用解绑接口');
+      });
+
+      $('#btn-unbind-wechat').on('click', function() {
+        console.log('解绑微信公众号: 需弹出确认弹窗后调用解绑接口');
+      });
+
+      // === 添加品牌色 ===
+      // 点击后应实现：
+      // 1. 弹出颜色选择器（color picker）
+      // 2. 选择颜色后在品牌色列表中新增一个圆形色块 + 色值标签
+      // 3. 将新颜色保存到品牌配置中
+      $('#btn-add-brand-color').on('click', function() {
+        console.log('添加品牌色: 需弹出颜色选择器，选择后新增色块');
+      });
+
+    });
+  </script>
+</body>
+
+</html>
