@@ -8,6 +8,7 @@ import {
   Loader2, TrendingUp, TrendingDown, Activity, Shield,
   Lock, Sparkles, ShieldAlert, ShieldCheck, Search, XCircle,
 } from 'lucide-react';
+import { NACLLogo } from '@/components/nacl-logo';
 
 /* ─── 类型 ─── */
 interface NoteData {
@@ -251,7 +252,7 @@ function GeneratePage() {
           <button onClick={() => window.history.back()} className="text-on-surface-variant hover:text-on-surface transition-colors">
             <ArrowLeft className="w-4 h-4" />
           </button>
-          <span className="font-mono text-[10px] tracking-wider" style={{ color: '#5A6273' }}>GENERATE</span>
+          <NACLLogo size="xs" />
           <span className="font-mono text-[10px]" style={{ color: '#FF3B5C' }}>{roleName}视角</span>
         </div>
         <div className="flex items-center gap-2">
@@ -529,7 +530,7 @@ function GeneratePage() {
                         咸
                       </div>
                       <div>
-                        <div className="text-xs font-medium" style={{ color: '#E8E8E8' }}>咸聊AI · {roleName}视角</div>
+                        <div className="text-xs font-medium" style={{ color: '#E8E8E8' }}>NACL · {roleName}视角</div>
                         <div className="text-[10px]" style={{ color: '#888' }}>刚刚</div>
                       </div>
                     </div>

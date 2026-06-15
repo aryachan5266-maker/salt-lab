@@ -2,6 +2,7 @@
 
 import { useState, useCallback } from 'react';
 import { Upload, Star, Download, Trash2, X, Plus, Image, FileText, Video, User, Palette, BookOpen } from 'lucide-react';
+import { NACLHeader } from '@/components/nacl-header';
 
 const TABS = [
   { key: 'logo', label: 'Logo', icon: Image },
@@ -53,13 +54,7 @@ export default function BrandAssetsPage() {
 
   return (
     <div className="min-h-screen bg-background hud-grid-bg flex flex-col">
-      <header className="sticky top-0 z-40 h-12 flex items-center justify-between px-5"
-        style={{ borderBottom: '1px solid rgba(140,150,165,0.18)', background: 'linear-gradient(180deg, #12151B, #0E1016)' }}>
-        <div className="flex items-center gap-2">
-          <span className="font-display text-sm font-bold tracking-[0.15em] metal-text">品牌资产</span>
-          <span className="text-[10px] font-mono text-on-surface-weakest">一次上传，全程复用</span>
-        </div>
-      </header>
+      <NACLHeader title="品牌资产" subtitle="一次上传，全程复用" />
 
       <main className="flex-1 px-5 py-4 max-w-5xl mx-auto w-full">
         {/* Tab 栏 */}
@@ -95,7 +90,7 @@ export default function BrandAssetsPage() {
             </div>
             <div className="metal-panel rounded-sm p-4">
               <div className="text-[10px] font-mono text-on-surface-weakest mb-2">品牌主张</div>
-              <p className="text-sm text-on-surface">咸聊一下，营销到家</p>
+              <p className="text-sm text-on-surface">NACL · 连接一切·构建未来</p>
             </div>
             <div className="metal-panel rounded-sm p-4">
               <div className="text-[10px] font-mono text-on-surface-weakest mb-2">人设语料</div>

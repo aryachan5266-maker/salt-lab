@@ -25,7 +25,7 @@ const INDUSTRIES = [
   '健身', '家居', '金融', '本地生活', '电商', '文旅',
 ] as const;
 
-/* ─── 多层 Sparkline — 半透明背景走势线 ─── */
+/* ─── 真实股市走势线 — 半透明背景动画 ─── */
 function BackgroundSparklines() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const frameRef = useRef<number>(0);
@@ -36,37 +36,136 @@ function BackgroundSparklines() {
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    /* 4 条走势线的配置 */
-    const lines = [
-      { color: 'rgba(255,59,92,0.12)', speed: 0.008, amp: 0.35, freq: 0.02, phase: 0, y: 0.25 },
-      { color: 'rgba(21,224,160,0.10)', speed: 0.006, amp: 0.25, freq: 0.015, phase: 2, y: 0.50 },
-      { color: 'rgba(33,230,193,0.08)', speed: 0.010, amp: 0.30, freq: 0.025, phase: 4, y: 0.75 },
-      { color: 'rgba(255,46,151,0.07)', speed: 0.007, amp: 0.20, freq: 0.018, phase: 1.5, y: 0.40 },
+    /* 两条走势线：红线(涨) + 绿线(跌)，真实价格模型 */
+    const MAX_POINTS = 60;
+    const ADD_INTERVAL = 1200; // 每 1.2 秒加一个点
+    const LINE_CONFIGS = [
+      { stroke: 'rgba(255,59,92,0.20)', node: 'rgba(255,59,92,0.40)', baseY: 0.35, vol: 0.012, drift: 0.0002 },
+      { stroke: 'rgba(21,224,160,0.16)', node: 'rgba(21,224,160,0.35)', baseY: 0.65, vol: 0.010, drift: -0.0001 },
     ];
 
-    let t = 0;
+    /* 每条线的价格历史 — 随机游走 */
+    const priceHistories = LINE_CONFIGS.map(cfg => {
+      const arr: number[] = [];
+      let price = cfg.baseY;
+      for (let i = 0; i < 30; i++) {
+        price += (Math.random() - 0.48 + cfg.drift) * cfg.vol;
+        price = Math.max(0.1, Math.min(0.9, price));
+        arr.push(price);
+      }
+      return arr;
+    });
 
-    const draw = () => {
+    let lastAddTime = 0;
+    let animProgress = 1;
+
+    const draw = (timestamp: number) => {
+      const dpr = window.devicePixelRatio || 1;
       const w = canvas.width;
       const h = canvas.height;
+      const logW = w / dpr;
+      const logH = h / dpr;
+
       ctx.clearRect(0, 0, w, h);
 
-      for (const line of lines) {
+      /* 网格线 — 极淡 */
+      ctx.strokeStyle = 'rgba(140,150,165,0.04)';
+      ctx.lineWidth = 0.5 * dpr;
+      for (let gy = 0; gy < logH; gy += 20) {
         ctx.beginPath();
-        ctx.strokeStyle = line.color;
-        ctx.lineWidth = 1.2;
-
-        for (let x = 0; x < w; x += 2) {
-          const noise = Math.sin(x * line.freq + t * line.speed * 60 + line.phase) * line.amp
-            + Math.sin(x * line.freq * 2.3 + t * line.speed * 40) * line.amp * 0.3;
-          const y = h * line.y + noise * h * 0.5;
-          if (x === 0) ctx.moveTo(x, y);
-          else ctx.lineTo(x, y);
-        }
+        ctx.moveTo(0, gy * dpr);
+        ctx.lineTo(w, gy * dpr);
+        ctx.stroke();
+      }
+      for (let gx = 0; gx < logW; gx += 36) {
+        ctx.beginPath();
+        ctx.moveTo(gx * dpr, 0);
+        ctx.lineTo(gx * dpr, h);
         ctx.stroke();
       }
 
-      t += 1;
+      /* 判断是否该加新点 */
+      if (timestamp - lastAddTime > ADD_INTERVAL) {
+        lastAddTime = timestamp;
+        animProgress = 0;
+        LINE_CONFIGS.forEach((cfg, i) => {
+          const arr = priceHistories[i];
+          const last = arr[arr.length - 1];
+          let next = last + (Math.random() - 0.48 + cfg.drift) * cfg.vol;
+          next = Math.max(0.1, Math.min(0.9, next));
+          arr.push(next);
+          if (arr.length > MAX_POINTS) arr.shift();
+        });
+      }
+
+      animProgress = Math.min(1, animProgress + 0.025);
+      const ease = 1 - Math.pow(1 - animProgress, 3);
+
+      /* 画每条线 */
+      LINE_CONFIGS.forEach((cfg, li) => {
+        const arr = priceHistories[li];
+        if (arr.length < 2) return;
+
+        const pointSpacing = logW / (MAX_POINTS - 1);
+        const offsetX = (MAX_POINTS - arr.length) * pointSpacing;
+
+        /* 计算点坐标 */
+        const points: { x: number; y: number }[] = arr.map((p, idx) => ({
+          x: (offsetX + idx * pointSpacing) * dpr,
+          y: p * h,
+        }));
+
+        /* 最后一个点做缓动插值 */
+        if (points.length >= 2 && animProgress < 1) {
+          const prev = points[points.length - 2];
+          const curr = points[points.length - 1];
+          curr.x = prev.x + (curr.x - prev.x) * ease;
+          curr.y = prev.y + (curr.y - prev.y) * ease;
+        }
+
+        /* 画平滑贝塞尔曲线 */
+        ctx.beginPath();
+        ctx.strokeStyle = cfg.stroke;
+        ctx.lineWidth = 1.5 * dpr;
+        ctx.lineJoin = 'round';
+        ctx.lineCap = 'round';
+
+        ctx.moveTo(points[0].x, points[0].y);
+        for (let i = 1; i < points.length; i++) {
+          const prev = points[i - 1];
+          const curr = points[i];
+          const cpx = (prev.x + curr.x) / 2;
+          ctx.bezierCurveTo(
+            prev.x + (cpx - prev.x) * 0.6, prev.y,
+            curr.x - (curr.x - cpx) * 0.6, curr.y,
+            curr.x, curr.y
+          );
+        }
+        ctx.stroke();
+
+        /* 数据节点 — 小圆点 */
+        for (let i = 0; i < points.length; i++) {
+          const p = points[i];
+          const isLast = i === points.length - 1;
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, isLast ? 2.5 * dpr : 1 * dpr, 0, Math.PI * 2);
+          ctx.fillStyle = cfg.node;
+          ctx.globalAlpha = isLast ? 1 : 0.5;
+          ctx.fill();
+          ctx.globalAlpha = 1;
+        }
+
+        /* 最新节点脉冲光圈 */
+        if (points.length > 0) {
+          const last = points[points.length - 1];
+          const pulse = (Math.sin(timestamp * 0.003) + 1) / 2;
+          ctx.beginPath();
+          ctx.arc(last.x, last.y, (5 + pulse * 5) * dpr, 0, Math.PI * 2);
+          ctx.fillStyle = cfg.stroke.replace(/[\d.]+\)$/, `${0.10 + pulse * 0.06})`);
+          ctx.fill();
+        }
+      });
+
       frameRef.current = requestAnimationFrame(draw);
     };
 
@@ -74,9 +173,9 @@ function BackgroundSparklines() {
     const resize = () => {
       const rect = canvas.parentElement?.getBoundingClientRect();
       if (rect) {
-        canvas.width = rect.width * window.devicePixelRatio;
-        canvas.height = rect.height * window.devicePixelRatio;
-        ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+        const dpr = window.devicePixelRatio || 1;
+        canvas.width = rect.width * dpr;
+        canvas.height = rect.height * dpr;
         canvas.style.width = rect.width + 'px';
         canvas.style.height = rect.height + 'px';
       }
@@ -84,6 +183,7 @@ function BackgroundSparklines() {
 
     resize();
     window.addEventListener('resize', resize);
+    lastAddTime = performance.now();
     frameRef.current = requestAnimationFrame(draw);
 
     return () => {
@@ -96,7 +196,7 @@ function BackgroundSparklines() {
     <canvas
       ref={canvasRef}
       className="absolute inset-0 w-full h-full pointer-events-none"
-      style={{ opacity: 0.8 }}
+      style={{ opacity: 0.9 }}
     />
   );
 }
