@@ -9,7 +9,7 @@
 ```
 盐究所 NACL-LAB（顶级大中台入口）
 ├── 红了么 · HONG LE ME — 小红书 AI 营销内容生成
-├── 爆了没 · BAO LE ME — 抖音爆款内容雷达 + 复刻SOP
+├── 爆了未 · BAO LE WEI — 抖音爆款内容雷达 + 复刻SOP
 ├── 往期案例 — 历史项目与作品集
 └── 盐究室 / 盐究院 — 其他子品牌
 ```
@@ -19,8 +19,9 @@
 ```
 salt-lab/
 ├── hong-le-mei/       # 红了么 — 小红书 AI 营销工具（Next.js 16）
+├── bao-le-me/         # 爆了未 — 抖音爆款内容雷达（Next.js 16）
 ├── nacl-lab/          # 盐究所中台门户（Vite + React 19）
-├── BAOLEME_AGENTS.md  # 爆了没项目规范
+├── BAOLEME_AGENTS.md  # 爆了未项目规范
 └── README.md          # 本文件
 ```
 
