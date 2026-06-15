@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { TrendingUp, TrendingDown, Search, RefreshCw, Calendar, ArrowRight } from 'lucide-react';
+import { NACLHeader } from '@/components/nacl-header';
 
 const MOCK_HOT_TOPICS = [
   { title: '冬季护肤三件套', industry: '美妆', heat: 98200, change: 12.5, trend: 'up' as const },
@@ -22,15 +23,13 @@ export default function TopicEnginePage() {
 
   return (
     <div className="min-h-screen bg-background hud-grid-bg flex flex-col">
-      <header className="sticky top-0 z-40 h-12 flex items-center justify-between px-5"
-        style={{ borderBottom: '1px solid rgba(140,150,165,0.18)', background: 'linear-gradient(180deg, #12151B, #0E1016)' }}>
-        <div className="flex items-center gap-2">
-          <span className="font-display text-sm font-bold tracking-[0.15em] metal-text">选题引擎</span>
-        </div>
-        <button className="hud-btn-ghost px-3 py-1.5 text-xs font-mono rounded-sm flex items-center gap-1.5">
-          <RefreshCw className="w-3 h-3" /> 刷新数据
-        </button>
-      </header>
+      <NACLHeader title="选题引擎" subtitle="热点·AI推荐·排期"
+        rightSlot={
+          <button className="hud-btn-ghost px-3 py-1.5 text-xs font-mono rounded-sm flex items-center gap-1.5">
+            <RefreshCw className="w-3 h-3" /> 刷新数据
+          </button>
+        }
+      />
 
       <main className="flex-1 px-5 py-4 max-w-5xl mx-auto w-full space-y-6">
         {/* 热点追踪 */}
