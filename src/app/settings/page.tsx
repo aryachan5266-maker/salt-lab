@@ -1,14 +1,12 @@
 'use client';
 
 import { Settings } from 'lucide-react';
+import { NACLHeader } from '@/components/nacl-header';
 
 export default function SettingsPage() {
   return (
     <div className="min-h-screen bg-background hud-grid-bg flex flex-col">
-      <header className="sticky top-0 z-40 h-12 flex items-center justify-between px-5"
-        style={{ borderBottom: '1px solid rgba(140,150,165,0.18)', background: 'linear-gradient(180deg, #12151B, #0E1016)' }}>
-        <span className="font-display text-sm font-bold tracking-[0.15em] metal-text">系统设置</span>
-      </header>
+      <NACLHeader title="系统设置" subtitle="资料·偏好·品牌" />
       <main className="flex-1 px-5 py-4 max-w-5xl mx-auto w-full">
         <div className="metal-panel rounded-lg p-12 text-center space-y-3">
           <Settings className="w-10 h-10 text-on-surface-weakest mx-auto" />
