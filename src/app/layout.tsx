@@ -3,11 +3,11 @@ import { StoreProvider, ToastProvider } from '@/components/store';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: '红了没 | 小红书 AI 营销结果工具',
+  title: 'NACL | AI 营销结果工具',
   description:
-    '用一句话或选个角色，一键产出可直接发布的笔记 + 已发布态预览图 + 营销逻辑说明。全行业通用，不只是文案工具。',
+    '选角色 + 说一句话，一键产出可直接发布的笔记 + 预览图 + 营销逻辑。连接一切·构建未来。',
   keywords: [
-    '红了没',
+    'NACL',
     'AI营销',
     '小红书文案',
     '抖音脚本',
@@ -15,7 +15,10 @@ export const metadata: Metadata = {
     '营销工具',
     '内容创作',
   ],
-  authors: [{ name: 'HONG LE MEI' }],
+  authors: [{ name: 'NACL' }],
+  icons: {
+    icon: '/icon.svg',
+  },
 };
 
 export default function RootLayout({

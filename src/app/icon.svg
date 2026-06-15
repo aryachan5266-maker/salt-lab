@@ -1,0 +1,8 @@
+<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="32" height="32" rx="6" fill="#08090C"/>
+  <!-- NACL Symbol — Triangle A -->
+  <path d="M16 6L8 26H24L16 6Z" stroke="white" stroke-width="2" stroke-linejoin="miter" fill="none"/>
+  <line x1="11" y1="20" x2="21" y2="20" stroke="white" stroke-width="2"/>
+  <!-- Red accent dot at apex -->
+  <circle cx="16" cy="6" r="2" fill="#FF3B5C"/>
+</svg>
