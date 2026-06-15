@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 850 180" role="img" aria-label="NACL logo">
+  <title>NACL logo</title>
+  <g fill="none" stroke="#FFFFFF" stroke-width="14" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M30 140 V45 L142 140 V45"/>
+    <path d="M240 140 L300 45 L360 140"/>
+    <path d="M570 45 H465 C428 45 408 62 408 92 C408 122 428 140 465 140 H570"/>
+    <path d="M705 45 V140 H820"/>
+  </g>
+</svg>
