@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>FleetFlow · 本地运行窗口</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #050607;
+      --panel: rgba(10, 11, 12, 0.94);
+      --line: rgba(235, 238, 236, 0.18);
+      --line-strong: rgba(235, 238, 236, 0.34);
+      --text: #f3f2ee;
+      --muted: #a8aaa8;
+      --red: #b64a3f;
+    }
+
+    * { box-sizing: border-box; }
+
+    html,
+    body {
+      margin: 0;
+      width: 100%;
+      height: 100%;
+      min-width: 320px;
+      background: var(--bg);
+      color: var(--text);
+      font-family: "Avenir Next", "PingFang SC", "Microsoft YaHei", sans-serif;
+    }
+
+    body {
+      display: grid;
+      grid-template-rows: auto 1fr;
+    }
+
+    .bar {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      min-height: 52px;
+      border-bottom: 1px solid var(--line);
+      background: var(--panel);
+      padding: 10px 14px;
+    }
+
+    .title {
+      display: grid;
+      gap: 2px;
+      min-width: 0;
+    }
+
+    .title strong {
+      font-size: 14px;
+      white-space: nowrap;
+    }
+
+    .title span {
+      color: var(--muted);
+      font-size: 11px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .status {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      margin-left: auto;
+      border: 1px solid rgba(182, 74, 63, 0.42);
+      background: rgba(182, 74, 63, 0.14);
+      color: #e7b8b0;
+      padding: 7px 11px;
+      border-radius: 999px;
+      font-size: 12px;
+      white-space: nowrap;
+    }
+
+    .dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--red);
+      box-shadow: 0 0 16px rgba(182, 74, 63, 0.9);
+    }
+
+    .open {
+      border: 1px solid var(--line-strong);
+      color: var(--text);
+      text-decoration: none;
+      padding: 7px 11px;
+      border-radius: 999px;
+      font-size: 12px;
+      white-space: nowrap;
+    }
+
+    iframe {
+      width: 100%;
+      height: 100%;
+      border: 0;
+      background: #0a0a0a;
+    }
+
+    .fallback {
+      display: none;
+      place-items: center;
+      padding: 24px;
+      text-align: center;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    body.offline iframe { display: none; }
+    body.offline .fallback { display: grid; }
+
+    @media (max-width: 700px) {
+      .bar {
+        align-items: flex-start;
+        flex-wrap: wrap;
+      }
+
+      .status {
+        margin-left: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="bar">
+    <div class="title">
+      <strong>FleetFlow 本地运行窗口</strong>
+      <span>内层服务：http://127.0.0.1:5174/</span>
+    </div>
+    <div class="status"><i class="dot"></i><span id="status">连接中</span></div>
+    <a class="open" href="http://127.0.0.1:5174/" target="_blank" rel="noopener noreferrer">新窗口打开</a>
+  </header>
+
+  <iframe id="app" src="http://127.0.0.1:5174/" title="FleetFlow 本地应用"></iframe>
+  <div class="fallback">
+    <div>
+      <strong>FleetFlow 本地服务还没启动</strong><br />
+      启动后刷新本页，就能在这个二级窗口里直接试用。
+    </div>
+  </div>
+
+  <script>
+    const status = document.getElementById("status");
+    fetch("http://127.0.0.1:5174/", { mode: "no-cors", cache: "no-store" })
+      .then(() => { status.textContent = "本地应用已连接"; })
+      .catch(() => {
+        status.textContent = "等待本地应用";
+        document.body.classList.add("offline");
+      });
+  </script>
+</body>
+</html>

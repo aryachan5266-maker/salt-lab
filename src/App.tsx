@@ -12,7 +12,10 @@ import {
   GitBranch,
   Layers3,
   LockKeyhole,
+  MonitorPlay,
   Orbit,
+  PlayCircle,
+  Rocket,
   ShieldCheck,
   X,
   Workflow,
@@ -30,13 +33,27 @@ type EvidenceFragment = {
   note: string;
 };
 
+type Category = "经营系统" | "营销智能体" | "本地自动化";
+
+// 实测模式：live/embed=已部署可在站内点测；prototype=自托管静态原型；
+// external=外部可跳转入口；gallery=私有系统仅打码截图；planned=规划中尚未开发。
+type DemoMode = "live" | "embed" | "prototype" | "external" | "gallery" | "planned";
+
+type Demo = {
+  mode: DemoMode;
+  url?: string;
+  cta?: string;
+};
+
 type Project = {
   title: string;
   label: string;
+  category: Category;
   summary: string;
   image: string;
   gallery: string[];
   evidence: EvidenceFragment[];
+  demo: Demo;
   role: string;
   what: string;
   value: string;
@@ -54,8 +71,9 @@ type SkillNode = {
 
 const projects: Project[] = [
   {
-    title: "Mango FleetFlow",
-    label: "芒果租车经营管理系统",
+    title: "FleetFlow",
+    label: "租车连锁经营管理系统",
+    category: "经营系统",
     summary: "把租车业务的客户、订单、车辆、财务、风险规则拆成可运行系统。",
     image: "/assets/projects/data-vault-wide.webp",
     gallery: [
@@ -64,23 +82,36 @@ const projects: Project[] = [
       "/assets/projects/archive-hall-wide.webp",
     ],
     evidence: [],
+    demo: { mode: "prototype", url: "/demos/fleetflow/index.html", cta: "本地预览" },
     role: "出业务框架、订单/财务逻辑、经营规则拆解",
-    what: "React + Vite + Node + MySQL 的租车经营系统，覆盖客户、订单、车辆、财务、合同、会员、销售与 AI 营销工具。",
+    what: "React + Vite + Node + MySQL 的租车经营系统，覆盖客户、订单、车辆、财务、合同、会员、销售与 AI 营销工具，框架用 base44 搭建。",
     value:
       "把散落在表格、流程和人工经验里的经营规则，整理成可交付、可协同、可继续产品化的系统资产。",
     proof:
-      "仓库含订单生命周期、资金流向、结算规则库、数据字典、经营指标字典、风险规则库；公开贡献 API 当前显示候选人为主要贡献者之一。",
-    status: "仓库事实已核验",
-    links: [
-      {
-        label: "GitHub 仓库",
-        href: "https://github.com/MANGO-Hypercar-OS/mango-fleetflow",
-      },
-    ],
+      "本页只接入脱敏本地预览，不公开源码仓库；完整系统包含订单生命周期、资金流向、结算规则库、数据字典、经营指标字典和风险规则库。",
+    status: "本地预览已接入",
+    links: [{ label: "源码不公开 · 看本地预览", disabled: true }],
   },
   {
-    title: "Mango Z",
-    label: "财务系统",
+    title: "盐究室会员 CRM",
+    label: "客户分层与会员运营系统",
+    category: "经营系统",
+    summary: "围绕客户 360 看板、会员分层、跟进节奏和转化漏斗设计的经营系统。",
+    image: "/assets/projects/ai-engine-wide.webp",
+    gallery: ["/assets/projects/ai-engine-wide.webp"],
+    evidence: [],
+    demo: { mode: "prototype", url: "/demos/saltlab-crm/index.html", cta: "看系统" },
+    role: "主导 CRM 结构、客户分层、跟进节奏与会员运营逻辑",
+    what: "围绕客户 360 看板、会员分层、销售跟进、复盘和转化漏斗设计的经营系统（HTML 主程序 + Python 后端同步脚本）。",
+    value: "不是记录客户，而是让线索被跟进、问题被发现、成交动作被管理。",
+    proof: "自建系统，主程序与后端同步脚本已成型；公开实测版本将用脱敏 / 演示数据接入，真实客户数据不公开。",
+    status: "自建系统",
+    links: [{ label: "源码不公开 · 本地演示", disabled: true }],
+  },
+  {
+    title: "Z 财务",
+    label: "经营财务系统",
+    category: "经营系统",
     summary: "把资金流、结算口径、系统健康和财务执行环境放到同一张经营视图。",
     image: "/assets/projects/archive-hall-wide.webp",
     gallery: ["/assets/redacted/money-dashboard-redacted.webp"],
@@ -101,6 +132,7 @@ const projects: Project[] = [
         note: "规则区已打码处理",
       },
     ],
+    demo: { mode: "gallery" },
     role: "定义财务口径、资金流、结算与风险视角",
     what: "围绕租车业务的收款、付款、押金、退款、挂靠/同行结算、异常与风险追踪建立后台视图。",
     value: "目标是让老板、财务、销售和交付团队看同一套经营事实，而不是各说各的表格。",
@@ -111,6 +143,7 @@ const projects: Project[] = [
   {
     title: "Trial System",
     label: "试岗系统",
+    category: "经营系统",
     summary: "把试岗、任务、候选人跟进和面聊记录变成可复盘的组织流程。",
     image: "/assets/projects/operator-console-wide.webp",
     gallery: ["/assets/redacted/hr-dashboard-redacted.webp"],
@@ -131,6 +164,7 @@ const projects: Project[] = [
         note: "记录内容已打码",
       },
     ],
+    demo: { mode: "gallery" },
     role: "把招聘判断拆成流程、任务和可复盘节点",
     what: "用于试岗流程管理、候选人跟进、任务推进和组织协同的管理系统。",
     value: "把靠感觉的招人判断，转成可记录、可比较、可沉淀的流程资产。",
@@ -139,26 +173,64 @@ const projects: Project[] = [
     links: [{ label: "内部系统 · 截图见详情", disabled: true }],
   },
   {
-    title: "mangoCRM",
-    label: "客户与转化系统",
-    summary: "围绕线索、客户分层、跟进节奏和转化漏斗设计的销售管理系统。",
-    image: "/assets/projects/ai-engine-wide.webp",
-    gallery: ["/assets/projects/ai-engine-wide.webp"],
+    title: "红了没",
+    label: "小红书产品线",
+    category: "营销智能体",
+    summary: "覆盖选题引擎、内容工厂、知识库、品牌资产、发布与数据复盘的小红书营销产品线。",
+    image: "/assets/projects/logic-lab-wide.webp",
+    gallery: ["/assets/projects/logic-lab-wide.webp"],
     evidence: [],
-    role: "主导 CRM 结构、客户分层、跟进节奏和转化逻辑",
-    what: "围绕线索、客户资源、销售跟进、复盘和转化漏斗设计经营系统。",
-    value: "不是记录客户，而是让线索被跟进、问题被发现、成交动作被管理。",
-    proof: "当前作为候选人主导设计案例呈现；公开截图和成果数据需候选人确认后开放。",
-    status: "内部系统",
-    links: [{ label: "内部系统 · 截图见详情", disabled: true }],
+    demo: {
+      mode: "external",
+      url: "https://6b29c3af-3804-4ab6-a217-b1365cda298d.dev.coze.site",
+      cta: "打开活 Demo",
+    },
+    role: "定义内容工厂、选题引擎、品牌资产与发布闭环的产品框架",
+    what: "覆盖选题引擎、内容工厂、知识库、品牌资产、发布与数据复盘的小红书营销智能体（Coze + Next.js）。文案、配图和语音生成已真实打通，角色差异化与行业上下文知识库持续迭代。",
+    value: "把『写小红书』从灵感活，变成有选题、有素材库、可批量产出和复盘的流水线。",
+    proof: "线上活 Demo 已接入，可直接点开实测：选角色 → 一句话 → 出可发布笔记 + 配图 + 营销逻辑拆解。持续迭代中。",
+    status: "活 Demo 已接入",
+    links: [
+      {
+        label: "打开线上 Demo",
+        href: "https://6b29c3af-3804-4ab6-a217-b1365cda298d.dev.coze.site",
+      },
+    ],
+  },
+  {
+    title: "爆了没",
+    label: "抖音短视频产品线",
+    category: "营销智能体",
+    summary: "把已验证的内容工厂模式迁移到抖音 / 短视频，生成可复制的爆款执行方案。",
+    image: "/assets/projects/concrete-grid-square.webp",
+    gallery: ["/assets/projects/concrete-grid-square.webp"],
+    evidence: [],
+    demo: {
+      mode: "external",
+      url: "https://0ed6e1df-d2d6-4baa-a7e3-f4bf3643df5c.dev.coze.site",
+      cta: "打开活 Demo",
+    },
+    role: "把小红书跑通的内容工厂模式迁移到短视频平台",
+    what: "抖音 / 短视频内容营销智能体，复用选题—产出—发布—复盘的内容闭环，生成可复制的爆款执行方案。",
+    value: "把已跑通的内容流水线模式，复制到第二个流量平台。",
+    proof: "首版线上 Demo 已接入，可点开实测；持续迭代中。",
+    status: "活 Demo 已接入（迭代中）",
+    links: [
+      {
+        label: "打开线上 Demo",
+        href: "https://0ed6e1df-d2d6-4baa-a7e3-f4bf3643df5c.dev.coze.site",
+      },
+    ],
   },
   {
     title: "Local Automation",
     label: "客资监测 / 销售质量监测",
+    category: "本地自动化",
     summary: "把客户资源流转、销售响应和异常信号变成可触发的本地自动化。",
     image: "/assets/projects/command-table-wide.webp",
     gallery: ["/assets/projects/command-table-wide.webp"],
     evidence: [],
+    demo: { mode: "gallery" },
     role: "把销售现场判断拆成可触发的监测规则",
     what: "监控客户资源流转、销售质量、响应节奏和异常信号，辅助管理层复盘。",
     value: "把业务经验从个人脑子里拿出来，变成公司可以持续运行的自动化机制。",
@@ -168,9 +240,37 @@ const projects: Project[] = [
   },
 ];
 
+const categories = ["全部", "经营系统", "营销智能体", "本地自动化"] as const;
+type Filter = (typeof categories)[number];
+
+const interactiveModes: DemoMode[] = ["live", "embed", "prototype", "external"];
+
+function agentStatus(demo: Demo): { text: string; tone: string } {
+  switch (demo.mode) {
+    case "live":
+    case "embed":
+      return demo.url
+        ? { text: "可实测", tone: "live" }
+        : { text: "待接入", tone: "pending" };
+    case "prototype":
+      return demo.url
+        ? { text: "原型实测", tone: "live" }
+        : { text: "原型可看", tone: "proto" };
+    case "external":
+      return demo.url
+        ? { text: "可跳转", tone: "live" }
+        : { text: "待接入", tone: "pending" };
+    case "gallery":
+      return { text: "内部 · 截图", tone: "internal" };
+    case "planned":
+      return { text: "建设中", tone: "planned" };
+  }
+}
+
 const navItems = [
-  { label: "案例", href: "#cases" },
+  { label: "作品台", href: "#cases" },
   { label: "能力", href: "#skills" },
+  { label: "资产", href: "#asset" },
   { label: "脉络", href: "#journey" },
   { label: "证据", href: "#evidence" },
   { label: "联系", href: "#contact" },
@@ -178,19 +278,19 @@ const navItems = [
 
 const pyramid = [
   {
-    title: "会 AI",
-    subtitle: "工具 / 模型 / Demo",
-    copy: "能调模型、会提示词、会用工具，能把一个想法做成能看的原型。",
+    title: "用透 AI",
+    subtitle: "不止会用 · 用到极致",
+    copy: "技术最不值钱，稀缺的是判断：哪种 AI、用在哪、怎么接进真实业务。",
   },
   {
-    title: "能落地 AI",
-    subtitle: "业务 / 流程 / 交付",
-    copy: "知道 AI 应该进入哪段流程，能把技术语言翻译成老板和团队能执行的业务语言。",
+    title: "拆得开生意",
+    subtitle: "任何行业 · 拆到底层",
+    copy: "钱怎么进、怎么出、卡在哪、风险在哪——换个行业，照样拆成能管的结构。",
   },
   {
-    title: "能卖出 AI",
-    subtitle: "客户 / 价值 / 收钱",
-    copy: "能找到真实痛点，设计付费理由，跑通找客户、交付、收钱、复购和转介绍。",
+    title: "让它赚到钱",
+    subtitle: "闭环 · 最难也最值钱",
+    copy: "找客户、交付、收钱、复购、转介绍，跑通完整的变现闭环。",
   },
 ];
 
@@ -236,7 +336,7 @@ const skillNodes: SkillNode[] = [
 const facts = [
   "FleetFlow README 核验：React + Vite / Node + Express / MySQL",
   "财务文档核验：订单生命周期、资金流向、结算规则、风险规则",
-  "贡献记录核验：GitHub API 当前返回候选人为主要贡献者之一",
+  "公开页只展示脱敏预览和可讲事实，不放源码仓库入口",
   "未确认的业务数字不在公开页面展示，避免给招聘方看到无来源结论",
 ];
 
@@ -256,23 +356,23 @@ const contacts: ContactItem[] = [
 const journey = [
   {
     stage: "I",
-    title: "业务结构拆解",
+    title: "把生意拆开看",
     years: "Stage 01",
-    copy: "从客户、订单、车辆、押金、结算、风险这些真实经营节点里抽规则。",
+    copy: "不管哪个行业，先把客户、钱、流程、风险拆成一张能管的结构图。",
     image: "/assets/projects/data-vault-wide.webp",
   },
   {
     stage: "II",
-    title: "AI 原型落地",
+    title: "当天把想法变成能用的东西",
     years: "Stage 02",
-    copy: "用 Base44 / AI coding 把方向快速变成可演示、可沟通、可迭代的产品雏形。",
+    copy: "不秀工具，只看哪种 AI 能把这件事做到最快、最好。",
     image: "/assets/projects/ai-engine-wide.webp",
   },
   {
     stage: "III",
-    title: "商业闭环推进",
+    title: "判断它到底能不能变成钱",
     years: "Stage 03",
-    copy: "围绕客户痛点、销售话术、交付流程和复购转介绍，判断 AI 是否真能变成钱。",
+    copy: "围绕客户痛点、成交动作、交付和复购转介绍，只认一个结果：有没有人愿意买单。",
     image: "/assets/projects/command-table-wide.webp",
   },
 ];
@@ -388,7 +488,7 @@ function EvidenceDisplay({
   );
 }
 
-function ProjectCard({
+function AgentCard({
   project,
   index,
   onOpen,
@@ -397,47 +497,136 @@ function ProjectCard({
   index: number;
   onOpen: () => void;
 }) {
+  const status = agentStatus(project.demo);
+  const planned = project.demo.mode === "planned";
+  const cta =
+    project.demo.cta ??
+    (project.demo.mode === "gallery" ? "看证据" : planned ? "敬请期待" : "启动");
+  const launchHref = interactiveModes.includes(project.demo.mode)
+    ? project.demo.url
+    : undefined;
+
   return (
     <motion.article
-      className="project-card"
+      className="agent-card"
       initial="hidden"
       whileInView="visible"
-      viewport={{ once: true, margin: "-80px" }}
+      viewport={{ once: true, margin: "-60px" }}
       variants={fadeUp}
-      transition={{ duration: 0.55, delay: index * 0.06 }}
+      transition={{ duration: 0.5, delay: index * 0.05 }}
     >
-      <button className="project-media" type="button" onClick={onOpen} aria-label={`查看 ${project.title} 详情`}>
-        <EvidenceDisplay project={project} compact />
+      <button
+        className="agent-thumb"
+        type="button"
+        onClick={onOpen}
+        aria-label={`打开 ${project.title} 控制台`}
+      >
+        <img src={project.image} alt="" loading="lazy" />
+        <span className="agent-cat">{project.category}</span>
+        <span className={`status-chip tone-${status.tone}`}>
+          <i className="chip-dot" />
+          {status.text}
+        </span>
       </button>
-      <div className="project-copy">
-        <div>
-          <p className="project-index">CASE 0{index + 1}</p>
-          <h3>{project.title}</h3>
-          <span>{project.label}</span>
-        </div>
-        <dl>
-          <dt>我的角色</dt>
-          <dd>{project.role}</dd>
-          <dt>做了什么</dt>
-          <dd>{project.what}</dd>
-          <dt>价值</dt>
-          <dd>{project.value}</dd>
-          <dt>证据状态</dt>
-          <dd>{project.proof}</dd>
-        </dl>
-        <div className="card-actions">
-          <button type="button" onClick={onOpen}>
-            查看详情
-            <ArrowUpRight size={16} />
+      <div className="agent-body">
+        <h3>{project.title}</h3>
+        <span className="agent-label">{project.label}</span>
+        <p className="agent-summary">{project.summary}</p>
+      </div>
+      <div className="agent-foot">
+        {launchHref ? (
+          <a
+            className="launch-btn"
+            href={launchHref}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label={`${project.title} ${cta}`}
+          >
+            <PlayCircle size={16} />
+            {cta}
+            {project.demo.mode === "external" ? <ExternalLink size={14} /> : null}
+          </a>
+        ) : (
+          <button
+            type="button"
+            className="launch-btn"
+            onClick={onOpen}
+            disabled={planned}
+          >
+            <PlayCircle size={16} />
+            {cta}
           </button>
-          <ProjectLinks links={project.links} />
-        </div>
+        )}
       </div>
     </motion.article>
   );
 }
 
-function ProjectModal({
+function DemoStage({ project }: { project: Project }) {
+  const { demo } = project;
+  const liveUrl =
+    demo.mode !== "external" && interactiveModes.includes(demo.mode)
+      ? demo.url
+      : undefined;
+
+  if (demo.mode === "external" && demo.url) {
+    return (
+      <div className="demo-pending demo-linkout">
+        <ExternalLink size={26} />
+        <strong>外部入口已接入</strong>
+        <p>该作品入口会在新窗口打开；站内保留概览与证据说明。</p>
+        <a
+          className="demo-open"
+          href={demo.url}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          打开入口
+          <ExternalLink size={14} />
+        </a>
+      </div>
+    );
+  }
+
+  if (!liveUrl) {
+    return (
+      <div className="demo-pending">
+        <Rocket size={26} />
+        <strong>实测入口待接入</strong>
+        <p>
+          {demo.mode === "planned"
+            ? "该智能体仍在规划阶段，敬请期待。"
+            : "为避免泄露真实数据，可点实测版本将用脱敏 / 演示数据部署后挂入这里。"}
+        </p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="demo-stage">
+      <div className="demo-frame">
+        <div className="demo-bar">
+          <span />
+          <span />
+          <span />
+          <em>{liveUrl}</em>
+        </div>
+        <iframe src={liveUrl} title={`${project.title} 实测`} loading="lazy" />
+      </div>
+      <a
+        className="demo-open"
+        href={liveUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        新窗口打开
+        <ExternalLink size={14} />
+      </a>
+    </div>
+  );
+}
+
+function AgentConsole({
   project,
   onClose,
 }: {
@@ -445,6 +634,16 @@ function ProjectModal({
   onClose: () => void;
 }) {
   const closeButtonRef = useRef<HTMLButtonElement>(null);
+
+  const hasEvidence = project.evidence.length > 0 || project.gallery.length > 0;
+  const canDemo = interactiveModes.includes(project.demo.mode);
+  const tabs: string[] = ["概览"];
+  if (hasEvidence) tabs.push("证据");
+  if (canDemo) tabs.push("实测");
+
+  const [tab, setTab] = useState<string>(
+    canDemo && project.demo.url ? "实测" : "概览",
+  );
 
   useEffect(() => {
     closeButtonRef.current?.focus();
@@ -478,10 +677,12 @@ function ProjectModal({
     };
   }, [onClose]);
 
+  const status = agentStatus(project.demo);
+
   return (
     <div className="modal-layer" role="presentation" onMouseDown={onClose}>
       <motion.div
-        className="case-modal"
+        className="case-modal console"
         role="dialog"
         aria-modal="true"
         aria-labelledby="case-modal-title"
@@ -491,58 +692,156 @@ function ProjectModal({
         transition={{ duration: 0.22 }}
         onMouseDown={(event) => event.stopPropagation()}
       >
-        <button ref={closeButtonRef} className="modal-close" type="button" onClick={onClose} aria-label="关闭案例详情">
+        <button
+          ref={closeButtonRef}
+          className="modal-close"
+          type="button"
+          onClick={onClose}
+          aria-label="关闭智能体控制台"
+        >
           <X size={20} />
         </button>
         <div className="modal-top">
           <div>
-            <span>{project.label}</span>
-            <h2 id="case-modal-title">{project.title}</h2>
+            <span>
+              {project.category} · {project.label}
+            </span>
+            <h2 id="case-modal-title">
+              {project.title}
+              <em className={`status-chip tone-${status.tone}`}>
+                <i className="chip-dot" />
+                {status.text}
+              </em>
+            </h2>
             <p>{project.summary}</p>
           </div>
           <ProjectLinks links={project.links} />
         </div>
 
-        <div className="modal-grid">
-          <div className="modal-copy">
-            <dl>
-              <dt>我的角色</dt>
-              <dd>{project.role}</dd>
-              <dt>做了什么</dt>
-              <dd>{project.what}</dd>
-              <dt>价值</dt>
-              <dd>{project.value}</dd>
-              <dt>证据状态</dt>
-              <dd>{project.proof}</dd>
-            </dl>
-          </div>
-          <div className="evidence-gallery" aria-label={`${project.title} 证据画廊`}>
-            {project.evidence.length ? (
-              <>
-                <EvidenceDisplay project={project} />
-                <div className="fragment-proof-grid">
-                  {project.evidence.map((item) => (
-                    <figure className="proof-fragment" key={item.src}>
-                      <img src={item.src} alt={`${project.title} ${item.label}`} />
-                      <figcaption>
-                        <span>{item.label}</span>
-                        <small>{item.note}</small>
-                      </figcaption>
-                    </figure>
-                  ))}
-                </div>
-              </>
-            ) : (
-              project.gallery.map((image) => (
-                <div className="proof-fragment hero-proof" key={image}>
-                  <img src={image} alt={`${project.title} evidence`} />
-                </div>
-              ))
-            )}
-          </div>
+        <div className="console-tabs" role="tablist">
+          {tabs.map((name) => (
+            <button
+              key={name}
+              type="button"
+              role="tab"
+              aria-selected={tab === name}
+              className={tab === name ? "active" : ""}
+              onClick={() => setTab(name)}
+            >
+              {name === "实测" ? <MonitorPlay size={15} /> : null}
+              {name}
+            </button>
+          ))}
+        </div>
+
+        <div className="console-body">
+          {tab === "概览" ? (
+            <div className="modal-copy">
+              <dl>
+                <dt>我的角色</dt>
+                <dd>{project.role}</dd>
+                <dt>做了什么</dt>
+                <dd>{project.what}</dd>
+                <dt>价值</dt>
+                <dd>{project.value}</dd>
+                <dt>证据状态</dt>
+                <dd>{project.proof}</dd>
+              </dl>
+            </div>
+          ) : null}
+
+          {tab === "证据" ? (
+            <div
+              className="evidence-gallery"
+              aria-label={`${project.title} 证据画廊`}
+            >
+              {project.evidence.length ? (
+                <>
+                  <EvidenceDisplay project={project} />
+                  <div className="fragment-proof-grid">
+                    {project.evidence.map((item) => (
+                      <figure className="proof-fragment" key={item.src}>
+                        <img
+                          src={item.src}
+                          alt={`${project.title} ${item.label}`}
+                        />
+                        <figcaption>
+                          <span>{item.label}</span>
+                          <small>{item.note}</small>
+                        </figcaption>
+                      </figure>
+                    ))}
+                  </div>
+                </>
+              ) : (
+                project.gallery.map((image) => (
+                  <div className="proof-fragment hero-proof" key={image}>
+                    <img src={image} alt={`${project.title} evidence`} />
+                  </div>
+                ))
+              )}
+            </div>
+          ) : null}
+
+          {tab === "实测" ? <DemoStage project={project} /> : null}
         </div>
       </motion.div>
     </div>
+  );
+}
+
+function Showroom({ onOpen }: { onOpen: (project: Project) => void }) {
+  const [filter, setFilter] = useState<Filter>("全部");
+  const shown =
+    filter === "全部"
+      ? projects
+      : projects.filter((project) => project.category === filter);
+  const interactiveCount = projects.filter((project) =>
+    interactiveModes.includes(project.demo.mode),
+  ).length;
+
+  return (
+    <section className="showroom" id="cases">
+      <SectionTitle
+        shadow="AGENT SHOWROOM"
+        title="智能体陈列墙"
+        copy="每个作品一张卡，点主按钮直接跳转；点缩略图打开详情和站内实测。私有系统以打码截图呈现。"
+      />
+      <div className="showroom-hud">
+        <div className="hud-stat">
+          <strong>{projects.length}</strong>
+          <span>智能体</span>
+        </div>
+        <div className="hud-stat">
+          <strong>{interactiveCount}</strong>
+          <span>个可跳转</span>
+        </div>
+        <div className="filter-tabs" role="tablist" aria-label="按类型筛选">
+          {categories.map((name) => (
+            <button
+              key={name}
+              type="button"
+              role="tab"
+              aria-selected={filter === name}
+              className={filter === name ? "active" : ""}
+              onClick={() => setFilter(name)}
+            >
+              {name}
+            </button>
+          ))}
+        </div>
+      </div>
+      <div className="agent-grid">
+        {shown.map((project, index) => (
+          <AgentCard
+            project={project}
+            index={index}
+            key={project.title}
+            onOpen={() => onOpen(project)}
+          />
+        ))}
+      </div>
+    </section>
   );
 }
 
@@ -667,7 +966,7 @@ function ContactList() {
 }
 
 function App() {
-  const [activeProject, setActiveProject] = useState<Project | null>(null);
+  const [activeAgent, setActiveAgent] = useState<Project | null>(null);
 
   return (
     <main>
@@ -675,7 +974,8 @@ function App() {
       <div className="site-shell">
         <header className="nav">
           <a href="#top" className="brand">
-            陈妍盐
+            <img src="/assets/brand/nacl-logo-white.svg" alt="NACL" />
+            <span>盐究所 NACL-LAB</span>
           </a>
           <nav aria-label="页面导航">
             {navItems.map((item) => (
@@ -693,15 +993,15 @@ function App() {
             animate={{ opacity: 1, y: 0 }}
           >
             <h1>
-              把 AI 从概念
-              <span>变成有人愿意付钱的业务</span>
+              技术最不值钱
+              <span>能把 AI 变成钱才稀缺</span>
             </h1>
             <p>
-              会 AI 的人很多，能落地的人少；真正能找到客户、完成交付、跑通收钱和转介绍的人更少。
+              盐究所 NACL-LAB 把业务、客户、钱、团队和 AI 拆成可运行系统。不是展示会多少工具，而是证明能不能变成老板愿意押注的增长资产。
             </p>
             <div className="hero-actions">
               <a href="#cases">
-                看案例证据
+                进作品台实测
                 <ArrowUpRight size={18} />
               </a>
               <a href="#contact" className="ghost-action">
@@ -719,7 +1019,7 @@ function App() {
             <div className="hero-glass">
               <span>role positioning</span>
               <strong>出框架 / 定业务逻辑 / 定方向</strong>
-              <p>技术细节交团队执行，沟通一次就能落地。</p>
+              <p>把经营问题拆清楚，再让技术和团队照着系统落地。</p>
             </div>
           </motion.div>
         </section>
@@ -727,27 +1027,27 @@ function App() {
         <section className="identity-strip" aria-label="定位摘要">
           <div>
             <BrainCircuit />
-            <span>懂 AI</span>
+            <span>AI 接进业务</span>
           </div>
           <div>
             <Workflow />
-            <span>懂业务流程</span>
+            <span>拆得开经营</span>
           </div>
           <div>
             <CircleDollarSign />
-            <span>懂商业转化</span>
+            <span>盯得住现金流</span>
           </div>
           <div>
             <ShieldCheck />
-            <span>严谨可追溯</span>
+            <span>沉淀成系统</span>
           </div>
         </section>
 
         <section className="pyramid-section" id="pyramid">
           <SectionTitle
             shadow="CAPABILITY PYRAMID"
-            title="能力金字塔"
-            copy="技术不是终点。AI 经理真正值钱的地方，是把技术翻译成业务结果。"
+            title="我凭什么值钱"
+            copy="会写提示词不稀奇。值钱的是：把 AI 接进客户、销售、交付、财务和复盘，变成老板看得懂的经营结果。"
           />
           <div className="pyramid-grid">
             {pyramid.map((item, index) => (
@@ -769,6 +1069,47 @@ function App() {
           </div>
         </section>
 
+        <section className="asset-section" id="asset">
+          <SectionTitle
+            shadow="COMPOUNDING ASSET"
+            title="自生长知识库"
+            copy="别人记赛博日记，我把决策变成会增值的资产。这一层，大多数人还没意识到有多值钱。"
+          />
+          <div className="asset-grid">
+            <div className="asset-copy">
+              <p>
+                大家刚开始记录决策、写赛博日记，方向对。但我走深一层：
+                <strong>让决策能复用、会增值。</strong>
+              </p>
+              <p>
+                我的 Obsidian 里跑着自生长知识库 + 赛博中台 + 赛博日记，统一成一件事——
+                <strong>把个人决策变成可复用的数字资产。</strong>
+              </p>
+              <ul className="asset-points">
+                <li>
+                  <span>决策即资产</span>
+                  每个判断沉淀成可检索、可复用的知识节点，而不是记完就忘。
+                </li>
+                <li>
+                  <span>自生长</span>
+                  用得越多、链接越密，知识库自己越长越值钱。
+                </li>
+                <li>
+                  <span>可迁移</span>
+                  换公司、换行业，这套资产跟着我走，越攒越厚。
+                </li>
+              </ul>
+            </div>
+            <div className="asset-evidence" aria-label="证据占位">
+              <div className="asset-placeholder">
+                <LockKeyhole size={20} />
+                <strong>证据待补充</strong>
+                <small>Obsidian 赛博中台 / 知识库截图，打码后接入</small>
+              </div>
+            </div>
+          </div>
+        </section>
+
         <JourneySection />
 
         <section className="evidence-section" id="evidence">
@@ -785,23 +1126,7 @@ function App() {
           </div>
         </section>
 
-        <section className="cases" id="cases">
-          <SectionTitle
-            shadow="PROJECT EVIDENCE"
-            title="案例卡区"
-            copy="每个项目统一讲清：我的角色、做了什么、产生什么价值。没有来源的数字不在公开页面展示。"
-          />
-          <div className="project-stack">
-            {projects.map((project, index) => (
-              <ProjectCard
-                project={project}
-                index={index}
-                key={project.title}
-                onOpen={() => setActiveProject(project)}
-              />
-            ))}
-          </div>
-        </section>
+        <Showroom onOpen={(project) => setActiveAgent(project)} />
 
         <section className="skills-section" id="skills">
           <SectionTitle
@@ -836,12 +1161,12 @@ function App() {
         </section>
 
         <footer>
-          <span>陈妍盐 · AI Commercialization Manager</span>
+          <span>盐究所 NACL-LAB · AI Commercialization Manager</span>
           <span>Private data redacted before publishing</span>
         </footer>
       </div>
-      {activeProject ? (
-        <ProjectModal project={activeProject} onClose={() => setActiveProject(null)} />
+      {activeAgent ? (
+        <AgentConsole project={activeAgent} onClose={() => setActiveAgent(null)} />
       ) : null}
     </main>
   );
