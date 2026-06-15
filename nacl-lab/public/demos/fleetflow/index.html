@@ -1,0 +1,389 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>FleetFlow · 经营系统静态原型</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #050607;
+      --panel: rgba(10, 11, 12, 0.9);
+      --panel-strong: rgba(18, 19, 20, 0.94);
+      --line: rgba(235, 238, 236, 0.14);
+      --line-strong: rgba(235, 238, 236, 0.3);
+      --text: #f3f2ee;
+      --muted: #a8aaa8;
+      --accent: #f3a7ba;
+      --green: #15e0a0;
+      --red: #ff3b5c;
+    }
+
+    * { box-sizing: border-box; }
+
+    html,
+    body {
+      margin: 0;
+      min-width: 320px;
+      min-height: 100%;
+      background:
+        radial-gradient(circle at 78% 12%, rgba(243, 167, 186, 0.12), transparent 20rem),
+        linear-gradient(180deg, #050607, #0b0c0d 48%, #050607);
+      color: var(--text);
+      font-family: "Avenir Next", "PingFang SC", "Microsoft YaHei", sans-serif;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background-image:
+        linear-gradient(rgba(243, 167, 186, 0.1) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+      background-size: 64px 64px;
+      opacity: 0.4;
+    }
+
+    button {
+      border: 0;
+      color: inherit;
+      font: inherit;
+    }
+
+    .shell {
+      position: relative;
+      width: min(1380px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 22px 0 34px;
+    }
+
+    .topbar {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 16px;
+      align-items: center;
+      border: 1px solid var(--line);
+      background: rgba(5, 6, 7, 0.72);
+      padding: 16px;
+    }
+
+    .brand {
+      display: grid;
+      gap: 4px;
+    }
+
+    .brand strong {
+      font-size: clamp(24px, 4vw, 44px);
+      letter-spacing: -0.04em;
+      line-height: 1;
+    }
+
+    .brand span,
+    .status,
+    .label {
+      color: var(--muted);
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 12px;
+      text-transform: uppercase;
+    }
+
+    .status {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border: 1px solid rgba(243, 167, 186, 0.36);
+      background: rgba(243, 167, 186, 0.1);
+      padding: 9px 12px;
+      color: #ffd8e1;
+      white-space: nowrap;
+    }
+
+    .dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+      background: var(--accent);
+      box-shadow: 0 0 18px rgba(243, 167, 186, 0.8);
+    }
+
+    .tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 18px 0;
+    }
+
+    .tabs button {
+      cursor: pointer;
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.04);
+      padding: 10px 14px;
+      color: var(--muted);
+    }
+
+    .tabs button.active {
+      border-color: rgba(243, 167, 186, 0.6);
+      background: rgba(243, 167, 186, 0.14);
+      color: white;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 14px;
+    }
+
+    .panel {
+      position: relative;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      background:
+        linear-gradient(135deg, rgba(255, 255, 255, 0.07), transparent 34%),
+        var(--panel);
+      padding: 18px;
+    }
+
+    .panel::after {
+      content: "";
+      position: absolute;
+      left: 18px;
+      right: 18px;
+      bottom: 18px;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(243, 167, 186, 0.7), transparent);
+      opacity: 0.56;
+    }
+
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .metric {
+      border: 1px solid var(--line);
+      background: rgba(0, 0, 0, 0.28);
+      padding: 14px;
+      min-height: 118px;
+    }
+
+    .metric strong {
+      display: block;
+      margin-top: 14px;
+      font-size: clamp(26px, 4vw, 44px);
+      letter-spacing: -0.05em;
+      line-height: 1;
+    }
+
+    .metric small {
+      display: block;
+      margin-top: 8px;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .flow {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 8px;
+      margin-top: 14px;
+    }
+
+    .step {
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.035);
+      padding: 14px 10px;
+      text-align: center;
+    }
+
+    .step strong {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 15px;
+    }
+
+    .step span {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .table {
+      display: grid;
+      gap: 8px;
+    }
+
+    .row {
+      display: grid;
+      grid-template-columns: 1fr auto auto;
+      gap: 12px;
+      align-items: center;
+      border: 1px solid var(--line);
+      background: rgba(0, 0, 0, 0.22);
+      padding: 12px;
+    }
+
+    .row strong {
+      font-size: 14px;
+    }
+
+    .row span {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .tag {
+      border: 1px solid rgba(255, 255, 255, 0.13);
+      padding: 5px 8px;
+      color: var(--muted);
+      font-size: 12px;
+      white-space: nowrap;
+    }
+
+    .tag.hot {
+      border-color: rgba(255, 59, 92, 0.42);
+      color: #ff9cad;
+    }
+
+    .tag.ok {
+      border-color: rgba(21, 224, 160, 0.36);
+      color: #9bf6d3;
+    }
+
+    .rules {
+      display: grid;
+      gap: 10px;
+    }
+
+    .rule {
+      border-left: 2px solid var(--accent);
+      background: rgba(255, 255, 255, 0.04);
+      padding: 12px 14px;
+    }
+
+    .rule strong {
+      display: block;
+      margin-bottom: 6px;
+    }
+
+    .rule p,
+    .note {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.7;
+    }
+
+    .view { display: none; }
+    .view.active { display: block; }
+
+    @media (max-width: 900px) {
+      .topbar,
+      .grid,
+      .metrics,
+      .flow {
+        grid-template-columns: 1fr;
+      }
+
+      .row {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <header class="topbar">
+      <div class="brand">
+        <strong>FleetFlow</strong>
+        <span>租车连锁经营管理系统 · 静态可测原型</span>
+      </div>
+      <div class="status"><i class="dot"></i> Demo Online</div>
+    </header>
+
+    <nav class="tabs" aria-label="FleetFlow 模块">
+      <button type="button" class="active" data-view="overview">经营总览</button>
+      <button type="button" data-view="orders">订单流</button>
+      <button type="button" data-view="fleet">车辆状态</button>
+      <button type="button" data-view="finance">资金规则</button>
+      <button type="button" data-view="risk">风险监测</button>
+    </nav>
+
+    <section class="view active" id="overview">
+      <div class="metrics">
+        <div class="metric"><span class="label">orders</span><strong>待确认</strong><small>真实订单量不公开</small></div>
+        <div class="metric"><span class="label">cashflow</span><strong>已脱敏</strong><small>只展示资金流结构</small></div>
+        <div class="metric"><span class="label">fleet</span><strong>样例</strong><small>车辆状态用于演示</small></div>
+        <div class="metric"><span class="label">risk</span><strong>规则库</strong><small>异常识别口径</small></div>
+      </div>
+      <div class="grid">
+        <article class="panel">
+          <span class="label">operating flow</span>
+          <div class="flow">
+            <div class="step"><strong>线索</strong><span>客户来源</span></div>
+            <div class="step"><strong>订单</strong><span>用车周期</span></div>
+            <div class="step"><strong>车辆</strong><span>调度状态</span></div>
+            <div class="step"><strong>资金</strong><span>押金/结算</span></div>
+            <div class="step"><strong>复盘</strong><span>风险/利润</span></div>
+          </div>
+          <p class="note" style="margin-top:18px;">这个原型用于展示系统拆解方式，不承载真实客户、车辆、收入或利润数据。</p>
+        </article>
+        <aside class="panel">
+          <span class="label">manager note</span>
+          <h2>把租车业务拆成能管、能查、能复盘的经营系统。</h2>
+          <p class="note">订单生命周期、资金流向、结算规则、风险规则是核心；页面展示的是结构能力，不公开真实后台。</p>
+        </aside>
+      </div>
+    </section>
+
+    <section class="view" id="orders">
+      <div class="panel table">
+        <span class="label">order pipeline</span>
+        <div class="row"><strong>客户咨询 · 商务接待</strong><span>需求确认 / 车型报价</span><i class="tag ok">可推进</i></div>
+        <div class="row"><strong>订单创建 · 押金待核</strong><span>合同 / 证件 / 支付口径</span><i class="tag hot">需复核</i></div>
+        <div class="row"><strong>用车中 · 状态跟进</strong><span>车辆位置 / 续租 / 违章预警</span><i class="tag">跟进中</i></div>
+        <div class="row"><strong>还车结算 · 异常归因</strong><span>押金退还 / 维修 / 客诉</span><i class="tag">待确认</i></div>
+      </div>
+    </section>
+
+    <section class="view" id="fleet">
+      <div class="panel table">
+        <span class="label">fleet status</span>
+        <div class="row"><strong>沪A · 商务 MPV</strong><span>可租 / 保养到期前提醒</span><i class="tag ok">available</i></div>
+        <div class="row"><strong>沪B · 新能源轿车</strong><span>用车中 / 续租确认</span><i class="tag">running</i></div>
+        <div class="row"><strong>沪C · 豪华 SUV</strong><span>维修中 / 费用归集</span><i class="tag hot">service</i></div>
+      </div>
+    </section>
+
+    <section class="view" id="finance">
+      <div class="panel rules">
+        <span class="label">finance rules</span>
+        <div class="rule"><strong>押金口径</strong><p>收取、冻结、退款和扣款原因必须能被订单追溯。</p></div>
+        <div class="rule"><strong>结算口径</strong><p>挂靠、同行、维修、违章、客诉费用进入同一套结算解释。</p></div>
+        <div class="rule"><strong>现金流视图</strong><p>这里只展示结构，不展示真实金额、客户姓名或财务截图。</p></div>
+      </div>
+    </section>
+
+    <section class="view" id="risk">
+      <div class="panel rules">
+        <span class="label">risk monitor</span>
+        <div class="rule"><strong>证件异常</strong><p>资料缺失、证件过期、联系人信息异常进入复核队列。</p></div>
+        <div class="rule"><strong>订单异常</strong><p>超期未还、续租未确认、押金异常、车辆状态冲突进入预警。</p></div>
+        <div class="rule"><strong>销售质量</strong><p>响应慢、报价混乱、跟进断点进入复盘，不在公开页暴露真实人员。</p></div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const buttons = [...document.querySelectorAll("[data-view]")];
+    const views = [...document.querySelectorAll(".view")];
+    buttons.forEach((button) => {
+      button.addEventListener("click", () => {
+        buttons.forEach((item) => item.classList.toggle("active", item === button));
+        views.forEach((view) => view.classList.toggle("active", view.id === button.dataset.view));
+      });
+    });
+  </script>
+</body>
+</html>

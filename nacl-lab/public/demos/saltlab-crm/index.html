@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>盐究室超跑 · 会员CRM大脑</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-datalabels/2.2.0/chartjs-plugin-datalabels.min.js"></script>
+<style>
+:root{
+--salt-300:#FFB088;--salt-400:#FF8C69;--salt-500:#FF6B35;--salt-600:#E85A28;--salt-glow:rgba(255,107,53,.32);
+--bg:#0A0B0F;--surface-1:#12141A;--surface-2:#1A1D26;--surface-3:#0F172A;--line:#232733;--line-strong:#2E3340;
+--text:#E8ECF8;--text-muted:#8B93A7;--text-dim:#5C6373;
+--success:#34C759;--warning:#FFB020;--danger:#FF453A;--info:#38BDF8;
+--lv6-fg:#FFD700;--lv6-bg:#2A1F00;--lv5-fg:#C9B6FF;--lv5-bg:#221C3A;--lv4-fg:#7FE9D6;--lv4-bg:#10261F;
+--lv3-fg:#FFD24A;--lv3-bg:#221E00;--lv2-fg:#C2C8D2;--lv2-bg:#1B1F27;--lv1-fg:#7D828C;--lv1-bg:#15181F;
+--font:system-ui,-apple-system,"Segoe UI",Roboto,"PingFang SC","Microsoft YaHei",sans-serif;
+--num:"SF Mono",ui-monospace,Menlo,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font);background:var(--bg);color:var(--text);font-size:13px;line-height:1.5}
+.num{font-variant-numeric:tabular-nums;font-family:var(--num)}
+a{color:inherit}
+::-webkit-scrollbar{width:9px;height:9px}::-webkit-scrollbar-thumb{background:var(--line-strong);border-radius:6px}
+/* top bar */
+.topbar{position:sticky;top:0;z-index:30;display:flex;align-items:center;gap:18px;padding:12px 22px;background:rgba(10,11,15,.82);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+.brand{display:flex;align-items:baseline;gap:8px;font-weight:700;font-size:17px;white-space:nowrap}
+.brand .o{color:var(--salt-500)}
+.brand .sub{font-size:11px;color:var(--text-muted);font-weight:400}
+.nav{display:flex;gap:4px;flex:1;flex-wrap:wrap}
+.nav button{background:none;border:none;color:var(--text-muted);font:inherit;font-size:13px;padding:7px 13px;border-radius:8px;cursor:pointer;position:relative}
+.nav button:hover{color:var(--text);background:var(--surface-2)}
+.nav button.on{color:var(--salt-500);background:var(--surface-2)}
+.nav button.on::after{content:"";position:absolute;left:13px;right:13px;bottom:2px;height:2px;background:var(--salt-500);border-radius:2px}
+.tools{display:flex;gap:8px}
+.btn{background:var(--surface-2);border:1px solid var(--line);color:var(--text);font:inherit;font-size:12px;padding:7px 12px;border-radius:8px;cursor:pointer;transition:.12s}
+.btn:hover{border-color:var(--line-strong);background:var(--surface-3)}
+.btn.pri{background:var(--salt-500);border-color:var(--salt-500);color:#1a0d05;font-weight:600}
+.btn.pri:hover{background:var(--salt-400)}
+.btn.sm{padding:4px 9px;font-size:11px}
+.btn.danger{color:var(--danger)}
+.wrap{max-width:1340px;margin:0 auto;padding:20px 22px 60px}
+.page{display:none}.page.on{display:block;animation:fade .2s var(--ease,ease)}
+@keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+h2.sec{font-size:17px;font-weight:700;margin:22px 0 12px;display:flex;align-items:center;gap:8px}
+h2.sec .tag{font-size:11px;color:var(--text-muted);font-weight:400}
+.muted{color:var(--text-muted)}.dim{color:var(--text-dim)}
+/* kpi */
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.kpi{background:var(--surface-1);border:1px solid var(--line);border-radius:12px;padding:14px 16px;cursor:default}
+.kpi .l{font-size:11px;color:var(--text-muted);margin-bottom:7px;display:flex;align-items:center;gap:5px}
+.kpi .v{font-size:26px;font-weight:700;line-height:1}
+.kpi .v small{font-size:12px;font-weight:400;color:var(--text-muted)}
+.kpi.warn{border-left:3px solid var(--warning)}.kpi.warn .v{color:var(--warning)}
+.kpi.bad{border-left:3px solid var(--danger)}.kpi.bad .v{color:var(--danger)}
+.kpi.good .v{color:var(--success)}
+.kpi.click{cursor:pointer}.kpi.click:hover{border-color:var(--salt-500)}
+/* panels & charts */
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+.panel{background:var(--surface-1);border:1px solid var(--line);border-radius:12px;padding:15px}
+.panel h3{font-size:13px;font-weight:600;margin-bottom:11px;display:flex;justify-content:space-between;align-items:center}
+.panel h3 .t{color:var(--text-muted);font-weight:400;font-size:11px}
+canvas{max-height:230px}
+/* table */
+.toolrow{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:6px 0 12px}
+input,select,textarea{background:var(--surface-2);border:1px solid var(--line);color:var(--text);font:inherit;font-size:13px;border-radius:8px;padding:8px 11px}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--salt-500)}
+input::placeholder{color:var(--text-dim)}
+.search{flex:1;min-width:200px}
+.tablewrap{background:var(--surface-1);border:1px solid var(--line);border-radius:12px;max-height:600px;overflow:auto}
+table{width:100%;border-collapse:collapse}
+th,td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--line);white-space:nowrap;font-size:12.5px}
+th{position:sticky;top:0;background:var(--surface-1);color:var(--text-muted);font-weight:600;font-size:11.5px;cursor:pointer;z-index:1}
+th:hover{color:var(--text)}
+tbody tr{cursor:pointer}tbody tr:hover{background:var(--surface-2)}
+td.r,th.r{text-align:right}
+.badge{display:inline-block;padding:2px 9px;border-radius:999px;font-size:11px;font-weight:600;white-space:nowrap}
+.lv6{background:var(--lv6-bg);color:var(--lv6-fg)}.lv5{background:var(--lv5-bg);color:var(--lv5-fg)}.lv4{background:var(--lv4-bg);color:var(--lv4-fg)}
+.lv3{background:var(--lv3-bg);color:var(--lv3-fg)}.lv2{background:var(--lv2-bg);color:var(--lv2-fg)}.lv1{background:var(--lv1-bg);color:var(--lv1-fg)}
+.seg{display:inline-block;font-size:11px;padding:2px 8px;border-radius:6px;background:var(--surface-3);color:var(--text-muted)}
+.seg.champ{background:#10261a;color:var(--success)}.seg.high{background:#2a1c0c;color:var(--salt-400)}
+.seg.risk{background:#2a1210;color:#ff8a7a}.seg.new{background:#0c2230;color:var(--info)}
+.dot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:5px}.on-d{background:var(--success)}.off-d{background:#3a3f4a}
+/* modal */
+.mask{position:fixed;inset:0;background:rgba(0,0,0,.62);display:none;align-items:center;justify-content:center;z-index:50;padding:18px}
+.mask.show{display:flex}
+.modal{background:var(--surface-1);border:1px solid var(--line-strong);border-radius:18px;max-width:680px;width:100%;max-height:88vh;overflow:auto;padding:22px;box-shadow:0 12px 40px rgba(0,0,0,.55)}
+.modal .x{float:right;cursor:pointer;color:var(--text-muted);font-size:20px;line-height:1}
+.modal h2{font-size:21px;margin-bottom:3px;display:flex;align-items:center;gap:10px}
+.kv{display:grid;grid-template-columns:auto 1fr auto 1fr;gap:8px 14px;font-size:12.5px;margin:12px 0}
+.kv .k{color:var(--text-muted)}
+.box{background:var(--surface-3);border:1px solid var(--line);border-radius:11px;padding:13px;margin-top:12px}
+.box .bt{font-size:12px;color:var(--text-muted);margin-bottom:9px;display:flex;justify-content:space-between;align-items:center}
+.chip{display:inline-block;background:var(--surface-2);border:1px solid var(--line);border-radius:7px;padding:4px 9px;margin:3px 4px 0 0;font-size:11.5px}
+.empty{color:var(--text-dim);font-size:12px;font-style:italic}
+/* timeline */
+.tl{border-left:2px solid var(--line);margin-left:6px;padding-left:14px}
+.tl .it{position:relative;padding:7px 0}
+.tl .it::before{content:"";position:absolute;left:-21px;top:11px;width:9px;height:9px;border-radius:50%;background:var(--salt-500);border:2px solid var(--surface-3)}
+.tl .it .meta{font-size:11px;color:var(--text-muted)}
+.tl .it .tt{font-size:11px;padding:1px 6px;border-radius:5px;background:var(--surface-2);margin-left:6px}
+/* quote band */
+.qband{position:relative;height:34px;background:var(--surface-2);border-radius:8px;margin:8px 0;overflow:hidden}
+.qband .reg{position:absolute;top:0;bottom:0;background:rgba(52,199,89,.25);border-left:1px solid var(--success);border-right:1px solid var(--success)}
+.qband .med{position:absolute;top:0;bottom:0;width:2px;background:var(--salt-500)}
+.qband .lbl{position:absolute;font-size:10px;color:var(--text-muted);top:9px}
+.advice{background:linear-gradient(180deg,#1d1710,var(--surface-1));border:1px solid #4a3618;border-radius:11px;padding:13px;font-size:12.5px;line-height:1.65;margin-top:12px}
+.advice b{color:var(--salt-400)}
+.pill-row{display:flex;gap:7px;flex-wrap:wrap;margin-top:6px}
+.alert{display:flex;justify-content:space-between;align-items:center;padding:9px 12px;border-bottom:1px solid var(--line);cursor:pointer}
+.alert:hover{background:var(--surface-2)}.alert:last-child{border-bottom:none}
+.tag2{font-size:10px;padding:1px 7px;border-radius:5px;font-weight:600}
+.status-sel{font-size:11px;padding:3px 7px}
+.note-port{font-size:11px;color:var(--info);background:#0c1a22;border:1px dashed #1d3a48;border-radius:8px;padding:8px 11px;margin-top:8px}
+/* toast 保存提示 */
+#toast{position:fixed;bottom:24px;right:24px;background:var(--success);color:#06210f;font-weight:700;padding:11px 20px;border-radius:12px;box-shadow:0 8px 28px rgba(52,199,89,.35);z-index:999;opacity:0;transform:translateY(12px);transition:.28s var(--ease,ease);pointer-events:none;font-size:13px}
+#toast.show{opacity:1;transform:none}
+/* KPI 卡片质感 */
+.kpi{position:relative;overflow:hidden;transition:.18s}
+.kpi::after{content:"";position:absolute;inset:0;background:radial-gradient(120% 120% at 100% 0,rgba(255,107,53,.06),transparent 60%);pointer-events:none}
+.kpi:hover{transform:translateY(-2px);border-color:var(--line-strong)}
+.panel{transition:.18s}
+.savebar{display:inline-flex;align-items:center;gap:8px}
+.saved-tag{font-size:11px;color:var(--success);opacity:0;transition:.2s}
+.saved-tag.on{opacity:1}
+input.dirty{border-color:var(--salt-500)!important;box-shadow:0 0 0 2px var(--salt-glow)}
+/* ===== design 质感打磨层 v2 ===== */
+body{background:radial-gradient(1200px 600px at 80% -10%,rgba(255,107,53,.05),transparent 55%),var(--bg)}
+/* 顶栏 + 品牌 */
+.topbar{border-bottom:1px solid transparent;background:linear-gradient(180deg,rgba(13,14,19,.92),rgba(10,11,15,.78));box-shadow:0 1px 0 rgba(255,107,53,.12),0 6px 24px rgba(0,0,0,.35)}
+.brand{letter-spacing:.5px}
+.brand .o{background:linear-gradient(135deg,#FFB088,#FF6B35);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;text-shadow:0 0 18px var(--salt-glow)}
+.brand::before{content:"";width:9px;height:9px;border-radius:50%;background:var(--salt-500);box-shadow:0 0 10px var(--salt-500);margin-right:2px;align-self:center}
+/* 导航当前态更明确 */
+.nav button{transition:.15s var(--ease,ease);border:1px solid transparent}
+.nav button.on{background:linear-gradient(180deg,rgba(255,107,53,.16),rgba(255,107,53,.06));border-color:rgba(255,107,53,.35);color:var(--salt-400)}
+.nav button.on::after{display:none}
+/* 区块标题加锚点条 */
+h2.sec{padding-left:13px;position:relative}
+h2.sec::before{content:"";position:absolute;left:0;top:3px;bottom:3px;width:4px;border-radius:3px;background:linear-gradient(180deg,#FFB088,#FF6B35);box-shadow:0 0 10px var(--salt-glow)}
+.panel h3{padding-left:11px;position:relative}
+.panel h3::before{content:"";position:absolute;left:0;top:2px;bottom:2px;width:3px;border-radius:3px;background:var(--salt-500);opacity:.8}
+/* KPI 冲击力 */
+.kpi{background:linear-gradient(165deg,#171a21,#12141a)}
+.kpi .v{font-size:27px;letter-spacing:-.5px}
+.kpi.warn{background:linear-gradient(165deg,#231a12,#15140f)}
+.kpi.bad{background:linear-gradient(165deg,#23130f,#15110f)}
+.kpi.good::after{background:radial-gradient(120% 120% at 100% 0,rgba(52,199,89,.08),transparent 60%)}
+/* 面板质感 */
+.panel{background:linear-gradient(165deg,#15171e,#12141a);box-shadow:0 2px 14px rgba(0,0,0,.25)}
+.panel:hover{border-color:#2a2f3a}
+/* 弹窗品牌头部带(不动滚动) */
+.modal h2{margin:-22px -22px 4px;padding:20px 22px 12px;background:linear-gradient(135deg,rgba(255,107,53,.18),rgba(255,140,105,.05) 60%,transparent);border-bottom:1px solid var(--line);border-radius:18px 18px 0 0}
+.modal .x{position:sticky;float:right;top:4px;z-index:3}
+.modal .mid{margin-top:2px}
+/* 按钮微交互 */
+.btn{transition:.14s var(--ease,ease)}
+.btn:active{transform:translateY(1px)}
+.btn.pri{box-shadow:0 4px 14px var(--salt-glow)}
+.btn.pri:hover{box-shadow:0 6px 20px var(--salt-glow)}
+/* 表格精修 */
+th{text-transform:none;letter-spacing:.3px;border-bottom:1px solid var(--line-strong)}
+tbody tr{transition:background .12s}
+tbody tr:hover{box-shadow:inset 3px 0 0 var(--salt-500)}
+.badge{box-shadow:0 1px 3px rgba(0,0,0,.25)}
+.tablewrap,.kpi,.panel{will-change:transform}
+/* ============ v3 立体·动态·玻璃质感 重设计 ============ */
+/* 动态极光背景 */
+body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:
+   radial-gradient(700px 500px at 12% 8%,rgba(255,107,53,.16),transparent 60%),
+   radial-gradient(600px 500px at 88% 12%,rgba(56,189,248,.10),transparent 60%),
+   radial-gradient(800px 600px at 70% 95%,rgba(255,140,105,.10),transparent 60%);
+  animation:aurora 16s ease-in-out infinite alternate}
+@keyframes aurora{0%{transform:translate3d(0,0,0) scale(1)}50%{transform:translate3d(-2%,1%,0) scale(1.05)}100%{transform:translate3d(2%,-1%,0) scale(1.03)}}
+.wrap,.topbar{position:relative;z-index:1}
+/* 玻璃拟态面板/卡片 */
+.kpi,.panel,.tablewrap,.modal,.box{
+  background:linear-gradient(165deg,rgba(30,34,44,.72),rgba(18,20,26,.66))!important;
+  backdrop-filter:blur(14px) saturate(140%);-webkit-backdrop-filter:blur(14px) saturate(140%);
+  border:1px solid rgba(255,255,255,.07);
+  box-shadow:0 10px 30px rgba(0,0,0,.45),inset 0 1px 0 rgba(255,255,255,.06)}
+/* 卡片顶部高光描边 */
+.kpi::before,.panel::before{content:"";position:absolute;inset:0;border-radius:inherit;padding:1px;pointer-events:none;
+  background:linear-gradient(180deg,rgba(255,255,255,.14),transparent 40%);-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;opacity:.6}
+/* 入场动画(切到某页时卡片依次浮现) */
+.page.on .kpi,.page.on .panel{animation:floatIn .5s var(--ease,ease) both}
+.page.on .kpi:nth-child(2){animation-delay:.04s}.page.on .kpi:nth-child(3){animation-delay:.08s}.page.on .kpi:nth-child(4){animation-delay:.12s}
+.page.on .kpi:nth-child(5){animation-delay:.16s}.page.on .kpi:nth-child(6){animation-delay:.2s}.page.on .kpi:nth-child(7){animation-delay:.24s}.page.on .kpi:nth-child(8){animation-delay:.28s}
+.page.on .grid2 .panel:nth-child(2){animation-delay:.1s}
+@keyframes floatIn{from{opacity:0;transform:translateY(18px) scale(.98)}to{opacity:1;transform:none}}
+/* 3D 悬浮(JS加 tilt, CSS给基础透视与浮起) */
+.kpi{transform-style:preserve-3d;transition:transform .18s var(--ease,ease),box-shadow .18s}
+.kpi:hover{box-shadow:0 22px 50px rgba(0,0,0,.55),0 0 0 1px rgba(255,107,53,.4),0 0 36px rgba(255,107,53,.22)!important}
+.panel:hover{transform:translateY(-3px);box-shadow:0 20px 44px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.07)!important}
+/* KPI 数字渐变质感 */
+.kpi .v{background:linear-gradient(180deg,#ffffff,#cdd3df);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.kpi.warn .v{background:linear-gradient(180deg,#ffd79a,#FF8C2e);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.kpi.bad .v{background:linear-gradient(180deg,#ff9b8e,#FF453A);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.kpi.good .v{background:linear-gradient(180deg,#9affc0,#34C759);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+/* 发光主按钮(呼吸) */
+.btn.pri{background:linear-gradient(135deg,#FF8C42,#FF6B35)!important;border:none!important;position:relative;overflow:hidden}
+.btn.pri::after{content:"";position:absolute;top:0;left:-60%;width:40%;height:100%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.45),transparent);transform:skewX(-18deg);animation:sheen 3.4s ease-in-out infinite}
+@keyframes sheen{0%,60%{left:-60%}80%,100%{left:130%}}
+/* 顶栏玻璃 + 导航发光当前态 */
+.topbar{backdrop-filter:blur(16px) saturate(160%);-webkit-backdrop-filter:blur(16px) saturate(160%)}
+.nav button.on{box-shadow:0 0 18px rgba(255,107,53,.3),inset 0 0 0 1px rgba(255,107,53,.4);animation:navpulse 2.4s ease-in-out infinite}
+@keyframes navpulse{50%{box-shadow:0 0 26px rgba(255,107,53,.5),inset 0 0 0 1px rgba(255,107,53,.6)}}
+/* 徽章/分群标更立体 */
+.badge,.seg{box-shadow:0 2px 6px rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.12)}
+/* 表格行悬浮上浮一点 */
+tbody tr:hover{box-shadow:inset 3px 0 0 var(--salt-500),0 2px 12px rgba(0,0,0,.3);transform:translateZ(0)}
+/* 弹窗入场 */
+.mask.show .modal{animation:modalPop .32s var(--ease,ease) both}
+@keyframes modalPop{from{opacity:0;transform:translateY(24px) scale(.96)}to{opacity:1;transform:none}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important}}
+@media(max-width:1000px){.kpis{grid-template-columns:repeat(2,1fr)}.grid2,.grid3{grid-template-columns:1fr}.kv{grid-template-columns:auto 1fr}}
+
+/* ================= HUD · 赛博驾驶舱主题 ================= */
+:root{--cyan:#38E1FF;--cyan-glow:rgba(56,225,255,.5);--neon:#FF6B35;--neon-glow:rgba(255,107,53,.55)}
+body{background:#05070c!important}
+/* 透视网格 + 扫描线背景 */
+body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.5;
+  background-image:
+    linear-gradient(rgba(56,225,255,.06) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(56,225,255,.06) 1px,transparent 1px),
+    radial-gradient(900px 600px at 50% -10%,rgba(255,107,53,.10),transparent 60%);
+  background-size:44px 44px,44px 44px,100% 100%;
+  animation:gridmove 12s linear infinite!important}
+@keyframes gridmove{to{background-position:0 44px,44px 0,0 0}}
+body::after{content:"";position:fixed;left:0;right:0;height:140px;top:-140px;z-index:0;pointer-events:none;
+  background:linear-gradient(180deg,transparent,rgba(56,225,255,.07),transparent);animation:scan 7s linear infinite}
+@keyframes scan{to{transform:translateY(calc(100vh + 280px))}}
+/* 数字/标题字体 */
+.num,.kpi .v,.gauge .gv,h1,h2.sec,.brand{font-family:"Orbitron","Rajdhani",var(--num)!important;letter-spacing:.5px}
+.nav button,.panel h3,th,.l,.gauge .gl{font-family:"Rajdhani",var(--font)!important;letter-spacing:.6px;font-weight:600}
+/* 顶栏 HUD */
+.topbar{background:linear-gradient(180deg,rgba(5,9,15,.95),rgba(5,7,12,.8))!important;border-bottom:1px solid rgba(56,225,255,.25)!important;box-shadow:0 0 24px rgba(56,225,255,.12),0 2px 0 rgba(255,107,53,.25)!important}
+.brand .o{background:none;-webkit-text-fill-color:var(--neon);text-shadow:0 0 14px var(--neon-glow)}
+.nav button.on{background:rgba(255,107,53,.12)!important;border:1px solid rgba(255,107,53,.5)!important;color:#FFB088!important;box-shadow:0 0 16px rgba(255,107,53,.35),inset 0 0 12px rgba(255,107,53,.12)!important}
+/* 面板 = HUD 框 + 角标 */
+.panel,.tablewrap{background:linear-gradient(165deg,rgba(10,16,26,.85),rgba(6,10,17,.82))!important;
+  border:1px solid rgba(56,225,255,.22)!important;border-radius:6px!important;
+  box-shadow:0 0 0 1px rgba(56,225,255,.05),0 12px 34px rgba(0,0,0,.55),inset 0 0 30px rgba(56,225,255,.04)!important;position:relative}
+.panel::before,.panel::after{content:"";position:absolute;width:14px;height:14px;border:2px solid var(--cyan);opacity:.8;pointer-events:none;-webkit-mask:none;mask:none;background:none;padding:0;border-radius:0}
+.panel::before{left:-1px;top:-1px;border-right:none;border-bottom:none;box-shadow:-2px -2px 8px var(--cyan-glow)}
+.panel::after{right:-1px;bottom:-1px;border-left:none;border-top:none;box-shadow:2px 2px 8px var(--cyan-glow)}
+.panel h3{color:#cfeffb!important}
+.panel h3::before{background:var(--cyan)!important;box-shadow:0 0 8px var(--cyan-glow)}
+/* 区块大标题 */
+h2.sec{color:#eaf6ff!important;text-shadow:0 0 18px rgba(56,225,255,.25)}
+h2.sec::before{background:linear-gradient(180deg,var(--cyan),var(--neon))!important;box-shadow:0 0 12px var(--cyan-glow)}
+/* ===== KPI 环形仪表 ===== */
+.kpis{gap:14px}
+.gauge{position:relative;background:linear-gradient(165deg,rgba(10,16,26,.9),rgba(6,10,17,.85));border:1px solid rgba(56,225,255,.2);border-radius:8px;padding:14px 12px 12px;display:flex;flex-direction:column;align-items:center;gap:8px;overflow:hidden;transition:.2s}
+.gauge:hover{border-color:rgba(255,107,53,.5);box-shadow:0 0 26px rgba(255,107,53,.22)}
+.gauge .ring{position:relative;width:104px;height:104px}
+.gauge svg{transform:rotate(-90deg)}
+.gauge .gctr{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px}
+.gauge .gv{font-size:21px;font-weight:700;line-height:1;color:#fff;text-shadow:0 0 12px rgba(56,225,255,.4)}
+.gauge .gsub{font-size:10px;color:var(--text-muted);font-family:var(--font)}
+.gauge .gl{font-size:12px;color:#9fd9ec;text-align:center;letter-spacing:.4px}
+.gauge.warn{border-color:rgba(255,176,32,.45)}.gauge.warn .gv{color:#FFD79A;text-shadow:0 0 12px rgba(255,176,32,.5)}
+.gauge.bad{border-color:rgba(255,69,58,.5)}.gauge.bad .gv{color:#ff9b8e;text-shadow:0 0 12px rgba(255,69,58,.5)}
+.gauge.good .gv{color:#9affc0;text-shadow:0 0 12px rgba(52,199,89,.5)}
+/* 按钮霓虹 */
+.btn{background:rgba(56,225,255,.06)!important;border:1px solid rgba(56,225,255,.3)!important;color:#cfeffb!important;border-radius:6px!important}
+.btn:hover{border-color:var(--cyan)!important;box-shadow:0 0 14px var(--cyan-glow)!important;color:#fff!important}
+.btn.pri{background:linear-gradient(135deg,#FF8C42,#FF5A2a)!important;border:1px solid rgba(255,140,66,.6)!important;color:#1a0d05!important;box-shadow:0 0 18px var(--neon-glow)!important}
+/* 表格 HUD */
+th{background:rgba(8,14,22,.96)!important;color:#9fd9ec!important;border-bottom:1px solid rgba(56,225,255,.3)!important;text-transform:uppercase;font-size:11px!important}
+tbody tr:hover{background:rgba(56,225,255,.06)!important;box-shadow:inset 3px 0 0 var(--neon),0 0 16px rgba(56,225,255,.12)!important}
+.search,select,input{background:rgba(8,14,22,.9)!important;border:1px solid rgba(56,225,255,.25)!important}
+input:focus,select:focus{border-color:var(--cyan)!important;box-shadow:0 0 12px var(--cyan-glow)!important}
+/* 弹窗 HUD */
+.modal{background:linear-gradient(165deg,rgba(8,13,21,.97),rgba(5,8,14,.97))!important;border:1px solid rgba(56,225,255,.3)!important;box-shadow:0 0 50px rgba(56,225,255,.2),0 20px 60px rgba(0,0,0,.7)!important}
+.modal h2{background:linear-gradient(135deg,rgba(255,107,53,.22),rgba(56,225,255,.12) 60%,transparent)!important;border-bottom:1px solid rgba(56,225,255,.3)!important}
+.box{background:rgba(56,225,255,.04)!important;border:1px solid rgba(56,225,255,.15)!important}
+.badge,.seg{text-shadow:none}
+/* Logo + 品牌 */
+.mlogo{height:30px;width:auto;filter:drop-shadow(0 0 8px rgba(255,107,53,.5));vertical-align:middle}.text-logo{display:inline-grid;place-items:center;width:30px;height:30px;border-radius:8px;background:#FF6B35;color:#1a0d05;font-weight:800}
+.brand .bd{font-size:15px;font-weight:700;color:#eaf6ff;font-family:"Rajdhani",var(--font);letter-spacing:.5px;margin-left:2px}
+/* 汽车元素：车速尾迹 + 剪影水印 */
+h2.sec .carwm{position:absolute;right:0;top:-6px;height:38px;opacity:.14;pointer-events:none}
+.sechead{display:flex;align-items:center;justify-content:space-between;position:relative}
+.carstripe{position:fixed;left:0;right:0;top:62px;height:2px;z-index:1;pointer-events:none;
+  background:linear-gradient(90deg,transparent,rgba(255,107,53,.0) 10%,rgba(255,107,53,.5) 50%,rgba(56,225,255,.5) 70%,transparent);
+  animation:stripe 5s ease-in-out infinite}
+@keyframes stripe{0%,100%{opacity:.35}50%{opacity:.8}}
+.panel .carwm2{position:absolute;right:12px;bottom:10px;height:42px;opacity:.07;pointer-events:none}
+@media(max-width:1000px){.kpis{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body>
+<div id="gate" style="display:none"></div>
+<div class="topbar">
+  <div class="brand"><span class="mlogo text-logo">盐</span><span class="bd">· 会员CRM大脑</span> <span class="sub">数据快照 2026-05-30</span></div>
+  <div class="nav" id="nav"></div>
+  <div class="tools">
+    <button class="btn sm" onclick="exportData()">⬇ 导出</button>
+    <label class="btn sm" style="cursor:pointer">⬆ 导入<input type="file" id="imp" accept=".json" style="display:none" onchange="importData(event)"></label>
+  </div>
+</div>
+<div class="carstripe"></div>
+<div class="wrap">
+  <div class="page on" id="p-overview"></div>
+  <div class="page" id="p-customers"></div>
+  <div class="page" id="p-perf"></div>
+  <div class="page" id="p-ops"></div>
+  <div class="page" id="p-followup"></div>
+  <div class="page" id="p-pricing"></div>
+  <div class="page" id="p-complaints"></div>
+  <div class="page" id="p-points"></div>
+</div>
+<div class="mask" id="mask"><div class="modal" id="modal"></div></div>
+<div id="toast"></div>
+
+<script>
+const RECS=[{"rank":1,"cid":"CUST-0001","prefix":"SLB","spend":268800,"cnt":18,"first":"2025-01-12","last":"2026-06-01","active":true,"debt":0,"lvl":"V6","lvlname":"黑钻","tier":"超跑级","fav":"法拉利F8","seg":"冠军客户","rfm":"555","vip":11,"models":"法拉利F8×4, 保时捷992×3, 奔驰G63×2, 路虎揽胜×2","note":"演示客户：近期高频复购","pts":2688},{"rank":2,"cid":"CUST-0002","prefix":"SLB","spend":156200,"cnt":9,"first":"2025-03-22","last":"2026-05-18","active":false,"debt":0,"lvl":"V5","lvlname":"钻石","tier":"豪华级","fav":"迈巴赫S480","seg":"高价值客户","rfm":"455","vip":9.5,"models":"迈巴赫S480×3, 奔驰E300×3, 埃尔法×1","note":"演示客户：适合会员权益触达","pts":1562},{"rank":3,"cid":"CUST-0003","prefix":"SLB","spend":82400,"cnt":5,"first":"2025-09-04","last":"2025-12-20","active":false,"debt":0,"lvl":"V4","lvlname":"铂金","tier":"性能高端","fav":"宝马M4","seg":"高价值流失预警","rfm":"155","vip":7.8,"models":"宝马M4×2, 保时捷718×2, 奥迪R8×1","note":"演示客户：需要唤回","pts":824},{"rank":4,"cid":"CUST-0004","prefix":"SLB","spend":39200,"cnt":3,"first":"2026-03-02","last":"2026-05-28","active":true,"debt":1200,"lvl":"V3","lvlname":"黄金","tier":"标准级","fav":"奔驰E300","seg":"潜力新客","rfm":"545","vip":6.1,"models":"奔驰E300×2, 理想L9×1","note":"演示客户：有小额待处理账款","pts":392},{"rank":5,"cid":"CUST-0005","prefix":"SLB","spend":9800,"cnt":1,"first":"2025-07-11","last":"2025-07-11","active":false,"debt":0,"lvl":"V2","lvlname":"白银","tier":"标准级","fav":"别克GL8","seg":"沉睡客户","rfm":"115","vip":3.6,"models":"别克GL8×1","note":"演示客户：低成本批量触达","pts":98},{"rank":6,"cid":"CUST-0006","prefix":"SLB","spend":0,"cnt":0,"first":"","last":"","active":false,"debt":0,"lvl":"V1","lvlname":"普通","tier":"无","fav":"","seg":"未消费/无记录","rfm":"111","vip":2,"models":"","note":"演示客户：仅保留客资线索","pts":0}];
+const BANDS={"法拉利F8":{"n":24,"min":3800,"max":5200,"median":4500,"p10":4000,"p90":5000},"迈巴赫S480":{"n":32,"min":1800,"max":3000,"median":2400,"p10":2000,"p90":2800},"宝马M4":{"n":18,"min":1200,"max":2200,"median":1800,"p10":1500,"p90":2000},"奔驰E300":{"n":40,"min":500,"max":900,"median":700,"p10":580,"p90":850},"别克GL8":{"n":12,"min":400,"max":800,"median":600,"p10":450,"p90":750}};
+const AGG={"kpi":{"cust":6,"spend":556400,"aov":15456,"active":2,"vip":2,"atrisk":1,"atriskVal":82400,"atrisk_val":82400,"debt":1200},"lvl":[["黑钻",1],["钻石",1],["铂金",1],["黄金",1],["白银",1],["普通",1]],"tier":[["超跑级",1],["豪华级",1],["性能高端",1],["标准级",2],["无车型",1]],"seg":[["冠军客户",1],["高价值客户",1],["高价值流失预警",1],["潜力新客",1],["沉睡客户",1],["未消费/无记录",1]],"models":[["奔驰E300",2],["法拉利F8",1],["保时捷992",1],["迈巴赫S480",1],["宝马M4",1],["别克GL8",1]]};
+const CHAT={"CUST-0001":{"it":3,"at":"2026-06-06","remark":"演示高意向客户","wx":"demo-01","mine":true},"CUST-0003":{"it":2,"at":"2026-05-20","remark":"演示待唤回客户","wx":"demo-02","mine":false}};
+const CONV={"CUST-0001":"顾问A","CUST-0002":"顾问B"};
+
+/* ===== 本地存储层（预留 SaltLab API 口）===== */
+const LS=k=>{try{return JSON.parse(localStorage.getItem('salt_'+k)||'null')}catch(e){return null}};
+const SS=(k,v)=>localStorage.setItem('salt_'+k,JSON.stringify(v));
+let FOLLOW=LS('follow')||{};       // {cid:[{ts,by,type,text}]}
+let COMPLAINTS=LS('complaints')||[];// [{id,cid,model,type,text,status,by,ts}]
+let PTSADJ=LS('ptsadj')||{};       // {cid:delta}
+let COUPONS=LS('coupons')||[];     // 优惠券模板(预留)
+let CFG=LS('cfg')||{ptsRate:100};  // 消费/ptsRate=1积分
+let TAGS=LS('tags')||{};           // {cid:[标签]}
+let TASKS=LS('tasks')||{};         // {cid:{due:'YYYY-MM-DD',note}}
+let SALESMAP=LS('salesmap')||{LS:'顾问E',LN:'顾问D',XC:'顾问H(离职)',CX:'顾问F',SL:'',XG:'',KGK:''}; // 前缀→销售姓名
+let COMM=LS('comm')||{_default:5}; // 提成费率% (可按前缀覆盖)
+/* SaltLabAPI：现读写localStorage；未来替换为 SaltLab.com 后端接口 */
+const SaltLabAPI={
+  // TODO→ POST https://saltv8.com/api/crm/followup
+  addFollowup(cid,o){(FOLLOW[cid]=FOLLOW[cid]||[]).unshift(o);SS('follow',FOLLOW)},
+  // TODO→ POST https://saltv8.com/api/crm/complaint
+  addComplaint(o){COMPLAINTS.unshift(o);SS('complaints',COMPLAINTS)},
+  setComplaintStatus(id,s){const c=COMPLAINTS.find(x=>x.id===id);if(c){c.status=s;SS('complaints',COMPLAINTS)}},
+  // TODO→ POST https://saltv8.com/api/crm/points/adjust
+  adjustPoints(cid,d){PTSADJ[cid]=(PTSADJ[cid]||0)+d;SS('ptsadj',PTSADJ)},
+  points(r){return Math.floor(r.spend/CFG.ptsRate)+(PTSADJ[r.cid]||0)},
+};
+const fmt=n=>Math.round(n).toLocaleString('zh-CN');
+const now=()=>new Date().toISOString().slice(0,16).replace('T',' ');
+const lvlC={V6:'lv6',V5:'lv5',V4:'lv4',V3:'lv3',V2:'lv2',V1:'lv1'};
+const segC=s=>s.includes('流失')?'risk':s.includes('冠军')?'champ':s.includes('高价值')?'high':s.includes('潜力')?'new':'';
+const byCid=c=>RECS.find(x=>x.cid===c);
+
+/* ===== 导航 ===== */
+const TABS=[['overview','📊 管理层总览'],['customers','👥 客户库'],['perf','🏆 业绩归因'],['ops','🛠️ 客户运营'],['followup','📞 跟进复盘'],['pricing','🏷️ 车型报价'],['complaints','⚠️ 客诉'],['points','🎁 积分券']];
+let cur='overview';
+function buildNav(){nav.innerHTML=TABS.map(([k,l])=>`<button data-k="${k}" class="${k===cur?'on':''}" onclick="go('${k}')">${l}</button>`).join('')}
+function go(k){cur=k;buildNav();document.querySelectorAll('.page').forEach(p=>p.classList.remove('on'));document.getElementById('p-'+k).classList.add('on');renderers[k]&&renderers[k]()}
+
+/* ===== 通用 ===== */
+function openCard(cid){
+  const r=byCid(cid);if(!r)return;
+  const models=r.models?r.models.split(', ').map(m=>`<span class="chip">${m}</span>`).join(''):'<span class="empty">无车型记录</span>';
+  const fl=FOLLOW[cid]||[];
+  const cps=COMPLAINTS.filter(c=>c.cid===cid);
+  const pts=SaltLabAPI.points(r);
+  // 偏好车型报价参考
+  let band='';
+  const bk=Object.keys(BANDS).find(m=>r.fav&&r.fav.includes(m));
+  if(bk){const b=BANDS[bk];band=quoteBandHtml(bk,b);}
+  document.getElementById('modal').innerHTML=`
+   <span class="x" onclick="closeM()">✕</span>
+   <h2>${r.cid} <span class="badge ${lvlC[r.lvl]}">${r.lvl} ${r.lvlname}</span></h2>
+   <div class="muted" style="font-size:12px">全库消费排名 #${r.rank} · ${r.active?'<span class="dot on-d"></span>在用车':'<span class="dot off-d"></span>未在用'} · RFM ${r.rfm} · <span class="seg ${segC(r.seg)}">${r.seg}</span></div>
+   <div class="kv">
+     <span class="k">累计消费</span><span class="num"><b>¥${fmt(r.spend)}</b></span>
+     <span class="k">消费次数</span><span>${r.cnt} 单</span>
+     <span class="k">首次/最近</span><span>${r.first||'—'} → ${r.last||'—'}</span>
+     <span class="k">车型档次</span><span>${r.tier}</span>
+     <span class="k">偏好车型</span><span>${r.fav||'—'}</span>
+     <span class="k">主播/来源</span><span>${SALESMAP[r.prefix]||r.prefix||'—'}<span class="muted">(${r.prefix})</span></span>
+     <span class="k">成交销售</span><span>${CONV[cid]?'<b style="color:var(--success)">'+CONV[cid]+'</b>':'<span class="empty">出回车记录待补</span>'}</span>
+     <span class="k">积分余额</span><span class="num" style="color:var(--salt-400)">${fmt(pts)} 分</span>
+     ${r.debt?`<span class="k">挂账欠款</span><span class="num" style="color:#ff8a7a">¥${fmt(r.debt)}</span>`:''}
+     ${r.note?`<span class="k">备注</span><span>${r.note}</span>`:''}
+   </div>
+   <div class="box"><div class="bt">🚗 用车清单（车型×次数）</div>${models}</div>
+   ${band?`<div class="box"><div class="bt">💰 偏好车型报价参考（防错价）</div>${band}</div>`:''}
+   <div class="box"><div class="bt">💬 三只猫聊天分析</div>${chatHtml(r.cid)}</div>
+   <div class="box"><div class="bt"><span>📞 跟进时间线</span><button class="btn sm pri" onclick="addFollow('${cid}')">＋加跟进</button></div>
+     ${fl.length?`<div class="tl">${fl.map(f=>`<div class="it"><div>${f.text}<span class="tt">${f.type}</span></div><div class="meta">${f.ts} · ${f.by}</div></div>`).join('')}</div>`:'<span class="empty">暂无跟进记录</span>'}</div>
+   <div class="box"><div class="bt"><span>⚠️ 客诉记录</span><button class="btn sm" onclick="addCmp('${cid}')">＋记客诉</button></div>
+     ${cps.length?cps.map(c=>complaintRow(c)).join(''):'<span class="empty">无客诉记录</span>'}</div>
+   <div class="box"><div class="bt"><span>🎁 积分 & 优惠券</span><button class="btn sm" onclick="adjPts('${cid}')">调整积分</button></div>
+     <div>当前积分 <b class="num" style="color:var(--salt-400)">${fmt(pts)}</b> 分（规则：消费 ¥${CFG.ptsRate}=1分，可调）</div>
+     <div class="note-port">预留端口 → 优惠券发放、积分商城兑换将接 SaltLab.com /api/crm/coupon</div></div>
+   ${opsBox(cid)}
+   <div class="advice">🎯 ${advice(r)}</div>`;
+  document.getElementById('mask').classList.add('show');
+}
+function closeM(){document.getElementById('mask').classList.remove('show')}
+document.getElementById('mask').onclick=e=>{if(e.target.id==='mask')closeM()};
+function advice(r){
+  if(r.seg.includes('流失'))return `<b>高价值流失预警。</b>${r.lvlname}会员，累计 ¥${fmt(r.spend)}，最近消费 ${r.last}。建议以偏好车型「${r.fav||'豪车'}」做专属唤回，优先级最高。`;
+  if(r.seg.includes('冠军'))return `<b>冠军客户。</b>高频高额且近期活跃，会员商城种子用户。给优先预订权+专属客服，引导转介绍。`;
+  if(r.seg.includes('高价值'))return `<b>高价值客户。</b>维护好关系，会员商城首批定向推送匹配「${r.fav||'高端车型'}」。`;
+  if(r.seg.includes('潜力'))return `<b>潜力新客。</b>用第二单优惠/升舱体验培养复购。`;
+  if(r.seg.includes('沉睡'))return `<b>沉睡客户。</b>低成本批量触达即可。`;
+  return `稳定维持客群，常规会员权益覆盖。`;
+}
+const itLabel={3:['🔥 高意向','var(--danger)'],2:['中意向','var(--warning)'],1:['观望','var(--text-muted)']};
+function chatHtml(cid){
+  const c=CHAT[cid];
+  if(!c)return `<span class="empty">三只猫暂无该客户的对话分析记录（桥接键 群名/好友含「${cid.replace(/^[A-Za-z]+/,'')}」，新客或未分析）</span>`;
+  const [lab,col]=itLabel[c.it]||['—','var(--text-muted)'];
+  return `<div style="font-size:12.5px;line-height:1.9">
+    意向分：<b style="color:${col}">${lab}（${c.it}/3）</b><br>
+    最近对话分析：<b>${c.at}</b><br>
+    好友备注：${c.remark} · 账号 ${c.wx}官号 ${c.mine?'<span class="tag2" style="background:#2a1c0c;color:var(--salt-400)">本人线</span>':''}
+   </div>
+   <div class="note-port">已从三只猫(autosale)实拉并入。完整对话内容由本地定时管线补全。</div>`;
+}
+function quoteBandHtml(name,b){
+  const lo=b.p10,hi=b.p90,mn=b.min,mx=b.max,md=b.median;
+  const span=mx-mn||1;
+  const L=v=>Math.max(0,Math.min(100,(v-mn)/span*100));
+  return `<div style="font-size:12px;margin-bottom:3px">${name} · ${b.n}单</div>
+   <div class="qband"><div class="reg" style="left:${L(lo)}%;right:${100-L(hi)}%"></div><div class="med" style="left:${L(md)}%"></div></div>
+   <div style="font-size:11.5px" class="muted">常规区间 <b style="color:var(--success)">¥${fmt(lo)}~${fmt(hi)}</b> · 中位 ¥${fmt(md)} · 极值 ¥${fmt(mn)}~${fmt(mx)}</div>`;
+}
+function complaintRow(c){
+  const sev=c.status==='已解决'?'':c.status==='处理中'?'border-left:3px solid var(--warning)':'border-left:3px solid var(--danger)';
+  return `<div class="box" style="${sev};margin-top:8px;padding:10px"><div style="font-size:12px"><b>${c.type}</b> · ${c.model||'—'} <span class="muted">${c.ts}</span></div>
+   <div style="font-size:12px;margin:4px 0">${c.text}</div>
+   <select class="status-sel" onchange="setCmpStatus('${c.id}',this.value)">
+   ${['待处理','处理中','已解决'].map(s=>`<option ${s===c.status?'selected':''}>${s}</option>`).join('')}</select></div>`;
+}
+/* 操作 */
+function addFollow(cid){const t=prompt('跟进内容：');if(!t)return;const ty=prompt('类型(电话/微信/到店/成交/其他)','微信')||'微信';const by=prompt('销售姓名','我')||'我';SaltLabAPI.addFollowup(cid,{ts:now(),by,type:ty,text:t});toast('跟进已保存 ✓');openCard(cid)}
+function addCmp(cid){const r=byCid(cid);const ty=prompt('客诉类型(车况/服务/价格/超时/其他)','服务');if(!ty)return;const t=prompt('客诉内容：');if(!t)return;SaltLabAPI.addComplaint({id:'c'+Date.now(),cid,model:r.fav,type:ty,text:t,status:'待处理',by:'我',ts:now()});toast('客诉已记录 ✓');openCard(cid)}
+function setCmpStatus(id,s){SaltLabAPI.setComplaintStatus(id,s);toast('状态已更新 ✓')}
+function adjPts(cid){const d=parseInt(prompt('积分调整(正加负减)：','0'));if(!d)return;SaltLabAPI.adjustPoints(cid,d);toast('积分已调整 ✓');openCard(cid)}
+/* 导出导入 */
+function exportData(){const blob=new Blob([JSON.stringify({follow:FOLLOW,complaints:COMPLAINTS,ptsadj:PTSADJ,coupons:COUPONS,cfg:CFG},null,1)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='saltlab_crm_data_'+new Date().toISOString().slice(0,10)+'.json';a.click()}
+function importData(e){const f=e.target.files[0];if(!f)return;const rd=new FileReader();rd.onload=()=>{try{const d=JSON.parse(rd.result);if(d.follow){FOLLOW=d.follow;SS('follow',FOLLOW)}if(d.complaints){COMPLAINTS=d.complaints;SS('complaints',COMPLAINTS)}if(d.ptsadj){PTSADJ=d.ptsadj;SS('ptsadj',PTSADJ)}if(d.coupons){COUPONS=d.coupons;SS('coupons',COUPONS)}if(d.cfg){CFG=d.cfg;SS('cfg',CFG)}alert('导入成功');go(cur)}catch(err){alert('导入失败：'+err)}};rd.readAsText(f)}
+
+/* ===== 各页渲染 ===== */
+const renderers={};
+const charts={};
+function mkChart(id,cfg){if(charts[id])charts[id].destroy();const el=document.getElementById(id);if(!el)return;charts[id]=new Chart(el,cfg)}
+/* 保存提示 toast */
+let _toastT;
+function toast(msg){const t=document.getElementById('toast');t.textContent=msg||'已保存 ✓';t.classList.add('show');clearTimeout(_toastT);_toastT=setTimeout(()=>t.classList.remove('show'),1600);}
+/* 图表美化 */
+if(window.ChartDataLabels)Chart.register(window.ChartDataLabels);
+Chart.defaults.color='#9aa0aa';Chart.defaults.font.family='system-ui';Chart.defaults.font.size=11;
+Chart.defaults.plugins.datalabels={display:false};
+Chart.defaults.plugins.tooltip={backgroundColor:'#1A1D26',borderColor:'#2E3340',borderWidth:1,titleColor:'#E8ECF8',bodyColor:'#E8ECF8',padding:10,cornerRadius:8,displayColors:true,boxPadding:4};
+function grad(id,c1,c2,vertical){const cv=document.getElementById(id);if(!cv)return c1;const ctx=cv.getContext('2d');const g=vertical?ctx.createLinearGradient(0,0,0,230):ctx.createLinearGradient(0,0,cv.width||600,0);g.addColorStop(0,c1);g.addColorStop(1,c2);return g;}
+const fmtK=n=>n>=10000?(n/10000).toFixed(n>=100000?0:1)+'万':fmt(n);
+/* 甜甜圈中心总数插件 */
+const donutCenter={id:'donutCenter',afterDraw(ch){if(ch.config.type!=='doughnut'||!ch.config.options._centerText)return;const{ctx,chartArea:{left,right,top,bottom}}=ch;const x=(left+right)/2,y=(top+bottom)/2;ctx.save();ctx.textAlign='center';ctx.fillStyle='#E8ECF8';ctx.font='700 22px system-ui';ctx.fillText(ch.config.options._centerText,x,y-4);ctx.fillStyle='#8B93A7';ctx.font='400 11px system-ui';ctx.fillText(ch.config.options._centerSub||'',x,y+15);ctx.restore();}};
+Chart.register(donutCenter);
+/* 3D 立体柱(等距挤出顶面+侧面) */
+function shade(hex,amt){hex=(hex||'').replace('#','');if(hex.length!==6)return hex?'#'+hex:'#888';let r=parseInt(hex.slice(0,2),16),g=parseInt(hex.slice(2,4),16),b=parseInt(hex.slice(4,6),16);const c=v=>Math.max(0,Math.min(255,Math.round(v+amt)));return`rgb(${c(r)},${c(g)},${c(b)})`;}
+const bar3d={id:'bar3d',afterDatasetsDraw(chart,a,opts){
+  if(!chart.options._bar3d)return;const ctx=chart.ctx,meta=chart.getDatasetMeta(0),ds=chart.data.datasets[0],d=(opts&&opts.depth)||11;
+  meta.data.forEach((bar,i)=>{const p=bar.getProps(['x','y','base','width'],true);const col=Array.isArray(ds.backgroundColor)?ds.backgroundColor[i]:ds.backgroundColor;if(typeof col!=='string')return;
+    const l=p.x-p.width/2,r=p.x+p.width/2,top=p.y,bot=p.base;
+    ctx.save();
+    ctx.fillStyle=shade(col,34);ctx.beginPath();ctx.moveTo(l,top);ctx.lineTo(r,top);ctx.lineTo(r+d,top-d);ctx.lineTo(l+d,top-d);ctx.closePath();ctx.fill();
+    ctx.fillStyle=shade(col,-34);ctx.beginPath();ctx.moveTo(r,top);ctx.lineTo(r,bot);ctx.lineTo(r+d,bot-d);ctx.lineTo(r+d,top-d);ctx.closePath();ctx.fill();
+    ctx.restore();});
+}};
+Chart.register(bar3d);
+
+renderers.overview=function(){
+  const k=AGG.kpi;
+  document.getElementById('p-overview').innerHTML=`
+   <h2 class="sec">经营总览 <span class="tag">点击预警卡可下钻</span><svg class="carwm" viewBox="0 0 150 46"><g fill="#FF6B35"><path d="M4 32 L10 26 C20 24 30 23 40 23 L54 13 C62 10 74 9 86 11 L108 16 C126 19 140 22 144 30 L144 33 L128 33 A11 11 0 0 0 106 33 L58 33 A11 11 0 0 0 36 33 L4 33 Z"/><circle cx="47" cy="33" r="8"/><circle cx="117" cy="33" r="8"/></g></svg></h2>
+   <div class="kpis" id="kpisHud"></div>
+   <div class="grid2" style="margin-top:14px">
+     <div class="panel"><h3>会员等级分布 <span class="t">按累计消费</span></h3><canvas id="cLvl"></canvas></div>
+     <div class="panel"><h3>RFM 智能分群 <span class="t">谁该被跟进</span></h3><canvas id="cSeg"></canvas></div>
+   </div>
+   <div class="grid2" style="margin-top:14px">
+     <div class="panel"><h3>车型档次偏好 <span class="t">客户结构</span></h3><canvas id="cTier"></canvas></div>
+     <div class="panel"><h3>车型热度 TOP12 <span class="t">商城选品参考</span></h3><canvas id="cModel"></canvas></div>
+   </div>
+   <div class="grid2" style="margin-top:14px">
+     <div class="panel"><h3>🔥 高价值流失预警 · 优先唤回 <span class="t">点开客户</span></h3>
+       <div id="riskList" style="max-height:300px;overflow:auto"></div></div>
+     <div class="panel"><h3>💸 挂账欠款 · 待收 <span class="t">点开客户</span></h3>
+       <div id="debtList" style="max-height:300px;overflow:auto"></div></div>
+   </div>
+   <div class="panel" style="margin-top:14px"><h3>🔥 三只猫高意向 · 近期对话待跟进 <span class="t">实拉聊天分析 · 点开客户</span></h3>
+     <div id="chatList" style="max-height:280px;overflow:auto"></div></div>
+   <div class="panel" style="margin-top:14px"><h3>📌 复盘要点 <span class="t">自动生成</span></h3><div id="recap" style="font-size:13px;line-height:1.8"></div></div>`;
+  // charts (美化版：圆角柱+渐变+数值标签+饼图中心总数)
+  const palc=['#FFD700','#C9B6FF','#7FE9D6','#FFD24A','#C2C8D2','#5C6373'];
+  const dlBar=(horiz)=>({display:true,color:'#E8ECF8',anchor:'end',align:horiz?'right':'top',offset:2,font:{weight:'700',size:11},formatter:v=>fmtK(v)});
+  mkChart('cLvl',{type:'bar',data:{labels:AGG.lvl.map(x=>x[0]),datasets:[{data:AGG.lvl.map(x=>x[1]),backgroundColor:palc,borderRadius:3,maxBarThickness:40}]},
+    options:{_bar3d:true,layout:{padding:{top:26,right:18}},plugins:{legend:{display:false},datalabels:dlBar(false),bar3d:{depth:11}},scales:{x:{grid:{display:false},ticks:{color:'#E8ECF8',font:{weight:'600'}}},y:{grid:{color:'#1e222b'},ticks:{color:'#8B93A7'}}}}});
+  mkChart('cSeg',{type:'bar',data:{labels:AGG.seg.map(x=>x[0]),datasets:[{data:AGG.seg.map(x=>x[1]),borderRadius:6,maxBarThickness:24,backgroundColor:AGG.seg.map(x=>x[0].includes('流失')?'#FF453A':x[0].includes('冠军')?'#34C759':x[0].includes('高价值')?'#FF6B35':x[0].includes('潜力')?'#38BDF8':x[0].includes('稳定')?'#7FE9D6':'#5C6373')}]},
+    options:{indexAxis:'y',layout:{padding:{right:30}},plugins:{legend:{display:false},datalabels:dlBar(true)},scales:{x:{grid:{color:'#1e222b'},ticks:{display:false}},y:{grid:{display:false},ticks:{color:'#E8ECF8'}}}}});
+  const tierTot=AGG.tier.reduce((s,x)=>s+x[1],0);
+  mkChart('cTier',{type:'doughnut',data:{labels:AGG.tier.map(x=>x[0]),datasets:[{data:AGG.tier.map(x=>x[1]),backgroundColor:['#FF6B35','#F5A623','#38BDF8','#8B93A7','#3a3f4a'],borderColor:'#12141A',borderWidth:3,hoverOffset:6}]},
+    options:{cutout:'62%',_centerText:fmt(tierTot),_centerSub:'有车型客户',plugins:{legend:{position:'right',labels:{color:'#E8ECF8',usePointStyle:true,pointStyle:'circle',padding:12,font:{size:12}}},datalabels:{display:false}}}});
+  mkChart('cModel',{type:'bar',data:{labels:AGG.models.map(x=>x[0]),datasets:[{data:AGG.models.map(x=>x[1]),borderRadius:6,maxBarThickness:20,backgroundColor:grad('cModel','#FF8C69','#FF6B35',false)}]},
+    options:{indexAxis:'y',layout:{padding:{right:30}},plugins:{legend:{display:false},datalabels:dlBar(true)},scales:{x:{grid:{color:'#1e222b'},ticks:{display:false}},y:{grid:{display:false},ticks:{color:'#E8ECF8'}}}}});
+  // lists
+  const risk=RECS.filter(r=>r.seg.includes('流失')).slice(0,40);
+  riskList.innerHTML=risk.map(r=>`<div class="alert" onclick="openCard('${r.cid}')"><div><b>${r.cid}</b> <span class="badge ${lvlC[r.lvl]}">${r.lvl}</span> <span class="muted">${r.fav||''}</span></div><div class="num" style="color:#ff8a7a">¥${fmt(r.spend)} · ${r.last}</div></div>`).join('');
+  const debt=RECS.filter(r=>r.debt>0).sort((a,b)=>b.debt-a.debt);
+  debtList.innerHTML=debt.length?debt.map(r=>`<div class="alert" onclick="openCard('${r.cid}')"><div><b>${r.cid}</b> <span class="muted">${r.note||''}</span></div><div class="num" style="color:var(--danger)">¥${fmt(r.debt)}</div></div>`).join(''):'<div class="empty" style="padding:10px">暂无登记欠款</div>';
+  const chatRows=Object.entries(CHAT).map(([cid,c])=>({cid,...c,r:byCid(cid)})).filter(x=>x.r).sort((a,b)=>b.it-a.it||b.at.localeCompare(a.at));
+  chatList.innerHTML=chatRows.length?chatRows.map(x=>{const[lab,col]=itLabel[x.it]||['—','#888'];return `<div class="alert" onclick="openCard('${x.cid}')"><div><b>${x.cid}</b> <span class="badge ${lvlC[x.r.lvl]}">${x.r.lvl}</span> ${x.mine?'<span class="tag2" style="background:#2a1c0c;color:var(--salt-400)">本人线</span>':''} <span class="muted">${x.remark}</span></div><div style="text-align:right"><span style="color:${col};font-weight:600">${lab}</span> <span class="muted num">· ${x.at} · ¥${fmt(x.r.spend)}</span></div></div>`}).join(''):'<div class="empty" style="padding:10px">暂无聊天分析数据</div>';
+  recap.innerHTML=`· 全库 <b>${fmt(k.cust)}</b> 位客户，累计消费 <b>¥${fmt(k.spend)}</b>，客单价 <b>¥${fmt(k.aov)}</b>。<br>
+   · 顶层（黑钻+钻石）<b>${k.vip}</b> 人贡献最高客单，是会员商城种子。<br>
+   · <b style="color:var(--warning)">${k.atrisk}</b> 位高价值客户已流失预警，合计 <b>¥${fmt(k.atriskVal)}</b> 消费基础待唤回——这是本阶段变现第一优先级。<br>
+   · 挂账欠款 <b style="color:var(--danger)">¥${fmt(k.debt)}</b> 待清收。<br>
+   · 车型热度 TOP3：${AGG.models.slice(0,3).map(m=>m[0]).join(' / ')}，会员商城选品/补车优先参考。`;
+  renderGauges(k);
+};
+
+renderers.customers=function(){
+  document.getElementById('p-customers').innerHTML=`
+   <h2 class="sec">客户库 <span class="tag">点任意行打开360画像</span></h2>
+   <div class="toolrow">
+     <input id="q" class="search" placeholder="搜索 客户编号/车型/备注…" oninput="apply()">
+     <select id="fLvl" onchange="apply()"><option value="">全部等级</option>${['V6','V5','V4','V3','V2','V1'].map(v=>`<option>${v}</option>`).join('')}</select>
+     <select id="fSeg" onchange="apply()"><option value="">全部分群</option>${[...new Set(RECS.map(r=>r.seg))].map(v=>`<option>${v}</option>`).join('')}</select>
+     <select id="fTier" onchange="apply()"><option value="">全部档次</option>${[...new Set(RECS.map(r=>r.tier))].map(v=>`<option>${v}</option>`).join('')}</select>
+     <select id="fAct" onchange="apply()"><option value="">在用车?</option><option value="1">在用车</option><option value="0">未在用</option></select>
+     <span class="muted" id="cnt" style="margin-left:auto"></span>
+   </div>
+   <div class="tablewrap"><table><thead><tr>
+     <th data-k="rank">#</th><th data-k="cid">客户编号</th><th data-k="lvl">等级</th>
+     <th data-k="spend" class="r">累计消费</th><th data-k="cnt" class="r">次数</th><th data-k="pts" class="r">积分</th>
+     <th data-k="last">最近消费</th><th data-k="tier">档次</th><th data-k="fav">偏好车型</th><th data-k="seg">分群</th><th data-k="debt" class="r">欠款</th>
+   </tr></thead><tbody id="tb"></tbody></table></div>`;
+  window.sortK='rank';window.sortDir=1;apply();
+};
+function apply(){
+  const q=(document.getElementById('q')?.value||'').trim().toLowerCase();
+  const fl=document.getElementById('fLvl')?.value||'',fs=document.getElementById('fSeg')?.value||'',ft=document.getElementById('fTier')?.value||'',fa=document.getElementById('fAct')?.value||'';
+  let v=RECS.filter(r=>{
+    if(fl&&r.lvl!==fl)return false;if(fs&&r.seg!==fs)return false;if(ft&&r.tier!==ft)return false;
+    if(fa!==''&&(r.active?'1':'0')!==fa)return false;
+    if(q&&!(r.cid.toLowerCase().includes(q)||r.models.toLowerCase().includes(q)||(r.note||'').toLowerCase().includes(q)))return false;
+    return true;});
+  v.sort((a,b)=>{let x=a[sortK],y=b[sortK];if(sortK==='pts'){x=SaltLabAPI.points(a);y=SaltLabAPI.points(b)}if(typeof x==='string')return sortDir*(x||'').localeCompare(y||'');return sortDir*((x||0)-(y||0))});
+  document.getElementById('cnt').textContent=`显示 ${v.length} / ${RECS.length}`;
+  document.getElementById('tb').innerHTML=v.slice(0,400).map(r=>`<tr onclick="openCard('${r.cid}')">
+    <td class="num">${r.rank}</td><td><b>${r.cid}</b></td><td><span class="badge ${lvlC[r.lvl]}">${r.lvl} ${r.lvlname}</span></td>
+    <td class="r num">¥${fmt(r.spend)}</td><td class="r num">${r.cnt}</td><td class="r num" style="color:var(--salt-400)">${fmt(SaltLabAPI.points(r))}</td>
+    <td>${r.last||'—'}</td><td>${r.tier}</td><td>${r.fav||'—'}</td><td><span class="seg ${segC(r.seg)}">${r.seg}</span></td>
+    <td class="r num">${r.debt?'¥'+fmt(r.debt):'—'}</td></tr>`).join('')+(v.length>400?`<tr><td colspan="11" class="muted" style="text-align:center;padding:12px">仅显示前400，请筛选收窄</td></tr>`:'');
+  document.querySelectorAll('#p-customers th[data-k]').forEach(th=>th.onclick=()=>{const kk=th.dataset.k;if(sortK===kk)sortDir*=-1;else{sortK=kk;sortDir=['spend','cnt','debt','pts'].includes(kk)?-1:1}apply()});
+}
+
+renderers.followup=function(){
+  const segs=['高价值流失预警','冠军客户','高价值客户','潜力新客'];
+  const cols=segs.map(s=>{const list=RECS.filter(r=>r.seg===s).slice(0,30);
+    return `<div class="panel"><h3>${s} <span class="t">${RECS.filter(r=>r.seg===s).length}</span></h3>
+     <div style="max-height:420px;overflow:auto">${list.map(r=>`<div class="alert" onclick="openCard('${r.cid}')"><div><b>${r.cid}</b> <span class="badge ${lvlC[r.lvl]}">${r.lvl}</span></div><div class="num muted">¥${fmt(r.spend)}</div></div>`).join('')}</div></div>`}).join('');
+  // 已记录跟进
+  const all=[];Object.entries(FOLLOW).forEach(([cid,arr])=>arr.forEach(f=>all.push({cid,...f})));
+  all.sort((a,b)=>b.ts.localeCompare(a.ts));
+  document.getElementById('p-followup').innerHTML=`
+   <h2 class="sec">销售跟进复盘 <span class="tag">按RFM分群锁定该打的电话</span></h2>
+   <div class="grid2">${cols}</div>
+   <div class="panel" style="margin-top:14px"><h3>📋 已记录跟进流水 <span class="t">${all.length} 条</span></h3>
+     ${all.length?`<div class="tablewrap" style="max-height:340px"><table><thead><tr><th>时间</th><th>客户</th><th>类型</th><th>内容</th><th>销售</th></tr></thead>
+       <tbody>${all.map(f=>`<tr onclick="openCard('${f.cid}')"><td class="muted">${f.ts}</td><td><b>${f.cid}</b></td><td><span class="seg">${f.type}</span></td><td>${f.text}</td><td>${f.by}</td></tr>`).join('')}</tbody></table></div>`:'<div class="empty" style="padding:12px">还没有跟进记录。打开客户360 → ＋加跟进，记录会沉淀到这里做复盘。</div>'}
+   </div>`;
+};
+
+renderers.pricing=function(){
+  const rows=Object.entries(BANDS).sort((a,b)=>b[1].n-a[1].n);
+  document.getElementById('p-pricing').innerHTML=`
+   <h2 class="sec">车型报价 · 防错价 <span class="tag">统一报价口径，避免第二个销售报错</span></h2>
+   <div class="panel"><h3>🔍 快速查价 + 报价校验</h3>
+     <div class="toolrow">
+       <input id="pq" class="search" placeholder="输入车型，如 大牛 / 兰博基尼580 / 揽胜" oninput="pricefilter()">
+       <input id="pquote" type="number" placeholder="试报价￥/天" style="width:140px" oninput="pricefilter()">
+       <span class="muted">输入报价 → 自动判断是否在常规区间</span>
+     </div>
+     <div id="quoteResult"></div>
+   </div>
+   <div class="panel" style="margin-top:14px"><h3>全部车型报价区间 <span class="t">${rows.length} 款 · 含≥5单</span></h3>
+   <div class="tablewrap"><table><thead><tr><th>车型</th><th class="r">样本单数</th><th class="r">常规下限P10</th><th class="r">常规上限P90</th><th class="r">中位</th><th class="r">历史极值</th></tr></thead>
+   <tbody id="ptb">${rows.map(([m,b])=>`<tr><td><b>${m}</b></td><td class="r num">${b.n}</td><td class="r num" style="color:var(--success)">¥${fmt(b.p10)}</td><td class="r num" style="color:var(--success)">¥${fmt(b.p90)}</td><td class="r num">¥${fmt(b.median)}</td><td class="r num muted">¥${fmt(b.min)}~${fmt(b.max)}</td></tr>`).join('')}</tbody></table></div></div>`;
+};
+function pricefilter(){
+  const q=(document.getElementById('pq').value||'').trim().toLowerCase();
+  const quote=parseFloat(document.getElementById('pquote').value);
+  document.querySelectorAll('#ptb tr').forEach(tr=>{tr.style.display=tr.textContent.toLowerCase().includes(q)?'':'none'});
+  const res=document.getElementById('quoteResult');
+  if(!q){res.innerHTML='';return}
+  const hit=Object.entries(BANDS).find(([m])=>m.toLowerCase().includes(q)||q.includes(m.toLowerCase()));
+  if(!hit){res.innerHTML='<div class="empty">未找到该车型的历史报价（样本不足5单）</div>';return}
+  const[m,b]=hit;let verdict='';
+  if(!isNaN(quote)){
+    if(quote>=b.p10&&quote<=b.p90)verdict=`<div style="color:var(--success);font-weight:600;margin-top:6px">✓ ¥${fmt(quote)} 在常规区间内，报价合理</div>`;
+    else if(quote<b.min||quote>b.max)verdict=`<div style="color:var(--danger);font-weight:600;margin-top:6px">✕ ¥${fmt(quote)} 超出历史极值 ¥${fmt(b.min)}~${fmt(b.max)}，疑似错价！</div>`;
+    else verdict=`<div style="color:var(--warning);font-weight:600;margin-top:6px">⚠ ¥${fmt(quote)} 偏离常规区间（¥${fmt(b.p10)}~${fmt(b.p90)}），请确认是否特批</div>`;
+  }
+  res.innerHTML=quoteBandHtml(m,b)+verdict;
+}
+
+renderers.complaints=function(){
+  const open=COMPLAINTS.filter(c=>c.status!=='已解决').length;
+  document.getElementById('p-complaints').innerHTML=`
+   <h2 class="sec">客诉管理 <span class="tag">沉淀客诉点，避免同一坑反复踩</span></h2>
+   <div class="kpis" style="grid-template-columns:repeat(4,1fr)">
+     <div class="kpi"><div class="l">客诉总数</div><div class="v num">${COMPLAINTS.length}</div></div>
+     <div class="kpi bad"><div class="l">待处理/处理中</div><div class="v num">${open}</div></div>
+     <div class="kpi good"><div class="l">已解决</div><div class="v num">${COMPLAINTS.length-open}</div></div>
+     <div class="kpi"><div class="l"></div><div class="v"><button class="btn pri" onclick="addCmpFree()">＋ 新建客诉</button></div></div>
+   </div>
+   <div class="panel" style="margin-top:14px"><h3>客诉列表</h3>
+     ${COMPLAINTS.length?`<div class="tablewrap"><table><thead><tr><th>时间</th><th>客户</th><th>车型</th><th>类型</th><th>内容</th><th>状态</th></tr></thead>
+       <tbody>${COMPLAINTS.map(c=>`<tr><td class="muted">${c.ts}</td><td onclick="openCard('${c.cid}')" style="cursor:pointer"><b>${c.cid}</b></td><td>${c.model||'—'}</td><td><span class="seg">${c.type}</span></td><td>${c.text}</td>
+         <td><select class="status-sel" onchange="setCmpStatus('${c.id}',this.value);renderers.complaints()">${['待处理','处理中','已解决'].map(s=>`<option ${s===c.status?'selected':''}>${s}</option>`).join('')}</select></td></tr>`).join('')}</tbody></table></div>`
+       :'<div class="empty" style="padding:12px">还没有客诉记录。曾经的客诉点可在这里录入，或在客户360里＋记客诉，后续报价/接待自动看到风险。</div>'}
+     <div class="note-port">预留端口 → 客诉可由三只猫聊天/工单自动抓取，接 SaltLab.com 后自动归集</div>
+   </div>`;
+};
+function addCmpFree(){const cid=prompt('客户编号(如 CUST-XXXX)：');if(!cid)return;if(!byCid(cid)){if(!confirm('该编号不在主库，仍要记录?'))return}const ty=prompt('客诉类型(车况/服务/价格/超时/其他)','服务');if(!ty)return;const t=prompt('客诉内容：');if(!t)return;SaltLabAPI.addComplaint({id:'c'+Date.now(),cid,model:(byCid(cid)||{}).fav||'',type:ty,text:t,status:'待处理',by:'我',ts:now()});renderers.complaints()}
+
+renderers.points=function(){
+  const top=[...RECS].map(r=>({cid:r.cid,lvl:r.lvl,pts:SaltLabAPI.points(r),spend:r.spend})).sort((a,b)=>b.pts-a.pts).slice(0,30);
+  document.getElementById('p-points').innerHTML=`
+   <h2 class="sec">积分 & 优惠券 <span class="tag">会员商城底座 · 预留端口</span></h2>
+   <div class="grid3">
+     <div class="panel"><h3>积分规则</h3>
+       <div style="font-size:13px;line-height:2">每消费 ¥<input id="ptsRate" type="number" value="${CFG.ptsRate}" style="width:80px" onchange="saveRate()"> = <b style="color:var(--salt-400)">1 积分</b></div>
+       <div class="muted" style="font-size:12px">当前可发积分池：<b class="num">${fmt(AGG.kpi.spend/CFG.ptsRate)}</b> 分</div>
+       <div class="note-port">预留 → 积分获取/消耗规则将由 SaltLab 后端统一管理</div></div>
+     <div class="panel"><h3>优惠券模板 <span class="t">预留</span></h3>
+       <div class="empty">优惠券创建/发放为预留功能</div>
+       <button class="btn" style="margin-top:8px" onclick="alert('预留端口：将接 SaltLab.com /api/crm/coupon 创建券模板、定向发放、核销')">＋ 新建券模板（预留）</button>
+       <div class="note-port">满减 / 折扣 / 升舱 / 生日券 → 接独立站后定向发放</div></div>
+     <div class="panel"><h3>积分商城 <span class="t">规划</span></h3>
+       <div class="empty">积分兑换商城为下一阶段，本CRM已为每客户算好积分余额作为底座。</div>
+       <div class="note-port">兑换：用车折扣 / 周边 / 升舱 / 专属服务</div></div>
+   </div>
+   <div class="panel" style="margin-top:14px"><h3>🏆 积分榜 TOP30 <span class="t">消费/${CFG.ptsRate}=1分</span></h3>
+   <div class="tablewrap" style="max-height:420px"><table><thead><tr><th>#</th><th>客户</th><th>等级</th><th class="r">累计消费</th><th class="r">积分余额</th></tr></thead>
+   <tbody>${top.map((r,i)=>`<tr onclick="openCard('${r.cid}')"><td class="num">${i+1}</td><td><b>${r.cid}</b></td><td><span class="badge ${lvlC[r.lvl]}">${r.lvl}</span></td><td class="r num">¥${fmt(r.spend)}</td><td class="r num" style="color:var(--salt-400)"><b>${fmt(r.pts)}</b></td></tr>`).join('')}</tbody></table></div></div>`;
+};
+function saveRate(){CFG.ptsRate=Math.max(1,parseInt(document.getElementById('ptsRate').value)||100);SS('cfg',CFG);toast('积分规则已保存 ✓');renderers.points()}
+
+/* ===== 360内：标签 / 跟进任务 / 话术 ===== */
+function opsBox(cid){
+  const tags=TAGS[cid]||[];
+  const task=TASKS[cid];
+  const tg=tags.length?tags.map(t=>`<span class="chip">${t} <span style="cursor:pointer;color:var(--text-dim)" onclick="rmTag('${cid}','${t}')">✕</span></span>`).join(''):'<span class="empty">无标签</span>';
+  let taskHtml=task&&task.due?`下次跟进：<b style="color:${task.due<today()?'var(--danger)':'var(--salt-400)'}">${task.due}${task.due<today()?' (已逾期)':''}</b> ${task.note?'· '+task.note:''}`:'<span class="empty">未设跟进任务</span>';
+  return `<div class="box"><div class="bt"><span>🛠️ 客户运营</span></div>
+    <div style="margin-bottom:8px">🏷️ 标签：${tg} <button class="btn sm" onclick="addTag('${cid}')">＋标签</button></div>
+    <div style="margin-bottom:8px">📅 ${taskHtml} <button class="btn sm" onclick="setTask('${cid}')">设跟进日期</button></div>
+    <button class="btn sm pri" onclick="genScript('${cid}')">✍️ 生成跟进话术</button>
+    <div id="scriptOut" style="margin-top:8px"></div></div>`;
+}
+function today(){return new Date().toISOString().slice(0,10)}
+function addTag(cid){const t=prompt('加标签(如:意向购车/婚庆/老客转介/谨慎报价)：');if(!t)return;TAGS[cid]=[...new Set([...(TAGS[cid]||[]),t.trim()])];SS('tags',TAGS);toast('标签已保存 ✓');openCard(cid)}
+function rmTag(cid,t){TAGS[cid]=(TAGS[cid]||[]).filter(x=>x!==t);SS('tags',TAGS);toast('标签已删除');openCard(cid)}
+function setTask(cid){const d=prompt('下次跟进日期 (YYYY-MM-DD)：',today());if(!d)return;const n=prompt('备注(可空)：','')||'';TASKS[cid]={due:d.trim(),note:n};SS('tasks',TASKS);toast('跟进任务已保存 ✓');openCard(cid)}
+function genScript(cid){
+  const r=byCid(cid);if(!r)return;const c=CHAT[cid];
+  const fav=r.fav||'心仪车型';let s='';
+  const band=Object.entries(BANDS).find(([m])=>r.fav&&r.fav.includes(m));
+  const price=band?`（${band[0]}日租常规¥${fmt(band[1].p10)}~${fmt(band[1].p90)}）`:'';
+  if(r.seg.includes('流失'))s=`${r.cid}您好！我是盐究室超跑。看到您之前选过${fav}，最近上新了几台车况很棒的，想第一时间告诉您。作为${r.lvlname}老客户，这次给您留了专属优惠${price}，最近有出行计划吗？随时帮您安排。`;
+  else if(r.seg.includes('冠军')||r.seg.includes('高价值'))s=`${r.cid}您好！感谢您一直选择盐究室超跑（您已是我们${r.lvlname}会员）。${fav}这边随时为您预留，新车到店也会优先通知您。需要我帮您看看近期档期吗？${price}`;
+  else if(r.seg.includes('潜力'))s=`${r.cid}您好！上次用车体验还满意吗？${fav}这类车我们车况和服务都有保障，第二次用车可以帮您申请老客优惠${price}，下次什么时候用，提前帮您锁车。`;
+  else s=`${r.cid}您好，我是盐究室超跑顾问。${fav}目前有现车${price}，需要的话随时帮您安排，也可以加我备注随时咨询。`;
+  if(c&&c.it===3)s='【三只猫显示该客户近期高意向🔥，建议优先打电话】\n'+s;
+  document.getElementById('scriptOut').innerHTML=`<div class="box" style="margin:0"><div class="bt">建议话术（可复制，按需改）</div><div style="font-size:12.5px;line-height:1.7;white-space:pre-wrap">${s}</div><button class="btn sm" style="margin-top:6px" onclick="navigator.clipboard&&navigator.clipboard.writeText(\`${s.replace(/`/g,'')}\`);this.textContent='已复制✓'">复制话术</button></div>`;
+}
+
+/* ===== 销售业绩 + 提成 ===== */
+function prefixOf(cid){const m=cid.match(/^[A-Za-z]+/);return m?m[0]:'(无)'}
+renderers.perf=function(){
+  const agg={};
+  RECS.forEach(r=>{const p=r.prefix||'(无)';(agg[p]=agg[p]||{n:0,rev:0,cnt:0,active:0,risk:0,hi:0,debt:0});const a=agg[p];a.n++;a.rev+=r.spend;a.cnt+=r.cnt;if(r.active)a.active++;if(r.seg.includes('流失'))a.risk++;a.debt+=r.debt;});
+  Object.keys(CHAT).forEach(cid=>{const p=prefixOf(cid);if(agg[p]&&CHAT[cid].it===3)agg[p].hi++;});
+  const rate=p=>COMM[p]!=null?COMM[p]:COMM._default;
+  const rows=Object.entries(agg).sort((a,b)=>b[1].rev-a[1].rev);
+  const totRev=rows.reduce((s,[,a])=>s+a.rev,0);
+  // 成交销售聚合（来自出回车记录 CONV：cid→成交销售）
+  const cAgg={};
+  Object.entries(CONV).forEach(([cid,seller])=>{const r=byCid(cid);if(!r)return;(cAgg[seller]=cAgg[seller]||{n:0,rev:0,custs:[]});cAgg[seller].n++;cAgg[seller].rev+=r.spend;cAgg[seller].custs.push(cid);});
+  const cRows=Object.entries(cAgg).sort((a,b)=>b[1].rev-a[1].rev);
+  document.getElementById('p-perf').innerHTML=`
+   <h2 class="sec">业绩归因 <span class="tag">两本账：主播/客资来源(前缀) + 成交销售(出回车记录)</span></h2>
+   <div class="note-port" style="margin-bottom:12px">📌 <b>主播/客资来源</b>=客户编号前缀(顾问ELS/顾问DLN/销冠…)，负责引流创造客资；<b>成交销售</b>=出回车记录里车牌后的人名(顾问A/顾问B…)，负责转化成交。两者都要看。</div>
+   <div class="toolrow"><span class="muted">默认提成费率</span>
+     <input id="defRate" type="number" value="${COMM._default}" style="width:80px" onchange="COMM._default=parseFloat(this.value)||0;SS('comm',COMM);toast('默认费率已保存 ✓');renderers.perf()"><span class="muted">%（表内可对单条线单独覆盖）</span>
+     <button class="btn pri savebar" onclick="savePerf()">💾 保存销售名 & 费率</button>
+     <span class="saved-tag" id="perfSaved">已自动保存 ✓</span>
+     <button class="btn sm" style="margin-left:auto" onclick="exportData();toast('已导出 ✓')">⬇ 导出CRM数据</button></div>
+   <div class="panel"><h3>🎙️ 主播 / 客资来源 业绩 <span class="t">${rows.length}个主播线 · 总业绩¥${fmt(totRev)}</span></h3>
+   <div class="tablewrap"><table><thead><tr>
+     <th>前缀</th><th>销售姓名(可填)</th><th class="r">客户数</th><th class="r">业绩(累计消费)</th><th class="r">占比</th><th class="r">客单价</th><th class="r">在用</th><th class="r">流失预警</th><th class="r">高意向</th><th class="r">提成%</th><th class="r">提成额</th>
+   </tr></thead><tbody>${rows.map(([p,a])=>{const rt=rate(p);const aov=a.cnt?a.rev/a.cnt:0;return `<tr>
+     <td><b>${p}</b></td>
+     <td><input value="${(SALESMAP[p]||'').replace(/"/g,'')}" placeholder="填姓名" style="width:110px;padding:4px 8px;font-size:12px" oninput="this.classList.add('dirty')" onchange="SALESMAP['${p}']=this.value;SS('salesmap',SALESMAP);this.classList.remove('dirty');toast('「'+(this.value||'空')+'」已保存 ✓')"></td>
+     <td class="r num">${a.n}</td><td class="r num">¥${fmt(a.rev)}</td><td class="r num">${(a.rev/totRev*100).toFixed(1)}%</td>
+     <td class="r num">¥${fmt(aov)}</td><td class="r num">${a.active}</td>
+     <td class="r num" style="color:${a.risk?'#ff8a7a':'inherit'}">${a.risk}</td><td class="r num" style="color:${a.hi?'var(--salt-400)':'inherit'}">${a.hi}</td>
+     <td class="r"><input type="number" value="${rt}" style="width:56px;padding:3px 6px;font-size:12px" onchange="COMM['${p}']=parseFloat(this.value)||0;SS('comm',COMM);toast('${p} 费率已保存 ✓');renderers.perf()"></td>
+     <td class="r num" style="color:var(--success)"><b>¥${fmt(a.rev*rt/100)}</b></td></tr>`}).join('')}</tbody></table></div></div>
+   <div class="panel" style="margin-top:14px"><h3>🎙️ 主播业绩分布 TOP12</h3><canvas id="cPerf"></canvas></div>
+   <div class="panel" style="margin-top:14px"><h3>🤝 成交销售业绩 <span class="t">来自出回车记录的"谁成交的"，随管线/数据库增长</span></h3>
+     ${cRows.length?`<div class="tablewrap"><table><thead><tr><th>成交销售</th><th class="r">成交客户数</th><th class="r">成交业绩</th><th>客户</th></tr></thead>
+       <tbody>${cRows.map(([s,d])=>`<tr><td><b>${s}</b></td><td class="r num">${d.n}</td><td class="r num" style="color:var(--success)">¥${fmt(d.rev)}</td><td>${d.custs.map(c=>`<span class="chip" style="cursor:pointer" onclick="openCard('${c}')">${c}</span>`).join('')}</td></tr>`).join('')}</tbody></table></div>`
+       :'<div class="empty" style="padding:10px">暂无成交销售数据</div>'}
+     <div class="note-port">成交销售(顾问A/顾问B…)在账单表里没有，来源是<b>出回车群记录</b>(车牌后的人名)或 <b>cw_khzda 的负责人字段</b>。目前仅从监控快照解析到少量种子，接上数据源后这里会自动长全。</div></div>`;
+  mkChart('cPerf',{type:'bar',data:{labels:rows.slice(0,12).map(([p])=>SALESMAP[p]||p),datasets:[{data:rows.slice(0,12).map(([,a])=>Math.round(a.rev)),backgroundColor:grad('cPerf','#FFB088','#FF6B35',true),borderRadius:7,maxBarThickness:40}]},
+    options:{layout:{padding:{top:18}},plugins:{legend:{display:false},datalabels:{display:true,color:'#E8ECF8',anchor:'end',align:'top',offset:2,font:{weight:'700',size:10},formatter:v=>'¥'+fmtK(v)}},scales:{x:{grid:{display:false},ticks:{color:'#E8ECF8',font:{weight:'600'}}},y:{grid:{color:'#1e222b'},ticks:{color:'#8B93A7',callback:v=>fmtK(v)}}}}});
+};
+function savePerf(){SS('salesmap',SALESMAP);SS('comm',COMM);const t=document.getElementById('perfSaved');if(t){t.classList.add('on');setTimeout(()=>t.classList.remove('on'),1800);}toast('销售名 & 提成费率已全部保存 ✓');}
+
+/* ===== 客户运营：标签库 / 待办跟进 / 查重 ===== */
+renderers.ops=function(){
+  // 标签统计
+  const tagCount={};Object.values(TAGS).forEach(arr=>arr.forEach(t=>tagCount[t]=(tagCount[t]||0)+1));
+  const tagList=Object.entries(tagCount).sort((a,b)=>b[1]-a[1]);
+  // 待办跟进
+  const tasks=Object.entries(TASKS).filter(([,t])=>t.due).map(([cid,t])=>({cid,...t,r:byCid(cid)})).filter(x=>x.r).sort((a,b)=>a.due.localeCompare(b.due));
+  const td=today();
+  // 查重：同编号跨前缀
+  const numMap={};RECS.forEach(r=>{const m=r.cid.match(/(\d{3,5})/);if(m){(numMap[m[1]]=numMap[m[1]]||[]).push(r.cid)}});
+  const dups=Object.entries(numMap).filter(([,a])=>a.length>1).sort((a,b)=>b[1].length-a[1].length);
+  document.getElementById('p-ops').innerHTML=`
+   <h2 class="sec">客户运营工具 <span class="tag">标签 / 跟进待办 / 查重</span></h2>
+   <div class="grid2">
+     <div class="panel"><h3>🏷️ 标签库 <span class="t">点标签看客户</span></h3>
+       ${tagList.length?'<div class="pill-row">'+tagList.map(([t,n])=>`<span class="chip" style="cursor:pointer" onclick="showTagged('${t}')">${t} ·${n}</span>`).join('')+'</div>':'<div class="empty">还没打标签。打开任意客户360 → ＋标签</div>'}
+       <div id="tagged" style="margin-top:10px"></div></div>
+     <div class="panel"><h3>📅 待办跟进 <span class="t">${tasks.length}条 · 逾期红色</span></h3>
+       <div style="max-height:320px;overflow:auto">${tasks.length?tasks.map(x=>`<div class="alert" onclick="openCard('${x.cid}')"><div><b>${x.cid}</b> <span class="badge ${lvlC[x.r.lvl]}">${x.r.lvl}</span> <span class="muted">${x.note||''}</span></div><div class="num" style="color:${x.due<td?'var(--danger)':'var(--salt-400)'}">${x.due}${x.due<td?' 逾期':''}</div></div>`).join(''):'<div class="empty" style="padding:10px">无待办。客户360里"设跟进日期"会汇总到这。</div>'}</div></div>
+   </div>
+   <div class="panel" style="margin-top:14px"><h3>🔁 查重助手 <span class="t">同编号出现在多个前缀，疑似同一人/归属待确认</span></h3>
+     <div class="tablewrap" style="max-height:320px"><table><thead><tr><th>编号</th><th>涉及客户记录</th><th class="r">条数</th></tr></thead>
+     <tbody>${dups.length?dups.map(([num,cids])=>`<tr><td><b>${num}</b></td><td>${cids.map(c=>`<span class="chip" style="cursor:pointer" onclick="openCard('${c}')">${c}</span>`).join('')}</td><td class="r num">${cids.length}</td></tr>`).join(''):'<tr><td colspan="3" class="empty" style="padding:10px">无跨前缀重号</td></tr>'}</tbody></table></div>
+     <div class="note-port">说明：编号相同但前缀不同(如 CUST-XXXX/CUST-XXXX)，多半是不同销售各自建的档，接 cw_khzda 后以库为准合并。</div></div>`;
+};
+function showTagged(t){const list=Object.entries(TAGS).filter(([,arr])=>arr.includes(t)).map(([cid])=>byCid(cid)).filter(Boolean);
+  document.getElementById('tagged').innerHTML=`<div class="bt" style="margin-top:4px">标签「${t}」(${list.length})</div>`+list.map(r=>`<div class="alert" onclick="openCard('${r.cid}')"><div><b>${r.cid}</b> <span class="badge ${lvlC[r.lvl]}">${r.lvl}</span></div><div class="num muted">¥${fmt(r.spend)}</div></div>`).join('');}
+
+/* HUD 环形仪表渲染 + 数字跳动/环扫 */
+function fmtBy(n,t){n=Math.round(n);
+  if(t==='wan')return '¥'+(n>=10000?(n/10000).toFixed(n>=1e7?0:1)+'万':n.toLocaleString());
+  if(t==='wanp')return (n/10000).toFixed(0)+'万';
+  if(t==='yuan')return '¥'+n.toLocaleString();
+  return n.toLocaleString();}
+function renderGauges(k){
+  const G=[
+   {l:'总客户',v:k.cust,t:'int',sub:'会员总数',pct:100,col:'#38E1FF'},
+   {l:'累计消费',v:k.spend,t:'wan',sub:'总额',pct:83,col:'#FF6B35'},
+   {l:'客单价',v:k.aov,t:'yuan',sub:'每单',pct:58,col:'#38E1FF'},
+   {l:'当前在用车',v:k.active,t:'int',sub:'进行中',pct:34,col:'#34C759',cls:'good'},
+   {l:'顶层会员',v:k.vip,t:'int',sub:'黑钻+钻石',pct:46,col:'#C9B6FF'},
+   {l:'高价值流失预警',v:k.atrisk,t:'int',sub:'¥'+fmt(k.atriskVal)+' 待唤回',pct:62,col:'#FFB020',cls:'warn',go:()=>{go('customers');setTimeout(()=>{document.getElementById('fSeg').value='高价值流失预警';apply()},60)}},
+   {l:'挂账欠款',v:k.debt,t:'yuan',sub:'待收',pct:28,col:'#FF453A',cls:'bad'},
+   {l:'可发积分池',v:Math.floor(k.spend/CFG.ptsRate),t:'wanp',sub:'分',pct:78,col:'#38E1FF'},
+  ];
+  const C=2*Math.PI*46;
+  window.GH=G.map(g=>g.go||null);
+  document.getElementById('kpisHud').innerHTML=G.map((g,i)=>`
+   <div class="gauge ${g.cls||''}" ${g.go?`style="cursor:pointer" onclick="GH[${i}]&&GH[${i}]()"`:''}>
+     <div class="ring"><svg width="104" height="104" viewBox="0 0 104 104">
+       <circle cx="52" cy="52" r="46" fill="none" stroke="rgba(255,255,255,.06)" stroke-width="7"/>
+       <circle class="gp" cx="52" cy="52" r="46" fill="none" stroke="${g.col}" stroke-width="7" stroke-linecap="round" stroke-dasharray="${C}" stroke-dashoffset="${C}" style="filter:drop-shadow(0 0 5px ${g.col});transition:stroke-dashoffset 1.1s cubic-bezier(.2,.8,.2,1)"/>
+     </svg><div class="gctr"><span class="gv" data-target="${g.v}" data-t="${g.t}">0</span><span class="gsub">${g.sub}</span></div></div>
+     <div class="gl">${g.l}</div></div>`).join('');
+  setTimeout(()=>{
+    document.querySelectorAll('#kpisHud .gauge').forEach((el,i)=>{
+      const pc=el.querySelector('.gp');if(pc)pc.style.strokeDashoffset=C*(1-G[i].pct/100);
+      const gv=el.querySelector('.gv'),tgt=+gv.dataset.target,tp=gv.dataset.t,t0=performance.now();
+      (function tick(now){const p=Math.min((now-t0)/1100,1),e=1-Math.pow(1-p,3);gv.textContent=fmtBy(tgt*e,tp);if(p<1)requestAnimationFrame(tick);else gv.textContent=fmtBy(tgt,tp);})(t0);
+    });
+  },80);
+}
+/* 3D 倾斜交互(KPI卡随鼠标立体偏转) */
+document.addEventListener('mousemove',e=>{
+  const c=e.target.closest&&e.target.closest('.gauge,.kpi');if(!c)return;
+  const r=c.getBoundingClientRect();const px=(e.clientX-r.left)/r.width-.5,py=(e.clientY-r.top)/r.height-.5;
+  c.style.transform=`perspective(720px) rotateY(${px*9}deg) rotateX(${-py*9}deg) translateY(-4px)`;
+},{passive:true});
+document.addEventListener('mouseout',e=>{const c=e.target.closest&&e.target.closest('.gauge,.kpi');if(c&&!c.contains(e.relatedTarget))c.style.transform='';},{passive:true});
+
+buildNav();renderers.overview();
+</script>
+</body>
+</html>

@@ -173,7 +173,7 @@ const projects: Project[] = [
     links: [{ label: "内部系统 · 截图见详情", disabled: true }],
   },
   {
-    title: "红了没",
+    title: "红了么",
     label: "小红书产品线",
     category: "营销智能体",
     summary: "覆盖选题引擎、内容工厂、知识库、品牌资产、发布与数据复盘的小红书营销产品线。",
@@ -268,11 +268,10 @@ function agentStatus(demo: Demo): { text: string; tone: string } {
 }
 
 const navItems = [
-  { label: "作品台", href: "#cases" },
-  { label: "能力", href: "#skills" },
-  { label: "资产", href: "#asset" },
-  { label: "脉络", href: "#journey" },
-  { label: "证据", href: "#evidence" },
+  { label: "指挥舱", href: "#command" },
+  { label: "知识星球", href: "#asset" },
+  { label: "工作正面", href: "#journey" },
+  { label: "总看板", href: "#cases" },
   { label: "联系", href: "#contact" },
 ];
 
@@ -377,6 +376,49 @@ const journey = [
   },
 ];
 
+const commandTiles = [
+  {
+    icon: BrainCircuit,
+    title: "AI 接进业务",
+    copy: "先判断哪里该用 AI，再决定用什么工具。",
+  },
+  {
+    icon: Workflow,
+    title: "经营拆成系统",
+    copy: "客户、钱、流程、风险拆成能协同的结构。",
+  },
+  {
+    icon: CircleDollarSign,
+    title: "结果只看买单",
+    copy: "不炫技，盯成交、交付、复购和现金流。",
+  },
+  {
+    icon: ShieldCheck,
+    title: "隐私先打码",
+    copy: "证据可看，真实客户和财务数据不公开。",
+  },
+];
+
+const knowledgeSignals = [
+  "赛博日记",
+  "决策轨道",
+  "Skill 沉淀",
+  "Token 消耗",
+  "复盘流",
+  "待接入数据",
+];
+
+const dashboardRows = [
+  { label: "公开案例", value: `${projects.length}`, note: "来自 projects 数组" },
+  {
+    label: "可实测入口",
+    value: `${projects.filter((project) => interactiveModes.includes(project.demo.mode)).length}`,
+    note: "原型 / 外链 / 可嵌入",
+  },
+  { label: "价值结果", value: "待确认", note: "不写无来源数字" },
+  { label: "真实数据", value: "已脱敏", note: "私有系统只展示截图碎片" },
+];
+
 const fadeUp = {
   hidden: { opacity: 0, y: 28 },
   visible: { opacity: 1, y: 0 },
@@ -397,6 +439,137 @@ function SectionTitle({
       <h2>{title}</h2>
       {copy ? <p>{copy}</p> : null}
     </div>
+  );
+}
+
+function CommandDashboard() {
+  return (
+    <section className="command-section" id="command">
+      <SectionTitle
+        shadow="COMMAND"
+        title="把业务、客户、钱、团队和 AI 拆成可运行系统"
+        copy="这一层不是工具熟练度，而是能不能把老板脑子里的增长命题，拆成团队可以执行、复盘和继续迭代的系统。"
+      />
+      <div className="command-grid">
+        <div className="command-index" aria-hidden="true">
+          <span>01</span>
+          <strong>NACL-LAB</strong>
+          <p>AI Commercialization Console</p>
+        </div>
+        <div className="command-bento">
+          {commandTiles.map((item, index) => {
+            const Icon = item.icon;
+            return (
+              <motion.article
+                className={`command-tile tile-${index + 1}`}
+                key={item.title}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true, margin: "-100px" }}
+                variants={fadeUp}
+                transition={{ duration: 0.48, delay: index * 0.06 }}
+              >
+                <Icon size={20} />
+                <h3>{item.title}</h3>
+                <p>{item.copy}</p>
+              </motion.article>
+            );
+          })}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function KnowledgeDashboard() {
+  return (
+    <section className="asset-section knowledge-dashboard" id="asset">
+      <SectionTitle
+        shadow="PLANET"
+        title="赛博日记不是记录，是个人经营资产"
+        copy="把决策、技能、复盘和工具消耗沉淀成可检索、可迁移的知识星球；没有来源的数据只作为结构占位。"
+      />
+      <div className="knowledge-grid">
+        <div className="knowledge-planet">
+          <SkillOrbit />
+        </div>
+        <div className="knowledge-panel">
+          <div className="panel-header">
+            <BrainCircuit size={16} />
+            <span>knowledge console</span>
+          </div>
+          <div className="signal-list">
+            {knowledgeSignals.map((signal) => (
+              <div className="signal-row" key={signal}>
+                <span>{signal}</span>
+                <strong>{signal === "待接入数据" ? "占位" : "运行中"}</strong>
+              </div>
+            ))}
+          </div>
+          <p>
+            这一块未来可以接 Obsidian / 赛博日记 / 自动化日志的脱敏截图或接口摘要；当前不伪造成长数据、token 数字或效率结论。
+          </p>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function WorkConsole() {
+  return (
+    <section className="work-console" id="journey">
+      <SectionTitle
+        shadow="WORK"
+        title="正面工作：我创造过什么，也准备把什么迁移到下一家公司"
+        copy="用作品、流程、证据和未来迁移能力说话，不用没有来源的业务数字包装自己。"
+      />
+      <div className="work-grid">
+        <div className="work-index" aria-hidden="true">
+          <span>03</span>
+          <strong>Selected Work</strong>
+        </div>
+        <div className="work-stack">
+          {journey.map((item, index) => (
+            <motion.article
+              className="work-card"
+              key={item.title}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: "-100px" }}
+              variants={fadeUp}
+              transition={{ duration: 0.5, delay: index * 0.08 }}
+            >
+              <div className="work-media">
+                <img src={item.image} alt="" loading="lazy" />
+              </div>
+              <div className="work-copy">
+                <span>{item.stage}</span>
+                <h3>{item.title}</h3>
+                <p>{item.copy}</p>
+              </div>
+            </motion.article>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function EvidenceConsole() {
+  return (
+    <section className="evidence-section" id="evidence">
+      <div className="portrait-blend">
+        <img src="/assets/projects/operator-portrait-vertical.webp" alt="candidate visual portrait" loading="lazy" />
+      </div>
+      <div className="evidence-copy">
+        <SectionTitle
+          shadow="PROOF"
+          title="证据先打码，再展示"
+          copy="候选人负责出框架、定业务 / 财务逻辑、定方向。私有系统只公开脱敏截图和可讲事实。"
+        />
+        <EvidencePanel />
+      </div>
+    </section>
   );
 }
 
@@ -803,10 +976,19 @@ function Showroom({ onOpen }: { onOpen: (project: Project) => void }) {
   return (
     <section className="showroom" id="cases">
       <SectionTitle
-        shadow="AGENT SHOWROOM"
-        title="智能体陈列墙"
-        copy="每个作品一张卡，点主按钮直接跳转；点缩略图打开详情和站内实测。私有系统以打码截图呈现。"
+        shadow="DASHBOARD"
+        title="总数据看板：作品、原型、外链和证据统一汇总"
+        copy="项目数量来自结构化数据；可实测入口按 Demo 状态自动计算。没有确凿来源的价值结果继续标注待确认。"
       />
+      <div className="dashboard-strip" aria-label="总看板摘要">
+        {dashboardRows.map((row) => (
+          <div className="dashboard-row" key={row.label}>
+            <span>{row.label}</span>
+            <strong>{row.value}</strong>
+            <small>{row.note}</small>
+          </div>
+        ))}
+      </div>
       <div className="showroom-hud">
         <div className="hud-stat">
           <strong>{projects.length}</strong>
@@ -848,6 +1030,9 @@ function Showroom({ onOpen }: { onOpen: (project: Project) => void }) {
 function SkillOrbit() {
   return (
     <div className="orbit-map" aria-label="职业能力图谱">
+      <div className="orbit-starfield" aria-hidden="true" />
+      <div className="orbit-aurora" aria-hidden="true" />
+      <div className="orbit-scan" aria-hidden="true" />
       <div className="core-orb">
         <Orbit size={34} />
         <strong>AI 商业化</strong>
@@ -863,6 +1048,13 @@ function SkillOrbit() {
       <div className="orbit-ring ring-one" />
       <div className="orbit-ring ring-two" />
       <div className="orbit-ring ring-three" />
+      {Array.from({ length: 8 }, (_, index) => (
+        <span
+          className={`orbit-beacon beacon-${index + 1}`}
+          aria-hidden="true"
+          key={index}
+        />
+      ))}
     </div>
   );
 }
@@ -969,7 +1161,7 @@ function App() {
   const [activeAgent, setActiveAgent] = useState<Project | null>(null);
 
   return (
-    <main>
+    <main className="overflow-x-hidden">
       <div className="grain" />
       <div className="site-shell">
         <header className="nav">
@@ -992,6 +1184,10 @@ function App() {
             initial={{ opacity: 1, y: 0 }}
             animate={{ opacity: 1, y: 0 }}
           >
+            <div className="hero-kicker">
+              <span>01</span>
+              <strong>AI 商业化经理 / 大中台电子简历</strong>
+            </div>
             <h1>
               技术最不值钱
               <span>能把 AI 变成钱才稀缺</span>
@@ -999,6 +1195,11 @@ function App() {
             <p>
               盐究所 NACL-LAB 把业务、客户、钱、团队和 AI 拆成可运行系统。不是展示会多少工具，而是证明能不能变成老板愿意押注的增长资产。
             </p>
+            <div className="hero-principles" aria-label="合作原则">
+              <span>拒绝白嫖</span>
+              <span>时间很贵</span>
+              <span>执行力强</span>
+            </div>
             <div className="hero-actions">
               <a href="#cases">
                 进作品台实测
@@ -1015,127 +1216,40 @@ function App() {
             initial={{ opacity: 1, scale: 1 }}
             animate={{ opacity: 1, scale: 1 }}
           >
-            <img src="/assets/projects/operator-console-wide.webp" alt="AI manager cyberpunk portrait" />
-            <div className="hero-glass">
+            <div className="hero-portal">
+              <img src="/assets/projects/operator-console-wide.webp" alt="AI manager command console" />
+              <div className="portal-wash" />
+              <div className="operator-silhouette" aria-hidden="true" />
+            </div>
+            <div className="hero-side-panel">
               <span>role positioning</span>
               <strong>出框架 / 定业务逻辑 / 定方向</strong>
               <p>把经营问题拆清楚，再让技术和团队照着系统落地。</p>
             </div>
+            <div className="mobile-fui-board" aria-hidden="true">
+              <div className="fui-topline">
+                <span>NACL-LAB</span>
+                <span>SYSTEM ONLINE</span>
+              </div>
+              <div className="fui-radar" />
+              <div className="fui-silhouette" />
+              <div className="fui-wave" />
+              <div className="fui-cells">
+                <span>业务</span>
+                <span>客户</span>
+                <span>现金流</span>
+                <span>AI</span>
+              </div>
+            </div>
           </motion.div>
         </section>
 
-        <section className="identity-strip" aria-label="定位摘要">
-          <div>
-            <BrainCircuit />
-            <span>AI 接进业务</span>
-          </div>
-          <div>
-            <Workflow />
-            <span>拆得开经营</span>
-          </div>
-          <div>
-            <CircleDollarSign />
-            <span>盯得住现金流</span>
-          </div>
-          <div>
-            <ShieldCheck />
-            <span>沉淀成系统</span>
-          </div>
-        </section>
-
-        <section className="pyramid-section" id="pyramid">
-          <SectionTitle
-            shadow="CAPABILITY PYRAMID"
-            title="我凭什么值钱"
-            copy="会写提示词不稀奇。值钱的是：把 AI 接进客户、销售、交付、财务和复盘，变成老板看得懂的经营结果。"
-          />
-          <div className="pyramid-grid">
-            {pyramid.map((item, index) => (
-              <motion.div
-                className={`pyramid-level level-${index + 1}`}
-                key={item.title}
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true, margin: "-120px" }}
-                variants={fadeUp}
-                transition={{ duration: 0.5, delay: index * 0.08 }}
-              >
-                <span>0{index + 1}</span>
-                <h3>{item.title}</h3>
-                <strong>{item.subtitle}</strong>
-                <p>{item.copy}</p>
-              </motion.div>
-            ))}
-          </div>
-        </section>
-
-        <section className="asset-section" id="asset">
-          <SectionTitle
-            shadow="COMPOUNDING ASSET"
-            title="自生长知识库"
-            copy="别人记赛博日记，我把决策变成会增值的资产。这一层，大多数人还没意识到有多值钱。"
-          />
-          <div className="asset-grid">
-            <div className="asset-copy">
-              <p>
-                大家刚开始记录决策、写赛博日记，方向对。但我走深一层：
-                <strong>让决策能复用、会增值。</strong>
-              </p>
-              <p>
-                我的 Obsidian 里跑着自生长知识库 + 赛博中台 + 赛博日记，统一成一件事——
-                <strong>把个人决策变成可复用的数字资产。</strong>
-              </p>
-              <ul className="asset-points">
-                <li>
-                  <span>决策即资产</span>
-                  每个判断沉淀成可检索、可复用的知识节点，而不是记完就忘。
-                </li>
-                <li>
-                  <span>自生长</span>
-                  用得越多、链接越密，知识库自己越长越值钱。
-                </li>
-                <li>
-                  <span>可迁移</span>
-                  换公司、换行业，这套资产跟着我走，越攒越厚。
-                </li>
-              </ul>
-            </div>
-            <div className="asset-evidence" aria-label="证据占位">
-              <div className="asset-placeholder">
-                <LockKeyhole size={20} />
-                <strong>证据待补充</strong>
-                <small>Obsidian 赛博中台 / 知识库截图，打码后接入</small>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <JourneySection />
-
-        <section className="evidence-section" id="evidence">
-          <div className="portrait-blend">
-            <img src="/assets/projects/operator-portrait-vertical.webp" alt="candidate visual portrait" loading="lazy" />
-          </div>
-          <div className="evidence-copy">
-            <SectionTitle
-              shadow="POSITION"
-              title="不是纯技术简历，是商业化操盘证据"
-              copy="候选人负责出框架、定业务 / 财务逻辑、定方向。技术细节由团队执行，这是产品负责人和业务架构师的取舍。"
-            />
-            <EvidencePanel />
-          </div>
-        </section>
+        <CommandDashboard />
+        <KnowledgeDashboard />
+        <WorkConsole />
+        <EvidenceConsole />
 
         <Showroom onOpen={(project) => setActiveAgent(project)} />
-
-        <section className="skills-section" id="skills">
-          <SectionTitle
-            shadow="MY SKILL MAP"
-            title="职业能力图谱"
-            copy="参考移动端轨道图的排版思路，但重新映射到 AI 商业化岗位需要的能力闭环。"
-          />
-          <SkillOrbit />
-        </section>
 
         <section className="manifesto" id="manifesto">
           <div className="manifesto-bg">

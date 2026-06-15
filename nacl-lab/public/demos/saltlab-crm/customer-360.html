@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>盐究室 · 客户360会员大脑</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+:root{--bg:#0f1115;--card:#181b22;--card2:#1f232c;--line:#2a2f3a;--txt:#e8eaed;--mut:#9aa0aa;--gold:#f5a623;--org:#ff7a18;--grn:#34c759;--red:#ff453a;--blu:#5ac8fa;--pur:#bf5af2}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--txt);font-size:14px}
+.wrap{max-width:1320px;margin:0 auto;padding:20px}
+header{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;margin-bottom:6px}
+header h1{font-size:22px;font-weight:700}
+header h1 .m{color:var(--org)}
+.sub{color:var(--mut);font-size:12px}
+.kpis{display:grid;grid-template-columns:repeat(7,1fr);gap:10px;margin:16px 0}
+.kpi{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.kpi .l{color:var(--mut);font-size:11px;margin-bottom:6px}
+.kpi .v{font-size:20px;font-weight:700;line-height:1.1}
+.kpi .v small{font-size:12px;color:var(--mut);font-weight:400}
+.kpi.warn{border-color:#5a3a1a;background:linear-gradient(180deg,#231a12,#181b22)}
+.kpi.warn .v{color:var(--gold)}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px}
+.panel h3{font-size:13px;font-weight:600;margin-bottom:10px;color:var(--txt)}
+.panel h3 span{color:var(--mut);font-weight:400;font-size:11px}
+canvas{max-height:240px}
+.controls{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:6px 0 12px}
+.controls input,.controls select{background:var(--card2);border:1px solid var(--line);color:var(--txt);border-radius:8px;padding:8px 10px;font-size:13px}
+.controls input{flex:1;min-width:180px}
+.controls .cnt{color:var(--mut);font-size:12px;margin-left:auto}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th,td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);white-space:nowrap}
+th{color:var(--mut);font-weight:600;font-size:12px;cursor:pointer;position:sticky;top:0;background:var(--card)}
+th:hover{color:var(--txt)}
+tbody tr{cursor:pointer}
+tbody tr:hover{background:var(--card2)}
+.tablewrap{background:var(--card);border:1px solid var(--line);border-radius:12px;max-height:560px;overflow:auto}
+.badge{display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:600}
+.lv6{background:#3a2a00;color:#ffd700}.lv5{background:#2a2440;color:#c9b6ff}.lv4{background:#1a2a2a;color:#7fe9d6}
+.lv3{background:#2a2400;color:#ffd24a}.lv2{background:#22262e;color:#c2c8d2}.lv1{background:#1c1f26;color:#7d828c}
+.seg{font-size:11px;padding:2px 7px;border-radius:6px;background:#22262e;color:var(--mut)}
+.seg.risk{background:#3a1a14;color:#ff8a7a}.seg.champ{background:#103a1a;color:#7fe39a}.seg.high{background:#2a2400;color:#ffd24a}.seg.new{background:#102a3a;color:#8fd6ff}
+.num{font-variant-numeric:tabular-nums;text-align:right}
+.dot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:5px}
+.on{background:var(--grn)}.off{background:#444}
+.mask{position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;align-items:center;justify-content:center;z-index:50;padding:20px}
+.mask.show{display:flex}
+.modal{background:var(--card);border:1px solid var(--line);border-radius:16px;max-width:560px;width:100%;max-height:86vh;overflow:auto;padding:22px}
+.modal .x{float:right;cursor:pointer;color:var(--mut);font-size:20px;line-height:1}
+.modal h2{font-size:20px;margin-bottom:4px}
+.modal .mid{color:var(--mut);font-size:12px;margin-bottom:14px}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:8px 16px;font-size:13px;margin-bottom:14px}
+.kv .k{color:var(--mut)}
+.box{background:var(--card2);border:1px solid var(--line);border-radius:10px;padding:12px;margin-bottom:12px}
+.box .t{font-size:12px;color:var(--mut);margin-bottom:8px}
+.chip{display:inline-block;background:#222730;border:1px solid var(--line);border-radius:7px;padding:4px 9px;margin:3px 4px 0 0;font-size:12px}
+.chat-empty{color:var(--mut);font-size:12px;font-style:italic}
+.advice{background:linear-gradient(180deg,#1d1710,#181b22);border:1px solid #4a3618;border-radius:10px;padding:12px;font-size:13px;line-height:1.6}
+.advice b{color:var(--gold)}
+@media(max-width:960px){.kpis{grid-template-columns:repeat(2,1fr)}.grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1><span class="m">盐究室</span> · 客户360会员大脑</h1>
+    <span class="sub">数据快照 2026-05-30 · 会员商城底座 v1 · RFM＋车型档次分层</span>
+  </header>
+
+  <div class="kpis" id="kpis"></div>
+
+  <div class="grid">
+    <div class="panel"><h3>会员等级分布 <span>按累计消费</span></h3><canvas id="cLvl"></canvas></div>
+    <div class="panel"><h3>RFM 智能分群 <span>谁该被跟进</span></h3><canvas id="cSeg"></canvas></div>
+  </div>
+  <div class="grid">
+    <div class="panel"><h3>车型档次偏好 <span>客户结构</span></h3><canvas id="cTier"></canvas></div>
+    <div class="panel"><h3>车型热度 TOP12 <span>商城选品参考</span></h3><canvas id="cModel"></canvas></div>
+  </div>
+
+  <div class="controls">
+    <input id="q" placeholder="搜索客户编号 / 车型 / 备注…">
+    <select id="fLvl"><option value="">全部等级</option></select>
+    <select id="fSeg"><option value="">全部分群</option></select>
+    <select id="fTier"><option value="">全部档次</option></select>
+    <select id="fAct"><option value="">在用车?</option><option value="1">在用车</option><option value="0">未在用</option></select>
+    <span class="cnt" id="cnt"></span>
+  </div>
+  <div class="tablewrap">
+    <table>
+      <thead><tr>
+        <th data-k="rank">#</th><th data-k="cid">客户编号</th><th data-k="lvl">等级</th>
+        <th data-k="spend" class="num">累计消费</th><th data-k="cnt" class="num">次数</th>
+        <th data-k="last">最近消费</th><th data-k="tier">档次</th><th data-k="fav">偏好车型</th>
+        <th data-k="seg">分群</th><th data-k="debt" class="num">欠款</th>
+      </tr></thead>
+      <tbody id="tb"></tbody>
+    </table>
+  </div>
+  <p class="sub" style="margin-top:10px">点击任意客户行 → 打开360画像。聊天记录位已预留，接入三只猫(autosale)后自动并入。</p>
+</div>
+
+<div class="mask" id="mask"><div class="modal" id="modal"></div></div>
+
+<script>
+const RECS=[{"rank":1,"cid":"CUST-0001","prefix":"SLB","spend":268800,"cnt":18,"first":"2025-01-12","last":"2026-06-01","active":true,"debt":0,"lvl":"V6","lvlname":"黑钻","tier":"超跑级","fav":"法拉利F8","seg":"冠军客户","rfm":"555","vip":11,"models":"法拉利F8×4, 保时捷992×3, 奔驰G63×2, 路虎揽胜×2","note":"演示客户：近期高频复购","pts":2688},{"rank":2,"cid":"CUST-0002","prefix":"SLB","spend":156200,"cnt":9,"first":"2025-03-22","last":"2026-05-18","active":false,"debt":0,"lvl":"V5","lvlname":"钻石","tier":"豪华级","fav":"迈巴赫S480","seg":"高价值客户","rfm":"455","vip":9.5,"models":"迈巴赫S480×3, 奔驰E300×3, 埃尔法×1","note":"演示客户：适合会员权益触达","pts":1562},{"rank":3,"cid":"CUST-0003","prefix":"SLB","spend":82400,"cnt":5,"first":"2025-09-04","last":"2025-12-20","active":false,"debt":0,"lvl":"V4","lvlname":"铂金","tier":"性能高端","fav":"宝马M4","seg":"高价值流失预警","rfm":"155","vip":7.8,"models":"宝马M4×2, 保时捷718×2, 奥迪R8×1","note":"演示客户：需要唤回","pts":824},{"rank":4,"cid":"CUST-0004","prefix":"SLB","spend":39200,"cnt":3,"first":"2026-03-02","last":"2026-05-28","active":true,"debt":1200,"lvl":"V3","lvlname":"黄金","tier":"标准级","fav":"奔驰E300","seg":"潜力新客","rfm":"545","vip":6.1,"models":"奔驰E300×2, 理想L9×1","note":"演示客户：有小额待处理账款","pts":392},{"rank":5,"cid":"CUST-0005","prefix":"SLB","spend":9800,"cnt":1,"first":"2025-07-11","last":"2025-07-11","active":false,"debt":0,"lvl":"V2","lvlname":"白银","tier":"标准级","fav":"别克GL8","seg":"沉睡客户","rfm":"115","vip":3.6,"models":"别克GL8×1","note":"演示客户：低成本批量触达","pts":98},{"rank":6,"cid":"CUST-0006","prefix":"SLB","spend":0,"cnt":0,"first":"","last":"","active":false,"debt":0,"lvl":"V1","lvlname":"普通","tier":"无","fav":"","seg":"未消费/无记录","rfm":"111","vip":2,"models":"","note":"演示客户：仅保留客资线索","pts":0}];
+const AGG={"kpi":{"cust":6,"spend":556400,"aov":15456,"active":2,"vip":2,"atrisk":1,"atriskVal":82400,"atrisk_val":82400,"debt":1200},"lvl":[["黑钻",1],["钻石",1],["铂金",1],["黄金",1],["白银",1],["普通",1]],"tier":[["超跑级",1],["豪华级",1],["性能高端",1],["标准级",2],["无车型",1]],"seg":[["冠军客户",1],["高价值客户",1],["高价值流失预警",1],["潜力新客",1],["沉睡客户",1],["未消费/无记录",1]],"models":[["奔驰E300",2],["法拉利F8",1],["保时捷992",1],["迈巴赫S480",1],["宝马M4",1],["别克GL8",1]]};
+
+const lvlClass={V6:'lv6',V5:'lv5',V4:'lv4',V3:'lv3',V2:'lv2',V1:'lv1'};
+const fmt=n=>n.toLocaleString('zh-CN');
+const segClass=s=>s.includes('流失')?'risk':s.includes('冠军')?'champ':s.includes('高价值')?'high':s.includes('潜力')?'new':'';
+
+const k=AGG.kpi;
+document.getElementById('kpis').innerHTML=[
+ ['总客户',fmt(k.cust),''],['累计消费总额','¥'+fmt(k.spend),''],['客单价(每单)','¥'+fmt(k.aov),''],
+ ['当前在用车',k.active,''],['黑钻+钻石',AGG.lvl[0][1]+AGG.lvl[1][1],'顶层会员'],
+ ['高价值流失预警',k.atrisk,'¥'+fmt(k.atrisk_val)+' 待唤回',true],['挂账欠款','¥'+fmt(k.debt),'']
+].map(([l,v,s,w])=>`<div class="kpi ${w?'warn':''}"><div class="l">${l}</div><div class="v">${v} <small>${s}</small></div></div>`).join('');
+
+const C={grid:'#2a2f3a'};
+Chart.defaults.color='#9aa0aa';Chart.defaults.font.size=11;
+new Chart(cLvl,{type:'bar',data:{labels:AGG.lvl.map(x=>x[0]),datasets:[{data:AGG.lvl.map(x=>x[1]),backgroundColor:['#ffd700','#bf5af2','#34c759','#f5a623','#8e98a6','#4a4f58']}]},options:{plugins:{legend:{display:false}},scales:{x:{grid:{display:false}},y:{grid:{color:C.grid}}}}});
+new Chart(cSeg,{type:'bar',data:{labels:AGG.seg.map(x=>x[0]),datasets:[{data:AGG.seg.map(x=>x[1]),backgroundColor:AGG.seg.map(x=>x[0].includes('流失')?'#ff453a':x[0].includes('冠军')?'#34c759':x[0].includes('高价值')?'#f5a623':x[0].includes('潜力')?'#5ac8fa':'#4a4f58')}]},options:{indexAxis:'y',plugins:{legend:{display:false}},scales:{x:{grid:{color:C.grid}},y:{grid:{display:false}}}}});
+new Chart(cTier,{type:'doughnut',data:{labels:AGG.tier.map(x=>x[0]),datasets:[{data:AGG.tier.map(x=>x[1]),backgroundColor:['#ff7a18','#f5a623','#5ac8fa','#8e98a6','#4a4f58']}]},options:{plugins:{legend:{position:'right'}}}});
+new Chart(cModel,{type:'bar',data:{labels:AGG.models.map(x=>x[0]),datasets:[{data:AGG.models.map(x=>x[1]),backgroundColor:'#ff7a18'}]},options:{indexAxis:'y',plugins:{legend:{display:false}},scales:{x:{grid:{color:C.grid}},y:{grid:{display:false}}}}});
+
+const uniq=(arr)=>[...new Set(arr)];
+const fill=(id,vals)=>{const s=document.getElementById(id);vals.forEach(v=>{const o=document.createElement('option');o.value=v;o.textContent=v;s.appendChild(o)})};
+fill('fLvl',['V6','V5','V4','V3','V2','V1']);
+fill('fSeg',uniq(RECS.map(r=>r.seg)));
+fill('fTier',uniq(RECS.map(r=>r.tier)));
+
+let sortK='rank',sortDir=1,view=[];
+function apply(){
+  const q=document.getElementById('q').value.trim().toLowerCase();
+  const fl=fLvl.value,fs=fSeg.value,ft=fTier.value,fa=fAct.value;
+  view=RECS.filter(r=>{
+    if(fl&&r.lvl!==fl)return false; if(fs&&r.seg!==fs)return false; if(ft&&r.tier!==ft)return false;
+    if(fa!==''&&(r.active?'1':'0')!==fa)return false;
+    if(q&&!(r.cid.toLowerCase().includes(q)||r.models.toLowerCase().includes(q)||(r.note||'').toLowerCase().includes(q)))return false;
+    return true;
+  });
+  view.sort((a,b)=>{let x=a[sortK],y=b[sortK];if(typeof x==='string'){x=x||'';y=y||'';return sortDir*x.localeCompare(y)}return sortDir*((x||0)-(y||0))});
+  render();
+}
+function render(){
+  document.getElementById('cnt').textContent=`显示 ${view.length} / ${RECS.length} 位客户`;
+  document.getElementById('tb').innerHTML=view.slice(0,400).map(r=>`<tr data-cid="${r.cid}">
+    <td class="num">${r.rank}</td><td><b>${r.cid}</b></td>
+    <td><span class="badge ${lvlClass[r.lvl]}">${r.lvl} ${r.lvlname}</span></td>
+    <td class="num">¥${fmt(r.spend)}</td><td class="num">${r.cnt}</td>
+    <td>${r.last||'—'}</td><td>${r.tier}</td><td>${r.fav||'—'}</td>
+    <td><span class="seg ${segClass(r.seg)}">${r.seg}</span></td>
+    <td class="num">${r.debt?'¥'+fmt(r.debt):'—'}</td></tr>`).join('')
+    +(view.length>400?`<tr><td colspan="10" class="sub" style="text-align:center;padding:14px">仅显示前400行，请用筛选缩小范围</td></tr>`:'');
+  document.querySelectorAll('#tb tr[data-cid]').forEach(tr=>tr.onclick=()=>openCard(tr.dataset.cid));
+}
+['q','fLvl','fSeg','fTier','fAct'].forEach(id=>document.getElementById(id).addEventListener('input',apply));
+document.querySelectorAll('th[data-k]').forEach(th=>th.onclick=()=>{const kk=th.dataset.k;if(sortK===kk)sortDir*=-1;else{sortK=kk;sortDir=(kk==='spend'||kk==='cnt'||kk==='debt')?-1:1}apply()});
+
+function advice(r){
+  if(r.seg==='高价值流失预警')return `<b>高价值流失预警。</b>这位是 ${r.lvlname} 会员，累计消费 ¥${fmt(r.spend)}，但最近一次消费在 ${r.last}。建议：以偏好车型「${r.fav||'豪车'}」做专属唤回（新车上架/老客折扣/生日权益），优先级最高。`;
+  if(r.seg==='冠军客户')return `<b>冠军客户。</b>高频高额、近期活跃，是会员商城的种子用户。建议：邀请进入顶层权益体系，给优先预订权+专属客服，引导口碑转介绍。`;
+  if(r.seg==='高价值客户')return `<b>高价值客户。</b>消费额高，维护好关系即可。建议：上线会员商城后首批定向推送，匹配「${r.fav||'高端车型'}」。`;
+  if(r.seg==='潜力新客')return `<b>潜力新客。</b>近期来过但频次低。建议：用第二单优惠/升舱体验培养复购习惯。`;
+  if(r.seg==='沉睡客户')return `<b>沉睡客户。</b>长期未消费、价值偏低。建议：低成本批量触达即可，不占用人工。`;
+  return `稳定维持客群，常规会员权益覆盖即可。`;
+}
+function openCard(cid){
+  const r=RECS.find(x=>x.cid===cid);if(!r)return;
+  const models=r.models?r.models.split(', ').map(m=>`<span class="chip">${m}</span>`).join(''):'<span class="chat-empty">无车型记录</span>';
+  document.getElementById('modal').innerHTML=`
+    <span class="x" onclick="document.getElementById('mask').classList.remove('show')">✕</span>
+    <h2>${r.cid} <span class="badge ${lvlClass[r.lvl]}">${r.lvl} ${r.lvlname}</span></h2>
+    <div class="mid">全库消费排名 #${r.rank} · ${r.active?'<span class="dot on"></span>当前在用车':'<span class="dot off"></span>未在用'} · RFM ${r.rfm}</div>
+    <div class="kv">
+      <span class="k">累计消费</span><span><b>¥${fmt(r.spend)}</b></span>
+      <span class="k">消费次数</span><span>${r.cnt} 单</span>
+      <span class="k">首次 / 最近</span><span>${r.first||'—'} → ${r.last||'—'}</span>
+      <span class="k">车型档次</span><span>${r.tier}</span>
+      <span class="k">偏好车型</span><span>${r.fav||'—'}</span>
+      <span class="k">RFM分群</span><span><span class="seg ${segClass(r.seg)}">${r.seg}</span></span>
+      ${r.debt?`<span class="k">挂账欠款</span><span style="color:#ff8a7a">¥${fmt(r.debt)}</span>`:''}
+      ${r.note?`<span class="k">备注</span><span>${r.note}</span>`:''}
+    </div>
+    <div class="box"><div class="t">🚗 用车清单（车型×次数）</div>${models}</div>
+    <div class="box"><div class="t">💬 三只猫聊天记录</div><span class="chat-empty">桥接键：群名/好友含「${r.cid.replace(/^[A-Za-z]+/,'')}」→ 接入 autosale 后自动并入最近对话与跟进摘要</span></div>
+    <div class="advice">🎯 ${advice(r)}</div>`;
+  document.getElementById('mask').classList.add('show');
+}
+document.getElementById('mask').onclick=e=>{if(e.target.id==='mask')e.currentTarget.classList.remove('show')};
+apply();
+</script>
+</body>
+</html>
