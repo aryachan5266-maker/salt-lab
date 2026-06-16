@@ -60,9 +60,13 @@ tbody tr:hover{background:var(--card2)}
 .advice{background:linear-gradient(180deg,#1d1710,#181b22);border:1px solid #4a3618;border-radius:10px;padding:12px;font-size:13px;line-height:1.6}
 .advice b{color:var(--gold)}
 @media(max-width:960px){.kpis{grid-template-columns:repeat(2,1fr)}.grid{grid-template-columns:1fr}}
+.portal-back{position:fixed;right:18px;bottom:22px;z-index:2147483647;display:inline-flex;align-items:center;gap:8px;border:1px solid rgba(255,122,24,.5);background:linear-gradient(180deg,rgba(255,122,24,.2),rgba(15,17,21,.88)),rgba(15,17,21,.94);box-shadow:0 14px 36px rgba(0,0,0,.42),0 0 24px rgba(255,122,24,.18);color:#fff;padding:11px 14px;border-radius:8px;text-decoration:none;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px;letter-spacing:.04em;pointer-events:auto}
+.portal-back::before{content:"←";color:var(--org);font-size:15px}
+@media(max-width:760px){.portal-back{left:14px;right:auto;top:calc(14px + env(safe-area-inset-top));bottom:auto}}
 </style>
 </head>
 <body>
+<a class="portal-back" href="/" aria-label="返回盐究所 NACL-LAB">返回盐究所</a>
 <div class="wrap">
   <header>
     <h1><span class="m">盐究室</span> · 客户360会员大脑</h1>

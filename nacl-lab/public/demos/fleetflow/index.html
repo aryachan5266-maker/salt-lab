@@ -278,6 +278,34 @@
     .view { display: none; }
     .view.active { display: block; }
 
+    .portal-back {
+      position: fixed;
+      right: 18px;
+      bottom: 22px;
+      z-index: 2147483647;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border: 1px solid rgba(243, 167, 186, 0.5);
+      background:
+        linear-gradient(180deg, rgba(243, 167, 186, 0.18), rgba(5, 6, 7, 0.86)),
+        rgba(5, 6, 7, 0.92);
+      box-shadow: 0 14px 36px rgba(0, 0, 0, 0.38), 0 0 24px rgba(243, 167, 186, 0.16);
+      color: #fff;
+      padding: 12px 15px;
+      text-decoration: none;
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 12px;
+      letter-spacing: 0.04em;
+      pointer-events: auto;
+    }
+
+    .portal-back::before {
+      content: "←";
+      color: var(--accent);
+      font-size: 15px;
+    }
+
     @media (max-width: 900px) {
       .topbar,
       .grid,
@@ -289,10 +317,18 @@
       .row {
         grid-template-columns: 1fr;
       }
+
+      .portal-back {
+        left: 14px;
+        right: auto;
+        top: calc(14px + env(safe-area-inset-top));
+        bottom: auto;
+      }
     }
   </style>
 </head>
 <body>
+  <a class="portal-back" href="/" aria-label="返回盐究所 NACL-LAB">返回盐究所</a>
   <main class="shell">
     <header class="topbar">
       <div class="brand">
