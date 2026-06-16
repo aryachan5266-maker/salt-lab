@@ -1,0 +1,28 @@
+{
+  "name": "salt-lab",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "pnpm run dev:nacl-lab",
+    "build": "pnpm run build:nacl-lab",
+    "start": "pnpm run start:nacl-lab",
+    "validate": "pnpm run validate:all",
+    "dev:nacl-lab": "pnpm --dir nacl-lab run dev -- --host 0.0.0.0",
+    "build:nacl-lab": "pnpm --dir nacl-lab run build",
+    "start:nacl-lab": "pnpm --dir nacl-lab run start",
+    "dev:hong": "pnpm --dir hong-le-mei run dev",
+    "build:hong": "pnpm --dir hong-le-mei run build",
+    "start:hong": "pnpm --dir hong-le-mei run start",
+    "validate:hong": "pnpm --dir hong-le-mei run validate",
+    "dev:bao": "pnpm --dir bao-le-me run dev",
+    "build:bao": "pnpm --dir bao-le-me run build",
+    "start:bao": "pnpm --dir bao-le-me run start",
+    "validate:bao": "pnpm --dir bao-le-me run validate",
+    "build:all": "pnpm run build:nacl-lab && pnpm run build:hong && pnpm run build:bao",
+    "validate:all": "pnpm run build:nacl-lab && pnpm run validate:hong && pnpm run validate:bao"
+  },
+  "packageManager": "pnpm@9.0.0",
+  "engines": {
+    "pnpm": ">=9.0.0"
+  }
+}

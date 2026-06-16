@@ -76,6 +76,19 @@ interface CreditsInfo {
   plan: string;
 }
 
+interface CapabilityItem {
+  available: boolean;
+  fallbackAvailable?: boolean;
+  note?: string;
+  reason?: string;
+}
+
+interface CapabilityResponse {
+  ok: boolean;
+  summary: string;
+  capabilities: Record<string, CapabilityItem>;
+}
+
 function stableScore(input: string, offset: number, min: number, span: number) {
   let hash = offset;
   for (let i = 0; i < input.length; i += 1) {
@@ -89,6 +102,92 @@ export default function GeneratePageWrapper() {
     <Suspense fallback={<div className="flex items-center justify-center h-screen text-muted-foreground">加载中...</div>}>
       <GeneratePage />
     </Suspense>
+  );
+}
+
+function CapabilitySelfCheck({
+  capabilities,
+  error,
+  onRefresh,
+}: {
+  capabilities: CapabilityResponse | null;
+  error: string | null;
+  onRefresh: () => void;
+}) {
+  const items = [
+    { key: 'copyGeneration', label: '文案生成' },
+    { key: 'imageGeneration', label: '封面生图' },
+    { key: 'tts', label: 'TTS 语音' },
+    { key: 'digitalHuman', label: '数字人' },
+  ];
+
+  return (
+    <section className="mb-4 metal-panel rounded-lg p-4">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+        <div>
+          <div className="mb-2 flex items-center gap-2">
+            <Activity className="h-4 w-4 text-primary" />
+            <span className="text-[10px] font-mono font-bold tracking-[0.18em] text-on-surface-weakest">
+              CAPABILITY SELF CHECK
+            </span>
+          </div>
+          <h2 className="text-sm font-semibold text-on-surface">生成能力自检</h2>
+          <p className="mt-1 max-w-2xl text-xs leading-5 text-on-surface-variant">
+            这里如实显示当前环境能不能调用真实生成能力；缺凭证时只展示 fallback，不把演示结果说成线上 AI 实测。
+          </p>
+        </div>
+        <button
+          type="button"
+          onClick={onRefresh}
+          className="inline-flex min-h-8 items-center justify-center gap-1.5 rounded-sm border border-[rgba(140,150,165,0.18)] px-3 py-1.5 text-[10px] font-mono text-on-surface-variant transition hover:text-on-surface"
+        >
+          <RefreshCw className="h-3 w-3" />
+          重新自检
+        </button>
+      </div>
+
+      <div className="mt-4 grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
+        {items.map((item) => {
+          const capability = capabilities?.capabilities[item.key];
+          const available = Boolean(capability?.available);
+          const fallback = Boolean(capability?.fallbackAvailable);
+          return (
+            <div
+              key={item.key}
+              className="rounded-sm border p-3"
+              style={{
+                borderColor: available
+                  ? 'rgba(21,224,160,0.28)'
+                  : fallback
+                    ? 'rgba(245,166,35,0.28)'
+                    : 'rgba(255,59,92,0.22)',
+                background: available
+                  ? 'rgba(21,224,160,0.045)'
+                  : fallback
+                    ? 'rgba(245,166,35,0.045)'
+                    : 'rgba(255,59,92,0.035)',
+              }}
+            >
+              <div className="mb-2 flex items-center justify-between gap-2">
+                <span className="text-xs font-semibold text-on-surface">{item.label}</span>
+                {available ? (
+                  <ShieldCheck className="h-4 w-4 text-success" />
+                ) : (
+                  <ShieldAlert className="h-4 w-4 text-warning" />
+                )}
+              </div>
+              <p className="text-[10px] font-mono text-on-surface-weakest">
+                {available ? '真实凭证可用' : fallback ? 'fallback 可用' : '当前不可用'}
+              </p>
+            </div>
+          );
+        })}
+      </div>
+
+      <p className="mt-3 text-xs leading-5 text-on-surface-variant">
+        {error || capabilities?.summary || '正在读取当前环境能力。'}
+      </p>
+    </section>
   );
 }
 
@@ -121,6 +220,8 @@ function GeneratePage() {
 
   /* ─── 额度信息 ─── */
   const [credits, setCredits] = useState<CreditsInfo>({ total: 100, used: 0, remaining: 100, plan: 'free' });
+  const [capabilities, setCapabilities] = useState<CapabilityResponse | null>(null);
+  const [capabilityError, setCapabilityError] = useState<string | null>(null);
 
   const abortRef = useRef<AbortController | null>(null);
 
@@ -203,6 +304,7 @@ function GeneratePage() {
     else setLoading(false);
     // 获取额度信息
     fetchCredits();
+    fetchCapabilities();
     return () => abortRef.current?.abort();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -241,6 +343,19 @@ function GeneratePage() {
       const data = await res.json();
       if (data.ok) setCredits(data.credits);
     } catch { /* ignore */ }
+  }, []);
+
+  const fetchCapabilities = useCallback(async () => {
+    try {
+      const res = await fetch('/api/capabilities', { cache: 'no-store' });
+      const data = await res.json() as CapabilityResponse;
+      if (!res.ok || !data.ok) throw new Error('能力自检失败');
+      setCapabilities(data);
+      setCapabilityError(null);
+    } catch (e) {
+      setCapabilities(null);
+      setCapabilityError(e instanceof Error ? e.message : '能力自检失败');
+    }
   }, []);
 
   /* ─── 生成封面图 ─── */
@@ -366,6 +481,11 @@ function GeneratePage() {
 
       {/* ─── 主内容 ─── */}
       <main className="flex-1 px-5 pb-24 pt-4 max-w-5xl mx-auto w-full">
+        <CapabilitySelfCheck
+          capabilities={capabilities}
+          error={capabilityError}
+          onRefresh={fetchCapabilities}
+        />
 
         {/* 加载态 */}
         {loading && (

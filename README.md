@@ -18,10 +18,12 @@
 
 ```
 salt-lab/
+├── nacl-lab/          # 盐究所中台门户（Vite + React 19）
 ├── hong-le-mei/       # 红了么 — 小红书 AI 营销工具（Next.js 16）
 ├── bao-le-me/         # 爆了么 — 抖音爆款内容雷达（Next.js 16）
-├── nacl-lab/          # 盐究所中台门户（Vite + React 19）
-├── BAOLEME_AGENTS.md  # 爆了么项目规范
+├── shared/brand/      # NACL 共享品牌资产
+├── DEPLOYMENT_MATRIX.md
+├── pnpm-workspace.yaml
 └── README.md          # 本文件
 ```
 
@@ -37,6 +39,23 @@ salt-lab/
 
 验收方式：先打开三个线上地址看最终页面，有问题截图回传；项目编辑器用于改代码、看构建日志、重新部署。
 
+## 本地矩阵命令
+
+根目录默认代表 `nacl-lab` 中台门户；产品线使用独立脚本运行和验证。
+
+```bash
+pnpm run dev:nacl-lab
+pnpm run build:nacl-lab
+
+pnpm run dev:hong
+pnpm run validate:hong
+
+pnpm run dev:bao
+pnpm run validate:bao
+```
+
+完整部署边界和子域名方案见 `DEPLOYMENT_MATRIX.md`。
+
 ## 品牌设计规范
 
 - 极简未来主义，黑白配色
@@ -45,13 +64,13 @@ salt-lab/
 - 移动端优先，最大宽度 480px
 - 灵感来源：NaCl 化学式
 
-## 分工
+## 分工边界
 
-| 角色 | 负责人 | 范围 |
-|------|--------|------|
-| 数据引擎 + 仓库管理 | 小盐（Coze Agent） | Supabase 数据推送、GitHub 文档/配置 |
-| 前端 UI + 本地开发 | CC / Claude | 页面、组件、交互、样式 |
-| 简历独立站 | Codex | nacl-lab/ 中台门户 |
+- 根目录：矩阵管理层，默认运行 `nacl-lab` 中台门户。
+- `nacl-lab/`：总品牌入口、电子简历、作品集和产品矩阵导航。
+- `hong-le-mei/`：红了么产品线，独立 Next.js 应用和 Coze 部署边界。
+- `bao-le-me/`：爆了么产品线，独立 Next.js 应用和 Coze 部署边界。
+- `shared/brand/`：共享品牌资产源，不存放密钥或私有客户资料。
 
 ## License
 

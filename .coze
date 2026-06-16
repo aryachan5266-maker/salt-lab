@@ -1,0 +1,16 @@
+[project]
+requires = [ "nodejs-24" ]
+template = "nextjs"
+version = "0.0.27"
+appliedPatches = [ ]
+
+[dev]
+build = [ "pnpm", "run", "build:nacl-lab" ]
+run = [ "pnpm", "run", "start:nacl-lab" ]
+validate = [ "pnpm", "run", "build:nacl-lab" ]
+deps = [ "git" ]
+
+[deploy]
+build = [ "pnpm", "run", "build:nacl-lab" ]
+run = [ "pnpm", "run", "start:nacl-lab" ]
+deps = [ "git" ]

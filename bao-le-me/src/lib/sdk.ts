@@ -82,7 +82,7 @@ export async function callDataCenter(query: string): Promise<string> {
 }
 
 /**
- * 直接调用 webhook（兼容红了没的 URL）
+ * 直接调用 webhook（兼容红了么的 URL）
  */
 export async function callWebhook(payload: Record<string, unknown>): Promise<string> {
   const token = process.env.COZE_WORKLOAD_API_TOKEN;

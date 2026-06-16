@@ -15,7 +15,7 @@
 ```
 盐究所 NACL-LAB（顶级大中台入口）
 ├── 红了么 · HONG LE ME — 小红书 AI 营销内容生成
-├── 爆了没 · BAO LE ME — 抖音爆款内容雷达 + 复刻SOP
+├── 爆了么 · BAO LE ME — 抖音爆款内容雷达 + 复刻SOP
 ├── 往期案例 — 历史项目与作品集
 └── 盐究室 / 盐究院 — 其他子品牌
 ```
@@ -26,7 +26,8 @@
 salt-lab/
 ├── nacl-lab/          # 盐究所中台门户（Vite + React 19）
 ├── hong-le-mei/       # 红了么 — 小红书 AI 营销工具（Next.js 16）
-├── BAOLEME_AGENTS.md  # 爆了没项目规范
+├── bao-le-me/         # 爆了么 — 抖音爆款内容雷达（Next.js 16）
+├── DEPLOYMENT_MATRIX.md
 ├── README.md          # 仓库总入口
 └── BRAND_UPDATE_NOTICE.md  # 本文件
 ```
@@ -37,8 +38,9 @@ salt-lab/
 |------|------|
 | `README.md` | 新建，展示完整品牌架构与仓库结构 |
 | `hong-le-mei/README.md` | "红了没"→"红了么"，品牌归属改为 NACL-LAB 体系 |
-| `BAOLEME_AGENTS.md` | 加入品牌架构说明，明确层级关系 |
+| `bao-le-me/AGENTS.md` | 加入品牌架构说明，明确层级关系 |
 | `nacl-lab/` | 新增，中台门户完整项目源码 |
+| `DEPLOYMENT_MATRIX.md` | 明确主门户、产品线和子域名部署边界 |
 
 ---
 
