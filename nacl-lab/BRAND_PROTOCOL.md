@@ -15,9 +15,11 @@
 
 ## Product Demo Rule
 
-- `红了么` 和 `爆了么` 当前接入 Coze dev 预览地址。
+- `红了么` 当前接入 Coze prod 稳定地址：`https://y5q2f6hcdv.coze.site`。
+- `爆了么` 当前仍接入 Coze dev 预览地址：`https://0ed6e1df-d2d6-4baa-a7e3-f4bf3643df5c.dev.coze.site`。
+- Coze 查询结果显示：`爆了么` 目前无生产部署历史，生产环境变量为空；不得对外称为稳定线上真 AI 结果。
 - dev 预览地址可能休眠；正式发布前必须替换成稳定部署地址。
-- 稳定地址由项目负责人提供后再替换，不在代码里猜测。
+- 稳定地址由项目负责人提供或明确批准部署后再替换，不在代码里猜测。
 
 ## Data Discipline
 

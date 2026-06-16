@@ -183,18 +183,18 @@ const projects: Project[] = [
     evidence: [],
     demo: {
       mode: "external",
-      url: "https://6b29c3af-3804-4ab6-a217-b1365cda298d.dev.coze.site",
+      url: "https://y5q2f6hcdv.coze.site",
       cta: "全屏实测",
     },
     role: "定义内容工厂、选题引擎、品牌资产与发布闭环的产品框架",
     what: "覆盖选题引擎、内容工厂、知识库、品牌资产、发布与数据复盘的小红书营销智能体（Coze + Next.js）。文案、配图和语音生成已真实打通，角色差异化与行业上下文知识库持续迭代。",
     value: "把『写小红书』从灵感活，变成有选题、有素材库、可批量产出和复盘的流水线。",
-    proof: "线上 Demo 已接入，可直接点开实测：选角色 → 一句话 → 出可发布笔记 + 配图 + 营销逻辑拆解。持续迭代中；正式发布前按品牌协议替换为稳定部署地址。",
-    status: "活 Demo 已接入",
+    proof: "线上稳定 Demo 已接入，可直接点开实测；当前生产环境未接入 AI 凭证，不声明线上结果为真实 AI 生成。",
+    status: "稳定 Demo 已接入",
     links: [
       {
         label: "全屏实测",
-        href: "https://6b29c3af-3804-4ab6-a217-b1365cda298d.dev.coze.site",
+        href: "https://y5q2f6hcdv.coze.site",
       },
     ],
   },
@@ -214,11 +214,11 @@ const projects: Project[] = [
     role: "把小红书跑通的内容工厂模式迁移到短视频平台",
     what: "抖音 / 短视频内容营销智能体，复用选题—产出—发布—复盘的内容闭环，生成可复制的爆款执行方案。",
     value: "把已跑通的内容流水线模式，复制到第二个流量平台。",
-    proof: "首版线上 Demo 已接入，可点开实测；持续迭代中。正式发布前按品牌协议替换为稳定部署地址。",
-    status: "活 Demo 已接入（迭代中）",
+    proof: "Coze 项目已存在；当前没有生产部署记录，生产环境变量为空。页面暂保留开发预览入口，不声明为正式线上版或真实 AI 结果。",
+    status: "开发预览 · 待正式部署",
     links: [
       {
-        label: "全屏实测",
+        label: "开发预览",
         href: "https://0ed6e1df-d2d6-4baa-a7e3-f4bf3643df5c.dev.coze.site",
       },
     ],
@@ -250,6 +250,10 @@ function isLiveProduct(project: Project) {
   return project.category === "营销智能体" && project.demo.mode === "external";
 }
 
+function isDevPreview(demo: Demo) {
+  return demo.url?.includes(".dev.coze.site") ?? false;
+}
+
 function agentStatus(demo: Demo): { text: string; tone: string } {
   switch (demo.mode) {
     case "live":
@@ -263,7 +267,9 @@ function agentStatus(demo: Demo): { text: string; tone: string } {
         : { text: "原型可看", tone: "proto" };
     case "external":
       return demo.url
-        ? { text: "可跳转", tone: "live" }
+        ? isDevPreview(demo)
+          ? { text: "开发预览", tone: "proto" }
+          : { text: "生产实测", tone: "live" }
         : { text: "待接入", tone: "pending" };
     case "gallery":
       return { text: "内部 · 截图", tone: "internal" };
@@ -748,18 +754,23 @@ function DemoStage({ project }: { project: Project }) {
       : undefined;
 
   if (demo.mode === "external" && demo.url) {
+    const preview = isDevPreview(demo);
     return (
       <div className="demo-pending demo-linkout">
         <MonitorPlay size={26} />
-        <strong>全屏实测入口</strong>
-        <p>该产品会作为完整应用在新窗口打开，不在中台里缩成小 iframe。站内只保留概览、证据和入口。</p>
+        <strong>{preview ? "开发预览入口" : "全屏实测入口"}</strong>
+        <p>
+          {preview
+            ? "该产品当前只有 Coze 开发预览，正式发布前需要部署成稳定地址。站内只保留概览、证据和入口。"
+            : "该产品会作为完整应用在新窗口打开，不在中台里缩成小 iframe。站内只保留概览、证据和入口。"}
+        </p>
         <a
           className="demo-open"
           href={demo.url}
           target="_blank"
           rel="noopener noreferrer"
         >
-          打开全屏实测
+          {preview ? "打开开发预览" : "打开全屏实测"}
           <ExternalLink size={14} />
         </a>
       </div>
@@ -920,7 +931,7 @@ function AgentConsole({
                 rel="noopener noreferrer"
               >
                 <MonitorPlay size={15} />
-                实测
+                {isDevPreview(project.demo) ? "预览" : "实测"}
                 <ExternalLink size={13} />
               </a>
             ) : (
