@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import {
+  ArrowLeft,
   ArrowUpRight,
   BrainCircuit,
   BriefcaseBusiness,
@@ -198,7 +199,7 @@ const projects: Project[] = [
     ],
   },
   {
-    title: "爆了没",
+    title: "爆了么",
     label: "抖音短视频产品线",
     category: "营销智能体",
     summary: "把已验证的内容工厂模式迁移到抖音 / 短视频，生成可复制的爆款执行方案。",
@@ -865,15 +866,26 @@ function AgentConsole({
         transition={{ duration: 0.22 }}
         onMouseDown={(event) => event.stopPropagation()}
       >
-        <button
-          ref={closeButtonRef}
-          className="modal-close"
-          type="button"
-          onClick={onClose}
-          aria-label="关闭智能体控制台"
-        >
-          <X size={20} />
-        </button>
+        <div className="modal-commandbar">
+          <button
+            ref={closeButtonRef}
+            className="modal-back"
+            type="button"
+            onClick={onClose}
+            aria-label="返回作品列表"
+          >
+            <ArrowLeft size={17} />
+            返回作品列表
+          </button>
+          <button
+            className="modal-close"
+            type="button"
+            onClick={onClose}
+            aria-label="关闭智能体控制台"
+          >
+            <X size={20} />
+          </button>
+        </div>
         <div className="modal-top">
           <div>
             <span>
@@ -1160,18 +1172,45 @@ function ContactList() {
 function App() {
   const [activeAgent, setActiveAgent] = useState<Project | null>(null);
 
+  useEffect(() => {
+    const onSectionClick = (event: globalThis.MouseEvent) => {
+      const link = (event.target as Element | null)?.closest<HTMLAnchorElement>(
+        "a[data-scroll-target]",
+      );
+      const href = link?.getAttribute("href");
+      if (!href?.startsWith("#")) return;
+      const target = document.querySelector<HTMLElement>(href);
+      if (!target) return;
+      event.preventDefault();
+      const scrollIntoView = () => {
+        const top = target.getBoundingClientRect().top + window.scrollY - 96;
+        window.scrollTo({ top: Math.max(top, 0), behavior: "auto" });
+      };
+      scrollIntoView();
+      window.requestAnimationFrame(scrollIntoView);
+      window.setTimeout(scrollIntoView, 260);
+      window.setTimeout(scrollIntoView, 760);
+      window.history.pushState(null, "", href);
+    };
+
+    document.addEventListener("click", onSectionClick, { capture: true });
+    return () => {
+      document.removeEventListener("click", onSectionClick, { capture: true });
+    };
+  }, []);
+
   return (
     <main className="overflow-x-hidden">
       <div className="grain" />
       <div className="site-shell">
         <header className="nav">
-          <a href="#top" className="brand">
+          <a href="#top" className="brand" data-scroll-target>
             <img src="/assets/brand/nacl-logo-white.svg" alt="NACL" />
             <span>盐究所 NACL-LAB</span>
           </a>
           <nav aria-label="页面导航">
             {navItems.map((item) => (
-              <a href={item.href} key={item.href}>
+              <a href={item.href} key={item.href} data-scroll-target>
                 {item.label}
               </a>
             ))}
@@ -1201,11 +1240,11 @@ function App() {
               <span>执行力强</span>
             </div>
             <div className="hero-actions">
-              <a href="#cases">
+              <a href="#cases" data-scroll-target>
                 进作品台实测
                 <ArrowUpRight size={18} />
               </a>
-              <a href="#contact" className="ghost-action">
+              <a href="#contact" className="ghost-action" data-scroll-target>
                 联系方式
               </a>
             </div>
