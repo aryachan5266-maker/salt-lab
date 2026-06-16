@@ -5,13 +5,18 @@ set -Eeuo pipefail
 PORT=5000
 COZE_WORKSPACE_PATH="${COZE_WORKSPACE_PATH:-$(pwd)}"
 DEPLOY_RUN_PORT="${DEPLOY_RUN_PORT:-${PORT}}"
+HOSTNAME="${HOSTNAME:-0.0.0.0}"
 
 
 cd "${COZE_WORKSPACE_PATH}"
 
 kill_port_if_listening() {
     local pids
-    pids=$(ss -H -lntp 2>/dev/null | awk -v port="${DEPLOY_RUN_PORT}" '$4 ~ ":"port"$"' | grep -o 'pid=[0-9]*' | cut -d= -f2 | paste -sd' ' - || true)
+    if command -v ss >/dev/null 2>&1; then
+      pids=$(ss -H -lntp 2>/dev/null | awk -v port="${DEPLOY_RUN_PORT}" '$4 ~ ":"port"$"' | grep -o 'pid=[0-9]*' | cut -d= -f2 | paste -sd' ' - || true)
+    else
+      pids=$(lsof -tiTCP:"${DEPLOY_RUN_PORT}" -sTCP:LISTEN 2>/dev/null | paste -sd' ' - || true)
+    fi
     if [[ -z "${pids}" ]]; then
       echo "Port ${DEPLOY_RUN_PORT} is free."
       return
@@ -19,7 +24,11 @@ kill_port_if_listening() {
     echo "Port ${DEPLOY_RUN_PORT} in use by PIDs: ${pids} (SIGKILL)"
     echo "${pids}" | xargs -I {} kill -9 {}
     sleep 1
-    pids=$(ss -H -lntp 2>/dev/null | awk -v port="${DEPLOY_RUN_PORT}" '$4 ~ ":"port"$"' | grep -o 'pid=[0-9]*' | cut -d= -f2 | paste -sd' ' - || true)
+    if command -v ss >/dev/null 2>&1; then
+      pids=$(ss -H -lntp 2>/dev/null | awk -v port="${DEPLOY_RUN_PORT}" '$4 ~ ":"port"$"' | grep -o 'pid=[0-9]*' | cut -d= -f2 | paste -sd' ' - || true)
+    else
+      pids=$(lsof -tiTCP:"${DEPLOY_RUN_PORT}" -sTCP:LISTEN 2>/dev/null | paste -sd' ' - || true)
+    fi
     if [[ -n "${pids}" ]]; then
       echo "Warning: port ${DEPLOY_RUN_PORT} still busy after SIGKILL, PIDs: ${pids}"
     else
@@ -29,6 +38,6 @@ kill_port_if_listening() {
 
 echo "Clearing port ${DEPLOY_RUN_PORT} before start."
 kill_port_if_listening
-echo "Starting HTTP service on port ${DEPLOY_RUN_PORT} for dev..."
+echo "Starting HTTP service on ${HOSTNAME}:${DEPLOY_RUN_PORT} for dev..."
 
-PORT=${DEPLOY_RUN_PORT} pnpm tsx watch src/server.ts
+PORT=${DEPLOY_RUN_PORT} HOSTNAME=${HOSTNAME} pnpm tsx watch src/server.ts

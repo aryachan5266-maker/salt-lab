@@ -1,87 +1,98 @@
 'use client';
 
+import { Database, Edit3, Layers3, Rocket, RotateCcw, ShieldCheck, Tags } from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
+import { NACLLogo } from '@/components/nacl-logo';
 import { useApp } from '@/lib/store';
 import { getRole } from '@/lib/roles';
+import { PageHeader } from '@/components/layout/PageHeader';
 
 export default function SettingsPage() {
   const { brandAssets, setCurrentPage } = useApp();
   const role = brandAssets ? getRole(brandAssets.role) : null;
 
   return (
-    <div className="px-5 py-5">
-      <h2 className="text-white text-lg font-bold mb-5">设置</h2>
+    <div className="space-y-5">
+      <PageHeader
+        eyebrow="SYSTEM"
+        title="设置"
+        description="管理当前身份、品牌资产和能力边界。这里会明确告诉用户哪些是数据来源，哪些只是 AI 推断。"
+        icon={ShieldCheck}
+        next={{ label: '回到总控台', page: 'home' }}
+      />
 
-      {/* User Card */}
-      <div className="bg-white/[0.03] border border-white/[0.05] rounded-2xl p-5 mb-4">
-        <div className="flex items-center gap-3">
-          <div className="w-12 h-12 rounded-full bg-[#C8A97E]/10 flex items-center justify-center text-xl">
-            {role?.emoji || '👤'}
-          </div>
-          <div className="flex-1">
-            <h3 className="text-white text-sm font-semibold">{brandAssets?.businessName || '未设置'}</h3>
-            <p className="text-white/30 text-xs">{role?.label || '选择身份'} · {brandAssets?.industry || '选择行业'}</p>
-          </div>
+      <section className="grid gap-4 lg:grid-cols-[0.8fr_1.2fr]">
+        <div className="nacl-card p-5 md:p-6">
+          <NACLLogo size="sm" className="mb-5 w-20" />
+          <h2 className="text-xl font-semibold text-white">{brandAssets?.businessName || '未设置'}</h2>
+          <p className="mt-2 text-sm text-white/38">{brandAssets?.occupation || role?.label || '选择身份'} · {brandAssets?.industry || '选择行业'}</p>
           <button
             onClick={() => setCurrentPage('onboarding')}
-            className="text-[#C8A97E]/60 text-xs hover:text-[#C8A97E] transition-colors"
+            className="mt-5 inline-flex items-center gap-2 rounded-[8px] border border-white/10 bg-white/[0.03] px-4 py-2.5 text-sm text-white/52 transition hover:border-[var(--color-accent)]/40 hover:text-white"
           >
+            <Edit3 size={15} />
             编辑
           </button>
         </div>
-      </div>
 
-      {/* Menu */}
-      <div className="bg-white/[0.03] border border-white/[0.05] rounded-2xl overflow-hidden mb-4">
-        <button
-          onClick={() => setCurrentPage('brand-assets')}
-          className="w-full flex items-center justify-between px-5 py-4 border-b border-white/[0.05] text-left hover:bg-white/[0.02] transition-colors"
-        >
-          <div className="flex items-center gap-3">
-            <span className="text-sm">🏷️</span>
-            <span className="text-white/70 text-sm">品牌资产</span>
-          </div>
-          <span className="text-white/20 text-xs">→</span>
-        </button>
-        <button
-          onClick={() => setCurrentPage('onboarding')}
-          className="w-full flex items-center justify-between px-5 py-4 border-b border-white/[0.05] text-left hover:bg-white/[0.02] transition-colors"
-        >
-          <div className="flex items-center gap-3">
-            <span className="text-sm">🔄</span>
-            <span className="text-white/70 text-sm">重新测评</span>
-          </div>
-          <span className="text-white/20 text-xs">→</span>
-        </button>
-        <button
-          onClick={() => setCurrentPage('decode')}
-          className="w-full flex items-center justify-between px-5 py-4 text-left hover:bg-white/[0.02] transition-colors"
-        >
-          <div className="flex items-center gap-3">
-            <span className="text-sm">🔬</span>
-            <span className="text-white/70 text-sm">同行拆解</span>
-          </div>
-          <span className="text-white/20 text-xs">→</span>
-        </button>
-      </div>
-
-      {/* Upgrade */}
-      <div className="bg-gradient-to-br from-[#C8A97E]/10 to-[#C8A97E]/5 border border-[#C8A97E]/20 rounded-2xl p-5 mb-4">
-        <h3 className="text-[#C8A97E] text-sm font-semibold mb-1">升级高级版</h3>
-        <p className="text-white/30 text-xs mb-3">无限查询 · 完整卡位 · 一键导出</p>
-        <button className="px-4 py-2 bg-gradient-to-r from-[#C8A97E] to-[#A88B65] text-[#0D0D12] text-xs font-bold rounded-lg">
-          39元/月
-        </button>
-      </div>
-
-      {/* Info */}
-      <div className="text-center py-4">
-        <div className="flex items-center justify-center gap-2 mb-2">
-          <img src="/nacl-logo.jpeg" alt="nacl" className="w-5 h-5 rounded object-cover" />
-          <span className="text-[#C8A97E] text-xs tracking-wide">nacl · 爆了没</span>
+        <div className="nacl-card overflow-hidden">
+          <MenuButton icon={Tags} label="品牌资产" onClick={() => setCurrentPage('brand-assets')} />
+          <MenuButton icon={RotateCcw} label="重新反推真实客户" onClick={() => setCurrentPage('onboarding')} />
+          <MenuButton icon={Layers3} label="同行拆解" onClick={() => setCurrentPage('decode')} />
         </div>
-        <p className="text-white/15 text-[10px]">你的编导脑 · 差异化卡位引擎</p>
-        <p className="text-white/10 text-[10px] mt-1">v1.0.0</p>
-      </div>
+      </section>
+
+      <section className="grid gap-4 md:grid-cols-3">
+        <div className="rounded-[8px] border border-[var(--color-accent)]/22 bg-[var(--color-accent)]/8 p-5">
+          <div className="mb-3 flex items-center gap-2 text-[var(--color-accent)]">
+            <Database size={17} />
+            <h2 className="text-xs font-semibold tracking-[0.22em]">数据来源</h2>
+          </div>
+          <p className="text-sm leading-7 text-white/62">
+            {brandAssets?.dataSource || '未完成客户反推。接入数据中台时显示真实来源；缺数据时明确标注 AI 推断。'}
+          </p>
+        </div>
+        <div className="nacl-card p-5">
+          <div className="mb-3 flex items-center gap-2 text-[var(--color-accent)]">
+            <ShieldCheck size={17} />
+            <h2 className="text-xs font-semibold tracking-[0.22em]">能力边界</h2>
+          </div>
+          <p className="text-sm leading-7 text-white/62">
+            爆了么交付脚本、分镜、口播、封面提示和违禁词体检；不假装直接生成成片视频。
+          </p>
+        </div>
+        <div className="nacl-card p-5">
+          <div className="mb-3 flex items-center gap-2 text-[var(--color-accent)]">
+            <Rocket size={17} />
+            <h2 className="text-xs font-semibold tracking-[0.22em]">试用状态</h2>
+          </div>
+          <p className="text-sm leading-7 text-white/62">
+            当前适合内测交付：客户反推、热点方向、卡位、脚本和复制交付已打通；实时抖音数据源接入前，不按“真实数据看板”收费。
+          </p>
+        </div>
+      </section>
+
+      <footer className="pt-4 text-center">
+        <div className="mb-2 flex items-center justify-center">
+          <NACLLogo size="xs" className="w-14" />
+        </div>
+        <p className="text-[10px] uppercase tracking-[0.32em] text-white/20">BAO LE ME · NACL-LAB · v1.0.0</p>
+      </footer>
     </div>
+  );
+}
+
+function MenuButton({ icon: Icon, label, onClick }: { icon: LucideIcon; label: string; onClick: () => void }) {
+  return (
+    <button
+      onClick={onClick}
+      className="flex w-full items-center justify-between border-b border-white/8 px-5 py-4 text-left transition last:border-b-0 hover:bg-white/[0.025]"
+    >
+      <span className="flex items-center gap-3 text-sm text-white/68">
+        <Icon size={16} className="text-[var(--color-accent)]" />
+        {label}
+      </span>
+      <span className="text-xs text-white/24">OPEN</span>
+    </button>
   );
 }

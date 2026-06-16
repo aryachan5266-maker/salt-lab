@@ -1,5 +1,5 @@
 // ============================================================
-// 爆了没 (Bao Le Mei) — 核心类型定义
+// 爆了么 (Bao Le Mei) — 核心类型定义
 // ============================================================
 
 // ---------- 角色系统 ----------
@@ -27,6 +27,7 @@ export type PageKey =
   | 'decode'
   | 'positioning'
   | 'generate'
+  | 'content-loop'
   | 'brand-assets'
   | 'settings';
 
@@ -35,6 +36,8 @@ export interface BrandAssets {
   brandName: string;
   businessName: string;
   industry: string;
+  city: string;
+  storeType: string;
   targetAudience: string[];
   ageGroup: string[];
   coreNeed: string[];
@@ -51,6 +54,7 @@ export interface BrandAssets {
   goalType: string;
   goalDetail: string;
   role: RoleKey;
+  occupation: string;
   // AI derived
   contentStrategy: string;
   tone: string;
@@ -61,6 +65,7 @@ export interface BrandAssets {
   audienceAnalysis: string;
   operationAdvice: string[];
   riskWarnings: string[];
+  dataSource: string;
 }
 
 // ---------- 数据中台 ----------
@@ -97,8 +102,9 @@ export interface BenchmarkAccount {
 
 // ---------- 差异化卡位引擎（招牌）----------
 export interface PositioningResult {
-  crowdedness: number;         // 拥挤度 0-100
-  crowdednessLabel: string;    // 拥挤度描述
+  crowdedness: number;         // AI卡位评分 0-100，不代表平台真实数据
+  crowdednessLabel: string;    // AI卡位评分描述
+  source?: string;             // 来源标注
   emptySlots: PositionSlot[];  // 空位
   reasons: string[];           // 为什么选这些空位
   yourAngle: string;           // 你的差异化角度
@@ -151,6 +157,7 @@ export interface AnalyzeProfileResponse {
   audienceAnalysis: string;
   operationAdvice: string[];
   riskWarnings: string[];
+  dataSource: string;
 }
 
 export interface HotRadarResponse {
@@ -171,6 +178,8 @@ export interface PositioningResponse {
 
 export interface GenerateScriptResponse {
   script: DouyinScript;
+  source?: string;
+  isFallback?: boolean;
 }
 
 export interface RecommendResponse {

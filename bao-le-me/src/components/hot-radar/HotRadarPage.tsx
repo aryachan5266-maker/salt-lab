@@ -1,8 +1,10 @@
 'use client';
 
 import { useState } from 'react';
+import { ArrowDown, ArrowUp, Minus, RefreshCw } from 'lucide-react';
 import { useApp } from '@/lib/store';
 import type { HotTopic } from '@/lib/types';
+import { ErrorNotice, PageHeader, StepHint } from '@/components/layout/PageHeader';
 
 // Demo data — 标注来源
 const DEMO_TOPICS: HotTopic[] = [
@@ -29,8 +31,12 @@ export default function HotRadarPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           industry: brandAssets.industry,
+          city: brandAssets.city,
+          storeType: brandAssets.storeType,
+          priceRange: brandAssets.priceRange,
           targetAudience: brandAssets.targetAudience,
           role: brandAssets.role,
+          occupation: brandAssets.occupation,
         }),
       });
       if (!res.ok) throw new Error('获取热点失败');
@@ -45,14 +51,33 @@ export default function HotRadarPage() {
     }
   };
 
+  const TrendIcon = ({ trend }: { trend: HotTopic['trend'] }) => {
+    if (trend === 'up') return <ArrowUp size={13} />;
+    if (trend === 'down') return <ArrowDown size={13} />;
+    return <Minus size={13} />;
+  };
+
   return (
-    <div className="px-5 py-5">
-      <h2 className="text-white text-lg font-bold mb-1">热点雷达</h2>
-      <p className="text-white/30 text-xs mb-5">基于你的客户画像，发现匹配的热点方向</p>
+    <div className="space-y-5">
+      <PageHeader
+        eyebrow="HOT RADAR"
+        title="热点雷达"
+        description="先筛趋势，再判断它是否适合你的真实客户。这里不承诺平台热度，只给可拍方向和来源标注。"
+        icon={RefreshCw}
+        action={{
+          label: loading ? '获取中' : '刷新热点',
+          onClick: fetchHotTopics,
+          disabled: loading || !brandAssets,
+          loading,
+          icon: RefreshCw,
+        }}
+        next={{ label: '去做卡位分析', page: 'positioning' }}
+      />
 
       {brandAssets && (
         <div className="flex flex-wrap gap-1.5 mb-5">
-          <span className="px-2.5 py-1 bg-[#C8A97E]/10 text-[#C8A97E] text-[10px] rounded-lg">{brandAssets.industry}</span>
+          <span className="px-2.5 py-1 bg-[var(--color-accent)]/10 text-[var(--color-accent)] text-[10px] rounded-lg">{brandAssets.city || brandAssets.industry}</span>
+          <span className="px-2.5 py-1 bg-white/[0.03] text-white/40 text-[10px] rounded-lg">{brandAssets.storeType || brandAssets.industry}</span>
           {brandAssets.targetAudience.slice(0, 2).map((a, i) => (
             <span key={i} className="px-2.5 py-1 bg-white/[0.03] text-white/40 text-[10px] rounded-lg">{a}</span>
           ))}
@@ -60,47 +85,39 @@ export default function HotRadarPage() {
       )}
 
       {/* Topics */}
-      <div className="space-y-3">
+      <div className="grid gap-3 lg:grid-cols-2">
         {topics.map((topic, idx) => (
-          <div key={topic.id} className="bg-white/[0.03] border border-white/[0.05] rounded-2xl p-4">
+          <div key={topic.id} className="nacl-card p-5">
             <div className="flex items-start justify-between mb-2">
               <div className="flex items-center gap-2">
-                <span className="text-[#C8A97E] font-bold text-lg tabular-nums w-6">{idx + 1}</span>
-                <span className={`text-xs px-1.5 py-0.5 rounded ${
+                <span className="text-[var(--color-accent)] font-bold text-lg tabular-nums w-6">{idx + 1}</span>
+                <span className={`inline-flex items-center gap-1 text-xs px-1.5 py-0.5 rounded ${
                   topic.trend === 'up' ? 'bg-[#00B894]/10 text-[#00B894]' :
                   topic.trend === 'down' ? 'bg-red-500/10 text-red-400' :
                   'bg-white/5 text-white/30'
                 }`}>
-                  {topic.trend === 'up' ? '↑' : topic.trend === 'down' ? '↓' : '→'} {topic.trend === 'up' ? '上升' : topic.trend === 'down' ? '下降' : '稳定'}
+                  <TrendIcon trend={topic.trend} /> {topic.trend === 'up' ? '上升' : topic.trend === 'down' ? '下降' : '稳定'}
                 </span>
               </div>
-              <span className="text-white/20 text-xs">{topic.heat}热度</span>
+              <span className="text-white/20 text-xs">AI热度样例 {topic.heat}</span>
             </div>
             <h3 className="text-white text-sm font-medium mb-2">{topic.title}</h3>
             <div className="flex flex-wrap gap-1.5 mb-2">
               {topic.tags.map((tag, i) => (
-                <span key={i} className="text-[#C8A97E]/60 text-[10px]">{tag}</span>
+                <span key={i} className="text-[var(--color-accent)]/60 text-[10px]">{tag}</span>
               ))}
             </div>
             <div className="flex items-center justify-between">
               <span className="text-white/15 text-[10px]">来源: {topic.source}</span>
               {topic.isDemo && (
-                <span className="text-[#FDCB6E]/50 text-[10px]">示例数据</span>
+                <span className="text-[#A9B8C8]/50 text-[10px]">示例数据</span>
               )}
             </div>
           </div>
         ))}
       </div>
-
-      {/* Refresh */}
-      <button
-        onClick={fetchHotTopics}
-        disabled={loading}
-        className="w-full mt-5 py-3 bg-white/[0.03] border border-white/[0.05] rounded-xl text-white/40 text-sm hover:border-[#C8A97E]/20 transition-colors disabled:opacity-50"
-      >
-        {loading ? '获取中...' : '刷新热点'}
-      </button>
-      {error && <p className="text-red-400 text-xs mt-2">{error}</p>}
+      <StepHint label="拿这些热点去找不撞车的差异化角度" page="positioning" />
+      <ErrorNotice message={error} onRetry={fetchHotTopics} />
     </div>
   );
 }

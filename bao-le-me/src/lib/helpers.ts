@@ -17,8 +17,8 @@ export function formatNumber(num: string | number): string {
 }
 
 export function getHeatColor(heat: number): string {
-  if (heat >= 80) return '#C8A97E';
-  if (heat >= 50) return 'rgba(200,169,126,0.7)';
+  if (heat >= 80) return 'var(--color-accent)';
+  if (heat >= 50) return 'rgba(99, 230, 255, 0.7)';
   return 'rgba(255,255,255,0.4)';
 }
 
