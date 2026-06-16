@@ -17,12 +17,12 @@ export async function GET(req: NextRequest) {
   }
 
   const fallback: Topic[] = [
-    { id: 'kw_1', title: '私域复购率提升 80% 的 3 个细节', angle: '私域运营', category: '行业关键词', heat: 92, source: '行业关键词', matchedAccounts: 5, tags: ['私域', '复购'], status: 'new', createdAt: Date.now() },
-    { id: 'kw_2', title: '小红书爆款笔记的 5 个底层逻辑', angle: '平台方法论', category: '行业关键词', heat: 88, source: '行业关键词', matchedAccounts: 8, tags: ['方法论', '爆款'], status: 'new', createdAt: Date.now() },
-    { id: 'kw_3', title: '创始人 IP 化为什么是企业增长第二曲线', angle: '商业洞察', category: '行业关键词', heat: 86, source: '行业关键词', matchedAccounts: 4, tags: ['IP', '增长'], status: 'new', createdAt: Date.now() },
-    { id: 'kw_4', title: '高客单价产品的内容成交公式', angle: '商业干货', category: '行业关键词', heat: 84, source: '行业关键词', matchedAccounts: 6, tags: ['高客单', '成交'], status: 'new', createdAt: Date.now() },
-    { id: 'kw_5', title: '内容创业的 3 个隐形税', angle: '反常识观点', category: '行业关键词', heat: 82, source: '行业关键词', matchedAccounts: 3, tags: ['创业', '观点'], status: 'new', createdAt: Date.now() },
-    { id: 'kw_6', title: '女性决策力的 4 个隐形优势', angle: '人群洞察', category: '行业关键词', heat: 80, source: '行业关键词', matchedAccounts: 7, tags: ['女性', '决策力'], status: 'new', createdAt: Date.now() },
+    { id: 'kw_1', title: '私域复购链路的关键细节', angle: '私域运营', category: '行业关键词', heat: 92, source: 'AI推断样例', matchedAccounts: 0, tags: ['私域', '复购'], status: 'new', createdAt: Date.now() },
+    { id: 'kw_2', title: '小红书爆款笔记的底层逻辑', angle: '平台方法论', category: '行业关键词', heat: 88, source: 'AI推断样例', matchedAccounts: 0, tags: ['方法论', '爆款'], status: 'new', createdAt: Date.now() },
+    { id: 'kw_3', title: '创始人 IP 化为什么是增长第二曲线', angle: '商业洞察', category: '行业关键词', heat: 86, source: 'AI推断样例', matchedAccounts: 0, tags: ['IP', '增长'], status: 'new', createdAt: Date.now() },
+    { id: 'kw_4', title: '高客单价产品的内容成交公式', angle: '商业干货', category: '行业关键词', heat: 84, source: 'AI推断样例', matchedAccounts: 0, tags: ['高客单', '成交'], status: 'new', createdAt: Date.now() },
+    { id: 'kw_5', title: '内容创业的隐形成本', angle: '反常识观点', category: '行业关键词', heat: 82, source: 'AI推断样例', matchedAccounts: 0, tags: ['创业', '观点'], status: 'new', createdAt: Date.now() },
+    { id: 'kw_6', title: '女性决策力的隐形优势', angle: '人群洞察', category: '行业关键词', heat: 80, source: 'AI推断样例', matchedAccounts: 0, tags: ['女性', '决策力'], status: 'new', createdAt: Date.now() },
   ];
 
   try {
@@ -61,14 +61,14 @@ JSON 数组格式：[{"title": "...", "angle": "...", "heat": 0-100, "tags": [".
               category: '行业关键词' as const,
               heat: Math.min(100, Math.max(60, Number.isFinite(heat) ? heat : 75)),
               source: 'web-search',
-              matchedAccounts: Math.floor(Math.random() * 8) + 2,
+              matchedAccounts: 0,
               tags: Array.isArray(topic.tags) ? topic.tags.filter((tag): tag is string => typeof tag === 'string') : [],
               status: 'new' as const,
               createdAt: Date.now(),
             };
             });
             cache = { data, at: Date.now() };
-            return NextResponse.json({ ok: true, data, source: 'web-search+llm' });
+            return NextResponse.json({ ok: true, data, source: 'web-search+llm-ai-inference' });
           }
         }
       } catch (e) {

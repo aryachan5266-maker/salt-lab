@@ -38,7 +38,7 @@ export async function POST(req: NextRequest) {
 
     // 调用 TTS
     const result = await client.synthesize({
-      uid: `xianliao-${Date.now()}`,
+      uid: `hongleme-${Date.now()}`,
       text: text.slice(0, 2000),
       speaker,
       audioFormat: 'mp3',

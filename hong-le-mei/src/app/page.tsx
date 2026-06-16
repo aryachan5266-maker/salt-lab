@@ -25,7 +25,7 @@ const INDUSTRIES = [
   '健身', '家居', '金融', '本地生活', '电商', '文旅',
 ] as const;
 
-/* ─── 真实股市走势线 — 半透明背景动画 ─── */
+/* ─── 装饰性走势线 — 半透明背景动画 ─── */
 function BackgroundSparklines() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const frameRef = useRef<number>(0);
@@ -36,7 +36,7 @@ function BackgroundSparklines() {
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    /* 两条走势线：红线(涨) + 绿线(跌)，真实价格模型 */
+    /* 两条装饰线：红线 + 绿线，不代表真实市场或账号数据 */
     const MAX_POINTS = 60;
     const ADD_INTERVAL = 1200; // 每 1.2 秒加一个点
     const LINE_CONFIGS = [
@@ -44,7 +44,7 @@ function BackgroundSparklines() {
       { stroke: 'rgba(21,224,160,0.16)', node: 'rgba(21,224,160,0.35)', baseY: 0.65, vol: 0.010, drift: -0.0001 },
     ];
 
-    /* 每条线的价格历史 — 随机游走 */
+    /* 每条线的视觉轨迹 — 模拟动画 */
     const priceHistories = LINE_CONFIGS.map(cfg => {
       const arr: number[] = [];
       let price = cfg.baseY;
@@ -304,7 +304,7 @@ export default function HomePage() {
 
           {/* 品牌 Hero — NACL Logo + 半透明走势线背景 */}
           <div className="relative overflow-hidden rounded-sm" style={{ minHeight: 120 }}>
-            {/* 半透明实时跳动走势线 */}
+            {/* 半透明装饰走势线 */}
             <BackgroundSparklines />
 
             {/* Logo 居中叠在走势线上 */}

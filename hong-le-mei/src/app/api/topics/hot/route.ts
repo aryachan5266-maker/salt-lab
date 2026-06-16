@@ -35,15 +35,15 @@ export async function GET(req: NextRequest) {
 
   // 2) 降级：使用高质量预置数据（保证前端始终有内容）
   const fallback: Topic[] = [
-    { id: 'hot_1', title: '30岁前我亲手关掉公司，才看懂这3件事', angle: '创业复盘+反常识', category: '小红书热门', heat: 98, source: '小红书热门', matchedAccounts: 8, tags: ['女性创业', '商业反思'], status: 'new', createdAt: Date.now() },
-    { id: 'hot_2', title: '普通女生做小红书的第3年，月入6位数', angle: '成长叙事', category: '小红书热门', heat: 96, source: '小红书热门', matchedAccounts: 12, tags: ['副业', '成长'], status: 'new', createdAt: Date.now() },
-    { id: 'hot_3', title: '我从大厂裸辞后才明白的5件事', angle: '职业转型', category: '小红书热门', heat: 94, source: '小红书热门', matchedAccounts: 6, tags: ['裸辞', '转型'], status: 'new', createdAt: Date.now() },
-    { id: 'hot_4', title: '副业月入3万后，我反而辞职了', angle: '反差对比', category: '小红书热门', heat: 91, source: '小红书热门', matchedAccounts: 5, tags: ['副业', '反差'], status: 'new', createdAt: Date.now() },
-    { id: 'hot_5', title: '女生学不会向上管理？是你没看懂这3个潜规则', angle: '观点输出', category: '小红书热门', heat: 89, source: '小红书热门', matchedAccounts: 4, tags: ['职场', '潜规则'], status: 'new', createdAt: Date.now() },
-    { id: 'hot_6', title: '靠朋友圈成交50万，普通人也能复制的私域公式', angle: '清单干货', category: '小红书热门', heat: 87, source: '小红书热门', matchedAccounts: 7, tags: ['私域', '变现'], status: 'new', createdAt: Date.now() },
-    { id: 'hot_7', title: '30+重新开始，最该投资的是这3项', angle: '清单干货', category: '小红书热门', heat: 85, source: '小红书热门', matchedAccounts: 9, tags: ['30+', '重启'], status: 'new', createdAt: Date.now() },
-    { id: 'hot_8', title: '从月薪5k到年入百万，我做对了什么', angle: '成长复盘', category: '小红书热门', heat: 82, source: '小红书热门', matchedAccounts: 11, tags: ['成长', '逆袭'], status: 'new', createdAt: Date.now() },
-    { id: 'hot_9', title: '创业第三年，我终于学会说"不"', angle: '人设叙事', category: '小红书热门', heat: 80, source: '小红书热门', matchedAccounts: 3, tags: ['创业', '成长'], status: 'new', createdAt: Date.now() },
+    { id: 'hot_1', title: '关掉公司后才看懂的经营判断', angle: '创业复盘+反常识', category: '小红书热门', heat: 98, source: 'AI推断样例', matchedAccounts: 0, tags: ['女性创业', '商业反思'], status: 'new', createdAt: Date.now() },
+    { id: 'hot_2', title: '普通女生做小红书后的成长复盘', angle: '成长叙事', category: '小红书热门', heat: 96, source: 'AI推断样例', matchedAccounts: 0, tags: ['副业', '成长'], status: 'new', createdAt: Date.now() },
+    { id: 'hot_3', title: '从大厂裸辞后才明白的职业选择', angle: '职业转型', category: '小红书热门', heat: 94, source: 'AI推断样例', matchedAccounts: 0, tags: ['裸辞', '转型'], status: 'new', createdAt: Date.now() },
+    { id: 'hot_4', title: '副业稳定后反而辞职了', angle: '反差对比', category: '小红书热门', heat: 91, source: 'AI推断样例', matchedAccounts: 0, tags: ['副业', '反差'], status: 'new', createdAt: Date.now() },
+    { id: 'hot_5', title: '向上管理背后的职场潜规则', angle: '观点输出', category: '小红书热门', heat: 89, source: 'AI推断样例', matchedAccounts: 0, tags: ['职场', '潜规则'], status: 'new', createdAt: Date.now() },
+    { id: 'hot_6', title: '普通人也能拆解的私域成交公式', angle: '清单干货', category: '小红书热门', heat: 87, source: 'AI推断样例', matchedAccounts: 0, tags: ['私域', '变现'], status: 'new', createdAt: Date.now() },
+    { id: 'hot_7', title: '重新开始最该投资的能力', angle: '清单干货', category: '小红书热门', heat: 85, source: 'AI推断样例', matchedAccounts: 0, tags: ['重启', '能力'], status: 'new', createdAt: Date.now() },
+    { id: 'hot_8', title: '从打工到业务负责人的成长复盘', angle: '成长复盘', category: '小红书热门', heat: 82, source: 'AI推断样例', matchedAccounts: 0, tags: ['成长', '逆袭'], status: 'new', createdAt: Date.now() },
+    { id: 'hot_9', title: '创业后终于学会说"不"', angle: '人设叙事', category: '小红书热门', heat: 80, source: 'AI推断样例', matchedAccounts: 0, tags: ['创业', '成长'], status: 'new', createdAt: Date.now() },
   ];
 
   // 3) 尝试用 LLM 把搜索结果融合
@@ -89,14 +89,14 @@ ${aiResults.slice(0, 8).map((result, i: number) => {
             category: '小红书热门' as TopicCategory,
             heat: Math.min(100, Math.max(60, Number.isFinite(heat) ? heat : 80)),
             source: 'web-search',
-            matchedAccounts: Math.floor(Math.random() * 10) + 2,
+            matchedAccounts: 0,
             tags: Array.isArray(topic.tags) ? topic.tags.filter((tag): tag is string => typeof tag === 'string') : [],
             status: 'new' as const,
             createdAt: Date.now(),
           };
           });
           cache = { data: aiTopics, at: Date.now() };
-          return NextResponse.json({ ok: true, data: aiTopics, source: 'web-search+llm' });
+          return NextResponse.json({ ok: true, data: aiTopics, source: 'web-search+llm-ai-inference' });
         }
       }
     } catch (e) {

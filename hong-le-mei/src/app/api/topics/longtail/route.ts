@@ -17,12 +17,12 @@ export async function GET(req: NextRequest) {
   }
 
   const fallback: Topic[] = [
-    { id: 'lt_1', title: '为什么我劝你别做"早起型博主"', angle: '反常识观点', category: '长尾潜力', heat: 78, source: '长尾潜力', matchedAccounts: 2, tags: ['反常识', '方法论'], status: 'new', createdAt: Date.now() },
-    { id: 'lt_2', title: '小红书 30+ 用户的 3 个隐性消费偏好', angle: '人群洞察', category: '长尾潜力', heat: 76, source: '长尾潜力', matchedAccounts: 3, tags: ['30+', '消费'], status: 'new', createdAt: Date.now() },
-    { id: 'lt_3', title: '辞职后我才明白的"铁饭碗" 3 个真相', angle: '职业洞察', category: '长尾潜力', heat: 74, source: '长尾潜力', matchedAccounts: 4, tags: ['辞职', '真相'], status: 'new', createdAt: Date.now() },
-    { id: 'lt_4', title: '普通人做小红书最容易踩的 5 个认知坑', angle: '清单干货', category: '长尾潜力', heat: 72, source: '长尾潜力', matchedAccounts: 5, tags: ['认知', '避坑'], status: 'new', createdAt: Date.now() },
-    { id: 'lt_5', title: '为什么你的产品文案没人买单', angle: '观点输出', category: '长尾潜力', heat: 70, source: '长尾潜力', matchedAccounts: 6, tags: ['文案', '营销'], status: 'new', createdAt: Date.now() },
-    { id: 'lt_6', title: '女性创业的"温柔式野心"如何炼成', angle: '人设叙事', category: '长尾潜力', heat: 68, source: '长尾潜力', matchedAccounts: 3, tags: ['女性', '野心'], status: 'new', createdAt: Date.now() },
+    { id: 'lt_1', title: '为什么我劝你别做"早起型博主"', angle: '反常识观点', category: '长尾潜力', heat: 78, source: 'AI推断样例', matchedAccounts: 0, tags: ['反常识', '方法论'], status: 'new', createdAt: Date.now() },
+    { id: 'lt_2', title: '小红书用户的隐性消费偏好', angle: '人群洞察', category: '长尾潜力', heat: 76, source: 'AI推断样例', matchedAccounts: 0, tags: ['消费', '人群'], status: 'new', createdAt: Date.now() },
+    { id: 'lt_3', title: '辞职后才明白的"铁饭碗"真相', angle: '职业洞察', category: '长尾潜力', heat: 74, source: 'AI推断样例', matchedAccounts: 0, tags: ['辞职', '真相'], status: 'new', createdAt: Date.now() },
+    { id: 'lt_4', title: '普通人做小红书最容易踩的认知坑', angle: '清单干货', category: '长尾潜力', heat: 72, source: 'AI推断样例', matchedAccounts: 0, tags: ['认知', '避坑'], status: 'new', createdAt: Date.now() },
+    { id: 'lt_5', title: '为什么你的产品文案没人买单', angle: '观点输出', category: '长尾潜力', heat: 70, source: 'AI推断样例', matchedAccounts: 0, tags: ['文案', '营销'], status: 'new', createdAt: Date.now() },
+    { id: 'lt_6', title: '女性创业的"温柔式野心"如何炼成', angle: '人设叙事', category: '长尾潜力', heat: 68, source: 'AI推断样例', matchedAccounts: 0, tags: ['女性', '野心'], status: 'new', createdAt: Date.now() },
   ];
 
   try {
@@ -61,14 +61,14 @@ JSON 数组格式：[{"title": "...", "angle": "...", "heat": 0-100, "tags": [".
               category: '长尾潜力' as const,
               heat: Math.min(95, Math.max(50, Number.isFinite(heat) ? heat : 70)),
               source: 'web-search',
-              matchedAccounts: Math.floor(Math.random() * 5) + 1,
+              matchedAccounts: 0,
               tags: Array.isArray(topic.tags) ? topic.tags.filter((tag): tag is string => typeof tag === 'string') : [],
               status: 'new' as const,
               createdAt: Date.now(),
             };
             });
             cache = { data, at: Date.now() };
-            return NextResponse.json({ ok: true, data, source: 'web-search+llm' });
+            return NextResponse.json({ ok: true, data, source: 'web-search+llm-ai-inference' });
           }
         }
       } catch (e) {

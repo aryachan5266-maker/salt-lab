@@ -32,7 +32,7 @@ export async function POST(req: NextRequest) {
     pipelineId: typeof body.pipelineId === 'string' ? body.pipelineId : undefined,
     title: typeof body.title === 'string' ? body.title : '未排期',
     coverUrl: typeof body.coverUrl === 'string' ? body.coverUrl : undefined,
-    account: typeof body.account === 'string' ? body.account : '@xianliao_ai',
+    account: typeof body.account === 'string' ? body.account : '@hongleme_demo',
     scheduledAt: typeof body.scheduledAt === 'number' ? body.scheduledAt : Date.now() + 60 * 60 * 1000,
     status,
     type,

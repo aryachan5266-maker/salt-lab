@@ -5,6 +5,14 @@ import { readJsonObject } from '@/lib/request-json';
 
 export const dynamic = 'force-dynamic';
 
+function stableScore(input: string, offset: number, min: number, span: number) {
+  let hash = offset;
+  for (let i = 0; i < input.length; i += 1) {
+    hash = (hash * 31 + input.charCodeAt(i)) % 9973;
+  }
+  return min + (hash % span);
+}
+
 export async function POST(req: NextRequest) {
   const body = await readJsonObject(req);
   if (!body) {
@@ -52,20 +60,21 @@ export async function POST(req: NextRequest) {
   }
 
   // 降级：基于标题启发式
-  const len = topic.length;
-  const baseHeat = Math.min(95, 60 + Math.floor(Math.random() * 30));
+  const scoreInput = `${topic}|${angle}`;
+  const baseHeat = stableScore(scoreInput, 17, 68, 18);
   const hasNumber = /\d/.test(topic);
   const hasContrast = /不|却|才|其实|真相|秘密/.test(topic);
 
   const data = {
-    spread: baseHeat + (hasNumber ? 5 : 0) + (hasContrast ? 8 : 0),
-    competition: 60 + Math.floor(Math.random() * 30),
-    persona: 75 + Math.floor(Math.random() * 20),
-    timeliness: 65 + Math.floor(Math.random() * 25),
+    spread: Math.min(95, baseHeat + (hasNumber ? 5 : 0) + (hasContrast ? 8 : 0)),
+    competition: stableScore(scoreInput, 31, 62, 18),
+    persona: stableScore(scoreInput, 43, 74, 16),
+    timeliness: stableScore(scoreInput, 59, 64, 18),
     total: baseHeat,
+    dataLabel: 'AI推断',
     reason: hasContrast
       ? '标题含反常识钩子，传播潜力较高；女性受众共鸣度高。'
       : '选题方向稳，与商业认知人设匹配，建议配强钩子首句。',
   };
-  return NextResponse.json({ ok: true, data, source: 'fallback' });
+  return NextResponse.json({ ok: true, data, source: 'fallback-ai-inference' });
 }

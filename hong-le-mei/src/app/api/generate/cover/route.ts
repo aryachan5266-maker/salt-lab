@@ -33,7 +33,7 @@ export async function POST(req: NextRequest) {
     `小红书封面图，3:4竖版，主题"${headline}"，${baseStyle}，底部加暖金#d4a574装饰条，主体居中，专业商业博主调性`,
   ].slice(0, count);
 
-  const results: Array<{ id: string; url: string; headline: string; matchScore: number; recommend: boolean }> = [];
+  const results: Array<{ id: string; url: string; headline: string; matchScore: number; scoreNote: string; recommend: boolean }> = [];
 
   try {
     const image = getImageClient();
@@ -54,7 +54,8 @@ export async function POST(req: NextRequest) {
             id: `cv_${i + 1}_${Date.now()}`,
             url,
             headline,
-            matchScore: 88 + Math.floor(Math.random() * 10),
+            matchScore: 0,
+            scoreNote: '待接入真实封面表现数据',
             recommend: i === 0,
           });
         }
@@ -79,11 +80,17 @@ export async function POST(req: NextRequest) {
         id: `cv_${i + 1}_${Date.now()}`,
         url: `https://images.unsplash.com/${unsplashIds[i % unsplashIds.length]}?w=720&h=900&fit=crop`,
         headline,
-        matchScore: 85 + Math.floor(Math.random() * 12),
+        matchScore: 0,
+        scoreNote: '待接入真实封面表现数据',
         recommend: i === 0,
       });
     }
   }
 
-  return NextResponse.json({ ok: true, data: results, source: results[0]?.url.includes('unsplash') ? 'unsplash-fallback' : 'ai-image' });
+  return NextResponse.json({
+    ok: true,
+    data: results,
+    source: results[0]?.url.includes('unsplash') ? 'unsplash-fallback-placeholder' : 'ai-image-placeholder',
+    dataDisciplineNote: '封面匹配分未接入真实发布表现，当前不展示确定分数。',
+  });
 }

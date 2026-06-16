@@ -6,17 +6,17 @@ import { NACLHeader } from '@/components/nacl-header';
 import { useToast } from '@/components/store';
 
 const MOCK_HOT_TOPICS = [
-  { title: '冬季护肤三件套', industry: '美妆', heat: 98200, change: 12.5, trend: 'up' as const },
-  { title: '年夜饭预制菜', industry: '餐饮', heat: 87600, change: 8.3, trend: 'up' as const },
-  { title: '春节旅游攻略', industry: '文旅', heat: 76500, change: -3.2, trend: 'down' as const },
-  { title: '新年健身计划', industry: '健身', heat: 65400, change: 5.7, trend: 'up' as const },
-  { title: '开年招人难', industry: '教育', heat: 54300, change: -1.8, trend: 'down' as const },
+  { title: '冬季护肤三件套', industry: '美妆', trend: 'up' as const },
+  { title: '年夜饭预制菜', industry: '餐饮', trend: 'up' as const },
+  { title: '春节旅游攻略', industry: '文旅', trend: 'down' as const },
+  { title: '新年健身计划', industry: '健身', trend: 'up' as const },
+  { title: '开年招人难', industry: '教育', trend: 'down' as const },
 ];
 
 const MOCK_AI_SUGGESTIONS = [
-  { title: '冬季干皮救恩！这3款面霜让我告别起皮', score: 92, platform: '小红书', hook: '痛点共鸣+解决方案' },
-  { title: '过年回家被问工资？用这招秒杀亲戚', score: 88, platform: '抖音', hook: '情感共鸣+实用话术' },
-  { title: '开年第一单！3个获客技巧让你接单到手软', score: 85, platform: '小红书', hook: '利益驱动+方法拆解' },
+  { title: '冬季干皮救急内容怎么写', platform: '小红书', hook: '痛点共鸣+解决方案' },
+  { title: '过年回家被问工资怎么接话', platform: '小红书', hook: '情感共鸣+实用话术' },
+  { title: '开年获客内容怎么拆', platform: '小红书', hook: '利益驱动+方法拆解' },
 ];
 
 export default function TopicEnginePage() {
@@ -78,13 +78,13 @@ export default function TopicEnginePage() {
                   </div>
                 </div>
                 <div className="text-right">
-                  <div className="font-mono text-sm font-bold" style={{ color: topic.trend === 'up' ? '#FF3B5C' : '#15E0A0' }}>
-                    {(topic.heat / 1000).toFixed(1)}K
+                  <div className="font-mono text-xs font-bold" style={{ color: topic.trend === 'up' ? '#FF3B5C' : '#15E0A0' }}>
+                    AI推断
                   </div>
                   <div className="flex items-center justify-end gap-0.5 text-[10px] font-mono"
                     style={{ color: topic.trend === 'up' ? '#FF3B5C' : '#15E0A0' }}>
                     {topic.trend === 'up' ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
-                    {topic.change > 0 ? '+' : ''}{topic.change}%
+                    待接入
                   </div>
                 </div>
               </div>
@@ -111,7 +111,7 @@ export default function TopicEnginePage() {
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
-                  <div className="font-mono text-sm font-bold" style={{ color: '#FF3B5C' }}>{s.score}</div>
+                  <div className="font-mono text-xs font-bold" style={{ color: '#FF3B5C' }}>AI推断</div>
                   <a href={`/generate?role=operator&q=${encodeURIComponent(s.title)}`}
                     className="hud-btn-primary px-3 py-1.5 rounded-sm text-[10px] flex items-center gap-1">
                     一键生成 <ArrowRight className="w-3 h-3" />
