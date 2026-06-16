@@ -2327,7 +2327,8 @@ footer {
   border-bottom: 1px solid var(--line);
 }
 
-.console-tabs button {
+.console-tabs button,
+.console-tabs a {
   appearance: none;
   background: transparent;
   border: 0;
@@ -2342,15 +2343,22 @@ footer {
   align-items: center;
   gap: 6px;
   transition: color 0.2s ease, border-color 0.2s ease;
+  text-decoration: none;
 }
 
-.console-tabs button:hover {
+.console-tabs button:hover,
+.console-tabs a:hover {
   color: var(--text);
 }
 
 .console-tabs button.active {
   color: var(--text);
   border-bottom-color: var(--red);
+}
+
+.console-tabs a.external-tab {
+  color: #ffd7e1;
+  border-bottom-color: rgba(243, 167, 186, 0.56);
 }
 
 .console-body {
@@ -3203,8 +3211,27 @@ section {
 }
 
 .agent-card:nth-child(1),
-.agent-card:nth-child(5) {
+.agent-card:nth-child(5),
+.agent-card.live-product {
   grid-column: span 6;
+}
+
+.agent-card.live-product {
+  border-color: rgba(243, 167, 186, 0.34);
+  background:
+    linear-gradient(135deg, rgba(243, 167, 186, 0.105), transparent 38%),
+    rgba(6, 7, 8, 0.88);
+}
+
+.agent-card.live-product .agent-thumb {
+  aspect-ratio: 16 / 8.8;
+}
+
+.agent-card.live-product .launch-btn {
+  min-height: 44px;
+  border-color: rgba(243, 167, 186, 0.62);
+  background: rgba(243, 167, 186, 0.18);
+  color: #ffe6ed;
 }
 
 .agent-thumb,
@@ -3278,7 +3305,8 @@ section {
 
   .agent-card,
   .agent-card:nth-child(1),
-  .agent-card:nth-child(5) {
+  .agent-card:nth-child(5),
+  .agent-card.live-product {
     grid-column: span 6;
   }
 }
@@ -3592,7 +3620,8 @@ section {
 
   .agent-card,
   .agent-card:nth-child(1),
-  .agent-card:nth-child(5) {
+  .agent-card:nth-child(5),
+  .agent-card.live-product {
     grid-column: auto;
   }
 
