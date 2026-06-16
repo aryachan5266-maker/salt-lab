@@ -25,7 +25,7 @@ const descMap: Record<string, string> = {
 
 export function Topbar() {
   const pathname = usePathname();
-  const title = titleMap[pathname] || '咸聊 AI 内容中台';
+  const title = titleMap[pathname] || '红了么 内容中台';
   const desc = descMap[pathname] || '';
   const toast = useToast();
   const [time, setTime] = useState('');

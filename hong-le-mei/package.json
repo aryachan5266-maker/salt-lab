@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "build": "bash ./scripts/build.sh",
+    "coze:prepare": "bash ./scripts/prepare.sh",
     "dev": "bash ./scripts/dev.sh",
     "preinstall": "npx only-allow pnpm",
     "lint": "eslint",

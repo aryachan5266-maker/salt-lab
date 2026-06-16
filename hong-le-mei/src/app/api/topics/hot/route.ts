@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getSearchClient, getLLMClient, DEFAULT_LLM_MODEL } from '@/lib/sdk';
-import { db, Topic } from '@/lib/db';
+import { db, Topic, TopicCategory } from '@/lib/db';
+import { asRecord, firstArrayField, textFromResult } from '@/lib/sdk-result';
 
 export const dynamic = 'force-dynamic';
 
@@ -18,7 +19,7 @@ export async function GET(req: NextRequest) {
   }
 
   // 1) 真实调用 web-search
-  let aiResults: any[] = [];
+  let aiResults: unknown[] = [];
   try {
     const search = getSearchClient();
     const res = await search.webSearch(
@@ -26,7 +27,7 @@ export async function GET(req: NextRequest) {
       10,
       true
     );
-    const summaries = (res as any).summaries || (res as any).results || (res as any).data || [];
+    const summaries = firstArrayField(res, ['summaries', 'results', 'data']);
     aiResults = Array.isArray(summaries) ? summaries : [];
   } catch (e) {
     console.error('web-search failed:', e);
@@ -53,7 +54,15 @@ export async function GET(req: NextRequest) {
 每条输出格式严格为 JSON: {"title": "...", "angle": "...", "heat": 0-100, "tags": ["...", "..."]}
 
 搜索摘要：
-${aiResults.slice(0, 8).map((r: any, i: number) => `${i + 1}. ${r.title || r.snippet || r.summary || JSON.stringify(r)}`).join('\n')}
+${aiResults.slice(0, 8).map((result, i: number) => {
+  const item = asRecord(result);
+  const summaryText =
+    (typeof item.title === 'string' && item.title) ||
+    (typeof item.snippet === 'string' && item.snippet) ||
+    (typeof item.summary === 'string' && item.summary) ||
+    JSON.stringify(result);
+  return `${i + 1}. ${summaryText}`;
+}).join('\n')}
 
 只输出 JSON 数组，不要任何额外说明。`;
 
@@ -65,23 +74,27 @@ ${aiResults.slice(0, 8).map((r: any, i: number) => `${i + 1}. ${r.title || r.sni
         }
       );
 
-      const content = (llmRes as any).content || (llmRes as any).text || '';
+      const content = textFromResult(llmRes);
       const match = content.match(/\[[\s\S]*?\]/);
       if (match) {
         const parsed = JSON.parse(match[0]);
         if (Array.isArray(parsed) && parsed.length > 0) {
-          const aiTopics: Topic[] = parsed.slice(0, limit).map((t: any, i: number) => ({
+          const aiTopics: Topic[] = parsed.slice(0, limit).map((rawTopic: unknown, i: number) => {
+            const topic = asRecord(rawTopic);
+            const heat = Number(topic.heat);
+            return {
             id: `hot_ai_${i + 1}_${Date.now()}`,
-            title: t.title || `选题 ${i + 1}`,
-            angle: t.angle || '观点输出',
+            title: typeof topic.title === 'string' ? topic.title : `选题 ${i + 1}`,
+            angle: typeof topic.angle === 'string' ? topic.angle : '观点输出',
             category: '小红书热门' as TopicCategory,
-            heat: Math.min(100, Math.max(60, t.heat || 80)),
+            heat: Math.min(100, Math.max(60, Number.isFinite(heat) ? heat : 80)),
             source: 'web-search',
             matchedAccounts: Math.floor(Math.random() * 10) + 2,
-            tags: Array.isArray(t.tags) ? t.tags : [],
+            tags: Array.isArray(topic.tags) ? topic.tags.filter((tag): tag is string => typeof tag === 'string') : [],
             status: 'new' as const,
             createdAt: Date.now(),
-          }));
+          };
+          });
           cache = { data: aiTopics, at: Date.now() };
           return NextResponse.json({ ok: true, data: aiTopics, source: 'web-search+llm' });
         }
@@ -96,5 +109,3 @@ ${aiResults.slice(0, 8).map((r: any, i: number) => `${i + 1}. ${r.title || r.sni
   cache = { data, at: Date.now() };
   return NextResponse.json({ ok: true, data, source: 'fallback' });
 }
-
-type TopicCategory = '小红书热门' | '行业关键词' | '长尾潜力' | 'AI评分';

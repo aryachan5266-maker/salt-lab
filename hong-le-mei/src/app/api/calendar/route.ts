@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db, CalendarItem } from '@/lib/db';
+import { readJsonObject } from '@/lib/request-json';
 
 export const dynamic = 'force-dynamic';
 
@@ -17,17 +18,24 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
-  const body = await req.json();
+  const body = await readJsonObject(req);
+  if (!body) {
+    return NextResponse.json({ ok: false, error: '请求体格式错误' }, { status: 400 });
+  }
   const id = `c_${Date.now()}`;
+  const status = body.status === 'draft' || body.status === 'pending' || body.status === 'scheduled' || body.status === 'published'
+    ? body.status
+    : 'scheduled';
+  const type = body.type === 'image' || body.type === 'video' || body.type === 'text' ? body.type : 'image';
   const item: CalendarItem = {
     id,
-    pipelineId: body.pipelineId,
-    title: body.title || '未排期',
-    coverUrl: body.coverUrl,
-    account: body.account || '@xianliao_ai',
-    scheduledAt: body.scheduledAt || Date.now() + 60 * 60 * 1000,
-    status: body.status || 'scheduled',
-    type: body.type || 'image',
+    pipelineId: typeof body.pipelineId === 'string' ? body.pipelineId : undefined,
+    title: typeof body.title === 'string' ? body.title : '未排期',
+    coverUrl: typeof body.coverUrl === 'string' ? body.coverUrl : undefined,
+    account: typeof body.account === 'string' ? body.account : '@xianliao_ai',
+    scheduledAt: typeof body.scheduledAt === 'number' ? body.scheduledAt : Date.now() + 60 * 60 * 1000,
+    status,
+    type,
   };
   db.calendar.set(id, item);
   db.pushActivity('calendar', `新建排期：${item.title.slice(0, 20)}`);

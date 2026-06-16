@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getSearchClient } from '@/lib/sdk';
 import { db, Benchmark } from '@/lib/db';
+import { firstArrayField } from '@/lib/sdk-result';
+import { readJsonObject } from '@/lib/request-json';
 
 export const dynamic = 'force-dynamic';
 
@@ -22,7 +24,7 @@ export async function GET() {
       6,
       false
     );
-    const results = (res as any).results || (res as any).data || [];
+    const results = firstArrayField(res, ['results', 'data']);
     // 简单尝试提取账号名（demo）
     if (Array.isArray(results) && results.length > 0) {
       // 标记"已实时抓取"
@@ -38,16 +40,19 @@ export async function GET() {
 
 // POST /api/benchmarks - 添加对标
 export async function POST(req: NextRequest) {
-  const body = await req.json();
+  const body = await readJsonObject(req);
+  if (!body) {
+    return NextResponse.json({ ok: false, error: '请求体格式错误' }, { status: 400 });
+  }
   const id = `b_${Date.now()}`;
   const bm: Benchmark = {
     id,
-    name: body.name || '新对标',
-    handle: body.handle || `@user_${Date.now()}`,
-    followers: body.followers || 10000,
-    category: body.category || '商业认知',
-    viralRate: body.viralRate || 5,
-    avgLikes: body.avgLikes || 500,
+    name: typeof body.name === 'string' ? body.name : '新对标',
+    handle: typeof body.handle === 'string' ? body.handle : `@user_${Date.now()}`,
+    followers: typeof body.followers === 'number' ? body.followers : 10000,
+    category: typeof body.category === 'string' ? body.category : '商业认知',
+    viralRate: typeof body.viralRate === 'number' ? body.viralRate : 5,
+    avgLikes: typeof body.avgLikes === 'number' ? body.avgLikes : 500,
     recentViral: [],
     lastSyncAt: Date.now(),
   };

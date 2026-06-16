@@ -3,11 +3,11 @@ import { StoreProvider, ToastProvider } from '@/components/store';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'NACL | AI 营销结果工具',
+  title: 'NΛCL | AI 营销结果工具',
   description:
     '选角色 + 说一句话，一键产出可直接发布的笔记 + 预览图 + 营销逻辑。连接一切·构建未来。',
   keywords: [
-    'NACL',
+    'NΛCL',
     'AI营销',
     '小红书文案',
     '抖音脚本',
@@ -15,7 +15,7 @@ export const metadata: Metadata = {
     '营销工具',
     '内容创作',
   ],
-  authors: [{ name: 'NACL' }],
+  authors: [{ name: 'NΛCL' }],
   icons: {
     icon: '/icon.svg',
   },

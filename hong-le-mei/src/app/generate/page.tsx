@@ -7,6 +7,7 @@ import {
   Eye, Brain, ArrowLeft, CheckCircle2, AlertTriangle,
   Loader2, TrendingUp, TrendingDown, Activity, Shield,
   Lock, Sparkles, ShieldAlert, ShieldCheck, Search, XCircle,
+  Home,
 } from 'lucide-react';
 import { NACLLogo } from '@/components/nacl-logo';
 
@@ -43,6 +44,30 @@ interface ForbiddenResult {
   pricingHint?: { free: string; pro: string; enterprise: string };
 }
 
+function normalizeForbiddenResult(data: unknown): ForbiddenResult | null {
+  if (!data || typeof data !== 'object') return null;
+  const record = data as Record<string, unknown>;
+  const nested = record.data && typeof record.data === 'object' ? record.data as Record<string, unknown> : {};
+  const hitsValue = Array.isArray(record.hits) ? record.hits : nested.hits;
+  const quotaValue = record.quota;
+  if (!Array.isArray(hitsValue) || !quotaValue || typeof quotaValue !== 'object') return null;
+  return {
+    ok: record.ok !== false,
+    hits: hitsValue.map((hit) => {
+      const item = hit && typeof hit === 'object' ? hit as Record<string, unknown> : {};
+      return {
+        word: typeof item.word === 'string' ? item.word : '',
+        category: typeof item.category === 'string' ? item.category : '未知',
+        suggestion: typeof item.suggestion === 'string' ? item.suggestion : '',
+        severity: item.severity === 'high' || item.severity === 'low' ? item.severity : 'medium',
+      };
+    }),
+    quota: quotaValue as ForbiddenResult['quota'],
+    upgradeHint: typeof record.upgradeHint === 'string' ? record.upgradeHint : undefined,
+    pricingHint: record.pricingHint as ForbiddenResult['pricingHint'],
+  };
+}
+
 /* ─── 额度信息 ─── */
 interface CreditsInfo {
   total: number;
@@ -63,6 +88,7 @@ function GeneratePage() {
   const searchParams = useSearchParams();
   const role = searchParams.get('role') || 'operator';
   const query = searchParams.get('q') || '';
+  const hasQuery = query.trim().length > 0;
   const gender = searchParams.get('gender') || '';
   const industry = searchParams.get('industry') || '';
 
@@ -77,7 +103,8 @@ function GeneratePage() {
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [imageError, setImageError] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
-  const [videoStatus, setVideoStatus] = useState<'idle' | 'checking'>('checking');
+  const [copyFailed, setCopyFailed] = useState(false);
+  const [videoStatus, setVideoStatus] = useState<'idle' | 'unavailable'>('idle');
 
   /* ─── 违禁词检测 ─── */
   const [forbiddenResult, setForbiddenResult] = useState<ForbiddenResult | null>(null);
@@ -139,11 +166,10 @@ function GeneratePage() {
               if (currentEvent === 'delta' && data.text) {
                 setStreamingText(prev => prev + data.text);
               } else if (currentEvent === 'done') {
+                setError(null);
                 setNoteData(data.data);
                 setSource(data.source || 'llm');
                 setLoading(false);
-                // 自动触发违禁词检测
-                handleForbiddenCheck();
               } else if (currentEvent === 'error') {
                 setError(data.error);
                 setLoading(false);
@@ -165,7 +191,8 @@ function GeneratePage() {
   }, [role, query, gender, industry]);
 
   useEffect(() => {
-    if (query) startGeneration();
+    if (hasQuery) startGeneration();
+    else setLoading(false);
     // 获取额度信息
     fetchCredits();
     return () => abortRef.current?.abort();
@@ -183,10 +210,21 @@ function GeneratePage() {
         body: JSON.stringify({ text: `${noteData.titles?.[0] || ''}\n${noteData.body}`, userId: 'default' }),
       });
       const data = await res.json();
-      setForbiddenResult(data);
-    } catch { setForbiddenResult(null); }
+      setForbiddenResult(normalizeForbiddenResult(data));
+      if (!res.ok) setForbiddenError(data.error || '扫描失败');
+      else setForbiddenError(null);
+    } catch {
+      setForbiddenResult(null);
+      setForbiddenError('扫描服务暂不可用');
+    }
     finally { setForbiddenLoading(false); }
   }, [noteData]);
+
+  useEffect(() => {
+    if (noteData?.body) {
+      handleForbiddenCheck();
+    }
+  }, [noteData, handleForbiddenCheck]);
 
   /* ─── 获取额度 ─── */
   const fetchCredits = useCallback(async () => {
@@ -229,16 +267,46 @@ function GeneratePage() {
   const handleCopy = useCallback(async () => {
     if (!noteData) return;
     const text = `${noteData.titles[selectedTitleIdx]}\n\n${noteData.body}\n\n${noteData.tags.join(' ')}`;
-    await navigator.clipboard.writeText(text);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+    try {
+      let copiedText = false;
+      if (navigator.clipboard?.writeText) {
+        try {
+          await navigator.clipboard.writeText(text);
+          copiedText = true;
+        } catch {
+          copiedText = false;
+        }
+      }
+      if (!copiedText) {
+        const textarea = document.createElement('textarea');
+        textarea.value = text;
+        textarea.setAttribute('readonly', '');
+        textarea.style.position = 'fixed';
+        textarea.style.top = '-9999px';
+        document.body.appendChild(textarea);
+        textarea.select();
+        copiedText = document.execCommand('copy');
+        document.body.removeChild(textarea);
+      }
+      if (!copiedText) throw new Error('copy failed');
+      setCopied(true);
+      setCopyFailed(false);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      setCopied(false);
+      setCopyFailed(true);
+      setTimeout(() => setCopyFailed(false), 2000);
+    }
   }, [noteData, selectedTitleIdx]);
 
   /* ─── 视频能力检测 ─── */
   const handleVideoClick = useCallback(async () => {
-    setVideoStatus('checking');
-    // 数字人视频暂不可用，直接提示
-    setTimeout(() => setVideoStatus('idle'), 2000);
+    setVideoStatus('unavailable');
+  }, []);
+
+  const handleBack = useCallback(() => {
+    if (window.history.length > 1) window.history.back();
+    else window.location.assign('/');
   }, []);
 
   const roleName = ROLE_NAMES[role] || role;
@@ -249,8 +317,14 @@ function GeneratePage() {
       <header className="sticky top-0 z-40 h-12 flex items-center justify-between px-5"
         style={{ borderBottom: '1px solid rgba(140,150,165,0.18)', background: 'linear-gradient(180deg, #12151B, #0E1016)' }}>
         <div className="flex items-center gap-3">
-          <button onClick={() => window.history.back()} className="text-on-surface-variant hover:text-on-surface transition-colors">
+          <button
+            onClick={handleBack}
+            aria-label="返回上一页"
+            title="返回上一页"
+            className="flex h-9 min-w-9 items-center justify-center gap-1 rounded-sm px-2 text-[10px] text-on-surface-variant transition-colors hover:text-on-surface"
+          >
             <ArrowLeft className="w-4 h-4" />
+            <span>返回</span>
           </button>
           <NACLLogo size="xs" />
           <span className="font-mono text-[10px]" style={{ color: '#FF3B5C' }}>{roleName}视角</span>
@@ -270,11 +344,13 @@ function GeneratePage() {
         {industry && industry.split(',').map((ind, i) => (
           <span key={i} className="hud-tag text-[10px]">{ind}</span>
         ))}
-        <span className="text-xs text-on-surface-variant ml-2 truncate max-w-md">&ldquo;{query}&rdquo;</span>
+        <span className="text-xs text-on-surface-variant ml-2 truncate max-w-md">
+          {hasQuery ? `“${query}”` : '等待输入生成需求'}
+        </span>
       </div>
 
       {/* ─── 主内容 ─── */}
-      <main className="flex-1 px-5 py-4 max-w-5xl mx-auto w-full">
+      <main className="flex-1 px-5 pb-24 pt-4 max-w-5xl mx-auto w-full">
 
         {/* 加载态 */}
         {loading && (
@@ -303,8 +379,32 @@ function GeneratePage() {
           </div>
         )}
 
+        {/* 空输入态 */}
+        {!hasQuery && !loading && (
+          <div className="metal-panel rounded-lg p-6 text-center sm:p-10">
+            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-sm border border-[rgba(140,150,165,0.18)] bg-[rgba(140,150,165,0.04)]">
+              <FileText className="h-8 w-8 text-on-surface-weakest" />
+            </div>
+            <h2 className="mt-4 text-lg font-medium text-on-surface">先输入一句生成需求</h2>
+            <p className="mx-auto mt-2 max-w-md text-sm text-on-surface-variant">
+              生成页需要带着产品、活动或选题进入。直接打开这个页面不会开始生成。
+            </p>
+            <div className="mt-5 flex flex-col justify-center gap-2 sm:flex-row">
+              <button onClick={() => window.location.assign('/')} className="hud-btn-primary rounded-sm px-4 py-2 text-xs font-medium">
+                <span className="inline-flex items-center justify-center gap-1.5">
+                  <Home className="h-3.5 w-3.5" />
+                  回首页输入
+                </span>
+              </button>
+              <button onClick={() => window.location.assign('/topic-engine')} className="hud-btn-ghost rounded-sm px-4 py-2 text-xs font-medium">
+                去选题引擎
+              </button>
+            </div>
+          </div>
+        )}
+
         {/* 错误态 */}
-        {error && !loading && (
+        {hasQuery && error && !loading && (
           <div className="metal-panel rounded-lg p-6 text-center space-y-3">
             <AlertTriangle className="w-8 h-8 text-warning mx-auto" />
             <p className="text-sm text-on-surface">生成遇到问题</p>
@@ -433,7 +533,7 @@ function GeneratePage() {
                       </div>
                       <button onClick={handleForbiddenCheck}
                         disabled={forbiddenLoading}
-                        className="px-3 py-1.5 rounded-sm text-[10px] font-mono flex items-center gap-1 transition-all"
+                        className="flex min-h-8 items-center gap-1 rounded-sm px-3 py-1.5 text-[10px] font-mono transition-all"
                         style={{ background: 'rgba(255,59,92,0.08)', color: '#FF3B5C', border: '1px solid rgba(255,59,92,0.25)' }}>
                         {forbiddenLoading ? <Loader2 className="w-3 h-3 animate-spin" /> : <Search className="w-3 h-3" />}
                         {forbiddenLoading ? '扫描中...' : '一键扫描'}
@@ -467,7 +567,7 @@ function GeneratePage() {
                                 <span className="text-[10px] font-mono" style={{ color: '#F5A623' }}>一键替换违禁词 · PRO 功能</span>
                               </div>
                               <button className="px-2 py-1 rounded-sm text-[10px] font-mono"
-                                style={{ background: 'rgba(255,59,92,0.1)', color: '#FF3B5C', border: '1px solid rgba(255,59,92,0.3)' }}>
+                                style={{ minHeight: 32, background: 'rgba(255,59,92,0.1)', color: '#FF3B5C', border: '1px solid rgba(255,59,92,0.3)' }}>
                                 升级 PRO
                               </button>
                             </div>
@@ -480,7 +580,9 @@ function GeneratePage() {
                       </div>
                     ) : (
                       <div className="px-4 py-3">
-                        <p className="text-xs text-on-surface-variant">发布前扫描违禁词/限流词，避免被平台限流或封号</p>
+                        <p className="text-xs text-on-surface-variant">
+                          {forbiddenError || '发布前扫描违禁词/限流词，避免被平台限流或封号'}
+                        </p>
                         <p className="text-[10px] font-mono mt-1" style={{ color: '#F5A623' }}>实体店主/销售最怕违规限流 — 扫一下更安心</p>
                       </div>
                     )}
@@ -530,7 +632,7 @@ function GeneratePage() {
                         咸
                       </div>
                       <div>
-                        <div className="text-xs font-medium" style={{ color: '#E8E8E8' }}>NACL · {roleName}视角</div>
+                        <div className="text-xs font-medium" style={{ color: '#E8E8E8' }}>NΛCL · {roleName}视角</div>
                         <div className="text-[10px]" style={{ color: '#888' }}>刚刚</div>
                       </div>
                     </div>
@@ -614,41 +716,39 @@ function GeneratePage() {
 
       {/* ─── 底部操作栏 ─── */}
       {noteData && !loading && (
-        <div className="sticky bottom-0 z-40 px-5 py-3 flex items-center justify-between"
+        <div className="sticky bottom-0 z-40 px-3 py-2 sm:px-5 sm:py-3 sm:flex sm:items-center sm:justify-between"
           style={{ background: 'linear-gradient(180deg, #0E1016, #08090C)', borderTop: '1px solid rgba(140,150,165,0.12)' }}>
-          <div className="flex items-center gap-2">
+          <div className="grid grid-cols-4 gap-2 sm:flex sm:items-center">
             <button onClick={handleCopy}
-              className="hud-btn-ghost px-3 py-2 rounded-sm text-xs flex items-center gap-1.5">
-              {copied ? <CheckCircle2 className="w-3 h-3 text-success" /> : <Copy className="w-3 h-3" />}
-              {copied ? '已复制' : '复制文案'}
+              className="hud-btn-ghost h-12 min-w-0 rounded-sm px-2 text-[10px] leading-tight flex flex-col items-center justify-center gap-1 sm:h-auto sm:px-3 sm:py-2 sm:text-xs sm:flex-row sm:gap-1.5">
+              {copied ? <CheckCircle2 className="w-3 h-3 text-success" /> : copyFailed ? <XCircle className="w-3 h-3 text-error" /> : <Copy className="w-3 h-3" />}
+              {copied ? '已复制' : copyFailed ? '复制失败' : '复制文案'}
             </button>
             <button onClick={startGeneration}
-              className="hud-btn-ghost px-3 py-2 rounded-sm text-xs flex items-center gap-1.5">
+              className="hud-btn-ghost h-12 min-w-0 rounded-sm px-2 text-[10px] leading-tight flex flex-col items-center justify-center gap-1 sm:h-auto sm:px-3 sm:py-2 sm:text-xs sm:flex-row sm:gap-1.5">
               <RefreshCw className="w-3 h-3" /> 换一版
             </button>
-          </div>
-          <div className="flex items-center gap-2">
             <button onClick={handleGenerateImage}
               disabled={imageLoading}
-              className="hud-btn-primary px-4 py-2 rounded-sm text-xs flex items-center gap-1.5">
+              className="hud-btn-primary h-12 min-w-0 rounded-sm px-2 text-[10px] leading-tight flex flex-col items-center justify-center gap-1 sm:h-auto sm:px-4 sm:py-2 sm:text-xs sm:flex-row sm:gap-1.5">
               <Palette className="w-3 h-3" />
               {imageLoading ? '生图中...' : '生成封面'}
             </button>
             <button onClick={handleVideoClick}
-              className="hud-btn-ghost px-4 py-2 rounded-sm text-xs flex items-center gap-1.5">
+              className="hud-btn-ghost h-12 min-w-0 rounded-sm px-2 text-[10px] leading-tight flex flex-col items-center justify-center gap-1 sm:h-auto sm:px-4 sm:py-2 sm:text-xs sm:flex-row sm:gap-1.5">
               <Video className="w-3 h-3" />
-              {videoStatus === 'checking' ? '确认中...' : '数字人视频'}
+              数字人视频
             </button>
           </div>
         </div>
       )}
 
       {/* 数字人视频不可用提示 */}
-      {videoStatus === 'checking' && (
+      {videoStatus === 'unavailable' && (
         <div className="fixed inset-0 z-50 flex items-center justify-center" style={{ background: 'rgba(0,0,0,0.7)' }}>
           <div className="metal-panel rounded-lg p-6 max-w-sm text-center space-y-3">
             <AlertTriangle className="w-6 h-6 text-warning mx-auto" />
-            <p className="text-sm text-on-surface">数字人对口型能力确认中</p>
+            <p className="text-sm text-on-surface">数字人视频暂不可用</p>
             <p className="text-xs text-on-surface-variant">
               扣子平台当前 SDK 未提供数字人/对口型/视频合成接口。<br />
               降级方案：上传人物照片 + AI 配音 + 自动字幕 → 幻灯片式口播视频。

@@ -1,11 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getLLMClient, DEFAULT_LLM_MODEL } from '@/lib/sdk';
 import { db } from '@/lib/db';
+import { textFromResult } from '@/lib/sdk-result';
+import { readJsonObject } from '@/lib/request-json';
 
 export const dynamic = 'force-dynamic';
 
 export async function POST(req: NextRequest) {
-  const { question } = await req.json();
+  const body = await readJsonObject(req);
+  if (!body) {
+    return NextResponse.json({ ok: false, error: '请求体格式错误' }, { status: 400 });
+  }
+  const question = typeof body.question === 'string' ? body.question : '';
   if (!question) {
     return NextResponse.json({ ok: false, error: 'question 必填' }, { status: 400 });
   }
@@ -20,7 +26,7 @@ export async function POST(req: NextRequest) {
     .join('\n');
   const topicPool = Array.from(db.topics.values()).slice(0, 10).map((t) => `- ${t.title} (${t.category})`).join('\n');
 
-  const prompt = `你是"咸聊AI"内容中台的 AI 助手小咸。回答用户问题时，要结合以下上下文：
+  const prompt = `你是"红了么"小红书内容中台的 AI 助手。回答用户问题时，要结合以下上下文：
 
 【品牌知识库】
 ${kb || '（暂无）'}
@@ -45,7 +51,7 @@ ${topicPool || '（暂无）'}
       [{ role: 'user', content: prompt }],
       { model: DEFAULT_LLM_MODEL, temperature: 0.7 }
     );
-    const content = (res as any).content || (res as any).text || '';
+    const content = textFromResult(res);
     return NextResponse.json({ ok: true, answer: content, source: 'llm' });
   } catch (e) {
     console.error('assistant failed:', e);

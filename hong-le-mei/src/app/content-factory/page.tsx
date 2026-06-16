@@ -1,6 +1,7 @@
 'use client';
 
-import { Zap, LayoutTemplate, Calendar, Search } from 'lucide-react';
+import { LayoutTemplate } from 'lucide-react';
+import { ComingSoonPanel } from '@/components/coming-soon-panel';
 import { NACLHeader } from '@/components/nacl-header';
 
 export default function ContentFactoryPage() {
@@ -8,12 +9,14 @@ export default function ContentFactoryPage() {
     <div className="min-h-screen bg-background hud-grid-bg flex flex-col">
       <NACLHeader title="内容工厂" subtitle="批量生成·模板·排期" />
       <main className="flex-1 px-5 py-4 max-w-5xl mx-auto w-full">
-        <div className="metal-panel rounded-lg p-12 text-center space-y-3">
-          <LayoutTemplate className="w-10 h-10 text-on-surface-weakest mx-auto" />
-          <h2 className="text-lg text-on-surface font-medium">内容工厂</h2>
-          <p className="text-sm text-on-surface-variant">批量生成、模板管理、内容排期</p>
-          <p className="text-xs text-on-surface-weakest font-mono">功能开发中，请先使用首页「一键生成」</p>
-        </div>
+        <ComingSoonPanel
+          icon={<LayoutTemplate className="h-8 w-8" />}
+          title="内容工厂"
+          description="批量生成、模板管理、内容排期"
+          note="批量能力还在接入，当前先用首页一键生成完成单条内容闭环"
+          secondaryHref="/topic-engine"
+          secondaryLabel="先找选题"
+        />
       </main>
     </div>
   );

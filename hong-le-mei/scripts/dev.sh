@@ -31,4 +31,4 @@ echo "Clearing port ${DEPLOY_RUN_PORT} before start."
 kill_port_if_listening
 echo "Starting HTTP service on port ${DEPLOY_RUN_PORT} for dev..."
 
-PORT=${DEPLOY_RUN_PORT} pnpm tsx watch src/server.ts
+COZE_PROJECT_ENV=DEV NODE_ENV=development pnpm next dev --webpack -H 0.0.0.0 -p "${DEPLOY_RUN_PORT}"

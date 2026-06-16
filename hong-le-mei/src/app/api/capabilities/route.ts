@@ -1,35 +1,53 @@
-// 咸聊AI · 能力探测 API
+// 红了么 · 能力探测 API
 // GET /api/capabilities
 // 探测当前扣子平台可用的生成能力，如实汇报
 
 import { NextResponse } from 'next/server';
+import { loadEnv } from '@/storage/database/supabase-client';
 
 export const dynamic = 'force-dynamic';
 
+function hasGenerationCredentials(): boolean {
+  loadEnv();
+  return Boolean(
+    process.env.COZE_WORKLOAD_IDENTITY_API_KEY ||
+    process.env.OPENAI_API_KEY ||
+    process.env.OPENAI_ADMIN_KEY
+  );
+}
+
 export async function GET() {
-  // 文案生成：doubao-seed-2-0-lite-260215 已验证可用
+  const canCallGeneration = hasGenerationCredentials();
+
   const copyGeneration = {
-    available: true,
+    available: canCallGeneration,
+    fallbackAvailable: true,
     model: 'doubao-seed-2-0-lite-260215',
     streaming: true,
     roles: ['boss', 'operator', 'sales', 'shop-owner', 'personal-ip'],
-    note: '流式 SSE 输出，5个角色差异化 prompt 已实现',
+    note: canCallGeneration
+      ? '流式 SSE 输出，5个角色差异化 prompt 已实现'
+      : '当前环境缺少生成凭证，已启用本地模板 fallback，主流程不中断',
   };
 
-  // 生图：豆包 seedream 已验证可用
   const imageGeneration = {
-    available: true,
+    available: canCallGeneration,
+    fallbackAvailable: true,
     model: 'doubao-seedream-5-0-260128',
     features: ['文生图', '中文大字排版', '小红书3:4/抖音9:16'],
-    note: '豆包字节系模型，中文不乱码',
+    note: canCallGeneration
+      ? '豆包字节系模型，中文不乱码'
+      : '当前环境缺少生成凭证，已启用本地 SVG 封面 fallback',
   };
 
-  // TTS：已验证可用
   const tts = {
-    available: true,
+    available: canCallGeneration,
+    fallbackAvailable: false,
     voices: ['longxiaochun(女声)', 'longxiaobai(男声)', 'longxiaoxia(故事)', 'longxiaoqiu(助手)'],
     format: 'mp3',
-    note: '支持基础 TTS，方言 TTS 需进一步确认具体音色列表',
+    note: canCallGeneration
+      ? '支持基础 TTS，方言 TTS 需进一步确认具体音色列表'
+      : '当前环境缺少 TTS 凭证，语音合成不可用',
   };
 
   // 数字人/对口型：当前扣子平台 SDK 不提供此能力
@@ -56,6 +74,8 @@ export async function GET() {
       digitalHuman,
       videoGeneration,
     },
-    summary: `✅ 文案生成已打通（doubao-seed-2-0-lite，流式SSE） | ✅ 生图可用（doubao-seedream，中文不乱码） | ✅ TTS可用（基础音色） | ❌ 数字人对口型不可用（SDK未提供，降级为图片+配音） | ❌ 视频生成不可用（SDK未提供）`,
+    summary: canCallGeneration
+      ? '✅ 文案生成可用 | ✅ 生图可用 | ✅ TTS可用 | ❌ 数字人对口型不可用（SDK未提供） | ❌ 视频生成不可用（SDK未提供）'
+      : '⚠️ 当前环境缺少生成凭证：文案/生图使用 fallback，TTS 不可用；数字人/视频 SDK 未提供',
   });
 }

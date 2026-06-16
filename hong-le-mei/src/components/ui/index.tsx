@@ -13,6 +13,7 @@ export { Label } from './label';
 
 // 自定义扩展组件
 import * as React from 'react';
+import Link from 'next/link';
 
 export function PageHeader({
   title,
@@ -27,7 +28,16 @@ export function PageHeader({
 }) {
   return (
     <div className="flex flex-col gap-3 border-b border-zinc-800 pb-4 sm:flex-row sm:items-end sm:justify-between">
-      <div>
+      <div className="min-w-0">
+        {breadcrumb && breadcrumb.length > 0 && (
+          <Link
+            href="/"
+            className="mb-3 inline-flex min-h-9 items-center gap-1.5 rounded-sm border border-zinc-800 bg-zinc-950/70 px-3 text-sm text-zinc-400 transition hover:border-rose-500/40 hover:text-zinc-100"
+          >
+            <span aria-hidden="true">←</span>
+            <span>返回</span>
+          </Link>
+        )}
         {breadcrumb && breadcrumb.length > 0 && (
           <div className="mb-1 text-xs text-zinc-500">
             {breadcrumb.map((b, i) => (

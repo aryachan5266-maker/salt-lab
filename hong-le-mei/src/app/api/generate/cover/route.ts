@@ -1,15 +1,21 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getImageClient, DEFAULT_IMAGE_MODEL } from '@/lib/sdk';
+import { arrayField, stringField } from '@/lib/sdk-result';
+import { readJsonObject } from '@/lib/request-json';
 
 export const dynamic = 'force-dynamic';
 export const maxDuration = 60;
 
 export async function POST(req: NextRequest) {
-  const body = await req.json();
-  const topic = body.topic || '商业认知';
-  const style = body.style || 'sharp'; // sharp/story/list/contrast
-  const headline = body.headline || '商业认知';
-  const count = Math.min(parseInt(body.count || '3'), 4);
+  const body = await readJsonObject(req);
+  if (!body) {
+    return NextResponse.json({ ok: false, error: '请求体格式错误' }, { status: 400 });
+  }
+  const topic = typeof body.topic === 'string' ? body.topic : '商业认知';
+  const style = typeof body.style === 'string' ? body.style : 'sharp'; // sharp/story/list/contrast
+  const headline = typeof body.headline === 'string' ? body.headline : '商业认知';
+  const countValue = typeof body.count === 'string' || typeof body.count === 'number' ? body.count : '3';
+  const count = Math.min(parseInt(String(countValue), 10) || 3, 4);
 
   // 风格 → 提示词
   const styleMap: Record<string, string> = {
@@ -39,10 +45,10 @@ export async function POST(req: NextRequest) {
           size: '1024x1280',
         });
         const url =
-          (res as any).image_url ||
-          (res as any).url ||
-          (res as any).data?.[0]?.url ||
-          (res as any).images?.[0]?.url;
+          stringField(res, 'image_url') ||
+          stringField(res, 'url') ||
+          stringField(arrayField(res, 'data')[0], 'url') ||
+          stringField(arrayField(res, 'images')[0], 'url');
         if (url) {
           results.push({
             id: `cv_${i + 1}_${Date.now()}`,

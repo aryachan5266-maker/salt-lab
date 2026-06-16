@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getLLMClient, DEFAULT_LLM_MODEL } from '@/lib/sdk';
 import { db, KnowledgeDoc } from '@/lib/db';
+import { readJsonObject } from '@/lib/request-json';
 
 export const dynamic = 'force-dynamic';
 
@@ -21,14 +22,17 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
-  const body = await req.json();
-  const id = body.id || `k_${Date.now()}`;
+  const body = await readJsonObject(req);
+  if (!body) {
+    return NextResponse.json({ ok: false, error: '请求体格式错误' }, { status: 400 });
+  }
+  const id = typeof body.id === 'string' ? body.id : `k_${Date.now()}`;
   const doc: KnowledgeDoc = {
     id,
-    title: body.title || '未命名文档',
-    content: body.content || '',
-    category: body.category || '品牌定位',
-    tags: body.tags || [],
+    title: typeof body.title === 'string' ? body.title : '未命名文档',
+    content: typeof body.content === 'string' ? body.content : '',
+    category: typeof body.category === 'string' ? body.category : '品牌定位',
+    tags: Array.isArray(body.tags) ? body.tags.filter((tag): tag is string => typeof tag === 'string') : [],
     updatedAt: Date.now(),
   };
   db.knowledge.set(id, doc);

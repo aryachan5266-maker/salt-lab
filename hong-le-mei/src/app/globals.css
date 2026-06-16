@@ -311,6 +311,10 @@
 
 /* === HUD 按钮 — 枪灰金属底 + 红色霓虹描边 === */
 .hud-btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.25rem;
   background: linear-gradient(180deg, #1A1E26 0%, #12151B 100%);
   border: 1px solid rgba(255,59,92,0.5);
   color: #E8EBF0;
@@ -325,6 +329,10 @@
 
 /* === HUD 次级按钮 === */
 .hud-btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.25rem;
   background: transparent;
   border: 1px solid rgba(140,150,165,0.15);
   color: #8A94A6;
@@ -337,6 +345,10 @@
 
 /* === 标签/胶囊 === */
 .hud-tag {
+  display: inline-flex;
+  min-height: 2rem;
+  align-items: center;
+  justify-content: center;
   font-size: 0.75rem;
   padding: 0.25rem 0.75rem;
   border-radius: 9999px;

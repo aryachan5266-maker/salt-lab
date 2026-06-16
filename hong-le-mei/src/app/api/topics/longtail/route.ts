@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getSearchClient, getLLMClient, DEFAULT_LLM_MODEL } from '@/lib/sdk';
 import { Topic } from '@/lib/db';
+import { asRecord, firstArrayField, textFromResult } from '@/lib/sdk-result';
 
 export const dynamic = 'force-dynamic';
 
@@ -31,34 +32,41 @@ export async function GET(req: NextRequest) {
       6,
       true
     );
-    const summaries = (res as any).summaries || (res as any).results || [];
+    const summaries = firstArrayField(res, ['summaries', 'results']);
     if (Array.isArray(summaries) && summaries.length > 0) {
       try {
         const llm = getLLMClient();
         const prompt = `你是小红书长尾潜力雷达。基于 web 搜索摘要，提炼 ${limit} 个适合"女性商业认知博主"的长尾潜力选题（搜索量中等但增长快）。
-JSON 数组格式：[{"title": "...", "angle": "...", "heat": 0-100, "tags": ["..."]}]，只输出 JSON。\n\n摘要：\n${summaries.slice(0, 5).map((r: any, i: number) => `${i + 1}. ${r.title || r.snippet || ''}`).join('\n')}`;
+JSON 数组格式：[{"title": "...", "angle": "...", "heat": 0-100, "tags": ["..."]}]，只输出 JSON。\n\n摘要：\n${summaries.slice(0, 5).map((summary, i: number) => {
+  const item = asRecord(summary);
+  return `${i + 1}. ${typeof item.title === 'string' ? item.title : typeof item.snippet === 'string' ? item.snippet : ''}`;
+}).join('\n')}`;
 
         const llmRes = await llm.invoke(
           [{ role: 'user', content: prompt }],
           { model: DEFAULT_LLM_MODEL, temperature: 0.8 }
         );
-        const content = (llmRes as any).content || (llmRes as any).text || '';
+        const content = textFromResult(llmRes);
         const match = content.match(/\[[\s\S]*?\]/);
         if (match) {
           const parsed = JSON.parse(match[0]);
           if (Array.isArray(parsed) && parsed.length > 0) {
-            const data: Topic[] = parsed.slice(0, limit).map((t: any, i: number) => ({
+            const data: Topic[] = parsed.slice(0, limit).map((rawTopic: unknown, i: number) => {
+              const topic = asRecord(rawTopic);
+              const heat = Number(topic.heat);
+              return {
               id: `lt_ai_${i + 1}_${Date.now()}`,
-              title: t.title || `长尾 ${i + 1}`,
-              angle: t.angle || '长尾潜力',
+              title: typeof topic.title === 'string' ? topic.title : `长尾 ${i + 1}`,
+              angle: typeof topic.angle === 'string' ? topic.angle : '长尾潜力',
               category: '长尾潜力' as const,
-              heat: Math.min(95, Math.max(50, t.heat || 70)),
+              heat: Math.min(95, Math.max(50, Number.isFinite(heat) ? heat : 70)),
               source: 'web-search',
               matchedAccounts: Math.floor(Math.random() * 5) + 1,
-              tags: Array.isArray(t.tags) ? t.tags : [],
+              tags: Array.isArray(topic.tags) ? topic.tags.filter((tag): tag is string => typeof tag === 'string') : [],
               status: 'new' as const,
               createdAt: Date.now(),
-            }));
+            };
+            });
             cache = { data, at: Date.now() };
             return NextResponse.json({ ok: true, data, source: 'web-search+llm' });
           }

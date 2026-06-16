@@ -62,11 +62,15 @@ export default function KnowledgePage() {
     });
     const j = await res.json();
     if (j.ok) {
+      const created = j.data as Doc;
       toast.success('已新建文档');
       setShowNew(false);
-      setNewDoc({ title: '', content: '', category });
-      setCategory(newDoc.category);
-      load();
+      setSearchQ('');
+      setNewDoc({ title: '', content: '', category: created.category });
+      setCategory(created.category);
+      setActiveDoc(created);
+      setEditContent(created.content);
+      setDocs((prev) => [created, ...prev.filter((doc) => doc.id !== created.id)]);
     }
   };
 
@@ -288,8 +292,8 @@ export default function KnowledgePage() {
               <CardTitle>最近活动</CardTitle>
             </CardHeader>
             <div className="space-y-1.5 text-xs text-zinc-400">
-              {pipeline.slice(0, 5).map((p) => (
-                <div key={p.id} className="truncate">· {p.topicTitle}</div>
+              {pipeline.slice(0, 5).map((p, index) => (
+                <div key={typeof p.id === 'string' ? p.id : index} className="truncate">· {typeof p.topicTitle === 'string' ? p.topicTitle : '未命名选题'}</div>
               ))}
               {pipeline.length === 0 && <div className="text-zinc-500">暂无活动</div>}
             </div>
@@ -303,18 +307,31 @@ export default function KnowledgePage() {
             <h3 className="mb-4 text-lg font-semibold text-zinc-100">新建文档</h3>
             <div className="space-y-3">
               <div>
-                <label className="mb-1 block text-xs text-zinc-500">分类</label>
-                <select className="input-soft w-full rounded-md border border-zinc-800 bg-zinc-900 px-3 py-2 text-sm" value={newDoc.category} onChange={(e) => setNewDoc({ ...newDoc, category: e.target.value })}>
+                <label htmlFor="new-doc-category" className="mb-1 block text-xs text-zinc-500">分类</label>
+                <select id="new-doc-category" className="input-soft w-full rounded-md border border-zinc-800 bg-zinc-900 px-3 py-2 text-sm" value={newDoc.category} onChange={(e) => setNewDoc({ ...newDoc, category: e.target.value })}>
                   {CATEGORIES.map((c) => <option key={c} value={c}>{c}</option>)}
                 </select>
               </div>
               <div>
-                <label className="mb-1 block text-xs text-zinc-500">标题</label>
-                <input className="input-soft w-full rounded-md border border-zinc-800 bg-zinc-900 px-3 py-2 text-sm" value={newDoc.title} onChange={(e) => setNewDoc({ ...newDoc, title: e.target.value })} />
+                <label htmlFor="new-doc-title" className="mb-1 block text-xs text-zinc-500">标题</label>
+                <input
+                  id="new-doc-title"
+                  placeholder="输入文档标题"
+                  className="input-soft w-full rounded-md border border-zinc-800 bg-zinc-900 px-3 py-2 text-sm"
+                  value={newDoc.title}
+                  onChange={(e) => setNewDoc({ ...newDoc, title: e.target.value })}
+                />
               </div>
               <div>
-                <label className="mb-1 block text-xs text-zinc-500">内容</label>
-                <textarea rows={6} className="input-soft w-full rounded-md border border-zinc-800 bg-zinc-900 px-3 py-2 text-sm" value={newDoc.content} onChange={(e) => setNewDoc({ ...newDoc, content: e.target.value })} />
+                <label htmlFor="new-doc-content" className="mb-1 block text-xs text-zinc-500">内容</label>
+                <textarea
+                  id="new-doc-content"
+                  rows={6}
+                  placeholder="输入内容"
+                  className="input-soft w-full rounded-md border border-zinc-800 bg-zinc-900 px-3 py-2 text-sm"
+                  value={newDoc.content}
+                  onChange={(e) => setNewDoc({ ...newDoc, content: e.target.value })}
+                />
               </div>
             </div>
             <div className="mt-5 flex justify-end gap-2">

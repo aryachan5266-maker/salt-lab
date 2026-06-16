@@ -1,5 +1,5 @@
 /**
- * 红了没 · 数据库服务层
+ * 红了么 · 数据库服务层
  * 使用 Supabase 真库替代内存库
  * 列名严格匹配 Drizzle schema (src/storage/database/shared/schema.ts)
  */

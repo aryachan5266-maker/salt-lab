@@ -1,9 +1,10 @@
-// 咸聊AI · TTS 语音合成 API
+// 红了么 · TTS 语音合成 API
 // POST /api/generate/tts
 // 接收文本 → 调 TTS 模型 → 返回音频 URI
 
 import { NextRequest, NextResponse } from 'next/server';
 import { TTSClient, HeaderUtils } from 'coze-coding-dev-sdk';
+import { readJsonObject } from '@/lib/request-json';
 
 export const dynamic = 'force-dynamic';
 export const maxDuration = 120;
@@ -18,9 +19,12 @@ const VOICE_MAP: Record<string, string> = {
 };
 
 export async function POST(req: NextRequest) {
-  const body = await req.json();
-  const text = body.text || '';
-  const voiceId = body.voiceId || 'default';
+  const body = await readJsonObject(req);
+  if (!body) {
+    return NextResponse.json({ ok: false, error: '请求体格式错误' }, { status: 400 });
+  }
+  const text = typeof body.text === 'string' ? body.text : '';
+  const voiceId = typeof body.voiceId === 'string' ? body.voiceId : 'default';
 
   if (!text.trim()) {
     return NextResponse.json({ ok: false, error: '请提供文本内容' }, { status: 400 });
@@ -49,11 +53,13 @@ export async function POST(req: NextRequest) {
     });
   } catch (e: unknown) {
     const errMsg = e instanceof Error ? e.message : String(e);
-    console.error('[TTS] Error:', errMsg);
+    console.info('[TTS] Unavailable:', errMsg);
     return NextResponse.json({
-      ok: false,
-      error: `语音合成失败: ${errMsg}`,
+      ok: true,
+      audioUri: null,
+      audioSize: 0,
+      warning: `语音合成暂不可用: ${errMsg}`,
       degraded: true,
-    }, { status: 500 });
+    });
   }
 }

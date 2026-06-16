@@ -1,8 +1,9 @@
 'use client';
 
 import { useState, useCallback } from 'react';
-import { Upload, Star, Download, Trash2, X, Plus, Image, FileText, Video, User, Palette, BookOpen } from 'lucide-react';
+import { Upload, Star, Image, FileText, Video, User, Palette, BookOpen } from 'lucide-react';
 import { NACLHeader } from '@/components/nacl-header';
+import { useToast } from '@/components/store';
 
 const TABS = [
   { key: 'logo', label: 'Logo', icon: Image },
@@ -40,6 +41,8 @@ const MOCK_ASSETS: Record<string, { name: string; type: string; time: string }[]
 export default function BrandAssetsPage() {
   const [activeTab, setActiveTab] = useState<string>('logo');
   const [starred, setStarred] = useState<Set<string>>(new Set());
+  const [uploadHint, setUploadHint] = useState('');
+  const toast = useToast();
 
   const toggleStar = useCallback((name: string) => {
     setStarred(prev => {
@@ -49,6 +52,12 @@ export default function BrandAssetsPage() {
       return next;
     });
   }, []);
+
+  const handleUploadClick = () => {
+    const message = '上传入口已预留，当前本地环境未接入文件存储';
+    setUploadHint(message);
+    toast.show(message, 'info');
+  };
 
   const assets = MOCK_ASSETS[activeTab] || [];
 
@@ -90,7 +99,7 @@ export default function BrandAssetsPage() {
             </div>
             <div className="metal-panel rounded-sm p-4">
               <div className="text-[10px] font-mono text-on-surface-weakest mb-2">品牌主张</div>
-              <p className="text-sm text-on-surface">NACL · 连接一切·构建未来</p>
+              <p className="text-sm text-on-surface">NΛCL · 连接一切·构建未来</p>
             </div>
             <div className="metal-panel rounded-sm p-4">
               <div className="text-[10px] font-mono text-on-surface-weakest mb-2">人设语料</div>
@@ -118,19 +127,32 @@ export default function BrandAssetsPage() {
                 </div>
                 <div className="p-2.5 flex items-center justify-between">
                   <span className="text-xs text-on-surface truncate">{asset.name}</span>
-                  <button onClick={() => toggleStar(asset.name)}
-                    className="transition-colors">
+                  <button
+                    onClick={() => toggleStar(asset.name)}
+                    aria-label={starred.has(asset.name) ? `取消收藏 ${asset.name}` : `收藏 ${asset.name}`}
+                    title={starred.has(asset.name) ? '取消收藏' : '收藏'}
+                    className="flex h-8 w-8 shrink-0 items-center justify-center rounded-sm text-on-surface-weakest transition-colors hover:text-warning"
+                  >
                     <Star className={`w-3 h-3 ${starred.has(asset.name) ? 'text-warning fill-warning' : 'text-on-surface-weakest'}`} />
                   </button>
                 </div>
               </div>
             ))}
             {/* 上传区 */}
-            <div className="border-2 border-dashed rounded-sm aspect-square flex flex-col items-center justify-center gap-2 transition-colors"
-              style={{ borderColor: 'rgba(140,150,165,0.2)' }}>
+            <button
+              type="button"
+              onClick={handleUploadClick}
+              className="border-2 border-dashed rounded-sm aspect-square flex flex-col items-center justify-center gap-2 transition-colors hover:bg-[rgba(140,150,165,0.04)]"
+              style={{ borderColor: 'rgba(140,150,165,0.2)' }}
+            >
               <Upload className="w-6 h-6 text-on-surface-weakest" />
               <span className="text-[10px] text-on-surface-weakest">上传新资产</span>
-            </div>
+            </button>
+          </div>
+        )}
+        {uploadHint && activeTab !== 'brand' && (
+          <div className="mt-3 rounded-sm border border-[rgba(33,230,193,0.25)] bg-[rgba(33,230,193,0.06)] px-3 py-2 text-xs text-on-surface-variant">
+            {uploadHint}
           </div>
         )}
       </main>

@@ -1,4 +1,4 @@
-// 红了没 · 文案生成 API · 流式 SSE
+// 红了么 · 文案生成 API · 流式 SSE
 // POST /api/generate/copy
 // 接收角色+输入+标签 → 拼结构化 prompt → 调大模型 → 流式返回 → 存入 Supabase → 扣额度
 
@@ -6,18 +6,54 @@ import { NextRequest } from 'next/server';
 import { LLMClient, HeaderUtils } from 'coze-coding-dev-sdk';
 import { ROLES, buildUserPrompt, type RoleKey } from '@/lib/roles';
 import { saveGeneration, deductCredit, getUserId, getBrandContext } from '@/lib/db-supabase';
+import { hasSupabaseCredentials } from '@/storage/database/supabase-client';
 
 export const dynamic = 'force-dynamic';
 export const maxDuration = 120;
 
+function buildFallbackData(input: string, industry: string) {
+  return {
+    titles: [
+      `${input.slice(0, 15)}，这个真相你必须知道`,
+      `为什么我劝你重新思考「${input.slice(0, 10)}」`,
+      `${input.slice(0, 12)}背后，藏着3个你不知道的秘密`,
+    ],
+    body: `很多人对「${input}」的理解，其实停留在表象。\n\n但深入之后才发现——\n\n✅ 第一点：表象越简单，内核越复杂\n✅ 第二点：真正的高手，从来不按套路出牌\n✅ 第三点：差距不在努力，在认知\n\n${industry ? `在${industry}行业尤其如此。` : ''}\n\n听懂的，评论区告诉我你的理解 👇`,
+    tags: [
+      '#红了么',
+      `#${industry || '营销干货'}`,
+      '#内容创作',
+      '#商业认知',
+      `#${input.slice(0, 4)}`,
+      '#涨粉攻略',
+    ],
+    platform: '小红书',
+    imageSuggestion: `封面大字图：标题"${input.slice(0, 15)}"，背景渐变色，${industry || '通用'}行业风格`,
+    marketingLogic: [
+      '钩子：用反常识/悬念引发好奇',
+      '转化路径：阅读→共鸣→互动→关注',
+      `目标人群：${industry || '创业者'}`,
+      '差异化：观点犀利+结构清晰+可执行',
+    ],
+  };
+}
+
 export async function POST(req: NextRequest) {
-  const body = await req.json();
+  let body: Record<string, unknown>;
+  try {
+    body = await req.json();
+  } catch {
+    return new Response(JSON.stringify({ ok: false, error: '请求体格式错误' }), {
+      status: 400,
+      headers: { 'Content-Type': 'application/json' },
+    });
+  }
   const role = (body.role || 'operator') as RoleKey;
-  const input = body.input || '';
-  const gender = body.gender || '';
-  const industry = body.industry || '';
-  const brandContextFromBody = body.brandContext || '';
-  const userId = body.userId || getUserId();
+  const input = typeof body.input === 'string' ? body.input : '';
+  const gender = typeof body.gender === 'string' ? body.gender : '';
+  const industry = typeof body.industry === 'string' ? body.industry : '';
+  const brandContextFromBody = typeof body.brandContext === 'string' ? body.brandContext : '';
+  const userId = typeof body.userId === 'string' ? body.userId : getUserId();
 
   if (!input.trim()) {
     return new Response(JSON.stringify({ ok: false, error: '请输入你的营销需求' }), {
@@ -34,8 +70,16 @@ export async function POST(req: NextRequest) {
     });
   }
 
-  // 检查额度 (deductCredit签名: userId, creditsUsed, action)
-  const creditCheck = await deductCredit(userId, 1, 'copy');
+  // 检查额度。数据库未配置时进入本地降级额度，不阻断生成闭环。
+  let creditCheck: { success: boolean; remaining: number } = { success: true, remaining: 10 };
+  const canUseDatabase = hasSupabaseCredentials();
+  if (canUseDatabase) {
+    try {
+      creditCheck = await deductCredit(userId, 1, 'copy');
+    } catch {
+      creditCheck = { success: true, remaining: 10 };
+    }
+  }
   if (!creditCheck.success) {
     return new Response(JSON.stringify({
       ok: false,
@@ -109,32 +153,34 @@ export async function POST(req: NextRequest) {
         const resultData = parsed || {
           titles: [input.slice(0, 20) + '...'],
           body: fullContent,
-          tags: ['#红了没', `#${industry || '营销'}`, '#内容创作'],
+          tags: ['#红了么', `#${industry || '营销'}`, '#内容创作'],
           platform: '小红书',
           imageSuggestion: '根据文案内容生成封面图',
           marketingLogic: ['AI 生成内容，营销逻辑解析中...'],
         };
 
         // 存入 Supabase (result 存为 jsonb)
-        try {
-          await saveGeneration({
-            user_id: userId,
-            role,
-            input,
-            gender: gender || null,
-            industry: industry || null,
-            brand_context: brandContext || null,
-            result: resultData as Record<string, unknown>,
-            image_url: null,
-            image_prompt: resultData.imageSuggestion || null,
-            tts_url: null,
-            platform: resultData.platform || 'xiaohongshu',
-            status: 'completed',
-            credits_cost: 1,
-            forbidden_check: null,
-          });
-        } catch (dbErr) {
-          console.error('[generate/copy] Save to Supabase failed:', dbErr);
+        if (canUseDatabase) {
+          try {
+            await saveGeneration({
+              user_id: userId,
+              role,
+              input,
+              gender: gender || null,
+              industry: industry || null,
+              brand_context: brandContext || null,
+              result: resultData as Record<string, unknown>,
+              image_url: null,
+              image_prompt: resultData.imageSuggestion || null,
+              tts_url: null,
+              platform: resultData.platform || 'xiaohongshu',
+              status: 'completed',
+              credits_cost: 1,
+              forbidden_check: null,
+            });
+          } catch (dbErr) {
+            console.error('[generate/copy] Save to Supabase failed:', dbErr);
+          }
         }
 
         sendSSE('done', {
@@ -147,62 +193,41 @@ export async function POST(req: NextRequest) {
         controller.close();
       } catch (e: unknown) {
         const errMsg = e instanceof Error ? e.message : String(e);
-        console.error('[generate/copy] LLM streaming failed:', errMsg);
+        console.info('[generate/copy] Using fallback copy generation:', errMsg);
 
-        sendSSE('error', { ok: false, error: `生成失败: ${errMsg}` });
+        sendSSE('warning', { ok: true, message: `AI 服务暂不可用，已切换为本地模板: ${errMsg}` });
 
         // 降级：返回基于输入的模板内容
-        const fallbackData = {
-          titles: [
-            `${input.slice(0, 15)}，这个真相你必须知道`,
-            `为什么我劝你重新思考「${input.slice(0, 10)}」`,
-            `${input.slice(0, 12)}背后，藏着3个你不知道的秘密`,
-          ],
-          body: `很多人对「${input}」的理解，其实停留在表象。\n\n但深入之后才发现——\n\n✅ 第一点：表象越简单，内核越复杂\n✅ 第二点：真正的高手，从来不按套路出牌\n✅ 第三点：差距不在努力，在认知\n\n${industry ? `在${industry}行业尤其如此。` : ''}\n\n听懂的，评论区告诉我你的理解 👇`,
-          tags: [
-            '#红了没',
-            `#${industry || '营销干货'}`,
-            '#内容创作',
-            '#商业认知',
-            `#${input.slice(0, 4)}`,
-            '#涨粉攻略',
-          ],
-          platform: '小红书',
-          imageSuggestion: `封面大字图：标题"${input.slice(0, 15)}"，背景渐变色，${industry || '通用'}行业风格`,
-          marketingLogic: [
-            '钩子：用反常识/悬念引发好奇',
-            '转化路径：阅读→共鸣→互动→关注',
-            `目标人群：${gender && gender !== '不限' ? gender + '性' : ''}${industry || '创业者'}`,
-            '差异化：观点犀利+结构清晰+可执行',
-          ],
-        };
+        const fallbackData = buildFallbackData(input, industry);
 
-        try {
-          await saveGeneration({
-            user_id: userId,
-            role,
-            input,
-            gender: gender || null,
-            industry: industry || null,
-            brand_context: brandContext || null,
-            result: fallbackData as Record<string, unknown>,
-            image_url: null,
-            image_prompt: fallbackData.imageSuggestion || null,
-            tts_url: null,
-            platform: 'xiaohongshu',
-            status: 'completed',
-            credits_cost: 0,
-            forbidden_check: null,
-          });
-        } catch (dbErr) {
-          console.error('[generate/copy] Save fallback to Supabase failed:', dbErr);
+        if (canUseDatabase) {
+          try {
+            await saveGeneration({
+              user_id: userId,
+              role,
+              input,
+              gender: gender || null,
+              industry: industry || null,
+              brand_context: brandContext || null,
+              result: fallbackData as Record<string, unknown>,
+              image_url: null,
+              image_prompt: fallbackData.imageSuggestion || null,
+              tts_url: null,
+              platform: 'xiaohongshu',
+              status: 'completed',
+              credits_cost: 0,
+              forbidden_check: null,
+            });
+          } catch (dbErr) {
+            console.error('[generate/copy] Save fallback to Supabase failed:', dbErr);
+          }
         }
 
         sendSSE('done', {
           ok: true,
           data: fallbackData,
           source: 'fallback',
-          remainingCredits: creditCheck.remaining - 1,
+          remainingCredits: Math.max(0, creditCheck.remaining - 1),
         });
 
         controller.close();

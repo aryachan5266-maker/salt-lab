@@ -202,14 +202,16 @@ function BackgroundSparklines() {
 }
 
 /* ─── 迷你行情指标 (热点灵感下方) ─── */
-function MiniTicker({ label, value, change }: { label: string; value: string; change: number }) {
+function MiniTicker({ label, value, change }: { label: string; value: string; change?: number }) {
   return (
     <div className="flex items-center gap-1">
       <span className="text-[8px] font-mono" style={{ color: '#5A6273' }}>{label}</span>
       <span className="text-[9px] font-mono font-medium" style={{ color: '#E8EBF0' }}>{value}</span>
-      <span className="text-[8px] font-mono" style={{ color: change > 0 ? '#FF3B5C' : '#15E0A0' }}>
-        {change > 0 ? '+' : ''}{change}%
-      </span>
+      {typeof change === 'number' && (
+        <span className="text-[8px] font-mono" style={{ color: change > 0 ? '#FF3B5C' : '#15E0A0' }}>
+          {change > 0 ? '+' : ''}{change}%
+        </span>
+      )}
     </div>
   );
 }
@@ -220,6 +222,9 @@ export default function HomePage() {
   const [input, setInput] = useState('');
   const [gender, setGender] = useState<string>('不限');
   const [industries, setIndustries] = useState<string[]>([]);
+  const [customIndustry, setCustomIndustry] = useState('');
+  const [showCustomIndustry, setShowCustomIndustry] = useState(false);
+  const [inputHint, setInputHint] = useState('');
   const [generating, setGenerating] = useState(false);
   const [credits, setCredits] = useState<number | null>(null);
 
@@ -235,6 +240,19 @@ export default function HomePage() {
     setIndustries(prev =>
       prev.includes(ind) ? prev.filter(i => i !== ind) : [...prev, ind]
     );
+  }, []);
+
+  const addCustomIndustry = useCallback(() => {
+    const value = customIndustry.trim();
+    if (!value) return;
+    setIndustries(prev => prev.includes(value) ? prev : [...prev, value]);
+    setCustomIndustry('');
+    setShowCustomIndustry(false);
+    setInputHint('');
+  }, [customIndustry]);
+
+  const handleVoiceInput = useCallback(() => {
+    setInputHint('当前浏览器未开放语音输入，请先用文字输入');
   }, []);
 
   const handleGenerate = useCallback(() => {
@@ -311,7 +329,7 @@ export default function HomePage() {
                 return (
                   <button key={r.key}
                     onClick={() => setRole(r.key)}
-                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-sm text-[11px] font-medium transition-all ${active ? 'glow-red' : ''}`}
+                    className={`flex min-h-9 items-center gap-1.5 px-3 py-1.5 rounded-sm text-[11px] font-medium transition-all ${active ? 'glow-red' : ''}`}
                     style={active ? {
                       background: `${r.color}12`,
                       border: `1px solid ${r.color}55`,
@@ -344,15 +362,29 @@ export default function HomePage() {
                 placeholder="我是做XX的，想发给XX人群，关于XX..."
                 className="flex-1 bg-transparent border-none px-3 py-2 text-sm text-on-surface placeholder:text-on-surface-weakest focus:outline-none"
               />
-              <button className="p-2 rounded-sm transition-colors" style={{ color: '#21E6C1' }} title="语音输入">
+              <button
+                onClick={handleVoiceInput}
+                aria-label="语音输入"
+                className="flex h-9 w-9 items-center justify-center rounded-sm transition-colors"
+                style={{ color: '#21E6C1' }}
+                title="语音输入"
+              >
                 <Mic className="w-4 h-4" />
               </button>
               {input && (
-                <button className="p-1.5 rounded-sm text-on-surface-weakest hover:text-on-surface" onClick={() => setInput('')}>
+                <button
+                  aria-label="清空输入"
+                  title="清空输入"
+                  className="flex h-9 w-9 items-center justify-center rounded-sm text-on-surface-weakest hover:text-on-surface"
+                  onClick={() => setInput('')}
+                >
                   <X className="w-3.5 h-3.5" />
                 </button>
               )}
             </div>
+            {inputHint && (
+              <p className="mt-1 text-[10px] text-on-surface-weakest">{inputHint}</p>
+            )}
           </section>
 
           {/* STEP 3：快速标签 — 内联式 */}
@@ -380,10 +412,34 @@ export default function HomePage() {
                   {ind}
                 </button>
               ))}
-              <button className="hud-tag text-[10px] px-2 py-0.5 flex items-center gap-0.5">
+              {industries.filter(ind => !INDUSTRIES.includes(ind as typeof INDUSTRIES[number])).map(ind => (
+                <button key={ind}
+                  onClick={() => toggleIndustry(ind)}
+                  className="hud-tag hud-tag-active text-[10px] px-2 py-0.5">
+                  {ind}
+                </button>
+              ))}
+              <button
+                onClick={() => setShowCustomIndustry((value) => !value)}
+                className="hud-tag text-[10px] px-2 py-0.5 flex items-center gap-0.5"
+              >
                 <Plus className="w-2.5 h-2.5" /> 自定义
               </button>
             </div>
+            {showCustomIndustry && (
+              <div className="mt-2 flex gap-2">
+                <input
+                  value={customIndustry}
+                  onChange={(e) => setCustomIndustry(e.target.value)}
+                  onKeyDown={(e) => e.key === 'Enter' && addCustomIndustry()}
+                  placeholder="输入行业标签"
+                  className="min-w-0 flex-1 rounded-sm border border-[rgba(140,150,165,0.18)] bg-transparent px-3 py-1.5 text-xs text-on-surface placeholder:text-on-surface-weakest focus:outline-none"
+                />
+                <button onClick={addCustomIndustry} className="hud-btn-primary rounded-sm px-3 py-1.5 text-xs">
+                  添加
+                </button>
+              </div>
+            )}
           </section>
 
           {/* 一键生成按钮 */}
@@ -405,9 +461,9 @@ export default function HomePage() {
             </div>
             <div className="grid grid-cols-3 gap-1.5">
               {[
-                { icon: Eye, text: '新手博主涨粉', sub: '0→1K' },
-                { icon: Target, text: '同城到店引流', sub: 'ROI 3.2x' },
-                { icon: TrendingUp, text: '爆款选题钩子', sub: '播放 10W+' },
+                { icon: Eye, text: '新手博主涨粉', sub: '待测' },
+                { icon: Target, text: '同城到店引流', sub: '待接入' },
+                { icon: TrendingUp, text: '爆款选题钩子', sub: 'AI推断' },
               ].map((item, i) => {
                 const Icon = item.icon;
                 return (
@@ -427,13 +483,13 @@ export default function HomePage() {
             {/* 行情指标 — 紧凑行，灵感卡片下方 */}
             <div className="flex items-center justify-between mt-2 px-1 py-1.5 rounded-sm"
               style={{ background: 'rgba(140,150,165,0.03)', border: '1px solid rgba(140,150,165,0.06)' }}>
-              <MiniTicker label="曝光" value="12.8K" change={8.3} />
+              <MiniTicker label="曝光" value="待接入" />
               <span className="text-[6px]" style={{ color: '#2A2E36' }}>│</span>
-              <MiniTicker label="互动" value="6.2%" change={2.1} />
+              <MiniTicker label="互动" value="待接入" />
               <span className="text-[6px]" style={{ color: '#2A2E36' }}>│</span>
-              <MiniTicker label="成本" value="¥3.2" change={-12.5} />
+              <MiniTicker label="成本" value="待接入" />
               <span className="text-[6px]" style={{ color: '#2A2E36' }}>│</span>
-              <MiniTicker label="转化" value="4.7%" change={1.5} />
+              <MiniTicker label="转化" value="待接入" />
             </div>
           </section>
         </div>

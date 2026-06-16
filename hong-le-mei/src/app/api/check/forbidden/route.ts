@@ -1,4 +1,4 @@
-// 红了没 · 违禁词检测 API（付费钩子版）
+// 红了么 · 违禁词检测 API（付费钩子版）
 // POST /api/check/forbidden { text, userId, generationId? }
 // - 检测小红书/抖音违禁词
 // - 记录到 Supabase forbidden_checks 表
@@ -8,6 +8,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getLLMClient, DEFAULT_LLM_MODEL } from '@/lib/sdk';
 import { getSupabaseServerClient, saveForbiddenCheck, getUserCredits, getUserId } from '@/lib/db-supabase';
+import { hasSupabaseCredentials } from '@/storage/database/supabase-client';
+import { readJsonObject } from '@/lib/request-json';
 
 export const dynamic = 'force-dynamic';
 
@@ -16,6 +18,9 @@ const PRO_DAILY_LIMIT = 999;
 
 async function getRemainingChecks(userId: string = getUserId()): Promise<{ remaining: number; total: number; isPro: boolean }> {
   try {
+    if (!hasSupabaseCredentials()) {
+      return { remaining: FREE_DAILY_LIMIT, total: FREE_DAILY_LIMIT, isPro: false };
+    }
     const supabase = getSupabaseServerClient();
     const today = new Date().toISOString().slice(0, 10);
 
@@ -46,7 +51,13 @@ async function getRemainingChecks(userId: string = getUserId()): Promise<{ remai
 }
 
 export async function POST(req: NextRequest) {
-  const { text, userId: rawUserId, generationId } = await req.json();
+  const body = await readJsonObject(req);
+  if (!body) {
+    return NextResponse.json({ ok: false, error: '请求体格式错误' }, { status: 400 });
+  }
+  const text = typeof body.text === 'string' ? body.text : '';
+  const rawUserId = typeof body.userId === 'string' ? body.userId : '';
+  const generationId = typeof body.generationId === 'string' ? body.generationId : null;
   const userId = rawUserId && rawUserId !== 'anonymous' ? rawUserId : getUserId();
   if (!text) {
     return NextResponse.json({ ok: false, error: 'text 必填' }, { status: 400 });
@@ -112,7 +123,7 @@ ${text}
       source = 'llm';
     }
   } catch (e) {
-    console.error('[forbidden] LLM 检测失败，降级启发式:', e);
+    console.info('[forbidden] Using heuristic scan:', e);
   }
 
   // 降级：启发式扫描
@@ -138,17 +149,19 @@ ${text}
   }
 
   // 3. 记录到 Supabase (使用正确的列名)
-  try {
-    await saveForbiddenCheck({
-      user_id: userId,
-      generation_id: generationId || null,
-      content: text.slice(0, 2000),
-      hits,
-      hit_count: hits.length,
-      is_premium: quota.isPro,
-    });
-  } catch (e) {
-    console.error('[forbidden] 记录写入失败:', e);
+  if (hasSupabaseCredentials()) {
+    try {
+      await saveForbiddenCheck({
+        user_id: userId,
+        generation_id: generationId || null,
+        content: text.slice(0, 2000),
+        hits,
+        hit_count: hits.length,
+        is_premium: quota.isPro,
+      });
+    } catch (e) {
+      console.error('[forbidden] 记录写入失败:', e);
+    }
   }
 
   // 4. 返回结果 + 额度信息
@@ -156,6 +169,7 @@ ${text}
 
   return NextResponse.json({
     ok: true,
+    hits,
     data: { hits },
     source,
     quota: newQuota,

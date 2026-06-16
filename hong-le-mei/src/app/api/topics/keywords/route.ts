@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getSearchClient, getLLMClient, DEFAULT_LLM_MODEL } from '@/lib/sdk';
 import { Topic } from '@/lib/db';
+import { asRecord, firstArrayField, textFromResult } from '@/lib/sdk-result';
 
 export const dynamic = 'force-dynamic';
 
@@ -31,34 +32,41 @@ export async function GET(req: NextRequest) {
       8,
       true
     );
-    const summaries = (res as any).summaries || (res as any).results || [];
+    const summaries = firstArrayField(res, ['summaries', 'results']);
     if (Array.isArray(summaries) && summaries.length > 0) {
       try {
         const llm = getLLMClient();
         const prompt = `你是小红书行业关键词雷达。基于 web 搜索摘要，提炼 ${limit} 个适合"女性商业认知博主"的行业关键词选题。
-JSON 数组格式：[{"title": "...", "angle": "...", "heat": 0-100, "tags": ["..."]}]，只输出 JSON。\n\n摘要：\n${summaries.slice(0, 6).map((r: any, i: number) => `${i + 1}. ${r.title || r.snippet || ''}`).join('\n')}`;
+JSON 数组格式：[{"title": "...", "angle": "...", "heat": 0-100, "tags": ["..."]}]，只输出 JSON。\n\n摘要：\n${summaries.slice(0, 6).map((summary, i: number) => {
+  const item = asRecord(summary);
+  return `${i + 1}. ${typeof item.title === 'string' ? item.title : typeof item.snippet === 'string' ? item.snippet : ''}`;
+}).join('\n')}`;
 
         const llmRes = await llm.invoke(
           [{ role: 'user', content: prompt }],
           { model: DEFAULT_LLM_MODEL, temperature: 0.6 }
         );
-        const content = (llmRes as any).content || (llmRes as any).text || '';
+        const content = textFromResult(llmRes);
         const match = content.match(/\[[\s\S]*?\]/);
         if (match) {
           const parsed = JSON.parse(match[0]);
           if (Array.isArray(parsed) && parsed.length > 0) {
-            const data: Topic[] = parsed.slice(0, limit).map((t: any, i: number) => ({
+            const data: Topic[] = parsed.slice(0, limit).map((rawTopic: unknown, i: number) => {
+              const topic = asRecord(rawTopic);
+              const heat = Number(topic.heat);
+              return {
               id: `kw_ai_${i + 1}_${Date.now()}`,
-              title: t.title || `关键词 ${i + 1}`,
-              angle: t.angle || '行业洞察',
+              title: typeof topic.title === 'string' ? topic.title : `关键词 ${i + 1}`,
+              angle: typeof topic.angle === 'string' ? topic.angle : '行业洞察',
               category: '行业关键词' as const,
-              heat: Math.min(100, Math.max(60, t.heat || 75)),
+              heat: Math.min(100, Math.max(60, Number.isFinite(heat) ? heat : 75)),
               source: 'web-search',
               matchedAccounts: Math.floor(Math.random() * 8) + 2,
-              tags: Array.isArray(t.tags) ? t.tags : [],
+              tags: Array.isArray(topic.tags) ? topic.tags.filter((tag): tag is string => typeof tag === 'string') : [],
               status: 'new' as const,
               createdAt: Date.now(),
-            }));
+            };
+            });
             cache = { data, at: Date.now() };
             return NextResponse.json({ ok: true, data, source: 'web-search+llm' });
           }

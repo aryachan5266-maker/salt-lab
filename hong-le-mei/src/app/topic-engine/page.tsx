@@ -1,8 +1,9 @@
 'use client';
 
 import { useState } from 'react';
-import { TrendingUp, TrendingDown, Search, RefreshCw, Calendar, ArrowRight } from 'lucide-react';
+import { TrendingUp, TrendingDown, RefreshCw, ArrowRight } from 'lucide-react';
 import { NACLHeader } from '@/components/nacl-header';
+import { useToast } from '@/components/store';
 
 const MOCK_HOT_TOPICS = [
   { title: '冬季护肤三件套', industry: '美妆', heat: 98200, change: 12.5, trend: 'up' as const },
@@ -20,13 +21,34 @@ const MOCK_AI_SUGGESTIONS = [
 
 export default function TopicEnginePage() {
   const [filter, setFilter] = useState('全部');
+  const [refreshing, setRefreshing] = useState(false);
+  const [lastUpdated, setLastUpdated] = useState('刚刚');
+  const toast = useToast();
+
+  const visibleTopics = filter === '全部'
+    ? MOCK_HOT_TOPICS
+    : MOCK_HOT_TOPICS.filter((topic) => topic.industry === filter);
+
+  const handleRefresh = () => {
+    setRefreshing(true);
+    setTimeout(() => {
+      setLastUpdated(new Date().toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' }));
+      setRefreshing(false);
+      toast.show('热点数据已刷新（演示数据）', 'success');
+    }, 500);
+  };
 
   return (
     <div className="min-h-screen bg-background hud-grid-bg flex flex-col">
       <NACLHeader title="选题引擎" subtitle="热点·AI推荐·排期"
         rightSlot={
-          <button className="hud-btn-ghost px-3 py-1.5 text-xs font-mono rounded-sm flex items-center gap-1.5">
-            <RefreshCw className="w-3 h-3" /> 刷新数据
+          <button
+            onClick={handleRefresh}
+            disabled={refreshing}
+            className="hud-btn-ghost px-3 py-1.5 text-xs font-mono rounded-sm flex items-center gap-1.5 disabled:opacity-60"
+          >
+            <RefreshCw className={`w-3 h-3 ${refreshing ? 'animate-spin' : ''}`} />
+            {refreshing ? '刷新中' : '刷新数据'}
           </button>
         }
       />
@@ -34,7 +56,10 @@ export default function TopicEnginePage() {
       <main className="flex-1 px-5 py-4 max-w-5xl mx-auto w-full space-y-6">
         {/* 热点追踪 */}
         <section>
-          <div className="text-[10px] font-mono tracking-widest mb-3" style={{ color: '#FF3B5C' }}>HOT TOPICS</div>
+          <div className="mb-3 flex items-center justify-between gap-3">
+            <div className="text-[10px] font-mono tracking-widest" style={{ color: '#FF3B5C' }}>HOT TOPICS</div>
+            <div className="text-[10px] font-mono text-on-surface-weakest">UPDATED {lastUpdated}</div>
+          </div>
           <div className="flex gap-1.5 mb-3 flex-wrap">
             {['全部', '美妆', '餐饮', '教育', '文旅', '健身'].map(f => (
               <button key={f} onClick={() => setFilter(f)}
@@ -44,7 +69,7 @@ export default function TopicEnginePage() {
             ))}
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-            {MOCK_HOT_TOPICS.map((topic, i) => (
+            {visibleTopics.map((topic, i) => (
               <div key={i} className="metal-panel hud-clip-tr rounded-sm p-3 flex items-center justify-between">
                 <div className="flex-1">
                   <div className="text-xs text-on-surface font-medium">{topic.title}</div>
@@ -64,6 +89,11 @@ export default function TopicEnginePage() {
                 </div>
               </div>
             ))}
+            {visibleTopics.length === 0 && (
+              <div className="metal-panel rounded-sm p-4 text-xs text-on-surface-variant">
+                当前分类暂无热点，切回「全部」查看可用选题。
+              </div>
+            )}
           </div>
         </section>
 

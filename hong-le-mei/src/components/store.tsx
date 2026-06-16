@@ -15,24 +15,29 @@ const STORAGE_KEYS = {
   settings: 'xhs_settings_v1',
 };
 
+type StoredTopic = { id: string } & Record<string, unknown>;
+type StoredItem = Record<string, unknown>;
+type StoredActivity = { id: string; type: string; text: string; at: number };
+type Settings = Record<string, unknown>;
+
 type Store = {
-  topicPool: any[]; // topic objects {id, title, ...}
-  pipeline: any[];
-  calendar: any[];
-  benchmarks: any[];
-  knowledge: any[];
-  activities: any[];
+  topicPool: StoredTopic[];
+  pipeline: StoredItem[];
+  calendar: StoredItem[];
+  benchmarks: StoredItem[];
+  knowledge: StoredItem[];
+  activities: StoredActivity[];
   analyticsAdopted: string[];
   adoptedSuggestions: string[];
-  settings: Record<string, any>;
+  settings: Settings;
   // 操作
-  addToPool: (topic: any) => void;
+  addToPool: (topic: StoredTopic) => void;
   hasTopic: (id: string) => boolean;
-  pushPipeline: (item: any) => void;
-  pushCalendar: (item: any) => void;
+  pushPipeline: (item: StoredItem) => void;
+  pushCalendar: (item: StoredItem) => void;
   addActivity: (type: string, text: string) => void;
   adoptSuggestion: (id: string) => void;
-  saveSettings: (patch: Record<string, any>) => void;
+  saveSettings: (patch: Settings) => void;
   toast: {
     success: (msg: string) => void;
     error: (msg: string) => void;
@@ -53,7 +58,7 @@ function readArr<T>(key: string, fallback: T[]): T[] {
   }
 }
 
-function writeArr(key: string, value: any) {
+function writeArr(key: string, value: unknown) {
   if (typeof window === 'undefined') return;
   try {
     localStorage.setItem(key, JSON.stringify(value));
@@ -73,7 +78,7 @@ function readObj<T>(key: string, fallback: T): T {
   }
 }
 
-function writeObj(key: string, value: any) {
+function writeObj(key: string, value: unknown) {
   if (typeof window === 'undefined') return;
   try {
     localStorage.setItem(key, JSON.stringify(value));
@@ -85,38 +90,38 @@ function writeObj(key: string, value: any) {
 
 export function StoreProvider({ children }: { children: React.ReactNode }) {
   const [hydrated, setHydrated] = useState(false);
-  const [topicPool, setTopicPool] = useState<any[]>([]);
-  const [pipeline, setPipeline] = useState<any[]>([]);
-  const [calendar, setCalendar] = useState<any[]>([]);
-  const [benchmarks, setBenchmarks] = useState<any[]>([]);
-  const [knowledge, setKnowledge] = useState<any[]>([]);
-  const [activities, setActivities] = useState<any[]>([]);
+  const [topicPool, setTopicPool] = useState<StoredTopic[]>([]);
+  const [pipeline, setPipeline] = useState<StoredItem[]>([]);
+  const [calendar, setCalendar] = useState<StoredItem[]>([]);
+  const [benchmarks, setBenchmarks] = useState<StoredItem[]>([]);
+  const [knowledge, setKnowledge] = useState<StoredItem[]>([]);
+  const [activities, setActivities] = useState<StoredActivity[]>([]);
   const [analyticsAdopted, setAnalyticsAdopted] = useState<string[]>([]);
-  const [settings, setSettings] = useState<Record<string, any>>({});
+  const [settings, setSettings] = useState<Settings>({});
   const [toastBump, setToastBump] = useState(0);
 
   useEffect(() => {
-    setTopicPool(readArr(STORAGE_KEYS.topicPool, []));
-    setPipeline(readArr(STORAGE_KEYS.pipeline, []));
-    setCalendar(readArr(STORAGE_KEYS.calendar, []));
-    setBenchmarks(readArr(STORAGE_KEYS.benchmarks, []));
-    setKnowledge(readArr(STORAGE_KEYS.knowledge, []));
-    setActivities(readArr(STORAGE_KEYS.activities, []));
+    setTopicPool(readArr<StoredTopic>(STORAGE_KEYS.topicPool, []));
+    setPipeline(readArr<StoredItem>(STORAGE_KEYS.pipeline, []));
+    setCalendar(readArr<StoredItem>(STORAGE_KEYS.calendar, []));
+    setBenchmarks(readArr<StoredItem>(STORAGE_KEYS.benchmarks, []));
+    setKnowledge(readArr<StoredItem>(STORAGE_KEYS.knowledge, []));
+    setActivities(readArr<StoredActivity>(STORAGE_KEYS.activities, []));
     setAnalyticsAdopted(readArr(STORAGE_KEYS.analyticsAdopted, []));
-    setSettings(readObj(STORAGE_KEYS.settings, {}));
+    setSettings(readObj<Settings>(STORAGE_KEYS.settings, {}));
     setHydrated(true);
 
     // 跨标签页同步
     const onStorage = (e: StorageEvent) => {
       if (!e.key) return;
-      if (e.key === STORAGE_KEYS.topicPool) setTopicPool(readArr(STORAGE_KEYS.topicPool, []));
-      if (e.key === STORAGE_KEYS.pipeline) setPipeline(readArr(STORAGE_KEYS.pipeline, []));
-      if (e.key === STORAGE_KEYS.calendar) setCalendar(readArr(STORAGE_KEYS.calendar, []));
-      if (e.key === STORAGE_KEYS.benchmarks) setBenchmarks(readArr(STORAGE_KEYS.benchmarks, []));
-      if (e.key === STORAGE_KEYS.activities) setActivities(readArr(STORAGE_KEYS.activities, []));
+      if (e.key === STORAGE_KEYS.topicPool) setTopicPool(readArr<StoredTopic>(STORAGE_KEYS.topicPool, []));
+      if (e.key === STORAGE_KEYS.pipeline) setPipeline(readArr<StoredItem>(STORAGE_KEYS.pipeline, []));
+      if (e.key === STORAGE_KEYS.calendar) setCalendar(readArr<StoredItem>(STORAGE_KEYS.calendar, []));
+      if (e.key === STORAGE_KEYS.benchmarks) setBenchmarks(readArr<StoredItem>(STORAGE_KEYS.benchmarks, []));
+      if (e.key === STORAGE_KEYS.activities) setActivities(readArr<StoredActivity>(STORAGE_KEYS.activities, []));
       if (e.key === STORAGE_KEYS.analyticsAdopted)
         setAnalyticsAdopted(readArr(STORAGE_KEYS.analyticsAdopted, []));
-      if (e.key === STORAGE_KEYS.settings) setSettings(readObj(STORAGE_KEYS.settings, {}));
+      if (e.key === STORAGE_KEYS.settings) setSettings(readObj<Settings>(STORAGE_KEYS.settings, {}));
     };
     window.addEventListener('storage', onStorage);
     return () => window.removeEventListener('storage', onStorage);
@@ -132,7 +137,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     analyticsAdopted,
     adoptedSuggestions: analyticsAdopted,
     settings,
-    addToPool: (topic: any) => {
+    addToPool: (topic: StoredTopic) => {
       setTopicPool((prev) => {
         if (prev.find((t) => t.id === topic.id)) return prev;
         const next = [{ addedAt: Date.now(), ...topic }, ...prev];
@@ -141,14 +146,14 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
       });
     },
     hasTopic: (id: string) => topicPool.some((t) => t.id === id),
-    pushPipeline: (item: any) => {
+    pushPipeline: (item: StoredItem) => {
       setPipeline((prev) => {
         const next = [{ id: `pl_${Date.now()}`, createdAt: Date.now(), ...item }, ...prev];
         writeArr(STORAGE_KEYS.pipeline, next);
         return next;
       });
     },
-    pushCalendar: (item: any) => {
+    pushCalendar: (item: StoredItem) => {
       setCalendar((prev) => {
         const next = [item, ...prev];
         writeArr(STORAGE_KEYS.calendar, next);
@@ -170,7 +175,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
         return next;
       });
     },
-    saveSettings: (patch: Record<string, any>) => {
+    saveSettings: (patch: Settings) => {
       setSettings((prev) => {
         const next = { ...prev, ...patch };
         writeObj(STORAGE_KEYS.settings, next);

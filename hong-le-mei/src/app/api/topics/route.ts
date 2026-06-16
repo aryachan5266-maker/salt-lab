@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db, Topic } from '@/lib/db';
+import { readJsonObject } from '@/lib/request-json';
 
 export const dynamic = 'force-dynamic';
 
@@ -26,20 +27,26 @@ export async function GET(req: NextRequest) {
 
 // POST /api/topics - 加入选题库
 export async function POST(req: NextRequest) {
-  const body = await req.json();
-  const id = body.id || `t_${Date.now()}`;
+  const body = await readJsonObject(req);
+  if (!body) {
+    return NextResponse.json({ ok: false, error: '请求体格式错误' }, { status: 400 });
+  }
+  const id = typeof body.id === 'string' ? body.id : `t_${Date.now()}`;
+  const category = body.category === '小红书热门' || body.category === '行业关键词' || body.category === '长尾潜力' || body.category === 'AI评分'
+    ? body.category
+    : 'AI评分';
   const topic: Topic = {
     id,
-    title: body.title || '未命名选题',
-    angle: body.angle || '默认',
-    category: body.category || 'AI评分',
-    heat: body.heat || 75,
-    source: body.source || '手动',
-    matchedAccounts: body.matchedAccounts || 0,
-    tags: body.tags || [],
+    title: typeof body.title === 'string' ? body.title : '未命名选题',
+    angle: typeof body.angle === 'string' ? body.angle : '默认',
+    category,
+    heat: typeof body.heat === 'number' ? body.heat : 75,
+    source: typeof body.source === 'string' ? body.source : '手动',
+    matchedAccounts: typeof body.matchedAccounts === 'number' ? body.matchedAccounts : 0,
+    tags: Array.isArray(body.tags) ? body.tags.filter((tag): tag is string => typeof tag === 'string') : [],
     status: 'pool',
     createdAt: Date.now(),
-    scores: body.scores,
+    scores: body.scores as Topic['scores'],
   };
   db.topics.set(id, topic);
   db.pushActivity('topic', `加入选题库：${topic.title.slice(0, 20)}`);

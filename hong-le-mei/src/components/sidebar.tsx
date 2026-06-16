@@ -70,7 +70,7 @@ export function Sidebar() {
             <span className="absolute -right-0.5 -top-0.5 h-2 w-2 animate-pulse rounded-full bg-emerald-400 ring-2 ring-zinc-950" />
           </div>
           <div className="flex flex-col leading-tight">
-            <span className="text-sm font-semibold tracking-wide">咸聊 AI</span>
+            <span className="text-sm font-semibold tracking-wide">红了么</span>
             <span className="text-[10px] text-zinc-500">内容中台 · 小红书版</span>
           </div>
         </div>
@@ -148,7 +148,7 @@ export function Sidebar() {
                 小咸
               </div>
               <div className="flex-1">
-                <div className="text-sm font-medium">咸聊 AI 助手</div>
+                <div className="text-sm font-medium">红了么 助手</div>
                 <div className="text-[10px] text-zinc-400">基于豆包大模型 · 实时分析</div>
               </div>
               <button

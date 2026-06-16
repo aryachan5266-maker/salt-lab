@@ -119,6 +119,8 @@ export interface CalendarItem {
 }
 
 export interface AnalyticsItem {
+  isPlaceholder?: boolean;
+  dataDisciplineNote?: string;
   totalReach: number;
   totalEngagement: number;
   hitRate: number; // 爆款率

@@ -1,10 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getLLMClient, DEFAULT_LLM_MODEL } from '@/lib/sdk';
+import { textFromResult } from '@/lib/sdk-result';
+import { readJsonObject } from '@/lib/request-json';
 
 export const dynamic = 'force-dynamic';
 
 export async function POST(req: NextRequest) {
-  const { topic, angle } = await req.json();
+  const body = await readJsonObject(req);
+  if (!body) {
+    return NextResponse.json({ ok: false, error: '请求体格式错误' }, { status: 400 });
+  }
+  const topic = typeof body.topic === 'string' ? body.topic : '';
+  const angle = typeof body.angle === 'string' ? body.angle : '';
   if (!topic) {
     return NextResponse.json({ ok: false, error: 'topic 必填' }, { status: 400 });
   }
@@ -34,7 +41,7 @@ export async function POST(req: NextRequest) {
       { model: DEFAULT_LLM_MODEL, temperature: 0.3 }
     );
 
-    const content = (res as any).content || (res as any).text || '';
+    const content = textFromResult(res);
     const match = content.match(/\{[\s\S]*?\}/);
     if (match) {
       const parsed = JSON.parse(match[0]);
