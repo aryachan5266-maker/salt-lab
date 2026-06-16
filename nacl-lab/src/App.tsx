@@ -208,18 +208,18 @@ const projects: Project[] = [
     evidence: [],
     demo: {
       mode: "external",
-      url: "https://0ed6e1df-d2d6-4baa-a7e3-f4bf3643df5c.dev.coze.site",
+      url: "https://tvw4jbjd95.coze.site",
       cta: "全屏实测",
     },
     role: "把小红书跑通的内容工厂模式迁移到短视频平台",
     what: "抖音 / 短视频内容营销智能体，复用选题—产出—发布—复盘的内容闭环，生成可复制的爆款执行方案。",
     value: "把已跑通的内容流水线模式，复制到第二个流量平台。",
-    proof: "Coze 项目已存在；当前没有生产部署记录，生产环境变量为空。页面暂保留开发预览入口，不声明为正式线上版或真实 AI 结果。",
-    status: "开发预览 · 待正式部署",
+    proof: "线上稳定 Demo 已接入，可直接点开实测；是否为真实 AI 结果以生产环境变量和接口配置为准，不编造。",
+    status: "稳定 Demo 已接入",
     links: [
       {
-        label: "开发预览",
-        href: "https://0ed6e1df-d2d6-4baa-a7e3-f4bf3643df5c.dev.coze.site",
+        label: "全屏实测",
+        href: "https://tvw4jbjd95.coze.site",
       },
     ],
   },

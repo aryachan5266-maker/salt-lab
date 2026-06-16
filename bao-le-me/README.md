@@ -1,6 +1,20 @@
-# projects
+# 爆了么 · BAO LE ME
+
+> 抖音短视频产品线，属于「盐究所 NACL-LAB」体系
 
 这是一个基于 [Next.js 16](https://nextjs.org) + [shadcn/ui](https://ui.shadcn.com) 的全栈应用项目，由扣子编程 CLI 创建。
+
+## 品牌归属
+
+**盐究所 NACL-LAB** 是顶级大中台入口，包含所有产品线：
+
+- **红了么** — 小红书 AI 营销内容生成
+- **爆了么**（本项目）— 抖音爆款内容雷达 + 复刻 SOP
+- **盐究室 / 盐究院** — 其他子品牌
+
+## 当前稳定入口
+
+https://tvw4jbjd95.coze.site
 
 ## 快速开始
 

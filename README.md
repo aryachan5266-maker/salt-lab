@@ -8,8 +8,8 @@
 
 ```
 盐究所 NACL-LAB（顶级大中台入口）
-├── 红了么 · HONG LE ME — 小红书 AI 营销内容生成
-├── 爆了未 · BAO LE WEI — 抖音爆款内容雷达 + 复刻SOP
+├── 红了么 · HONG LE MEI — 小红书 AI 营销内容生成
+├── 爆了么 · BAO LE ME — 抖音爆款内容雷达 + 复刻 SOP
 ├── 往期案例 — 历史项目与作品集
 └── 盐究室 / 盐究院 — 其他子品牌
 ```
@@ -19,11 +19,21 @@
 ```
 salt-lab/
 ├── hong-le-mei/       # 红了么 — 小红书 AI 营销工具（Next.js 16）
-├── bao-le-me/         # 爆了未 — 抖音爆款内容雷达（Next.js 16）
+├── bao-le-me/         # 爆了么 — 抖音爆款内容雷达（Next.js 16）
 ├── nacl-lab/          # 盐究所中台门户（Vite + React 19）
-├── BAOLEME_AGENTS.md  # 爆了未项目规范
+├── BAOLEME_AGENTS.md  # 爆了么项目规范
 └── README.md          # 本文件
 ```
+
+## 当前稳定入口
+
+| 产品 | 稳定 URL | 说明 |
+|------|----------|------|
+| 红了么 | https://y5q2f6hcdv.coze.site | Coze 线上演示入口 |
+| 爆了么 | https://tvw4jbjd95.coze.site | Coze 线上演示入口 |
+| 盐究所 NACL-LAB | nacl-lab/ | 大中台电子简历源码 |
+
+说明：线上演示可直接打开；是否为真实 AI 结果以各项目生产环境变量和接口配置为准，不编造。
 
 ## 品牌设计规范
 
