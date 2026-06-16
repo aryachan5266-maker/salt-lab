@@ -27,13 +27,15 @@ salt-lab/
 
 ## 当前稳定入口
 
-| 产品 | 稳定 URL | 说明 |
-|------|----------|------|
-| 红了么 | https://y5q2f6hcdv.coze.site | Coze 线上演示入口 |
-| 爆了么 | https://tvw4jbjd95.coze.site | Coze 线上演示入口 |
-| 盐究所 NACL-LAB | nacl-lab/ | 大中台电子简历源码 |
+| 产品 | 稳定 URL | 项目编辑器 | 说明 |
+|------|----------|------------|------|
+| 红了么 | https://y5q2f6hcdv.coze.site | https://www.coze.cn/p/7650888992468140086 | 小红书 AI 内容中台 |
+| 爆了么 | https://tvw4jbjd95.coze.site | https://www.coze.cn/p/7651554155693277224 | 抖音爆款复制机 |
+| 盐究所 NACL-LAB | https://d47vs6bmvk.coze.site | https://www.coze.cn/p/7652021830038962228 | 大中台电子简历门户 |
 
 说明：线上演示可直接打开；是否为真实 AI 结果以各项目生产环境变量和接口配置为准，不编造。
+
+验收方式：先打开三个线上地址看最终页面，有问题截图回传；项目编辑器用于改代码、看构建日志、重新部署。
 
 ## 品牌设计规范
 
